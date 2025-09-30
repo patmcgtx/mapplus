@@ -21,15 +21,14 @@ struct ContentView: View {
         Map {
         }
         .mapStyle(MapStyle.standard(elevation: .realistic,
-                                    emphasis: .automatic,
+                                    emphasis: .muted,
                                     pointsOfInterest: [
-                                            .airport,
-                                            .museum,
-                                            .amusementPark,
-                                            .animalService,
-                                            .aquarium,
-                                            .hospital,
-                                            .police
+                                        .library,
+                                        .school,
+                                        .fireStation,
+                                        .hospital,
+                                        .pharmacy,
+                                        .police
                                     ],
                                     showsTraffic: false))
         .mapControls{
