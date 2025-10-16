@@ -24,13 +24,13 @@ struct LandmarkSampleData {
         let domain = CLLocationCoordinate2D(latitude: 30.40041, longitude: -97.72298)
         
         container.mainContext.insert(
-            Landmark(name: "Capitol", systemImageName: "building", location: capitol))
+            Landmark(name: "Capitol", systemImageName: "building.columns.fill", location: capitol))
         
         container.mainContext.insert(
-            Landmark(name: "Sagebrush", systemImageName: "building", location: sagebrush))
+            Landmark(name: "Sagebrush", systemImageName: "figure.socialdance", location: sagebrush))
 
         container.mainContext.insert(
-            Landmark(name: "Domain", systemImageName: "building", location: domain))
+            Landmark(name: "Domain", systemImageName: "storefront", location: domain))
 
         return container
     }
