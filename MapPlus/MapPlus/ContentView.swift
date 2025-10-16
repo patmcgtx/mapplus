@@ -11,12 +11,19 @@ import MapKit
 
 struct ContentView: View {
 
+    // Map state
+    @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var mapSelectedItem: MKMapItem?
+    
     // Persistence
     @Environment(\.modelContext) private var modelContext
-    @Query private var landmarks: [Landmark]
+    @Query var landmarks: [Landmark]
 
     var body: some View {
-        Map {
+        Map(position: $mapPosition, selection: $mapSelectedItem) {
+            ForEach(landmarks, id: \.self) { landmark in
+                Marker(landmark.name, systemImage: landmark.systemImageName, coordinate: landmark.location)
+            }
         }
         .mapStyle(MapStyle.standard(elevation: .realistic,
                                     emphasis: .muted,
@@ -46,4 +53,5 @@ private let itemFormatter: DateFormatter = {
 
 #Preview {
     ContentView()
+        .modelContainer(LandmarkSampleData.container)
 }
