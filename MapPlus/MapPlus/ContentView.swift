@@ -19,6 +19,7 @@ struct ContentView: View {
     @Query var landmarks: [Landmark]
 
     var body: some View {
+        
         Map(position: $mapPosition, selection: $mapSelectedItem) {
             ForEach(landmarks, id: \.self) { landmark in
                 Marker(landmark.name, systemImage: landmark.systemImageName, coordinate: landmark.location)
@@ -38,6 +39,30 @@ struct ContentView: View {
         .mapControls{
             MapUserLocationButton()
             MapCompass()
+        }
+        .safeAreaInset(edge: .bottom) {
+            ScrollView(.horizontal) {
+                HStack {
+                    Spacer()
+                    Button("Refresh", systemImage: "location") {
+                    }
+                    Spacer()
+                    Button("Clear", systemImage: "location") {
+                    }
+                    Spacer()
+                    Button("Show All", systemImage: "location") {
+                    }
+                    Spacer()
+                    Button("Show All", systemImage: "location") {
+                    }
+                    Spacer()
+                    Button("Show All", systemImage: "location") {
+                    }
+                }
+            }
+            .labelStyle(.titleAndIcon)
+            .padding(.top)
+            .background(.ultraThinMaterial)
         }
     }
 
