@@ -1,5 +1,6 @@
 import Testing
 import MapKit
+import SwiftData
 @testable import MapPlus
 
 struct LandmarkTests {
@@ -77,4 +78,62 @@ struct LandmarkTests {
         )
     }
     
+    @MainActor @Test func testUniqueUpsert() throws {
+        
+        let coordinate = CLLocationCoordinate2D(
+            latitude: 30.00458,
+            longitude: -97.14810
+        )
+        let swmithville = Landmark(
+            name: "Smithville",
+            systemImageName: "mappin.circle",
+            location: coordinate
+        )
+        let swmithville4thStreet = Landmark(
+            name: "4th Street",
+            systemImageName: "mappin",
+            location: coordinate
+        )
+
+        // Set up in-memory persistence container
+        let configInMemory = ModelConfiguration(
+            isStoredInMemoryOnly: true
+        )
+        let container = try ModelContainer(
+            for: Landmark.self,
+            configurations: configInMemory
+        )
+        let descriptor = FetchDescriptor<Landmark>()
+        
+        // Start out with no landmarks
+        var allLandmarks = try container.mainContext.fetch(descriptor)
+        
+        #expect (
+            allLandmarks.isEmpty
+        )
+
+        // Add a landmark
+        container.mainContext.insert(swmithville)
+        allLandmarks = try container.mainContext.fetch(descriptor)
+
+        #expect (
+            allLandmarks.count == 1
+        )
+
+        // Re-add the same landmark
+        container.mainContext.insert(swmithville)
+        allLandmarks = try container.mainContext.fetch(descriptor)
+
+        #expect (
+            allLandmarks.count == 1
+        )
+
+        // Add a duplcate landmark
+        container.mainContext.insert(swmithville4thStreet)
+        allLandmarks = try container.mainContext.fetch(descriptor)
+
+        #expect (
+            allLandmarks.count == 1
+        )
+    }
 }
