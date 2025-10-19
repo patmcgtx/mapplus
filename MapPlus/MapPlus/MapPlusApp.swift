@@ -15,6 +15,6 @@ struct MapPlusApp: App {
         WindowGroup {
             ContentView()
         }
-        .modelContainer(for: Landmark.self)
+        .modelContainer(LandmarkInMemorySampleData.container)
     }
 }

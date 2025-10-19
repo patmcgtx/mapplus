@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 import MapKit
 
-struct LandmarkSampleData {
+struct LandmarkInMemorySampleData {
     
     @MainActor
     static var container: ModelContainer {

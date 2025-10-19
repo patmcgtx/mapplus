@@ -16,7 +16,6 @@ struct ContentView: View {
     @State private var mapSelectedItem: MKMapItem?
     
     // Persistence
-    @Environment(\.modelContext) private var modelContext
     @Query var landmarks: [Landmark]
 
     var body: some View {
@@ -53,5 +52,5 @@ private let itemFormatter: DateFormatter = {
 
 #Preview {
     ContentView()
-        .modelContainer(LandmarkSampleData.container)
+        .modelContainer(LandmarkInMemorySampleData.container)
 }
