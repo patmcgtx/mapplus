@@ -6,33 +6,75 @@ struct LandmarkTests {
     
     @Test func testInitialization() {
         
-        let coordinate = CLLocationCoordinate2D(latitude: 37.81985, longitude: -122.47852)
-        let landmark = Landmark(name: "Golden Gate Bridge", systemImageName: "bridge", location: coordinate)
+        let coordinate = CLLocationCoordinate2D(
+            latitude: 37.81985,
+            longitude: -122.47852
+        )
+        let goldenGate = Landmark(
+            name: "Golden Gate Bridge",
+            systemImageName: "bridge",
+            location: coordinate
+        )
         
-        #expect(landmark.name == "Golden Gate Bridge")
-        #expect(landmark.systemImageName == "bridge")
-        #expect(landmark.location.latitude == coordinate.latitude)
-        #expect(landmark.location.longitude == coordinate.longitude)
+        #expect(
+            goldenGate.name == "Golden Gate Bridge"
+        )
+        #expect(
+            goldenGate.systemImageName == "bridge"
+        )
+        #expect(
+            goldenGate.location.latitude == coordinate.latitude
+        )
+        #expect(
+            goldenGate.location.longitude == coordinate.longitude
+        )
     }
 
     @Test func testCoordinateComputedProperty() {
         
-        let lat: CLLocationDegrees = 35.0
-        let lon: CLLocationDegrees = -120.0
-        let landmark = Landmark(name: "Some landmark", systemImageName: "microphone", location: .init(latitude: lat, longitude: lon))
+        let lat: CLLocationDegrees = 29.23755
+        let lon: CLLocationDegrees = -94.87794
+        let beachPark = Landmark(
+            name: "Sunny Beach Pocket Park",
+            systemImageName: "beach.umbrella",
+            location: .init(
+                latitude: lat,
+                longitude: lon
+            )
+        )
         
-        #expect(landmark.location.latitude == lat)
-        #expect(landmark.location.longitude == lon)
+        #expect(
+            beachPark.location.latitude == lat
+        )
+        #expect(
+            beachPark.location.longitude == lon
+        )
     }
     
     @Test func testUniqueness() {
         
-        let coordinate = CLLocationCoordinate2D(latitude: 30.0, longitude: -97.0)
-        let landmark = Landmark(name: "A Landmark", systemImageName: "mappin", location: coordinate)
-        let samePlace = Landmark(name: "Same Landmark", systemImageName: "mappin.circle", location: coordinate)
+        let coordinate = CLLocationCoordinate2D(
+            latitude: 30.00458,
+            longitude: -97.14810
+        )
+        let swmithville = Landmark(
+            name: "Smithville",
+            systemImageName: "mappin.circle",
+            location: coordinate
+        )
+        let swmithville4thStreet = Landmark(
+            name: "4th Street",
+            systemImageName: "mappin",
+            location: coordinate
+        )
         
-        // Uniqueness is based entirely on location (other attribues become an upsert in SwiftData)
-        #expect(landmark.location.latitude == samePlace.location.latitude)
-        #expect(landmark.location.longitude == samePlace.location.longitude)
+        // Uniqueness is based entirely on location
+        #expect(
+            swmithville.location.latitude == swmithville4thStreet.location.latitude
+        )
+        #expect(
+            swmithville.location.longitude == swmithville4thStreet.location.longitude
+        )
     }
+    
 }
