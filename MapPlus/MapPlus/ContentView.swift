@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 import MapKit
 
+/// The main map view
 struct ContentView: View {
 
     // Map state
@@ -50,13 +51,13 @@ struct ContentView: View {
                     Button("Clear", systemImage: "location") {
                     }
                     Spacer()
-                    Button("Show All", systemImage: "location") {
+                    Button("Show 1", systemImage: "location") {
                     }
                     Spacer()
-                    Button("Show All", systemImage: "location") {
+                    Button("Show 2", systemImage: "location") {
                     }
                     Spacer()
-                    Button("Show All", systemImage: "location") {
+                    Button("Show 3", systemImage: "location") {
                     }
                 }
             }
@@ -67,13 +68,6 @@ struct ContentView: View {
     }
 
 }
-
-private let itemFormatter: DateFormatter = {
-    let formatter = DateFormatter()
-    formatter.dateStyle = .short
-    formatter.timeStyle = .medium
-    return formatter
-}()
 
 #Preview {
     ContentView()
