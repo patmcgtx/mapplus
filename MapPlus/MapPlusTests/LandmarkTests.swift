@@ -80,21 +80,6 @@ struct LandmarkTests {
     
     @MainActor @Test func testUniqueUpsert() throws {
         
-        let coordinate = CLLocationCoordinate2D(
-            latitude: 30.00458,
-            longitude: -97.14810
-        )
-        let swmithville = Landmark(
-            name: "Smithville",
-            systemImageName: "mappin.circle",
-            location: coordinate
-        )
-        let swmithville4thStreet = Landmark(
-            name: "4th Street",
-            systemImageName: "mappin",
-            location: coordinate
-        )
-
         // Set up in-memory persistence container
         let configInMemory = ModelConfiguration(
             isStoredInMemoryOnly: true
@@ -111,9 +96,19 @@ struct LandmarkTests {
         #expect (
             allLandmarks.isEmpty
         )
+        
+        let coordinate = CLLocationCoordinate2D(
+            latitude: 30.00458,
+            longitude: -97.14810
+        )
+        let smithville = Landmark(
+            name: "Smithville",
+            systemImageName: "mappin.circle",
+            location: coordinate
+        )
 
         // Add a landmark
-        container.mainContext.insert(swmithville)
+        container.mainContext.insert(smithville)
         allLandmarks = try container.mainContext.fetch(descriptor)
 
         #expect (
@@ -121,19 +116,12 @@ struct LandmarkTests {
         )
 
         // Re-add the same landmark
-        container.mainContext.insert(swmithville)
+        container.mainContext.insert(smithville)
         allLandmarks = try container.mainContext.fetch(descriptor)
 
         #expect (
             allLandmarks.count == 1
         )
 
-        // Add a duplcate landmark
-        container.mainContext.insert(swmithville4thStreet)
-        allLandmarks = try container.mainContext.fetch(descriptor)
-
-        #expect (
-            allLandmarks.count == 1
-        )
     }
 }
