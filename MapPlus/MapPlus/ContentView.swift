@@ -37,10 +37,6 @@ struct ContentView: View {
                                         .police
                                     ],
                                     showsTraffic: false))
-        .mapControls{
-            MapUserLocationButton()
-            MapCompass()
-        }
         .safeAreaInset(edge: .bottom) {
             ScrollView(.horizontal) {
                 HStack {
