@@ -57,6 +57,9 @@ struct ContentView: View {
                     }
                 }
             }
+            .mapControls{
+                MapCompass()
+            }
             .labelStyle(.titleAndIcon)
             .padding(.top)
             .background(.ultraThinMaterial)
