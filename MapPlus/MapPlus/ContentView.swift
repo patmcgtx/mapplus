@@ -41,20 +41,13 @@ struct ContentView: View {
             ScrollView(.horizontal) {
                 HStack {
                     Spacer()
-                    Button("Refresh", systemImage: "location") {
-                    }
+                    Button("Home") {}
                     Spacer()
-                    Button("Clear", systemImage: "location") {
-                    }
+                    Button("School") {}
                     Spacer()
-                    Button("Show 1", systemImage: "location") {
-                    }
+                    Button("Mom work") {}
                     Spacer()
-                    Button("Show 2", systemImage: "location") {
-                    }
-                    Spacer()
-                    Button("Show 3", systemImage: "location") {
-                    }
+                    Button("Edit") {}
                 }
             }
             .labelStyle(.titleAndIcon)
