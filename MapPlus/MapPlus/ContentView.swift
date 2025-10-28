@@ -41,11 +41,11 @@ struct ContentView: View {
             ScrollView(.horizontal) {
                 HStack {
                     Spacer()
-                    Button("Home") {}
+                    Button("Home") { self.focusOnLandmark(named: "Home") }
                     Spacer()
-                    Button("School") {}
+                    Button("School") { self.focusOnLandmark(named: "School") }
                     Spacer()
-                    Button("Mom work") {}
+                    Button("Mom's work") { self.focusOnLandmark(named: "Mom's work") }
                     Spacer()
                     Button("Edit") {}
                 }
@@ -53,6 +53,19 @@ struct ContentView: View {
             .labelStyle(.titleAndIcon)
             .padding(.top)
             .background(.ultraThinMaterial)
+        }
+    }
+    
+    private func focusOnLandmark(named landmarkName: String) {
+        if let focus = landmarks.filter({ $0.name == landmarkName }).first?.location {
+            withAnimation {
+                self.mapPosition = .camera(
+                    MapCamera(
+                        centerCoordinate: focus,
+                        distance: 2000
+                    )
+                )
+            }
         }
     }
 

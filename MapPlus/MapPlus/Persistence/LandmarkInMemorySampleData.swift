@@ -11,6 +11,8 @@ import MapKit
 
 struct LandmarkInMemorySampleData {
     
+    @State private var position: MapCameraPosition = .automatic
+
     @MainActor
     static var container: ModelContainer {
         
@@ -19,18 +21,18 @@ struct LandmarkInMemorySampleData {
 
         // Populate sample data
         
-        let capitol = CLLocationCoordinate2D(latitude: 30.27267, longitude: -97.74109)
-        let sagebrush = CLLocationCoordinate2D(latitude: 30.20632, longitude: -97.77506)
-        let domain = CLLocationCoordinate2D(latitude: 30.40041, longitude: -97.72298)
+        let home = CLLocationCoordinate2D(latitude: 30.22791, longitude: -97.76270)
+        let work = CLLocationCoordinate2D(latitude: 30.27267, longitude: -97.74109)
+        let school = CLLocationCoordinate2D(latitude: 30.20632, longitude: -97.77506)
         
         container.mainContext.insert(
-            Landmark(name: "Capitol", systemImageName: "building.columns.fill", location: capitol))
+            Landmark(name: "Home", systemImageName: "house", location: home))
         
         container.mainContext.insert(
-            Landmark(name: "Sagebrush", systemImageName: "figure.socialdance", location: sagebrush))
+            Landmark(name: "Mom's work", systemImageName: "arcade.stick", location: work))
 
         container.mainContext.insert(
-            Landmark(name: "Domain", systemImageName: "storefront", location: domain))
+            Landmark(name: "School", systemImageName: "graduationcap", location: school))
 
         return container
     }
