@@ -9,7 +9,7 @@ import SwiftData
 import MapKit
 
 @Model
-class Landmark: Identifiable {
+class Landmark: Identifiable, Hashable {
     
     #Unique<Landmark>([\.latitude, \.longitude])
     
