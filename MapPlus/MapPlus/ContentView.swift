@@ -37,21 +37,23 @@ struct ContentView: View {
                                         .police
                                     ],
                                     showsTraffic: false))
-        .safeAreaInset(edge: .bottom) {
-            ScrollView(.horizontal) {
-                HStack {
-                    Spacer()
-                    Button("Home") { self.focusOnLandmark(named: "Home") }
-                    Spacer()
-                    Button("School") { self.focusOnLandmark(named: "School") }
-                    Spacer()
-                    Button("Mom's work") { self.focusOnLandmark(named: "Mom's work") }
-                    Spacer()
-                    Button("Edit") {}
+        .safeAreaInset(edge: .bottom, alignment: .trailing) {
+            Menu {
+                Button("landmark", systemImage: "mappin") {
+                    print("tapped")
                 }
+                Button("landmark", systemImage: "mappin") {
+                    print("tapped")
+                }
+                Button("landmark", systemImage: "mappin") {
+                    print("tapped")
+                }
+            } label: {
+                Image(systemName: "mappin.circle")
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .padding(.trailing, 16)
             }
-            .labelStyle(.titleAndIcon)
-            .padding(.top)
             .background(.ultraThinMaterial)
         }
     }
