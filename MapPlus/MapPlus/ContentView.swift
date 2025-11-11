@@ -45,7 +45,7 @@ struct ContentView: View {
                 Divider()
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
-                        focusOnLandmark(named: landmark.name)
+                        zoomTo(landmark: landmark)
                     }
                 }                
                 Button("Me", systemImage: "location") {
@@ -60,16 +60,14 @@ struct ContentView: View {
         }
     }
     
-    private func focusOnLandmark(named landmarkName: String) {
-        if let focus = landmarks.filter({ $0.name == landmarkName }).first?.location {
-            withAnimation {
-                self.mapPosition = .camera(
-                    MapCamera(
-                        centerCoordinate: focus,
-                        distance: 2000
-                    )
+    private func zoomTo(landmark: Landmark) {
+        withAnimation {
+            self.mapPosition = .camera(
+                MapCamera(
+                    centerCoordinate: landmark.location,
+                    distance: 2000 // meters
                 )
-            }
+            )
         }
     }
 

@@ -11,8 +11,6 @@ import MapKit
 @Model
 class Landmark: Identifiable, Hashable {
     
-    #Unique<Landmark>([\.latitude, \.longitude])
-    
     var name: String
     var systemImageName: String
     @Attribute private var latitude: CLLocationDegrees
