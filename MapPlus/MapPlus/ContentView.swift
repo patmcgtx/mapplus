@@ -41,7 +41,7 @@ struct ContentView: View {
             Menu {
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
-                        print("tapped")
+                        focusOnLandmark(named: landmark.name)
                     }
                 }
             } label: {
