@@ -37,22 +37,26 @@ struct ContentView: View {
                                         .police
                                     ],
                                     showsTraffic: false))
-        .safeAreaInset(edge: .bottom) {
-            ScrollView(.horizontal) {
-                HStack {
-                    Spacer()
-                    Button("Home") { self.focusOnLandmark(named: "Home") }
-                    Spacer()
-                    Button("School") { self.focusOnLandmark(named: "School") }
-                    Spacer()
-                    Button("Mom's work") { self.focusOnLandmark(named: "Mom's work") }
-                    Spacer()
-                    Button("Edit") {}
+        .safeAreaInset(edge: .bottom, alignment: .trailing) {
+            Menu {
+                Button("Edit...", systemImage: "list.number") {
+                    // TODO Open landmarks edit screen
                 }
+                Divider()
+                ForEach(self.landmarks, id: \.self) { landmark in
+                    Button(landmark.name, systemImage: landmark.systemImageName) {
+                        focusOnLandmark(named: landmark.name)
+                    }
+                }                
+                Button("Me", systemImage: "location") {
+                    // TODO Zoom to my location
+                }
+            } label: {
+                Image(systemName: "mappin.circle")
+                    .resizable()
+                    .frame(width: 80, height: 80)
+                    .padding(.trailing, 16)
             }
-            .labelStyle(.titleAndIcon)
-            .padding(.top)
-            .background(.ultraThinMaterial)
         }
     }
     
@@ -73,5 +77,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(LandmarkInMemorySampleData.container)
+        .modelContainer(LandmarkInMemorySampleData().container)
 }
