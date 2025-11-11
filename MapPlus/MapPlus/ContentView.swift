@@ -40,13 +40,16 @@ struct ContentView: View {
         .safeAreaInset(edge: .bottom, alignment: .trailing) {
             Menu {
                 Button("Edit...", systemImage: "list.number") {
-                    // TODO Open edit view
+                    // TODO Open landmarks edit screen
                 }
                 Divider()
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
                         focusOnLandmark(named: landmark.name)
                     }
+                }                
+                Button("Me", systemImage: "location") {
+                    // TODO Zoom to my location
                 }
             } label: {
                 Image(systemName: "mappin.circle")
