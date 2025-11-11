@@ -39,6 +39,10 @@ struct ContentView: View {
                                     showsTraffic: false))
         .safeAreaInset(edge: .bottom, alignment: .trailing) {
             Menu {
+                Button("Edit...", systemImage: "list.number") {
+                    // TODO Open edit view
+                }
+                Divider()
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
                         focusOnLandmark(named: landmark.name)
