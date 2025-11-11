@@ -39,14 +39,10 @@ struct ContentView: View {
                                     showsTraffic: false))
         .safeAreaInset(edge: .bottom, alignment: .trailing) {
             Menu {
-                Button("landmark", systemImage: "mappin") {
-                    print("tapped")
-                }
-                Button("landmark", systemImage: "mappin") {
-                    print("tapped")
-                }
-                Button("landmark", systemImage: "mappin") {
-                    print("tapped")
+                ForEach(self.landmarks, id: \.self) { landmark in
+                    Button(landmark.name, systemImage: landmark.systemImageName) {
+                        print("tapped")
+                    }
                 }
             } label: {
                 Image(systemName: "mappin.circle")
@@ -54,7 +50,6 @@ struct ContentView: View {
                     .frame(width: 80, height: 80)
                     .padding(.trailing, 16)
             }
-            .background(.ultraThinMaterial)
         }
     }
     
