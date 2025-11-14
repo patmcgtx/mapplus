@@ -12,7 +12,7 @@ import MapKit
 struct LandmarkInMemorySampleData {
     
     @State private var position: MapCameraPosition = .automatic
-
+    
     var sampleData: [Landmark] {
         [
             Landmark(
@@ -43,9 +43,22 @@ struct LandmarkInMemorySampleData {
     }
     
     @MainActor
-    var container: ModelContainer {
+    var inMemoryContainer: ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try! ModelContainer(for: Landmark.self, configurations: config)
+        
+        for landmark in self.sampleData {
+            container.mainContext.insert(landmark)
+        }
+        
+        return container
+    }
+    
+    @MainActor
+    var persistentContainer: ModelContainer {
+        
+        let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
 
         for landmark in self.sampleData {
