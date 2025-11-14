@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 import MapKit
 
-struct LandmarkInMemorySampleData {
+struct LandmarkSampleData {
     
     @State private var position: MapCameraPosition = .automatic
     
@@ -43,7 +43,7 @@ struct LandmarkInMemorySampleData {
     }
     
     @MainActor
-    var inMemoryContainer: ModelContainer {
+    func inMemoryContainer() throws -> ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
@@ -52,11 +52,13 @@ struct LandmarkInMemorySampleData {
             container.mainContext.insert(landmark)
         }
         
+        try container.mainContext.save()
+        
         return container
     }
     
     @MainActor
-    var persistentContainer: ModelContainer {
+    func persistentContainer() throws -> ModelContainer {
         
         let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
@@ -64,6 +66,8 @@ struct LandmarkInMemorySampleData {
         for landmark in self.sampleData {
             container.mainContext.insert(landmark)
         }
+        
+        try container.mainContext.save()
 
         return container
     }
