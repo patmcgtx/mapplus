@@ -73,7 +73,7 @@ struct ContentView: View {
             }
         }
         .onAppear(){
-            self.locationHandler.requestPermissions()
+            self.locationHandler.requestPermissions() { _ in  }
         }
     }
     
