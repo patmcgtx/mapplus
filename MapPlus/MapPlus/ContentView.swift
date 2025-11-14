@@ -12,8 +12,11 @@ import MapKit
 /// The main map view
 struct ContentView: View {
 
+    // Location
+    private var locationHandler = LocationHandler()
+    
     // Map state
-    @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var mapSelectedItem: MKMapItem?
     
     // Persistence
@@ -23,8 +26,13 @@ struct ContentView: View {
         
         Map(position: $mapPosition, selection: $mapSelectedItem) {
             ForEach(landmarks, id: \.self) { landmark in
-                Marker(landmark.name, systemImage: landmark.systemImageName, coordinate: landmark.location)
+                Marker(
+                    landmark.name,
+                    systemImage: landmark.systemImageName,
+                    coordinate: landmark.location
+                )
             }
+            UserAnnotation()
         }
         .mapStyle(MapStyle.standard(elevation: .realistic,
                                     emphasis: .muted,
@@ -37,6 +45,10 @@ struct ContentView: View {
                                         .police
                                     ],
                                     showsTraffic: false))
+        .mapControls {
+            MapCompass()
+            MapScaleView()
+        }
         .safeAreaInset(edge: .bottom, alignment: .trailing) {
             Menu {
                 Button("Edit...", systemImage: "list.number") {
@@ -45,11 +57,13 @@ struct ContentView: View {
                 Divider()
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
-                        focusOnLandmark(named: landmark.name)
+                        zoomTo(landmark: landmark)
                     }
                 }                
                 Button("Me", systemImage: "location") {
-                    // TODO Zoom to my location
+                    withAnimation {
+                        self.mapPosition = .userLocation(fallback: .automatic)
+                    }
                 }
             } label: {
                 Image(systemName: "mappin.circle")
@@ -58,18 +72,19 @@ struct ContentView: View {
                     .padding(.trailing, 16)
             }
         }
+        .onAppear(){
+            self.locationHandler.requestPermissions() { _ in  }
+        }
     }
     
-    private func focusOnLandmark(named landmarkName: String) {
-        if let focus = landmarks.filter({ $0.name == landmarkName }).first?.location {
-            withAnimation {
-                self.mapPosition = .camera(
-                    MapCamera(
-                        centerCoordinate: focus,
-                        distance: 2000
-                    )
+    private func zoomTo(landmark: Landmark) {
+        withAnimation {
+            self.mapPosition = .camera(
+                MapCamera(
+                    centerCoordinate: landmark.location,
+                    distance: 2000 // meters
                 )
-            }
+            )
         }
     }
 
