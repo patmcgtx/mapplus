@@ -92,5 +92,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(LandmarkInMemorySampleData().container)
+        .modelContainer(try! LandmarkSampleData().inMemoryContainer())
 }
