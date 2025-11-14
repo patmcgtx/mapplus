@@ -12,8 +12,11 @@ import MapKit
 /// The main map view
 struct ContentView: View {
 
+    // Location
+    private var locationHandler = LocationHandler()
+    
     // Map state
-    @State private var mapPosition: MapCameraPosition = .automatic
+    @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var mapSelectedItem: MKMapItem?
     
     // Persistence
@@ -23,8 +26,13 @@ struct ContentView: View {
         
         Map(position: $mapPosition, selection: $mapSelectedItem) {
             ForEach(landmarks, id: \.self) { landmark in
-                Marker(landmark.name, systemImage: landmark.systemImageName, coordinate: landmark.location)
+                Marker(
+                    landmark.name,
+                    systemImage: landmark.systemImageName,
+                    coordinate: landmark.location
+                )
             }
+            UserAnnotation()
         }
         .mapStyle(MapStyle.standard(elevation: .realistic,
                                     emphasis: .muted,
@@ -37,6 +45,10 @@ struct ContentView: View {
                                         .police
                                     ],
                                     showsTraffic: false))
+        .mapControls {
+            MapCompass()
+            MapScaleView()
+        }
         .safeAreaInset(edge: .bottom, alignment: .trailing) {
             Menu {
                 Button("Edit...", systemImage: "list.number") {
@@ -49,7 +61,9 @@ struct ContentView: View {
                     }
                 }                
                 Button("Me", systemImage: "location") {
-                    // TODO Zoom to my location
+                    withAnimation {
+                        self.mapPosition = .userLocation(fallback: .automatic)
+                    }
                 }
             } label: {
                 Image(systemName: "mappin.circle")
@@ -57,6 +71,9 @@ struct ContentView: View {
                     .frame(width: 80, height: 80)
                     .padding(.trailing, 16)
             }
+        }
+        .onAppear(){
+            self.locationHandler.requestPermissions()
         }
     }
     
