@@ -24,52 +24,59 @@ struct ContentView: View {
 
     var body: some View {
         
-        Map(position: $mapPosition, selection: $mapSelectedItem) {
-            ForEach(landmarks, id: \.self) { landmark in
-                Marker(
-                    landmark.name,
-                    systemImage: landmark.systemImageName,
-                    coordinate: landmark.location
-                )
+        ZStack {
+            Map(position: $mapPosition, selection: $mapSelectedItem) {
+                ForEach(landmarks, id: \.self) { landmark in
+                    Marker(
+                        landmark.name,
+                        systemImage: landmark.systemImageName,
+                        coordinate: landmark.location
+                    )
+                }
+                UserAnnotation()
             }
-            UserAnnotation()
-        }
-        .mapStyle(MapStyle.standard(elevation: .realistic,
-                                    emphasis: .muted,
-                                    pointsOfInterest: [
-                                        .library,
-                                        .school,
-                                        .fireStation,
-                                        .hospital,
-                                        .pharmacy,
-                                        .police
-                                    ],
-                                    showsTraffic: false))
-        .mapControls {
-            MapCompass()
-            MapScaleView()
-        }
-        .safeAreaInset(edge: .bottom, alignment: .trailing) {
-            Menu {
-                Button("Edit...", systemImage: "list.number") {
-                    // TODO Open landmarks edit screen
-                }
-                Divider()
-                ForEach(self.landmarks, id: \.self) { landmark in
-                    Button(landmark.name, systemImage: landmark.systemImageName) {
-                        zoomTo(landmark: landmark)
+            .mapStyle(MapStyle.standard(elevation: .realistic,
+                                        emphasis: .muted,
+                                        pointsOfInterest: [
+                                            .library,
+                                            .school,
+                                            .fireStation,
+                                            .hospital,
+                                            .pharmacy,
+                                            .police
+                                        ],
+                                        showsTraffic: false))
+            .mapControls {
+                MapCompass()
+                MapScaleView()
+            }
+
+            VStack {
+                Spacer()
+                HStack {
+                    Spacer()
+                    Menu {
+                        Button("Edit...", systemImage: "list.number") {
+                            // TODO Open landmarks edit screen
+                        }
+                        Divider()
+                        ForEach(self.landmarks, id: \.self) { landmark in
+                            Button(landmark.name, systemImage: landmark.systemImageName) {
+                                zoomTo(landmark: landmark)
+                            }
+                        }
+                        Button("Me", systemImage: "location") {
+                            withAnimation {
+                                self.mapPosition = .userLocation(fallback: .automatic)
+                            }
+                        }
+                    } label: {
+                        Image(systemName: "mappin.circle")
+                            .resizable()
+                            .frame(width: 80, height: 80)
+                            .padding(.trailing, 16)
                     }
-                }                
-                Button("Me", systemImage: "location") {
-                    withAnimation {
-                        self.mapPosition = .userLocation(fallback: .automatic)
-                    }
                 }
-            } label: {
-                Image(systemName: "mappin.circle")
-                    .resizable()
-                    .frame(width: 80, height: 80)
-                    .padding(.trailing, 16)
             }
         }
         .onAppear(){
