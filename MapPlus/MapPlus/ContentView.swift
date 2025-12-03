@@ -74,6 +74,7 @@ struct ContentView: View {
                         Image(systemName: "mappin.circle")
                             .resizable()
                             .frame(width: 80, height: 80)
+                            .background(Color.white.opacity(0.5))
                             .padding(.trailing, 16)
                     }
                 }
