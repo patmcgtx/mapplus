@@ -17,8 +17,7 @@ struct LandmarksView : View {
         NavigationStack {
             List(landmarks, id: \.id) { landmark in
                 HStack {
-                    Image(systemName: landmark.systemImageName)
-                    Text(landmark.name)
+                    Label(landmark.name, systemImage: landmark.systemImageName)
                 }
             }
             .navigationTitle("Landmarks")
