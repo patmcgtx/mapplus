@@ -15,6 +15,9 @@ struct ContentView: View {
     // Location
     private var locationHandler = LocationHandler()
     
+    // Landamrks editing
+    @State private var showingLandmarkList: Bool = false
+    
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var mapSelectedItem: MKMapItem?
@@ -57,12 +60,12 @@ struct ContentView: View {
                     Spacer()
                     Menu {
                         Button("Edit...", systemImage: "list.number") {
-                            // TODO Open landmarks edit screen
+                            self.showingLandmarkList = true
                         }
                         Divider()
                         ForEach(self.landmarks, id: \.self) { landmark in
                             Button(landmark.name, systemImage: landmark.systemImageName) {
-                                zoomTo(landmark: landmark)
+                                self.zoomTo(landmark: landmark)
                             }
                         }
                         Button("Me", systemImage: "location") {
@@ -81,6 +84,9 @@ struct ContentView: View {
         }
         .onAppear(){
             self.locationHandler.requestPermissions() { _ in  }
+        }
+        .sheet(isPresented: $showingLandmarkList) {
+            LandmarksView(landmarks: self.landmarks)
         }
     }
     
