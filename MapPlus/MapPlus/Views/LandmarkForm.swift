@@ -75,10 +75,7 @@ struct LandmarkForm: View {
         let landmark = Landmark(
             name: "String",
             systemImageName: "String",
-            location: CLLocationCoordinate2D(
-                latitude: 30.22791,
-                longitude: -97.76270
-            )
+            location: coord
         )
         onSave(landmark)
         dismiss()
