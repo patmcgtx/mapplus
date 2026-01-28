@@ -10,17 +10,15 @@ import CoreLocation
 
 
 struct LandmarkForm: View {
-    // Callback to deliver the newly created Landmark to a parent view
-    var onSave: (Landmark) -> Void = { _ in }
 
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     // Form state
-    @State private var name: String = ""
-    @State private var category: String = ""
-    @State private var latitude: String = ""
-    @State private var longitude: String = ""
-    @State private var notes: String = ""
+    @State private var name: String = "Bath & Body Works"
+    @State private var systemImageName: String = "bag"
+    @State private var latitude: String = "30.230825"
+    @State private var longitude: String = "-97.799609"
 
     // Simple validation
     private var isSaveDisabled: Bool {
@@ -36,54 +34,51 @@ struct LandmarkForm: View {
                     TextField("Name", text: $name)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
-                    TextField("Category", text: $category)
-                        .textInputAutocapitalization(.words)
+                    TextField("Image Name", text: $systemImageName)
+                        .autocorrectionDisabled()
                 }
-
                 Section("Location") {
                     TextField("Latitude", text: $latitude)
                         .keyboardType(.numbersAndPunctuation)
                     TextField("Longitude", text: $longitude)
                         .keyboardType(.numbersAndPunctuation)
                 }
-
-                Section("Notes") {
-                    TextEditor(text: $notes)
-                        .frame(minHeight: 100)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 8)
-                                .stroke(Color.secondary.opacity(0.2))
-                        )
-                }
             }
             .navigationTitle("New Landmark")
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") { dismiss() }
+                    Button("Cancel") {
+                        dismiss()
+                    }
                 }
                 ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") { save() }
-                        .disabled(isSaveDisabled)
+                    Button("Save") {
+                        do {
+                            guard let lat = Double(self.latitude), let lon = Double(self.longitude) else { return }
+                            let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+                            let landmark = Landmark(
+                                name: self.name,
+                                systemImageName: self.systemImageName,
+                                location: coord
+                            )
+                            // Insert using the injected modelContext and save with error handling
+                            self.modelContext.insert(landmark)
+                            try self.modelContext.save()
+                            dismiss()
+                        } catch {
+                            // You might want to surface this to the user; for now we just log it
+                            print("Failed to save landmark: \(error)")
+                        }
+                    }
+                    .disabled(
+                        isSaveDisabled
+                    )
                 }
             }
-        }
-    }
-
-    private func save() {
-        guard let lat = Double(latitude), let lon = Double(longitude) else { return }
-        let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
-        let landmark = Landmark(
-            name: "String",
-            systemImageName: "String",
-            location: coord
-        )
-        onSave(landmark)
-        dismiss()
-    }
-}
+        } // NavigationStack
+    } // body
+} // View
 
 #Preview {
-    LandmarkForm { landmark in
-        print("Saved landmark: \(landmark)")
-    }
+    LandmarkForm()
 }
