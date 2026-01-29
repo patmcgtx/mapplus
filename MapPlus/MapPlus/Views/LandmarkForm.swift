@@ -35,12 +35,11 @@ struct LandmarkForm: View {
     @State private var landmarkIconName: String = "mappin.circle.fill"
     @State private var landmarkAddressInput: String = ""
 
-    @State private var isAddressLookingRunning = false
-
     // Location lookup
     private let geocoder = CLGeocoder()
     @State private var landmarkAddressDescription: String = ""
-    
+    @State private var isAddressLookingRunning = false
+
     // TODO patmcg do I need these vars?  Do they need to be @State?
     @State private var latitude: CLLocationDegrees = 0.0
     @State private var longitude: CLLocationDegrees = 0.0
@@ -67,28 +66,19 @@ struct LandmarkForm: View {
                     }
                 }
                 Section("Location") {
-                    TextField(
-                        "Address",
-                        text: $landmarkAddressInput,
-                        onEditingChanged: { _ in
-                            self.isAddressLookingRunning = true
-                            // TODO patmcg consider adding a "Look up" button
-                            // TODO patmcg add a progress indicator
-                            // TODO patmcg consider moving this to its own model/service
-                            self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
-                                placemarks, error in
-                                // TODO patmcg handle error case with like a (!) icon
-                                self.isAddressLookingRunning = false
-                                if let placemark = placemarks?.first {
-                                    if let lat = placemark.location?.coordinate.latitude,
-                                       let lon = placemark.location?.coordinate.longitude {
-                                        self.latitude = lat
-                                        self.longitude = lon
-                                        self.landmarkAddressDescription = placemark.formattedAddress ?? "Unknown Address"
-                                    }
-                                }
-                            }
-                    })
+                    HStack {
+                        TextField(
+                            "Address",
+                            text: $landmarkAddressInput,
+                            onEditingChanged: { _ in
+                                self.handleAddressLookup()
+                            })
+                        Button {
+                            self.handleAddressLookup()
+                        } label: {
+                            Image(systemName: "magnifyingglass")
+                        }
+                    }
                 }
                 Section("Preview") {
                     HStack {
@@ -107,7 +97,7 @@ struct LandmarkForm: View {
             .navigationTitle(self.landmarkName)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel") {
+                    Button("Cancel", systemImage: "x.circle") {
                         dismiss()
                     }
                 }
@@ -136,11 +126,30 @@ struct LandmarkForm: View {
                     .disabled(
                         isSaveDisabled
                     )
+                } // ToolbarItem / confirmation
+            } // .toolbar
+        } // NavigationStack
+    } // body
+    
+    private func handleAddressLookup() {
+        self.isAddressLookingRunning = true
+        // TODO patmcg consider moving this to its own model/service
+        self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
+            placemarks, error in
+            // TODO patmcg handle error case with like a (!) icon
+            self.isAddressLookingRunning = false
+            if let placemark = placemarks?.first {
+                if let lat = placemark.location?.coordinate.latitude,
+                   let lon = placemark.location?.coordinate.longitude {
+                    self.latitude = lat
+                    self.longitude = lon
+                    self.landmarkAddressDescription = placemark.formattedAddress ?? "Unknown Address"
                 }
             }
         }
     }
     
+    // TODO patmcg consider moving this to its own model/service
     private let iconsToShow: [SFSymbol] = [
         .house,
         .houseFill,
@@ -153,6 +162,7 @@ struct LandmarkForm: View {
         .dollarsignBankBuilding,
         .mappin,
         .mappinSquare,
+        .mappinAndEllipse,
         .mappinAndEllipse,
         .cupAndSaucer,
         .cupAndHeatWaves,
