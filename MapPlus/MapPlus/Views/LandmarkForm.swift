@@ -7,7 +7,7 @@
 
 import SwiftUI
 import CoreLocation
-
+import SFSymbolsPicker
 
 struct LandmarkForm: View {
 
@@ -15,14 +15,15 @@ struct LandmarkForm: View {
     @Environment(\.modelContext) private var modelContext
 
     // Form state
-    @State private var name: String = "Bath & Body Works"
-    @State private var systemImageName: String = "bag"
+    @State private var landmarkName: String = "New Place"
+    @State private var landmarkIconName: String = "mappin.circle.fill"
     @State private var latitude: String = "30.230825"
     @State private var longitude: String = "-97.799609"
+    @State private var isIconSelectorPresented = false
 
     // Simple validation
     private var isSaveDisabled: Bool {
-        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
+        landmarkName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
         Double(latitude) == nil ||
         Double(longitude) == nil
     }
@@ -31,11 +32,15 @@ struct LandmarkForm: View {
         NavigationStack {
             Form {
                 Section("Details") {
-                    TextField("Name", text: $name)
+                    TextField("Name", text: $landmarkName)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
-                    TextField("Image Name", text: $systemImageName)
-                        .autocorrectionDisabled()
+                    Button("Pick icon", systemImage: landmarkIconName) {
+                        self.isIconSelectorPresented.toggle()
+                    }
+                }
+                .sheet(isPresented: $isIconSelectorPresented) {
+                    SymbolsPicker(selection: $landmarkIconName, titleKey: "Pick an Icon", autoDismiss: true)
                 }
                 Section("Location") {
                     TextField("Latitude", text: $latitude)
@@ -44,7 +49,7 @@ struct LandmarkForm: View {
                         .keyboardType(.numbersAndPunctuation)
                 }
             }
-            .navigationTitle("New Landmark")
+            .navigationTitle(landmarkName)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
@@ -53,12 +58,13 @@ struct LandmarkForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
+                        // TODO patmcg consider sending this to a view model
                         do {
                             guard let lat = Double(self.latitude), let lon = Double(self.longitude) else { return }
                             let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
                             let landmark = Landmark(
-                                name: self.name,
-                                systemImageName: self.systemImageName,
+                                name: self.landmarkName,
+                                systemImageName: self.landmarkIconName,
                                 location: coord
                             )
                             // Insert using the injected modelContext and save with error handling

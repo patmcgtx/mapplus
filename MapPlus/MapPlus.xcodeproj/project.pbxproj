@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		69DB796D2F2AD79700F9C3EA /* SFSymbolsPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		69A0205D2E6CE46800871D38 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -65,6 +69,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69DB796D2F2AD79700F9C3EA /* SFSymbolsPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -125,6 +130,7 @@
 			);
 			name = MapPlus;
 			packageProductDependencies = (
+				69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */,
 			);
 			productName = MapPlus;
 			productReference = 69A020452E6CE46700871D38 /* MapPlus.app */;
@@ -208,6 +214,9 @@
 			);
 			mainGroup = 69A0203C2E6CE46700871D38;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 69A020462E6CE46700871D38 /* Products */;
 			projectDirPath = "";
@@ -628,6 +637,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/alessiorubicini/SFSymbolsPickerForSwiftUI";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.9;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */;
+			productName = SFSymbolsPicker;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 69A0203D2E6CE46700871D38 /* Project object */;
 }
