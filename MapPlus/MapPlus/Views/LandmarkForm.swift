@@ -90,16 +90,18 @@ struct LandmarkForm: View {
                             }
                     })
                 }
-            }
-            HStack {
-                VStack {
-                    Image(systemName: self.landmarkIconName)
-                    Text(self.landmarkName)
-                }
-                if (self.isAddressLookingRunning) {
-                    ProgressView()
-                } else {
-                    Text(self.landmarkAddressDescription)
+                Section("Preview") {
+                    HStack {
+                        VStack {
+                            Image(systemName: self.landmarkIconName)
+                            Text(self.landmarkName)
+                        }
+                        if (self.isAddressLookingRunning) {
+                            ProgressView()
+                        } else {
+                            Text(self.landmarkAddressDescription)
+                        }
+                    }
                 }
             }
             .navigationTitle(self.landmarkName)
