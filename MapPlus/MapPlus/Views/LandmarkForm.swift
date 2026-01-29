@@ -17,6 +17,8 @@ struct LandmarkForm: View {
     // Form state
     @State private var landmarkName: String = "New Place"
     @State private var landmarkIconName: String = "mappin.circle.fill"
+    @State private var landmarkAddress: String = ""
+    
     @State private var latitude: String = "30.230825"
     @State private var longitude: String = "-97.799609"
     @State private var isIconSelectorPresented = false
@@ -35,12 +37,13 @@ struct LandmarkForm: View {
                     TextField("Name", text: $landmarkName)
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
-                    Button("Pick icon", systemImage: landmarkIconName) {
-                        self.isIconSelectorPresented.toggle()
+                    NavigationLink {
+                        SymbolsPicker(selection: $landmarkIconName, titleKey: "Pick an Icon", autoDismiss: true)
+                    } label: {
+                        Button("Pick icon", systemImage: landmarkIconName) {
+                            self.isIconSelectorPresented.toggle()
+                        }
                     }
-                }
-                .sheet(isPresented: $isIconSelectorPresented) {
-                    SymbolsPicker(selection: $landmarkIconName, titleKey: "Pick an Icon", autoDismiss: true)
                 }
                 Section("Location") {
                     TextField("Latitude", text: $latitude)
