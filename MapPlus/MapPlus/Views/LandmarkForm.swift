@@ -19,7 +19,7 @@ struct LandmarkForm: View {
     @Environment(\.modelContext) private var modelContext
     
     // Form state
-    @State private var landmarkName: String = "New Place"
+    @State private var landmarkName: String = ""
     @State private var landmarkIconName: String = "mappin.circle"
     @State private var landmarkAddressInput: String = ""
 
@@ -50,13 +50,17 @@ struct LandmarkForm: View {
                 }
                 Section("Location") {
                     HStack {
+                        // TODO patmcg add clean burron with HStack 
                         TextField(
                             "Address",
                             text: $landmarkAddressInput,
                             onEditingChanged: { _ in
+                                // TODO patmcg hide keyboard on address earch
                                 self.handleAddressLookup()
                             })
+                        .autocorrectionDisabled()
                         Button {
+                            // TODO patmcg hide keyboard on address earch
                             self.handleAddressLookup()
                         } label: {
                             Image(systemName: "magnifyingglass")
@@ -86,7 +90,6 @@ struct LandmarkForm: View {
                     }
                 }
             } // Form
-            .navigationTitle(self.landmarkName)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "x.circle") {
@@ -100,6 +103,8 @@ struct LandmarkForm: View {
                     .disabled(self.isSaveDisabled)
                 } // ToolbarItem / confirmation
             } // .toolbar
+            .toolbarTitleDisplayMode(.inline)
+            .navigationTitle("New Place")
         } // NavigationStack
     } // body
 
