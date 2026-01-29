@@ -7,13 +7,13 @@
 
 import SwiftUI
 import CoreLocation
-import SFSymbolsPicker
+import SFSafeSymbols
 
 struct LandmarkForm: View {
-
+    
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-
+    
     // Form state
     @State private var landmarkName: String = "New Place"
     @State private var landmarkIconName: String = "mappin.circle.fill"
@@ -21,14 +21,14 @@ struct LandmarkForm: View {
     
     @State private var latitude: String = "30.230825"
     @State private var longitude: String = "-97.799609"
-
+    
     // Simple validation
     private var isSaveDisabled: Bool {
         landmarkName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
         Double(latitude) == nil ||
         Double(longitude) == nil
     }
-
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -37,7 +37,10 @@ struct LandmarkForm: View {
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                     NavigationLink {
-                        IconPicker(landmarkIconName: $landmarkIconName)
+                        IconPicker(
+                            landmarkIconName: $landmarkIconName,
+                            symbolsToShow: self.symbolsToShow
+                        )
                     } label: {
                         Label("Pick icon", systemImage: landmarkIconName)
                     }
@@ -81,9 +84,59 @@ struct LandmarkForm: View {
                     )
                 }
             }
-        } // NavigationStack
-    } // body
-} // View
+        }
+    }
+    
+    private let symbolsToShow: [SFSymbol] = [
+        .house,
+        .houseFill,
+        .musicNoteHouse,
+        .houseBadgeWifi,
+        .building,
+        .buildingColumns,
+        .building2,
+        .building2CropCircle,
+        .dollarsignBankBuilding,
+        .mappin,
+        .mappinSquare,
+        .mappinAndEllipse,
+        .cupAndSaucer,
+        .cupAndHeatWaves,
+        .mug,
+        .forkKnife,
+        .forkKnifeCircle,
+        .car,
+        .graduationcap,
+        .arcadeStick,
+        .arcadeStickConsole,
+        .bus,
+        .tram,
+        .ferry,
+        .cablecar,
+        .bicycle,
+        .fuelpump,
+        .person,
+        .person2,
+        .person3,
+        .figureWalk,
+        .figureWave,
+        .figure,
+        .figureStand,
+        .figureStandDress,
+        .figureAndChildHoldinghands,
+        .figure2AndChildHoldinghands,
+        .figurePlay,
+        .figureRun,
+        .figureRoll,
+        .figureChild,
+        .figureYoga,
+        .figureDance,
+        .figureKickboxing,
+        .figureMindAndBody,
+        .figureSkateboarding,
+        .figureOpenWaterSwim,
+    ]
+}
 
 #Preview {
     LandmarkForm()
