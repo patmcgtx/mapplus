@@ -65,18 +65,27 @@ struct LandmarkForm: View {
                 }
                 Section("Preview") {
                     HStack {
-                        VStack {
-                            Image(systemName: self.landmarkIconName)
-                            Text(self.landmarkName)
+                        HStack {
+                            VStack {
+                                Spacer()
+                                Image(systemName: self.landmarkIconName)
+                                Spacer()
+                                Text(self.landmarkName)
+                                Spacer()
+                            }
+                            .padding()
+                            Spacer()
+                            if (self.isAddressSearchRunning) {
+                                ProgressView()
+                            } else {
+                                Text(self.resolvedAddressDescription)
+                            }
+                            Spacer()
                         }
-                        if (self.isAddressSearchRunning) {
-                            ProgressView()
-                        } else {
-                            Text(self.resolvedAddressDescription)
-                        }
+                        .padding()
                     }
                 }
-            }
+            } // Form
             .navigationTitle(self.landmarkName)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
