@@ -13,18 +13,6 @@ import SFSafeSymbols
 import CoreLocation
 import Contacts
 
-// TODO patmcg consider moving this to its own model/service
-extension CLPlacemark {
-    var formattedAddress: String? {
-        // Ensure the postalAddress property is available
-        guard let postalAddress = postalAddress else { return nil }
-        
-        // Use CNPostalAddressFormatter to create a localized string
-        let formatter = CNPostalAddressFormatter()
-        return formatter.string(from: postalAddress)
-    }
-}
-
 struct LandmarkForm: View {
     
     @Environment(\.dismiss) private var dismiss
@@ -32,23 +20,18 @@ struct LandmarkForm: View {
     
     // Form state
     @State private var landmarkName: String = "New Place"
-    @State private var landmarkIconName: String = "mappin.circle.fill"
+    @State private var landmarkIconName: String = "mappin.circle"
     @State private var landmarkAddressInput: String = ""
+
+    private let unknownAddress = "Unknown Address"
 
     // Location lookup
     private let geocoder = CLGeocoder()
-    @State private var landmarkAddressDescription: String = ""
-    @State private var isAddressLookingRunning = false
-
-    // TODO patmcg do I need these vars?  Do they need to be @State?
-    @State private var latitude: CLLocationDegrees = 0.0
-    @State private var longitude: CLLocationDegrees = 0.0
-    
-    // Simple validation
-    private var isSaveDisabled: Bool {
-        landmarkName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
-    
+    @State private var isAddressSearchRunning = false
+    @State private var resolvedAddressDescription: String = ""
+    @State private var resolvedLatitude: CLLocationDegrees = 0.0
+    @State private var resolvedLongitude: CLLocationDegrees = 0.0
+        
     var body: some View {
         NavigationStack {
             Form {
@@ -86,10 +69,10 @@ struct LandmarkForm: View {
                             Image(systemName: self.landmarkIconName)
                             Text(self.landmarkName)
                         }
-                        if (self.isAddressLookingRunning) {
+                        if (self.isAddressSearchRunning) {
                             ProgressView()
                         } else {
-                            Text(self.landmarkAddressDescription)
+                            Text(self.resolvedAddressDescription)
                         }
                     }
                 }
@@ -103,53 +86,86 @@ struct LandmarkForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        // TODO patmcg consider sending this to a view model
-                        do {
-                            let coord = CLLocationCoordinate2D(
-                                latitude: self.latitude,
-                                longitude: self.longitude
-                            )
-                            let landmark = Landmark(
-                                name: self.landmarkName,
-                                systemImageName: self.landmarkIconName,
-                                location: coord
-                            )
-                            // Insert using the injected modelContext and save with error handling
-                            self.modelContext.insert(landmark)
-                            try self.modelContext.save()
-                            dismiss()
-                        } catch {
-                            // You might want to surface this to the user; for now we just log it
-                            print("Failed to save landmark: \(error)")
-                        }
+                        self.saveCurrentLandmark()
                     }
-                    .disabled(
-                        isSaveDisabled
-                    )
+                    .disabled(self.isSaveDisabled)
                 } // ToolbarItem / confirmation
             } // .toolbar
         } // NavigationStack
     } // body
-    
-    private func handleAddressLookup() {
-        self.isAddressLookingRunning = true
-        // TODO patmcg consider moving this to its own model/service
-        self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
-            placemarks, error in
-            // TODO patmcg handle error case with like a (!) icon
-            self.isAddressLookingRunning = false
-            if let placemark = placemarks?.first {
-                if let lat = placemark.location?.coordinate.latitude,
-                   let lon = placemark.location?.coordinate.longitude {
-                    self.latitude = lat
-                    self.longitude = lon
-                    self.landmarkAddressDescription = placemark.formattedAddress ?? "Unknown Address"
-                }
-            }
+
+    // TODO patmcg consider moving this to its own model/service
+    private func saveCurrentLandmark() {
+        do {
+            let coord = CLLocationCoordinate2D(
+                latitude: self.resolvedLatitude,
+                longitude: self.resolvedLongitude
+            )
+            let landmark = Landmark(
+                name: self.landmarkName,
+                systemImageName: self.landmarkIconName,
+                location: coord
+            )
+            // Insert using the injected modelContext and save with error handling
+            self.modelContext.insert(landmark)
+            try self.modelContext.save()
+            dismiss()
+        } catch {
+            // You might want to surface this to the user; for now we just log it
+            print("Failed to save landmark: \(error)")
         }
     }
     
     // TODO patmcg consider moving this to its own model/service
+    private func handleAddressLookup() {
+        if self.isAddressInputValid {
+            // Othwerise, go ahead and do the address search
+            self.isAddressSearchRunning = true
+            self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
+                placemarks, error in
+                if error != nil {
+                    self.resolvedAddressDescription = self.unknownAddress
+                } else {
+                    self.isAddressSearchRunning = false
+                    if let placemark = placemarks?.first {
+                        if let lat = placemark.location?.coordinate.latitude,
+                           let lon = placemark.location?.coordinate.longitude {
+                            self.resolvedLatitude = lat
+                            self.resolvedLongitude = lon
+                            self.resolvedAddressDescription = placemark.formattedAddress ?? self.unknownAddress
+                        }
+                    }
+                }
+            }
+        } else {
+            // If no address provided, then clear the location data
+            self.clearLocation()
+        }
+    }
+    
+    // TODO patmcg challenge - how to unit test this private logic?
+    //      Or does it really have to be UI tests?  Can I ise ViewInspector?
+    
+    // Simple validation
+    private var isSaveDisabled: Bool {
+        !self.landmarkName.isPopulated || !self.resolvedAddressDescription.isPopulated
+    }
+
+    private var isAddressInputValid: Bool {
+        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != self.unknownAddress
+    }
+    
+    private func clearLocation() {
+        self.resolvedLatitude = 0.0
+        self.resolvedLongitude = 0.0
+        self.resolvedAddressDescription = ""
+    }
+    
+    // TODO patmcg consider moving this to its own model/service
+    // TODO patmcg add unit tests
+    //      - Check some entries
+    //      - Check count
+    //      - Make sure there are no duplccates (causes UI issues)
     private let iconsToShow: [SFSymbol] = [
         .house,
         .houseFill,
@@ -161,8 +177,8 @@ struct LandmarkForm: View {
         .building2CropCircle,
         .dollarsignBankBuilding,
         .mappin,
+        .mapCircle,
         .mappinSquare,
-        .mappinAndEllipse,
         .mappinAndEllipse,
         .cupAndSaucer,
         .cupAndHeatWaves,
@@ -200,6 +216,26 @@ struct LandmarkForm: View {
         .figureSkateboarding,
         .figureOpenWaterSwim,
     ]
+}
+
+// TODO patmcg consider moving this to its own model/service
+// TODO patmcg add unit tests
+extension CLPlacemark {
+    var formattedAddress: String? {
+        // Ensure the postalAddress property is available
+        guard let postalAddress = postalAddress else { return nil }
+        
+        // Use CNPostalAddressFormatter to create a localized string
+        let formatter = CNPostalAddressFormatter()
+        return formatter.string(from: postalAddress)
+    }
+}
+
+// TODO patmcg add unit tests
+extension String {
+    var isPopulated: Bool {
+        !trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 }
 
 #Preview {
