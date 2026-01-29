@@ -59,7 +59,7 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Menu {
-                        Button("Edit...", systemImage: "list.number") {
+                        Button("My Places...", systemImage: "list.number") {
                             self.showingLandmarkList = true
                         }
                         Divider()

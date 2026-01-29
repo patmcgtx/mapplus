@@ -21,7 +21,6 @@ struct LandmarkForm: View {
     
     @State private var latitude: String = "30.230825"
     @State private var longitude: String = "-97.799609"
-    @State private var isIconSelectorPresented = false
 
     // Simple validation
     private var isSaveDisabled: Bool {
@@ -38,11 +37,9 @@ struct LandmarkForm: View {
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                     NavigationLink {
-                        SymbolsPicker(selection: $landmarkIconName, titleKey: "Pick an Icon", autoDismiss: true)
+                        IconPicker(landmarkIconName: $landmarkIconName)
                     } label: {
-                        Button("Pick icon", systemImage: landmarkIconName) {
-                            self.isIconSelectorPresented.toggle()
-                        }
+                        Label("Pick icon", systemImage: landmarkIconName)
                     }
                 }
                 Section("Location") {
