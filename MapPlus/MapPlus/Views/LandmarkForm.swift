@@ -35,10 +35,13 @@ struct LandmarkForm: View {
     @State private var landmarkIconName: String = "mappin.circle.fill"
     @State private var landmarkAddressInput: String = ""
 
-    @State private var landmarkAddressDescription: String = ""
+    @State private var isAddressLookingRunning = false
 
     // Location lookup
     private let geocoder = CLGeocoder()
+    @State private var landmarkAddressDescription: String = ""
+    
+    // TODO patmcg do I need these vars?  Do they need to be @State?
     @State private var latitude: CLLocationDegrees = 0.0
     @State private var longitude: CLLocationDegrees = 0.0
     
@@ -60,7 +63,7 @@ struct LandmarkForm: View {
                             iconsToShow: self.iconsToShow
                         )
                     } label: {
-                        Label("Pick icon", systemImage: landmarkIconName)
+                        Label("Icon", systemImage: landmarkIconName)
                     }
                 }
                 Section("Location") {
@@ -68,12 +71,14 @@ struct LandmarkForm: View {
                         "Address",
                         text: $landmarkAddressInput,
                         onEditingChanged: { _ in
+                            self.isAddressLookingRunning = true
                             // TODO patmcg consider adding a "Look up" button
                             // TODO patmcg add a progress indicator
                             // TODO patmcg consider moving this to its own model/service
                             self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
                                 placemarks, error in
                                 // TODO patmcg handle error case with like a (!) icon
+                                self.isAddressLookingRunning = false
                                 if let placemark = placemarks?.first {
                                     if let lat = placemark.location?.coordinate.latitude,
                                        let lon = placemark.location?.coordinate.longitude {
@@ -84,11 +89,20 @@ struct LandmarkForm: View {
                                 }
                             }
                     })
-                    // TODO patmcg Add a nice view with a red mappin, etc.
+                }
+            }
+            HStack {
+                VStack {
+                    Image(systemName: self.landmarkIconName)
+                    Text(self.landmarkName)
+                }
+                if (self.isAddressLookingRunning) {
+                    ProgressView()
+                } else {
                     Text(self.landmarkAddressDescription)
                 }
             }
-            .navigationTitle(landmarkName)
+            .navigationTitle(self.landmarkName)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel") {
