@@ -7,7 +7,23 @@
 
 import SwiftUI
 import CoreLocation
+import Contacts
 import SFSafeSymbols
+
+import CoreLocation
+import Contacts
+
+// TODO patmcg consider moving this to its own model/service
+extension CLPlacemark {
+    var formattedAddress: String? {
+        // Ensure the postalAddress property is available
+        guard let postalAddress = postalAddress else { return nil }
+        
+        // Use CNPostalAddressFormatter to create a localized string
+        let formatter = CNPostalAddressFormatter()
+        return formatter.string(from: postalAddress)
+    }
+}
 
 struct LandmarkForm: View {
     
@@ -19,7 +35,7 @@ struct LandmarkForm: View {
     @State private var landmarkIconName: String = "mappin.circle.fill"
     @State private var landmarkAddressInput: String = ""
 
-    @State private var landmarkActualAddress: String = ""
+    @State private var landmarkAddressDescription: String = ""
 
     // Location lookup
     private let geocoder = CLGeocoder()
@@ -51,19 +67,25 @@ struct LandmarkForm: View {
                     TextField(
                         "Address",
                         text: $landmarkAddressInput,
-                        onEditingChanged: { newValue in
+                        onEditingChanged: { _ in
+                            // TODO patmcg consider adding a "Look up" button
+                            // TODO patmcg add a progress indicator
                             // TODO patmcg consider moving this to its own model/service
-                            self.geocoder.geocodeAddressString(self.landmarkAddressInput) { placemarks, error in
-                                let placemark = placemarks?.first
-                                if let lat = placemark?.location?.coordinate.latitude,
-                                   let lon = placemark?.location?.coordinate.longitude {
-                                    self.latitude = lat
-                                    self.longitude = lon
-                                    self.landmarkActualAddress = placemark?.name ?? "Unknown Address"
+                            self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
+                                placemarks, error in
+                                // TODO patmcg handle error case with like a (!) icon
+                                if let placemark = placemarks?.first {
+                                    if let lat = placemark.location?.coordinate.latitude,
+                                       let lon = placemark.location?.coordinate.longitude {
+                                        self.latitude = lat
+                                        self.longitude = lon
+                                        self.landmarkAddressDescription = placemark.formattedAddress ?? "Unknown Address"
+                                    }
                                 }
                             }
                     })
-                    Text(self.landmarkActualAddress)
+                    // TODO patmcg Add a nice view with a red mappin, etc.
+                    Text(self.landmarkAddressDescription)
                 }
             }
             .navigationTitle(landmarkName)
