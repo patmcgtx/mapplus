@@ -13,14 +13,14 @@ struct IconPicker: View {
         
     @Binding var landmarkIconName: String
     
-    let symbolsToShow: [SFSymbol]
+    let iconsToShow: [SFSymbol]
 
     var body: some View {
         SymbolsPicker(
             selection: $landmarkIconName,
             title: "Pick icon",
             autoDismiss: true,
-            symbols: self.symbolsToShow,
+            symbols: self.iconsToShow,
             closeButton: {
                 // TODO patmcg would be nice to find a way to hide this completely
             }
@@ -30,21 +30,21 @@ struct IconPicker: View {
 
 private struct IconPickerPreview: View {
 
-    let symbolsToShow: [SFSymbol]
+    let iconsToShow: [SFSymbol]
 
     @State private var iconName: String = "mappin"
 
     var body: some View {
-        IconPicker(landmarkIconName: $iconName, symbolsToShow: self.symbolsToShow)
+        IconPicker(landmarkIconName: $iconName, iconsToShow: self.iconsToShow)
     }
 }
 
 #Preview("All icons") {
-    IconPickerPreview(symbolsToShow: [])
+    IconPickerPreview(iconsToShow: [])
 }
 
 #Preview("Walking icons") {
-    IconPickerPreview(symbolsToShow:
+    IconPickerPreview(iconsToShow:
     [
         .figureWalk,
         .figureWalkCircle,

@@ -39,7 +39,7 @@ struct LandmarkForm: View {
                     NavigationLink {
                         IconPicker(
                             landmarkIconName: $landmarkIconName,
-                            symbolsToShow: self.symbolsToShow
+                            iconsToShow: self.iconsToShow
                         )
                     } label: {
                         Label("Pick icon", systemImage: landmarkIconName)
@@ -87,7 +87,7 @@ struct LandmarkForm: View {
         }
     }
     
-    private let symbolsToShow: [SFSymbol] = [
+    private let iconsToShow: [SFSymbol] = [
         .house,
         .houseFill,
         .musicNoteHouse,
