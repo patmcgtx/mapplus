@@ -19,14 +19,14 @@ struct LandmarkForm: View {
     @State private var landmarkIconName: String = "mappin.circle.fill"
     @State private var landmarkAddress: String = ""
     
-    @State private var latitude: String = "30.230825"
-    @State private var longitude: String = "-97.799609"
+    // Location lookup
+    private let geoCoder = CLGeocoder()
+    @State private var latitude: CLLocationDegrees = 0.0
+    @State private var longitude: CLLocationDegrees = 0.0
     
     // Simple validation
     private var isSaveDisabled: Bool {
-        landmarkName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty ||
-        Double(latitude) == nil ||
-        Double(longitude) == nil
+        landmarkName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
     
     var body: some View {
@@ -46,10 +46,18 @@ struct LandmarkForm: View {
                     }
                 }
                 Section("Location") {
-                    TextField("Latitude", text: $latitude)
-                        .keyboardType(.numbersAndPunctuation)
-                    TextField("Longitude", text: $longitude)
-                        .keyboardType(.numbersAndPunctuation)
+                    TextField(
+                        "Address",
+                        text: $landmarkAddress,
+                        onEditingChanged: { newValue in
+                            self.geoCoder.geocodeAddressString(self.landmarkAddress) { placemarks, error in
+                                let placemark = placemarks?.first
+                                if let lat = placemark?.location?.coordinate.latitude,
+                                   let lon = placemark?.location?.coordinate.longitude {
+                                    self.latitude = lat
+                                    self.longitude = lon}
+                            }
+                    })
                 }
             }
             .navigationTitle(landmarkName)
@@ -63,8 +71,10 @@ struct LandmarkForm: View {
                     Button("Save") {
                         // TODO patmcg consider sending this to a view model
                         do {
-                            guard let lat = Double(self.latitude), let lon = Double(self.longitude) else { return }
-                            let coord = CLLocationCoordinate2D(latitude: lat, longitude: lon)
+                            let coord = CLLocationCoordinate2D(
+                                latitude: self.latitude,
+                                longitude: self.longitude
+                            )
                             let landmark = Landmark(
                                 name: self.landmarkName,
                                 systemImageName: self.landmarkIconName,
