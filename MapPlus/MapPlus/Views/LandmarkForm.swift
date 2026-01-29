@@ -17,10 +17,12 @@ struct LandmarkForm: View {
     // Form state
     @State private var landmarkName: String = "New Place"
     @State private var landmarkIconName: String = "mappin.circle.fill"
-    @State private var landmarkAddress: String = ""
-    
+    @State private var landmarkAddressInput: String = ""
+
+    @State private var landmarkActualAddress: String = ""
+
     // Location lookup
-    private let geoCoder = CLGeocoder()
+    private let geocoder = CLGeocoder()
     @State private var latitude: CLLocationDegrees = 0.0
     @State private var longitude: CLLocationDegrees = 0.0
     
@@ -48,16 +50,20 @@ struct LandmarkForm: View {
                 Section("Location") {
                     TextField(
                         "Address",
-                        text: $landmarkAddress,
+                        text: $landmarkAddressInput,
                         onEditingChanged: { newValue in
-                            self.geoCoder.geocodeAddressString(self.landmarkAddress) { placemarks, error in
+                            // TODO patmcg consider moving this to its own model/service
+                            self.geocoder.geocodeAddressString(self.landmarkAddressInput) { placemarks, error in
                                 let placemark = placemarks?.first
                                 if let lat = placemark?.location?.coordinate.latitude,
                                    let lon = placemark?.location?.coordinate.longitude {
                                     self.latitude = lat
-                                    self.longitude = lon}
+                                    self.longitude = lon
+                                    self.landmarkActualAddress = placemark?.name ?? "Unknown Address"
+                                }
                             }
                     })
+                    Text(self.landmarkActualAddress)
                 }
             }
             .navigationTitle(landmarkName)
