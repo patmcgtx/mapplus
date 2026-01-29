@@ -43,7 +43,7 @@ struct LandmarkSampleData {
     }
     
     @MainActor
-    func inMemoryContainer() throws -> ModelContainer {
+    func inMemorySampleContainer() throws -> ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
@@ -59,16 +59,8 @@ struct LandmarkSampleData {
     
     @MainActor
     func persistentContainer() throws -> ModelContainer {
-        
         let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
-
-        for landmark in self.sampleData {
-            container.mainContext.insert(landmark)
-        }
-        
-        try container.mainContext.save()
-
         return container
     }
 }
