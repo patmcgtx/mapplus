@@ -22,6 +22,7 @@ struct LandmarkForm: View {
     @State private var landmarkName: String = ""
     @State private var landmarkIconName: String = "mappin.circle"
     @State private var landmarkAddressInput: String = ""
+    @FocusState private var isInputActive: Bool
 
     private let unknownAddress = "Unknown Address"
 
@@ -36,9 +37,13 @@ struct LandmarkForm: View {
         NavigationStack {
             Form {
                 Section("Details") {
-                    TextField("Name", text: $landmarkName)
+                    TextField("Name", text: $landmarkName,
+                    onEditingChanged: { _ in
+                        self.isInputActive = false
+                    })
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
+                        .focused($isInputActive)
                     NavigationLink {
                         IconPicker(
                             landmarkIconName: $landmarkIconName,
@@ -58,6 +63,7 @@ struct LandmarkForm: View {
                                 // TODO patmcg hide keyboard on address earch
                                 self.handleAddressLookup()
                             })
+                        .focused($isInputActive)
                         .autocorrectionDisabled()
                         Button {
                             // TODO patmcg hide keyboard on address earch
@@ -106,6 +112,7 @@ struct LandmarkForm: View {
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle("New Place")
         } // NavigationStack
+        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
     } // body
 
     // TODO patmcg consider moving this to its own model/service
@@ -134,6 +141,7 @@ struct LandmarkForm: View {
     private func handleAddressLookup() {
         if self.isAddressInputValid {
             // Othwerise, go ahead and do the address search
+            self.isInputActive = false
             self.isAddressSearchRunning = true
             self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
                 placemarks, error in
