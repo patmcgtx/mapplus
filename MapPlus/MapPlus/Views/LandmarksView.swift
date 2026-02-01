@@ -36,7 +36,7 @@ struct LandmarksView : View {
                         self.showLandmarkForm = true
                     }
                     .sheet(isPresented: $showLandmarkForm) {
-                        LandmarkForm()
+                        LandmarkForm(mode: .create)
                     }
                 }
             }

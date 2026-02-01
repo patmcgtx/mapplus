@@ -11,10 +11,14 @@ import SFSafeSymbols
 
 struct LandmarkForm: View {
         
+    let mode: LandmarkFormViewModel.Mode
+    
+    // TODO add mode to view model, derive view model from self.mode
+    private let viewModel = LandmarkFormViewModel()
+
+    // Environment
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    
-    private let viewModel = LandmarkFormViewModel()
     
     // Form state
     @State private var landmarkName: String = ""
@@ -105,11 +109,25 @@ struct LandmarkForm: View {
                 }
             }
             .toolbarTitleDisplayMode(.inline)
-            .navigationTitle("New Place")
+            .navigationTitle(self.viewModel.title(for: self.mode))
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
+        .onAppear() {
+            self.landmarkName = self.landmarkToEdit?.name ?? ""
+            self.landmarkIconName = self.landmarkToEdit?.systemImageName ?? "mappin.circle"
+//            self.resolvedAddress = AddressInfo(formattedDescription: "TODO patmcg")
+        }
     }
 
+    private var landmarkToEdit: Landmark? {
+        switch self.mode {
+        case .create:
+            return nil
+        case .edit(let landmark):
+            return landmark
+        }
+    }
+    
     // TODO patmcg consider moving this to its own model/service
     private func saveCurrentLandmark() {
         do {
@@ -160,6 +178,18 @@ struct LandmarkForm: View {
     
 }
 
-#Preview {
-    LandmarkForm()
+#Preview("Create") {
+    LandmarkForm(mode: .create)
+}
+
+#Preview("Edit") {
+    LandmarkForm(
+        mode: .edit(
+            Landmark(
+                name: "Existing Landmark",
+                systemImageName: "house",
+                location: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
+            )
+        )
+    )
 }
