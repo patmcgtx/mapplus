@@ -6,5 +6,14 @@
 //
 
 enum MapPlusError: Error {
+    
     case noAddressFound
+    
+    // TODO patmcg localize
+    func errorMessage() -> String {
+        switch self {
+        case .noAddressFound:
+            return "No address found"
+        }
+    }
 }

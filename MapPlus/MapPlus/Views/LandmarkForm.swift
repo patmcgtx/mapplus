@@ -64,10 +64,17 @@ struct LandmarkForm: View {
                             onEditingChanged: { _ in
                                 Task {
                                     // TODO patmcg remoce dup below, ie by private func
-                                    let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
-                                    // TODO patmcg handle error on ^
-                                    await MainActor.run {
-                                        self.resolvedAddress = resolved
+                                    do {
+                                        let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                                        await MainActor.run {
+                                            self.resolvedAddress = resolved
+                                        }
+                                    } catch {
+                                        await MainActor.run {
+                                            self.resolvedAddress = AddressInfo(
+                                                formattedDescription: MapPlusError.noAddressFound.errorMessage()
+                                            )
+                                        }
                                     }
                                 }
                             })
@@ -157,7 +164,7 @@ struct LandmarkForm: View {
 
     private var isAddressInputValid: Bool {
         self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != self.unknownAddress
-    }    
+    }
     
 }
 
