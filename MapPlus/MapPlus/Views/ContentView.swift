@@ -37,7 +37,7 @@ struct ContentView: View {
                     )
                 }
                 UserAnnotation()
-            } // Map
+            }
             .mapStyle(MapStyle.standard(elevation: .realistic,
                                         emphasis: .muted,
                                         pointsOfInterest: [
@@ -52,7 +52,7 @@ struct ContentView: View {
             .mapControls {
                 MapCompass()
                 MapScaleView()
-            } // mapStyle
+            }
 
             VStack {
                 Spacer()
@@ -78,10 +78,10 @@ struct ContentView: View {
                             .resizable()
                             .frame(width: 80, height: 80)
                             .padding(.trailing, 16)
-                    } // Menu
+                    }
                 }
-            } // VStack
-        } // ZStack
+            }
+        }
         .onAppear(){
             self.locationPermissionsService.requestPermissions() { _ in
                 // TODO patmcg handle issues on the location permissions request
@@ -90,7 +90,7 @@ struct ContentView: View {
         .sheet(isPresented: $showingLandmarkList) {
             LandmarksView(landmarks: self.landmarks)
         }
-    } // body
+    }
     
     private func zoomTo(landmark: Landmark) {
         withAnimation {
