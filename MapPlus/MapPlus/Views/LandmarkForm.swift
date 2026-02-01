@@ -28,7 +28,7 @@ struct LandmarkForm: View {
     private let addressLookupService = AddressLookupService()
     @State private var isAddressSearchRunning = false
     @State private var resolvedAddress = AddressInfo()
-        
+    
     var body: some View {
         NavigationStack {
             Form {
@@ -62,31 +62,12 @@ struct LandmarkForm: View {
                             "Address",
                             text: $landmarkAddressInput,
                             onEditingChanged: { _ in
-                                Task {
-                                    // TODO patmcg remoce dup below, ie by private func
-                                    do {
-                                        let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
-                                        await MainActor.run {
-                                            self.resolvedAddress = resolved
-                                        }
-                                    } catch {
-                                        await MainActor.run {
-                                            self.resolvedAddress = AddressInfo(
-                                                formattedDescription: MapPlusError.noAddressFound.errorMessage()
-                                            )
-                                        }
-                                    }
-                                }
+                                self.searchAddress()
                             })
                         .focused($isInputActive)
                         .autocorrectionDisabled()
                         Button {
-                            Task {
-                                let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
-                                await MainActor.run {
-                                    self.resolvedAddress = resolved
-                                }
-                            }
+                            self.searchAddress()
                         } label: {
                             Image(systemName: "magnifyingglass")
                         }
@@ -157,6 +138,23 @@ struct LandmarkForm: View {
     }
     
     // MARK: - Internal helpers
+    
+    private func searchAddress() {
+        Task {
+            do {
+                let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                await MainActor.run {
+                    self.resolvedAddress = resolved
+                }
+            } catch {
+                await MainActor.run {
+                    self.resolvedAddress = AddressInfo(
+                        formattedDescription: MapPlusError.noAddressFound.errorMessage()
+                    )
+                }
+            }
+        }
+    }
     
     private var isSaveDisabled: Bool {
         !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
