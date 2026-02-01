@@ -27,11 +27,7 @@ struct LandmarkForm: View {
     private let unknownAddress = "Unknown Address"
     private let addressLookupService = AddressLookupService()
     @State private var isAddressSearchRunning = false
-    @State private var resolvedAddressDescription: String = ""
-    // TODO patmcg can I fold lat/long and description into an AddressInfo?
-    // TODO patmcg do lat/long need to be @State?
-    @State private var resolvedLatitude: CLLocationDegrees = 0.0
-    @State private var resolvedLongitude: CLLocationDegrees = 0.0
+    @State private var resolvedAddress = AddressInfo()
         
     var body: some View {
         NavigationStack {
@@ -68,12 +64,10 @@ struct LandmarkForm: View {
                             onEditingChanged: { _ in
                                 Task {
                                     // TODO patmcg remoce dup below, ie by private func
-                                    let resolvedLocation = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                                    let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
                                     // TODO patmcg handle error on ^
                                     await MainActor.run {
-                                        self.resolvedAddressDescription = resolvedLocation.formattedDescription
-                                        self.resolvedLatitude = resolvedLocation.latitude
-                                        self.resolvedLongitude = resolvedLocation.longitude
+                                        self.resolvedAddress = resolved
                                     }
                                 }
                             })
@@ -81,11 +75,9 @@ struct LandmarkForm: View {
                         .autocorrectionDisabled()
                         Button {
                             Task {
-                                let resolvedLocation = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                                let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
                                 await MainActor.run {
-                                    self.resolvedAddressDescription = resolvedLocation.formattedDescription
-                                    self.resolvedLatitude = resolvedLocation.latitude
-                                    self.resolvedLongitude = resolvedLocation.longitude
+                                    self.resolvedAddress = resolved
                                 }
                             }
                         } label: {
@@ -108,7 +100,7 @@ struct LandmarkForm: View {
                             if (self.isAddressSearchRunning) {
                                 ProgressView()
                             } else {
-                                Text(self.resolvedAddressDescription)
+                                Text(self.resolvedAddress.formattedDescription)
                             }
                             Spacer()
                         }
@@ -139,8 +131,8 @@ struct LandmarkForm: View {
     private func saveCurrentLandmark() {
         do {
             let coord = CLLocationCoordinate2D(
-                latitude: self.resolvedLatitude,
-                longitude: self.resolvedLongitude
+                latitude: self.resolvedAddress.latitude,
+                longitude: self.resolvedAddress.longitude
             )
             let landmark = Landmark(
                 name: self.landmarkName,
@@ -160,18 +152,12 @@ struct LandmarkForm: View {
     // MARK: - Internal helpers
     
     private var isSaveDisabled: Bool {
-        !self.landmarkName.isPopulated || !self.resolvedAddressDescription.isPopulated
+        !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
     }
 
     private var isAddressInputValid: Bool {
         self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != self.unknownAddress
-    }
-    
-    private func clearLocation() {
-        self.resolvedLatitude = 0.0
-        self.resolvedLongitude = 0.0
-        self.resolvedAddressDescription = ""
-    }
+    }    
     
 }
 
