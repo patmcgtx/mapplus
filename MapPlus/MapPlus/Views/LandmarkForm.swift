@@ -115,7 +115,13 @@ struct LandmarkForm: View {
         .onAppear() {
             self.landmarkName = self.landmarkToEdit?.name ?? ""
             self.landmarkIconName = self.landmarkToEdit?.systemImageName ?? "mappin.circle"
-//            self.resolvedAddress = AddressInfo(formattedDescription: "TODO patmcg")
+            if let landmark = self.landmarkToEdit {
+                self.resolvedAddress = AddressInfo(
+                    formattedDescription: landmark.formattedAddress,
+                    latitude: landmark.location.latitude,
+                    longitude: landmark.location.longitude
+                )
+            }
         }
     }
 
@@ -137,6 +143,7 @@ struct LandmarkForm: View {
             )
             let landmark = Landmark(
                 name: self.landmarkName,
+                formattedAddress: self.resolvedAddress.formattedDescription,
                 systemImageName: self.landmarkIconName,
                 location: coord
             )
@@ -184,12 +191,7 @@ struct LandmarkForm: View {
 
 #Preview("Edit") {
     LandmarkForm(
-        mode: .edit(
-            Landmark(
-                name: "Existing Landmark",
-                systemImageName: "house",
-                location: CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-            )
-        )
+        mode: .edit(LandmarkSampleData().sampleData.first!)
     )
 }
+    
