@@ -6,14 +6,16 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LandmarksView : View {
 
+    // UI state
     @Environment(\.dismiss) var dismiss
-    
     @State private var showLandmarkForm: Bool = false
 
-    let landmarks: [Landmark]
+    // Persistence
+    @Query(sort: \Landmark.name, order: .forward) var landmarks: [Landmark]
     
     var body: some View {
         NavigationStack {
@@ -44,5 +46,6 @@ struct LandmarksView : View {
 }
 
 #Preview {
-    LandmarksView(landmarks: LandmarkSampleData().sampleData)
+    LandmarksView()
+        .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
 }
