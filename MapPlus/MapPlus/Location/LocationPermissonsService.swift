@@ -1,5 +1,5 @@
 //
-//  LocationHandler.swift
+//  LocationPermissonsService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 11/13/25.
@@ -7,8 +7,8 @@
 
 import MapKit
 
-/// A handler for location permissions and updates
-class LocationHandler: NSObject, CLLocationManagerDelegate {
+/// TODO patmcg doc
+class LocationPermissonsService: NSObject, CLLocationManagerDelegate {
     
     private var locationManager = CLLocationManager()
     private var callback: (_ status: CLAuthorizationStatus) -> Void = { status in }
@@ -20,7 +20,8 @@ class LocationHandler: NSObject, CLLocationManagerDelegate {
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
     }
-    
+
+    // TODO patmcg is this used/needed?
     func locationManager(_ manager: CLLocationManager,
                          didChangeAuthorization status: CLAuthorizationStatus) {
         callback(status)

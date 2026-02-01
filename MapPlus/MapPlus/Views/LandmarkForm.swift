@@ -7,14 +7,15 @@
 
 import SwiftUI
 import CoreLocation
-import Contacts
+//import Contacts
 import SFSafeSymbols
 
 struct LandmarkForm: View {
-    
+        
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     
+    private let addressLookupService = AddressLookupService()
     private let viewModel = LandmarkFormViewModel()
     
     // Form state
@@ -26,7 +27,7 @@ struct LandmarkForm: View {
     private let unknownAddress = "Unknown Address"
 
     // Location lookup
-    private let geocoder = CLGeocoder()
+//    private let geocoder = CLGeocoder()
     @State private var isAddressSearchRunning = false
     @State private var resolvedAddressDescription: String = ""
     @State private var resolvedLatitude: CLLocationDegrees = 0.0
@@ -65,12 +66,22 @@ struct LandmarkForm: View {
                             "Address",
                             text: $landmarkAddressInput,
                             onEditingChanged: { _ in
-                                self.handleAddressLookup()
+                                Task {
+                                    let resolvedLocation = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                                    await MainActor.run {
+                                        self.resolvedAddressDescription = resolvedLocation.formattedDescription
+                                    }
+                                }
                             })
                         .focused($isInputActive)
                         .autocorrectionDisabled()
                         Button {
-                            self.handleAddressLookup()
+                            Task {
+                                let resolvedLocation = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                                await MainActor.run {
+                                    self.resolvedAddressDescription = resolvedLocation.formattedDescription
+                                }
+                            }
                         } label: {
                             Image(systemName: "magnifyingglass")
                         }
@@ -141,32 +152,32 @@ struct LandmarkForm: View {
     }
     
     // TODO patmcg consider moving this to its own model/service
-    private func handleAddressLookup() {
-        if self.isAddressInputValid {
-            // Othwerise, go ahead and do the address search
-            self.isInputActive = false
-            self.isAddressSearchRunning = true
-            self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
-                placemarks, error in
-                if error != nil {
-                    self.resolvedAddressDescription = self.unknownAddress
-                } else {
-                    self.isAddressSearchRunning = false
-                    if let placemark = placemarks?.first {
-                        if let lat = placemark.location?.coordinate.latitude,
-                           let lon = placemark.location?.coordinate.longitude {
-                            self.resolvedLatitude = lat
-                            self.resolvedLongitude = lon
-                            self.resolvedAddressDescription = placemark.formattedAddress ?? self.unknownAddress
-                        }
-                    }
-                }
-            }
-        } else {
-            // If no address provided, then clear the location data
-            self.clearLocation()
-        }
-    }
+//    private func handleAddressLookup() {
+//        if self.isAddressInputValid {
+//            // Othwerise, go ahead and do the address search
+//            self.isInputActive = false
+//            self.isAddressSearchRunning = true
+//            self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
+//                placemarks, error in
+//                if error != nil {
+//                    self.resolvedAddressDescription = self.unknownAddress
+//                } else {
+//                    self.isAddressSearchRunning = false
+//                    if let placemark = placemarks?.first {
+//                        if let lat = placemark.location?.coordinate.latitude,
+//                           let lon = placemark.location?.coordinate.longitude {
+//                            self.resolvedLatitude = lat
+//                            self.resolvedLongitude = lon
+//                            self.resolvedAddressDescription = placemark.formattedAddress ?? self.unknownAddress
+//                        }
+//                    }
+//                }
+//            }
+//        } else {
+//            // If no address provided, then clear the location data
+//            self.clearLocation()
+//        }
+//    }
     
     // TODO patmcg challenge - how to unit test this private logic?
     //      Or does it really have to be UI tests?  Can I ise ViewInspector?
