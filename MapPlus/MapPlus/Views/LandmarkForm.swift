@@ -78,6 +78,7 @@ struct LandmarkForm: View {
                                 Text(self.landmarkName)
                                 Spacer()
                             }
+                            .multilineTextAlignment(.center)
                             .padding()
                             Spacer()
                             if (self.isAddressSearchRunning) {
