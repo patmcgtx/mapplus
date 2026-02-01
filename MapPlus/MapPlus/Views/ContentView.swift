@@ -13,7 +13,7 @@ import MapKit
 struct ContentView: View {
 
     // Location
-    private var locationHandler = LocationHandler()
+    private var locationPermissionsService = LocationPermissonsService()
     
     // Landamrks editing
     @State private var showingLandmarkList: Bool = false
@@ -59,7 +59,7 @@ struct ContentView: View {
                 HStack {
                     Spacer()
                     Menu {
-                        Button("Edit...", systemImage: "list.number") {
+                        Button("My Places...", systemImage: "list.number") {
                             self.showingLandmarkList = true
                         }
                         Divider()
@@ -83,7 +83,9 @@ struct ContentView: View {
             }
         }
         .onAppear(){
-            self.locationHandler.requestPermissions() { _ in  }
+            self.locationPermissionsService.requestPermissions() { _ in
+                // TODO patmcg handle issues on the location permissions request
+            }
         }
         .sheet(isPresented: $showingLandmarkList) {
             LandmarksView(landmarks: self.landmarks)
@@ -105,5 +107,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
-        .modelContainer(try! LandmarkSampleData().inMemoryContainer())
+        .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
 }
