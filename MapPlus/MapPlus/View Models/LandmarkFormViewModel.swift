@@ -7,33 +7,32 @@
 
 import SFSafeSymbols
 
-// TODO patmcg doc
+/// View model supplying data LandmarkFormView
 struct LandmarkFormViewModel {
-    
+
     // TODO patmcg add unit tests
     //      - Check some entries
     //      - Check count
-    //      - Make sure there are no duplccates (causes UI issues)
+    //      - Make sure there are no dups (causes UI issues)
+
+    /// Which icons to show in the icon selector
     let iconsToShow: [SFSymbol] = [
+        .mappin,
+        .mappinAndEllipse,
+        .mapCircle,
+        .mappinSquare,
         .house,
-        .houseFill,
         .musicNoteHouse,
         .houseBadgeWifi,
         .building,
-        .buildingColumns,
         .building2,
         .building2CropCircle,
         .dollarsignBankBuilding,
-        .mappin,
-        .mapCircle,
-        .mappinSquare,
-        .mappinAndEllipse,
+        .forkKnife,
+        .forkKnifeCircle,
         .cupAndSaucer,
         .cupAndHeatWaves,
         .mug,
-        .forkKnife,
-        .forkKnifeCircle,
-        .car,
         .graduationcap,
         .arcadeStick,
         .arcadeStickConsole,
@@ -42,13 +41,14 @@ struct LandmarkFormViewModel {
         .ferry,
         .cablecar,
         .bicycle,
+        .car,
         .fuelpump,
         .person,
         .person2,
         .person3,
+        .figure,
         .figureWalk,
         .figureWave,
-        .figure,
         .figureStand,
         .figureStandDress,
         .figureAndChildHoldinghands,
@@ -56,7 +56,6 @@ struct LandmarkFormViewModel {
         .figurePlay,
         .figureRun,
         .figureRoll,
-        .figureChild,
         .figureYoga,
         .figureDance,
         .figureKickboxing,
