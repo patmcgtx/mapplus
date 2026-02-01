@@ -20,12 +20,10 @@ struct LandmarkForm: View {
     // Form state
     @State private var landmarkName: String = ""
     @State private var landmarkIconName: String = "mappin.circle"
-    @State private var landmarkAddressInput: String = ""
-    @FocusState private var isInputActive: Bool
 
     // Location lookup
-    private let unknownAddress = "Unknown Address"
     private let addressLookupService = AddressLookupService()
+    @State private var landmarkAddressInput: String = ""
     @State private var isAddressSearchRunning = false
     @State private var resolvedAddress = AddressInfo()
     
@@ -36,11 +34,9 @@ struct LandmarkForm: View {
                     HStack {
                         TextField("Name", text: $landmarkName,
                                   onEditingChanged: { _ in
-                            self.isInputActive = false
                         })
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
-                        .focused($isInputActive)
                         Button {
                             self.landmarkName = ""
                         } label: {
@@ -64,7 +60,6 @@ struct LandmarkForm: View {
                             onEditingChanged: { _ in
                                 self.searchAddress()
                             })
-                        .focused($isInputActive)
                         .autocorrectionDisabled()
                         Button {
                             self.searchAddress()
@@ -161,7 +156,7 @@ struct LandmarkForm: View {
     }
 
     private var isAddressInputValid: Bool {
-        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != self.unknownAddress
+        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.noAddressFound.errorMessage()
     }
     
 }
