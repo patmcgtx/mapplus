@@ -7,7 +7,6 @@
 
 import SwiftUI
 import CoreLocation
-//import Contacts
 import SFSafeSymbols
 
 struct LandmarkForm: View {
@@ -145,8 +144,7 @@ struct LandmarkForm: View {
             } catch {
                 await MainActor.run {
                     self.resolvedAddress = AddressInfo(
-                        formattedDescription: MapPlusError.noAddressFound.errorMessage()
-                    )
+                        formattedDescription: MapPlusError.noAddressFound.errorMessage                    )
                 }
             }
         }
@@ -157,7 +155,7 @@ struct LandmarkForm: View {
     }
 
     private var isAddressInputValid: Bool {
-        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.noAddressFound.errorMessage()
+        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.noAddressFound.errorMessage
     }
     
 }

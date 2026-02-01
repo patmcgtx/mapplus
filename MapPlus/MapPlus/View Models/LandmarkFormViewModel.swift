@@ -7,9 +7,9 @@
 
 import SFSafeSymbols
 
+// TODO patmcg doc
 struct LandmarkFormViewModel {
     
-    // TODO patmcg consider moving this to its own model/service
     // TODO patmcg add unit tests
     //      - Check some entries
     //      - Check count

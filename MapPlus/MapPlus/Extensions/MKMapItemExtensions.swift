@@ -10,8 +10,7 @@ extension MKMapItem {
     
     var fullDescription: String {
         
-        // TODO patmcg use builder pattern
-        var retval = "unknown address" // TODO patmcg localize
+        var retval = MapPlusError.noAddressFound.errorMessage
         
         if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             retval = fullAddress
