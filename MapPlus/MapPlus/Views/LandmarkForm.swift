@@ -15,7 +15,6 @@ struct LandmarkForm: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     
-    private let addressLookupService = AddressLookupService()
     private let viewModel = LandmarkFormViewModel()
     
     // Form state
@@ -24,12 +23,13 @@ struct LandmarkForm: View {
     @State private var landmarkAddressInput: String = ""
     @FocusState private var isInputActive: Bool
 
-    private let unknownAddress = "Unknown Address"
-
     // Location lookup
-//    private let geocoder = CLGeocoder()
+    private let unknownAddress = "Unknown Address"
+    private let addressLookupService = AddressLookupService()
     @State private var isAddressSearchRunning = false
     @State private var resolvedAddressDescription: String = ""
+    // TODO patmcg can I fold lat/long and description into an AddressInfo?
+    // TODO patmcg do lat/long need to be @State?
     @State private var resolvedLatitude: CLLocationDegrees = 0.0
     @State private var resolvedLongitude: CLLocationDegrees = 0.0
         
@@ -67,9 +67,13 @@ struct LandmarkForm: View {
                             text: $landmarkAddressInput,
                             onEditingChanged: { _ in
                                 Task {
+                                    // TODO patmcg remoce dup below, ie by private func
                                     let resolvedLocation = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                                    // TODO patmcg handle error on ^
                                     await MainActor.run {
                                         self.resolvedAddressDescription = resolvedLocation.formattedDescription
+                                        self.resolvedLatitude = resolvedLocation.latitude
+                                        self.resolvedLongitude = resolvedLocation.longitude
                                     }
                                 }
                             })
@@ -80,6 +84,8 @@ struct LandmarkForm: View {
                                 let resolvedLocation = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
                                 await MainActor.run {
                                     self.resolvedAddressDescription = resolvedLocation.formattedDescription
+                                    self.resolvedLatitude = resolvedLocation.latitude
+                                    self.resolvedLongitude = resolvedLocation.longitude
                                 }
                             }
                         } label: {
@@ -109,7 +115,7 @@ struct LandmarkForm: View {
                         .padding()
                     }
                 }
-            } // Form
+            }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button("Cancel", systemImage: "x.circle") {
@@ -121,13 +127,13 @@ struct LandmarkForm: View {
                         self.saveCurrentLandmark()
                     }
                     .disabled(self.isSaveDisabled)
-                } // ToolbarItem / confirmation
-            } // .toolbar
+                }
+            }
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle("New Place")
-        } // NavigationStack
+        }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-    } // body
+    }
 
     // TODO patmcg consider moving this to its own model/service
     private func saveCurrentLandmark() {
@@ -151,38 +157,8 @@ struct LandmarkForm: View {
         }
     }
     
-    // TODO patmcg consider moving this to its own model/service
-//    private func handleAddressLookup() {
-//        if self.isAddressInputValid {
-//            // Othwerise, go ahead and do the address search
-//            self.isInputActive = false
-//            self.isAddressSearchRunning = true
-//            self.geocoder.geocodeAddressString(self.landmarkAddressInput) {
-//                placemarks, error in
-//                if error != nil {
-//                    self.resolvedAddressDescription = self.unknownAddress
-//                } else {
-//                    self.isAddressSearchRunning = false
-//                    if let placemark = placemarks?.first {
-//                        if let lat = placemark.location?.coordinate.latitude,
-//                           let lon = placemark.location?.coordinate.longitude {
-//                            self.resolvedLatitude = lat
-//                            self.resolvedLongitude = lon
-//                            self.resolvedAddressDescription = placemark.formattedAddress ?? self.unknownAddress
-//                        }
-//                    }
-//                }
-//            }
-//        } else {
-//            // If no address provided, then clear the location data
-//            self.clearLocation()
-//        }
-//    }
+    // MARK: - Internal helpers
     
-    // TODO patmcg challenge - how to unit test this private logic?
-    //      Or does it really have to be UI tests?  Can I ise ViewInspector?
-    
-    // Simple validation
     private var isSaveDisabled: Bool {
         !self.landmarkName.isPopulated || !self.resolvedAddressDescription.isPopulated
     }
@@ -197,13 +173,6 @@ struct LandmarkForm: View {
         self.resolvedAddressDescription = ""
     }
     
-}
-
-// TODO patmcg add unit tests
-extension String {
-    var isPopulated: Bool {
-        !trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
 }
 
 #Preview {

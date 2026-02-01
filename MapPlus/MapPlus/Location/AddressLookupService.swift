@@ -21,9 +21,6 @@ struct AddressLookupService {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = address
         
-        // Optional: Constrain search to a specific region
-        // request.region = mapView.region
-
         let search = MKLocalSearch(request: request)
         let response = try await search.start()
 
@@ -31,9 +28,17 @@ struct AddressLookupService {
             throw MapPlusError.noAddressFound
         }
 
-        let coordinate = item.placemark.coordinate
-        if let formattedAddress = item.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false)
-        ?? item.placemark.title ?? address
+        let coordinate = item.location.coordinate
+
+        if !CLLocationCoordinate2DIsValid(coordinate) {
+            throw MapPlusError.noAddressFound
+        }
+        
+        let formattedAddress =
+            item.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) ?? address
+        // TODO patcg handle this as an extension on MKMapItem and add unit tests
+        //      But be wary that a basic address lookup (as opposed to a business name) causes weird results
+//        let fullDescription = [item.name, formattedAddress].compactMap{$0}.joined(separator: "\n")
         
         return AddressInfo(
             formattedDescription: formattedAddress,
