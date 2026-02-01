@@ -37,20 +37,27 @@ struct LandmarkForm: View {
         NavigationStack {
             Form {
                 Section("Details") {
-                    TextField("Name", text: $landmarkName,
-                    onEditingChanged: { _ in
-                        self.isInputActive = false
-                    })
+                    HStack {
+                        TextField("Name", text: $landmarkName,
+                                  onEditingChanged: { _ in
+                            self.isInputActive = false
+                        })
                         .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         .focused($isInputActive)
+                        Button {
+                            self.landmarkName = ""
+                        } label: {
+                            Image(systemName: "xmark.circle")
+                        }
+                    }
                     NavigationLink {
                         IconPicker(
                             landmarkIconName: $landmarkIconName,
                             iconsToShow: self.iconsToShow
                         )
                     } label: {
-                        Label("Icon", systemImage: landmarkIconName)
+                        Label("Icon...", systemImage: landmarkIconName)
                     }
                 }
                 Section("Location") {
@@ -60,13 +67,11 @@ struct LandmarkForm: View {
                             "Address",
                             text: $landmarkAddressInput,
                             onEditingChanged: { _ in
-                                // TODO patmcg hide keyboard on address earch
                                 self.handleAddressLookup()
                             })
                         .focused($isInputActive)
                         .autocorrectionDisabled()
                         Button {
-                            // TODO patmcg hide keyboard on address earch
                             self.handleAddressLookup()
                         } label: {
                             Image(systemName: "magnifyingglass")
