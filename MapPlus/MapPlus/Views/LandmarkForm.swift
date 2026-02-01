@@ -10,13 +10,12 @@ import CoreLocation
 import Contacts
 import SFSafeSymbols
 
-import CoreLocation
-import Contacts
-
 struct LandmarkForm: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    
+    private let viewModel = LandmarkFormViewModel()
     
     // Form state
     @State private var landmarkName: String = ""
@@ -54,7 +53,7 @@ struct LandmarkForm: View {
                     NavigationLink {
                         IconPicker(
                             landmarkIconName: $landmarkIconName,
-                            iconsToShow: self.iconsToShow
+                            iconsToShow: viewModel.iconsToShow
                         )
                     } label: {
                         Label("Icon...", systemImage: landmarkIconName)
@@ -62,7 +61,6 @@ struct LandmarkForm: View {
                 }
                 Section("Location") {
                     HStack {
-                        // TODO patmcg add clean burron with HStack 
                         TextField(
                             "Address",
                             text: $landmarkAddressInput,
@@ -188,74 +186,6 @@ struct LandmarkForm: View {
         self.resolvedAddressDescription = ""
     }
     
-    // TODO patmcg consider moving this to its own model/service
-    // TODO patmcg add unit tests
-    //      - Check some entries
-    //      - Check count
-    //      - Make sure there are no duplccates (causes UI issues)
-    private let iconsToShow: [SFSymbol] = [
-        .house,
-        .houseFill,
-        .musicNoteHouse,
-        .houseBadgeWifi,
-        .building,
-        .buildingColumns,
-        .building2,
-        .building2CropCircle,
-        .dollarsignBankBuilding,
-        .mappin,
-        .mapCircle,
-        .mappinSquare,
-        .mappinAndEllipse,
-        .cupAndSaucer,
-        .cupAndHeatWaves,
-        .mug,
-        .forkKnife,
-        .forkKnifeCircle,
-        .car,
-        .graduationcap,
-        .arcadeStick,
-        .arcadeStickConsole,
-        .bus,
-        .tram,
-        .ferry,
-        .cablecar,
-        .bicycle,
-        .fuelpump,
-        .person,
-        .person2,
-        .person3,
-        .figureWalk,
-        .figureWave,
-        .figure,
-        .figureStand,
-        .figureStandDress,
-        .figureAndChildHoldinghands,
-        .figure2AndChildHoldinghands,
-        .figurePlay,
-        .figureRun,
-        .figureRoll,
-        .figureChild,
-        .figureYoga,
-        .figureDance,
-        .figureKickboxing,
-        .figureMindAndBody,
-        .figureSkateboarding,
-        .figureOpenWaterSwim,
-    ]
-}
-
-// TODO patmcg consider moving this to its own model/service
-// TODO patmcg add unit tests
-extension CLPlacemark {
-    var formattedAddress: String? {
-        // Ensure the postalAddress property is available
-        guard let postalAddress = postalAddress else { return nil }
-        
-        // Use CNPostalAddressFormatter to create a localized string
-        let formatter = CNPostalAddressFormatter()
-        return formatter.string(from: postalAddress)
-    }
 }
 
 // TODO patmcg add unit tests
