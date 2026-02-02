@@ -20,7 +20,9 @@ struct LandmarksView : View {
     var body: some View {
         NavigationStack {
             List(landmarks, id: \.id) { landmark in
-                HStack {
+                NavigationLink {
+                    LandmarkForm(mode: .edit(landmark))
+                } label: {
                     Label(landmark.name, systemImage: landmark.systemImageName)
                 }
             }

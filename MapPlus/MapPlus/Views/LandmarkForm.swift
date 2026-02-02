@@ -13,7 +13,7 @@ struct LandmarkForm: View {
         
     let mode: LandmarkFormViewModel.Mode
     
-    // TODO add mode to view model, derive view model from self.mode
+    // TODO patmcg add mode to view model, derive view model from self.mode
     private let viewModel = LandmarkFormViewModel()
 
     // Environment
@@ -38,7 +38,6 @@ struct LandmarkForm: View {
                         TextField("Name", text: $landmarkName,
                                   onEditingChanged: { _ in
                         })
-                        .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         Button {
                             self.landmarkName = ""
@@ -136,6 +135,8 @@ struct LandmarkForm: View {
     
     // TODO patmcg consider moving this to its own model/service
     private func saveCurrentLandmark() {
+        // TODO patmcg make sure this handles updates to xisting landmarks too
+        //      Mayeb search landmarks first??
         do {
             let coord = CLLocationCoordinate2D(
                 latitude: self.resolvedAddress.latitude,

@@ -20,8 +20,8 @@ class Landmark: Identifiable, Hashable {
     /// The SF Symbols icon name for this landmark
     var systemImageName: String
     
-    /// The full address, cached from MapKit
-    var formattedAddress: String = "unknown"
+    /// The full address description from MapKit
+    var formattedAddress: String
     
     @Attribute private var latitude: CLLocationDegrees
     @Attribute private var longitude: CLLocationDegrees

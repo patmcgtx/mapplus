@@ -24,7 +24,7 @@ struct LandmarkFormViewModel {
         // TODO patmcg localize
         switch mode {
         case .create: return "New Landmark"
-        case .edit: return "Edit Landmark"
+        case .edit(let landmark): return landmark.name
         }
     }
     
