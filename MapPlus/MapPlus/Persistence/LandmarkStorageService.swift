@@ -12,6 +12,8 @@ import CoreLocation
 /// using SwiftData. This type provides convenience helpers to translate
 /// app-level types (like `AddressInfo`) into persisted `Landmark` records.
 struct LandmarkStorageService {
+    
+    // TODO patmcg initialize with modelContext: ModelContext
         
     /// Saves a new `Landmark` to the provided SwiftData `ModelContext`.
     ///

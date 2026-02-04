@@ -33,6 +33,8 @@ class LocationPermissonsService: NSObject, CLLocationManagerDelegate {
     /// - Parameter callback : A closure to call when the permissions request completes with
     ///   the resulting `CLAuthorizationStatus`.
     func requestPermissions(callback: @escaping (_ status: CLAuthorizationStatus) -> Void) {
+        // TODO patmcg make this async instead of completion block?
+        // TODO patmchg and just define this better 
         self.callback = callback
         self.locationManager.delegate = self
         self.locationManager.requestWhenInUseAuthorization()
