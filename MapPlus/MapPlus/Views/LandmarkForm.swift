@@ -10,10 +10,12 @@ import SFSafeSymbols
 
 struct LandmarkForm: View {
         
-    /// Are we creating a new landmark or editing an existing one?
-    let mode: LandmarkFormViewModel.Mode
+    /// View model owns the form mode and other data
+    private let viewModel: LandmarkFormViewModel
 
-    private let viewModel = LandmarkFormViewModel()
+    init(mode: LandmarkFormViewModel.Mode) {
+        self.viewModel = LandmarkFormViewModel(mode: mode)
+    }
 
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -57,7 +59,7 @@ struct LandmarkForm: View {
                         Label("Icon...", systemImage: landmarkIconName)
                     }
                 }
-                if case .create = self.mode  {
+                if case .create = self.viewModel.mode  {
                     Section("Location") {
                         HStack {
                             TextField(
@@ -124,7 +126,7 @@ struct LandmarkForm: View {
                 }
             }
             .toolbarTitleDisplayMode(.inline)
-            .navigationTitle(self.viewModel.title(for: self.mode))
+            .navigationTitle(self.viewModel.title)
             .alert("Oops", isPresented: $showingSaveError) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -150,7 +152,7 @@ struct LandmarkForm: View {
 
     /// What landmark are we editing, if any?
     private var landmarkInEdit: Landmark? {
-        switch self.mode {
+        switch self.viewModel.mode {
         case .create:
             return nil
         case .edit(let landmark):

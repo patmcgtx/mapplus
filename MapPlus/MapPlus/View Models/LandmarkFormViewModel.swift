@@ -16,15 +16,22 @@ struct LandmarkFormViewModel {
         case edit(Landmark)
     }
 
-    // TODO initialize this with a mode
-//    let mode: Mode
-    
-    // TODO patmcg doc
-    func title(for mode: Mode) -> String {
+    /// The current mode for the form
+    let mode: Mode
+
+    /// Initialize the view model with a mode
+    init(mode: Mode) {
+        self.mode = mode
+    }
+
+    /// Title to show for the given mode
+    var title: String {
         // TODO patmcg localize
         switch mode {
-        case .create: return "New Landmark"
-        case .edit(let landmark): return landmark.name
+        case .create:
+            return "New Landmark"
+        case .edit(let landmark):
+            return landmark.name
         }
     }
     
