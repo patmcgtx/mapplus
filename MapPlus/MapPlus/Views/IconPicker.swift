@@ -22,7 +22,7 @@ struct IconPicker: View {
             autoDismiss: true,
             symbols: self.iconsToShow,
             closeButton: {
-                // TODO patmcg would be nice to find a way to hide this completely
+                // TODO hide this completely - bug #58
             }
         )
     }
