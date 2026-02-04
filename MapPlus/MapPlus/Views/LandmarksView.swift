@@ -6,19 +6,23 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct LandmarksView : View {
 
+    // UI state
     @Environment(\.dismiss) var dismiss
-    
     @State private var showLandmarkForm: Bool = false
 
-    let landmarks: [Landmark]
+    // Persistence
+    @Query(sort: \Landmark.name, order: .forward) var landmarks: [Landmark]
     
     var body: some View {
         NavigationStack {
             List(landmarks, id: \.id) { landmark in
-                HStack {
+                NavigationLink {
+                    LandmarkForm(mode: .edit(landmark))
+                } label: {
                     Label(landmark.name, systemImage: landmark.systemImageName)
                 }
             }
@@ -34,7 +38,7 @@ struct LandmarksView : View {
                         self.showLandmarkForm = true
                     }
                     .sheet(isPresented: $showLandmarkForm) {
-                        LandmarkForm()
+                        LandmarkForm(mode: .create)
                     }
                 }
             }
@@ -44,5 +48,6 @@ struct LandmarksView : View {
 }
 
 #Preview {
-    LandmarksView(landmarks: LandmarkSampleData().sampleData)
+    LandmarksView()
+        .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
 }

@@ -11,10 +11,14 @@ import SFSafeSymbols
 
 struct LandmarkForm: View {
         
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
+    /// Are we creating a new landmark or editing an existing one?
+    let mode: LandmarkFormViewModel.Mode
     
     private let viewModel = LandmarkFormViewModel()
+
+    // Environment
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     
     // Form state
     @State private var landmarkName: String = ""
@@ -34,7 +38,6 @@ struct LandmarkForm: View {
                         TextField("Name", text: $landmarkName,
                                   onEditingChanged: { _ in
                         })
-                        .textInputAutocapitalization(.words)
                         .autocorrectionDisabled()
                         Button {
                             self.landmarkName = ""
@@ -51,19 +54,21 @@ struct LandmarkForm: View {
                         Label("Icon...", systemImage: landmarkIconName)
                     }
                 }
-                Section("Location") {
-                    HStack {
-                        TextField(
-                            "Address",
-                            text: $landmarkAddressInput,
-                            onEditingChanged: { _ in
-                                self.searchAddress()
-                            })
-                        .autocorrectionDisabled()
-                        Button {
-                            self.searchAddress()
-                        } label: {
-                            Image(systemName: "magnifyingglass")
+                if case .create = self.mode  {
+                    Section("Location") {
+                        HStack {
+                            TextField(
+                                "Address",
+                                text: $landmarkAddressInput,
+                                onEditingChanged: { _ in
+                                    self.lookupAddress()
+                                })
+                            .autocorrectionDisabled()
+                            Button {
+                                self.lookupAddress()
+                            } label: {
+                                Image(systemName: "magnifyingglass")
+                            }
                         }
                     }
                 }
@@ -105,13 +110,26 @@ struct LandmarkForm: View {
                 }
             }
             .toolbarTitleDisplayMode(.inline)
-            .navigationTitle("New Place")
+            .navigationTitle(self.viewModel.title(for: self.mode))
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
+        .onAppear() {
+            self.landmarkName = self.landmarkInEdit?.name ?? ""
+            self.landmarkIconName = self.landmarkInEdit?.systemImageName ?? "mappin.circle"
+            if let landmark = self.landmarkInEdit {
+                self.resolvedAddress = AddressInfo(
+                    formattedDescription: landmark.formattedAddress,
+                    latitude: landmark.location.latitude,
+                    longitude: landmark.location.longitude
+                )
+            }
+        }
     }
-
+    
     // TODO patmcg consider moving this to its own model/service
     private func saveCurrentLandmark() {
+        // TODO patmcg make sure this handles updates to xisting landmarks too
+        //      Mayeb search landmarks first??
         do {
             let coord = CLLocationCoordinate2D(
                 latitude: self.resolvedAddress.latitude,
@@ -119,6 +137,7 @@ struct LandmarkForm: View {
             )
             let landmark = Landmark(
                 name: self.landmarkName,
+                formattedAddress: self.resolvedAddress.formattedDescription,
                 systemImageName: self.landmarkIconName,
                 location: coord
             )
@@ -133,8 +152,19 @@ struct LandmarkForm: View {
     }
     
     // MARK: - Internal helpers
+
+    /// What landmark are we editing, if any?
+    private var landmarkInEdit: Landmark? {
+        switch self.mode {
+        case .create:
+            return nil
+        case .edit(let landmark):
+            return landmark
+        }
+    }
     
-    private func searchAddress() {
+    /// Runs and address lookup in the background and updates the UI with the results..
+    private func lookupAddress() {
         Task {
             do {
                 let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
@@ -160,6 +190,13 @@ struct LandmarkForm: View {
     
 }
 
-#Preview {
-    LandmarkForm()
+#Preview("Create") {
+    LandmarkForm(mode: .create)
 }
+
+#Preview("Edit") {
+    LandmarkForm(
+        mode: .edit(LandmarkSampleData().sampleData.first!)
+    )
+}
+    

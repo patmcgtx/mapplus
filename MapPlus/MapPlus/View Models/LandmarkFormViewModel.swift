@@ -10,6 +10,24 @@ import SFSafeSymbols
 /// View model supplying data LandmarkFormView
 struct LandmarkFormViewModel {
 
+    // TODO patmcg doc
+    enum Mode {
+        case create
+        case edit(Landmark)
+    }
+
+    // TODO initialize this with a mode
+//    let mode: Mode
+    
+    // TODO patmcg doc
+    func title(for mode: Mode) -> String {
+        // TODO patmcg localize
+        switch mode {
+        case .create: return "New Landmark"
+        case .edit(let landmark): return landmark.name
+        }
+    }
+    
     // TODO patmcg add unit tests
     //      - Check some entries
     //      - Check count

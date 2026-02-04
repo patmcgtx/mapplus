@@ -23,7 +23,7 @@ struct ContentView: View {
     @State private var mapSelectedItem: MKMapItem?
     
     // Persistence
-    @Query var landmarks: [Landmark]
+    @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
 
     var body: some View {
         
@@ -88,7 +88,7 @@ struct ContentView: View {
             }
         }
         .sheet(isPresented: $showingLandmarkList) {
-            LandmarksView(landmarks: self.landmarks)
+            LandmarksView()
         }
     }
     

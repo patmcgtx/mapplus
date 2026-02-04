@@ -17,6 +17,7 @@ struct LandmarkSampleData {
         [
             Landmark(
                 name: "Home",
+                formattedAddress: "123 Home",
                 systemImageName: "house",
                 location: CLLocationCoordinate2D(
                     latitude: 30.22791,
@@ -25,6 +26,7 @@ struct LandmarkSampleData {
             ),
             Landmark(
                 name: "Mom's work",
+                formattedAddress: "123 Work",
                 systemImageName: "arcade.stick",
                 location: CLLocationCoordinate2D(
                     latitude: 30.27267,
@@ -33,6 +35,7 @@ struct LandmarkSampleData {
             ),
             Landmark(
                 name: "School",
+                formattedAddress: "123 School",
                 systemImageName: "graduationcap",
                 location: CLLocationCoordinate2D(
                     latitude: 30.20632,
