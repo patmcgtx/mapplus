@@ -69,6 +69,7 @@ struct LandmarkFormViewModel {
     /// - Important: Avoid duplicates; duplicates can cause UI selection issues.
     /// - FIXME: Add unit tests to validate representative entries, total count, and uniqueness.
     let iconsToShow: [SFSymbol] = [
+        // TODO patmcg moce this to a new IconPicker view model
         .mappin,
         .mappinAndEllipse,
         .mapCircle,
