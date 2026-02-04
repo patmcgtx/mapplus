@@ -13,7 +13,7 @@ struct MapPlusApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainMapView()
         }
         .modelContainer(try! LandmarkSampleData().persistentContainer())
     }

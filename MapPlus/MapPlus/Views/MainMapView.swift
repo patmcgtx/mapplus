@@ -10,7 +10,7 @@ import SwiftData
 import MapKit
 
 /// The main map view
-struct ContentView: View {
+struct MainMapView: View {
 
     // Location
     private var locationPermissionsService = LocationPermissonsService()
@@ -106,6 +106,6 @@ struct ContentView: View {
 }
 
 #Preview {
-    ContentView()
+    MainMapView()
         .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
 }
