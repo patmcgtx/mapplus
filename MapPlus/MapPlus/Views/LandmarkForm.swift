@@ -10,12 +10,12 @@ import SFSafeSymbols
 
 struct LandmarkForm: View {
         
-    /// View model owns the form mode and other data
-    private let viewModel: LandmarkFormViewModel
-
     init(mode: LandmarkFormViewModel.Mode) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
     }
+    
+    // View model owns the form mode and configuration
+    private let viewModel: LandmarkFormViewModel
 
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -126,7 +126,7 @@ struct LandmarkForm: View {
                 }
             }
             .toolbarTitleDisplayMode(.inline)
-            .navigationTitle(self.viewModel.title)
+            .navigationTitle(self.viewModel.formTitle)
             .alert("Oops", isPresented: $showingSaveError) {
                 Button("OK", role: .cancel) { }
             } message: {
@@ -135,9 +135,9 @@ struct LandmarkForm: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .onAppear() {
-            self.landmarkName = self.landmarkInEdit?.name ?? ""
-            self.landmarkIconName = self.landmarkInEdit?.systemImageName ?? "mappin.circle"
-            if let landmark = self.landmarkInEdit {
+            self.landmarkName = self.viewModel.landmarkName
+            self.landmarkIconName = self.viewModel.landmarkIconName
+            if let landmark = self.viewModel.landmarkToEdit {
                 self.resolvedAddress = AddressInfo(
                     formattedDescription: landmark.formattedAddress,
                     latitude: landmark.location.latitude,
@@ -149,16 +149,6 @@ struct LandmarkForm: View {
     
     
     // MARK: - Internal helpers
-
-    /// What landmark are we editing, if any?
-    private var landmarkInEdit: Landmark? {
-        switch self.viewModel.mode {
-        case .create:
-            return nil
-        case .edit(let landmark):
-            return landmark
-        }
-    }
     
     /// Runs and address lookup in the background and updates the UI with the results..
     private func lookupAddress() {
