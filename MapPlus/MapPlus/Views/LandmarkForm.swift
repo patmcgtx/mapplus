@@ -6,14 +6,13 @@
 //
 
 import SwiftUI
-import CoreLocation
 import SFSafeSymbols
 
 struct LandmarkForm: View {
         
     /// Are we creating a new landmark or editing an existing one?
     let mode: LandmarkFormViewModel.Mode
-    
+
     private let viewModel = LandmarkFormViewModel()
 
     // Environment
@@ -23,6 +22,10 @@ struct LandmarkForm: View {
     // Form state
     @State private var landmarkName: String = ""
     @State private var landmarkIconName: String = "mappin.circle"
+    
+    // Error state
+    @State private var showingSaveError: Bool = false
+    @State private var saveErrorMessage: String = ""
 
     // Location lookup
     private let addressLookupService = AddressLookupService()
@@ -104,13 +107,29 @@ struct LandmarkForm: View {
                 }
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
-                        self.saveCurrentLandmark()
+                        do {
+                            try LandmarkStorageService().save(
+                                address: self.resolvedAddress,
+                                inContext: self.modelContext,
+                                withName: self.landmarkName,
+                                iconName: self.landmarkIconName
+                            )
+                            self.dismiss()
+                        } catch {
+                            self.saveErrorMessage = error.localizedDescription
+                            self.showingSaveError = true
+                        }
                     }
                     .disabled(self.isSaveDisabled)
                 }
             }
             .toolbarTitleDisplayMode(.inline)
             .navigationTitle(self.viewModel.title(for: self.mode))
+            .alert("Oops", isPresented: $showingSaveError) {
+                Button("OK", role: .cancel) { }
+            } message: {
+                Text(saveErrorMessage.isEmpty ? "Failed to save" : saveErrorMessage)
+            }
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .onAppear() {
@@ -126,30 +145,6 @@ struct LandmarkForm: View {
         }
     }
     
-    // TODO patmcg consider moving this to its own model/service
-    private func saveCurrentLandmark() {
-        // TODO patmcg make sure this handles updates to xisting landmarks too
-        //      Mayeb search landmarks first??
-        do {
-            let coord = CLLocationCoordinate2D(
-                latitude: self.resolvedAddress.latitude,
-                longitude: self.resolvedAddress.longitude
-            )
-            let landmark = Landmark(
-                name: self.landmarkName,
-                formattedAddress: self.resolvedAddress.formattedDescription,
-                systemImageName: self.landmarkIconName,
-                location: coord
-            )
-            // Insert using the injected modelContext and save with error handling
-            self.modelContext.insert(landmark)
-            try self.modelContext.save()
-            dismiss()
-        } catch {
-            // You might want to surface this to the user; for now we just log it
-            print("Failed to save landmark: \(error)")
-        }
-    }
     
     // MARK: - Internal helpers
 
@@ -180,6 +175,7 @@ struct LandmarkForm: View {
         }
     }
     
+    // TODO patmcg fix this logic
     private var isSaveDisabled: Bool {
         !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
     }
