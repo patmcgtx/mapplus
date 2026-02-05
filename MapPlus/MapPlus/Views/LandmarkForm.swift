@@ -19,11 +19,17 @@ struct LandmarkForm: View {
 
     // Environment
     @Environment(\.dismiss) private var dismiss
+    
+    // Persistence
     @Environment(\.modelContext) private var modelContext
+    private var storageService: LandmarkStorageService {
+        LandmarkStorageService(modelContext: self.modelContext)
+    }
     
     // Form state
     @State private var landmarkName: String = ""
     @State private var landmarkIconName: String = "mappin.circle"
+    @State private var landmarkNotes: String = ""
     
     // Icon picker state
     @State private var showingIconPicker: Bool = false
@@ -58,7 +64,10 @@ struct LandmarkForm: View {
                     Label("Icon...", systemImage: landmarkIconName)
                 }
             }
-            if case .create = self.viewModel.mode  {
+            Section("Notes") {
+                TextEditor(text: $landmarkNotes)
+            }
+            if case .create = self.viewModel.mode {
                 Section("Location") {
                     HStack {
                         TextField(
@@ -109,12 +118,10 @@ struct LandmarkForm: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     do {
-                        let landmarkStorage = LandmarkStorageService(
-                            modelContext: self.modelContext
-                        )
-                        try landmarkStorage.save(
+                        try self.storageService.save(
                             address: self.resolvedAddress,
-                            withName: self.landmarkName,
+                            name: self.landmarkName,
+                            notes: self.landmarkNotes,
                             iconName: self.landmarkIconName
                         )
                         self.dismiss()
@@ -141,9 +148,10 @@ struct LandmarkForm: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .onAppear() {
-            self.landmarkName = self.viewModel.landmarkName
-            self.landmarkIconName = self.viewModel.landmarkIconName
             if let landmark = self.viewModel.landmarkToEdit {
+                self.landmarkName = landmark.name
+                self.landmarkIconName = landmark.systemImageName
+                self.landmarkNotes = landmark.notes
                 self.resolvedAddress = AddressInfo(
                     formattedDescription: landmark.formattedAddress,
                     latitude: landmark.location.latitude,
