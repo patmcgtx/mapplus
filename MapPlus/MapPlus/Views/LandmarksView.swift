@@ -15,16 +15,20 @@ struct LandmarksView : View {
     @State private var showLandmarkForm: Bool = false
 
     // Persistence
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .forward) var landmarks: [Landmark]
     
     var body: some View {
         NavigationStack {
-            List(landmarks, id: \.id) { landmark in
-                NavigationLink {
-                    LandmarkForm(mode: .edit(landmark))
-                } label: {
-                    Label(landmark.name, systemImage: landmark.systemImageName)
+            List {
+                ForEach(landmarks, id: \.id) { landmark in
+                    NavigationLink {
+                        LandmarkForm(mode: .edit(landmark))
+                    } label: {
+                        Label(landmark.name, systemImage: landmark.systemImageName)
+                    }
                 }
+                .onDelete(perform: deleteLandmarks)
             }
             .navigationTitle("My Places")
             .toolbar {
@@ -44,6 +48,19 @@ struct LandmarksView : View {
             }
         }
         .foregroundStyle(.primary) // Set the style for all the forms
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Deletes landmarks at the specified index set from the SwiftData model context.
+    ///
+    /// - Parameter offsets: The index set indicating which landmarks to delete from the list.
+    private func deleteLandmarks(at offsets: IndexSet) {
+        for index in offsets {
+            let landmark = landmarks[index]
+            modelContext.delete(landmark)
+            try? modelContext.save()
+        }
     }
 }
 
