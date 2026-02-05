@@ -110,9 +110,11 @@ struct LandmarkForm: View {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Save") {
                         do {
-                            try LandmarkStorageService().save(
+                            let landmarkStorage = LandmarkStorageService(
+                                modelContext: self.modelContext
+                            )
+                            try landmarkStorage.save(
                                 address: self.resolvedAddress,
-                                inContext: self.modelContext,
                                 withName: self.landmarkName,
                                 iconName: self.landmarkIconName
                             )
