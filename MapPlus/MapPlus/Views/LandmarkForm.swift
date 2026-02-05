@@ -19,7 +19,12 @@ struct LandmarkForm: View {
 
     // Environment
     @Environment(\.dismiss) private var dismiss
+    
+    // Persistence
     @Environment(\.modelContext) private var modelContext
+    private var storageService: LandmarkStorageService {
+        LandmarkStorageService(modelContext: self.modelContext)
+    }
     
     // Form state
     @State private var landmarkName: String = ""
@@ -109,10 +114,7 @@ struct LandmarkForm: View {
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     do {
-                        let landmarkStorage = LandmarkStorageService(
-                            modelContext: self.modelContext
-                        )
-                        try landmarkStorage.save(
+                        try self.storageService.save(
                             address: self.resolvedAddress,
                             withName: self.landmarkName,
                             iconName: self.landmarkIconName
