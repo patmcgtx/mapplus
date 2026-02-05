@@ -56,10 +56,10 @@ struct LandmarksView : View {
     ///
     /// - Parameter offsets: The index set indicating which landmarks to delete from the list.
     private func deleteLandmarks(at offsets: IndexSet) {
+        let storage = LandmarkStorageService(modelContext: self.modelContext)
         for index in offsets {
             let landmark = landmarks[index]
-            modelContext.delete(landmark)
-            try? modelContext.save()
+            try? storage.delete(landmark: landmark)
         }
     }
 }

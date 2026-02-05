@@ -13,7 +13,10 @@ import CoreLocation
 /// app-level types (like `AddressInfo`) into persisted `Landmark` records.
 struct LandmarkStorageService {
         
-    /// Saves a new `Landmark` to the provided SwiftData `ModelContext`.
+    /// The context under which to perform persistence operations
+    let modelContext: ModelContext
+    
+    /// Saves a new `Landmark` and commites the change.
     ///
     /// This method converts the supplied `AddressInfo` into a `CLLocationCoordinate2D`
     /// and constructs a `Landmark` with the given name and system image. The new
@@ -29,8 +32,6 @@ struct LandmarkStorageService {
     /// - Throws: Rethrows any error encountered when saving the `modelContext`.
     func save(
         address: AddressInfo,
-        // TODO patmchg would be nice to find its own modelContext
-        inContext modelContext: ModelContext,
         withName name: String,
         iconName: String
     ) throws {
@@ -47,8 +48,16 @@ struct LandmarkStorageService {
             location: coord
         )
         
-        modelContext.insert(landmark)
+        self.modelContext.insert(landmark)
         try modelContext.save()
     }
     
+    /// Deletes the given `Landmark` and commits the change.
+    /// - Parameters:
+    ///   - landmark: The landmakr to delete
+    /// - Throws: Rethrows any error encountered when saving the `modelContext`.
+    func delete(landmark: Landmark) throws {
+        self.modelContext.delete(landmark)
+        try modelContext.save()
+    }
 }
