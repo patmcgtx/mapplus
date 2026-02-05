@@ -25,14 +25,14 @@ struct LandmarkStorageService {
     /// - Parameters:
     ///   - address: The address information that provides the latitude, longitude,
     ///              and formatted description for the landmark.
-    ///   - modelContext: The SwiftData model context used to insert and persist the
-    ///                   new `Landmark`.
-    ///   - withName: The display name to assign to the landmark.
+    ///   - name: The display name to assign to the landmark.
+    ///   - notes: Descriptive notes about the landmark.
     ///   - iconName: The SF Symbols system image name associated with the landmark.
     /// - Throws: Rethrows any error encountered when saving the `modelContext`.
     func save(
         address: AddressInfo,
-        withName name: String,
+        name: String,
+        notes: String,
         iconName: String
     ) throws {
         
@@ -43,6 +43,7 @@ struct LandmarkStorageService {
         
         let landmark = Landmark(
             name: name,
+            notes: notes,
             formattedAddress: address.formattedDescription,
             systemImageName: iconName,
             location: coord
