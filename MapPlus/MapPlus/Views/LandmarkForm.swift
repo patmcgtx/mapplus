@@ -25,6 +25,9 @@ struct LandmarkForm: View {
     @State private var landmarkName: String = ""
     @State private var landmarkIconName: String = "mappin.circle"
     
+    // Icon picker state
+    @State private var showingIconPicker: Bool = false
+    
     // Error state
     @State private var showingSaveError: Bool = false
     @State private var saveErrorMessage: String = ""
@@ -36,104 +39,105 @@ struct LandmarkForm: View {
     @State private var resolvedAddress = AddressInfo()
     
     var body: some View {
-        NavigationStack {
-            Form {
-                Section("Details") {
+        Form {
+            Section("Details") {
+                HStack {
+                    TextField("Name", text: $landmarkName,
+                              onEditingChanged: { _ in
+                    })
+                    .autocorrectionDisabled()
+                    Button {
+                        self.landmarkName = ""
+                    } label: {
+                        Image(systemName: "xmark.circle")
+                    }
+                }
+                Button {
+                    self.showingIconPicker = true
+                } label: {
+                    Label("Icon...", systemImage: landmarkIconName)
+                }
+            }
+            if case .create = self.viewModel.mode  {
+                Section("Location") {
                     HStack {
-                        TextField("Name", text: $landmarkName,
-                                  onEditingChanged: { _ in
-                        })
+                        TextField(
+                            "Address",
+                            text: $landmarkAddressInput,
+                            onEditingChanged: { _ in
+                                self.lookupAddress()
+                            })
                         .autocorrectionDisabled()
                         Button {
-                            self.landmarkName = ""
+                            self.lookupAddress()
                         } label: {
-                            Image(systemName: "xmark.circle")
-                        }
-                    }
-                    NavigationLink {
-                        IconPicker(
-                            landmarkIconName: $landmarkIconName,
-                            iconsToShow: viewModel.iconsToShow
-                        )
-                    } label: {
-                        Label("Icon...", systemImage: landmarkIconName)
-                    }
-                }
-                if case .create = self.viewModel.mode  {
-                    Section("Location") {
-                        HStack {
-                            TextField(
-                                "Address",
-                                text: $landmarkAddressInput,
-                                onEditingChanged: { _ in
-                                    self.lookupAddress()
-                                })
-                            .autocorrectionDisabled()
-                            Button {
-                                self.lookupAddress()
-                            } label: {
-                                Image(systemName: "magnifyingglass")
-                            }
+                            Image(systemName: "magnifyingglass")
                         }
                     }
                 }
-                Section("Preview") {
+            }
+            Section("Preview") {
+                HStack {
                     HStack {
-                        HStack {
-                            VStack {
-                                Spacer()
-                                Image(systemName: self.landmarkIconName)
-                                Spacer()
-                                Text(self.landmarkName)
-                                Spacer()
-                            }
-                            .multilineTextAlignment(.center)
-                            .padding()
+                        VStack {
                             Spacer()
-                            if (self.isAddressSearchRunning) {
-                                ProgressView()
-                            } else {
-                                Text(self.resolvedAddress.formattedDescription)
-                            }
+                            Image(systemName: self.landmarkIconName)
+                            Spacer()
+                            Text(self.landmarkName)
                             Spacer()
                         }
+                        .multilineTextAlignment(.center)
                         .padding()
-                    }
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button("Cancel", systemImage: "x.circle") {
-                        dismiss()
-                    }
-                }
-                ToolbarItem(placement: .confirmationAction) {
-                    Button("Save") {
-                        do {
-                            let landmarkStorage = LandmarkStorageService(
-                                modelContext: self.modelContext
-                            )
-                            try landmarkStorage.save(
-                                address: self.resolvedAddress,
-                                withName: self.landmarkName,
-                                iconName: self.landmarkIconName
-                            )
-                            self.dismiss()
-                        } catch {
-                            self.saveErrorMessage = error.localizedDescription
-                            self.showingSaveError = true
+                        Spacer()
+                        if (self.isAddressSearchRunning) {
+                            ProgressView()
+                        } else {
+                            Text(self.resolvedAddress.formattedDescription)
                         }
+                        Spacer()
                     }
-                    .disabled(self.isSaveDisabled)
+                    .padding()
                 }
             }
-            .toolbarTitleDisplayMode(.inline)
-            .navigationTitle(self.viewModel.formTitle)
-            .alert("Oops", isPresented: $showingSaveError) {
-                Button("OK", role: .cancel) { }
-            } message: {
-                Text(saveErrorMessage.isEmpty ? "Failed to save" : saveErrorMessage)
+        }
+        .toolbar {
+            ToolbarItem(placement: .cancellationAction) {
+                Button("Cancel", systemImage: "x.circle") {
+                    dismiss()
+                }
             }
+            ToolbarItem(placement: .confirmationAction) {
+                Button("Save") {
+                    do {
+                        let landmarkStorage = LandmarkStorageService(
+                            modelContext: self.modelContext
+                        )
+                        try landmarkStorage.save(
+                            address: self.resolvedAddress,
+                            withName: self.landmarkName,
+                            iconName: self.landmarkIconName
+                        )
+                        self.dismiss()
+                    } catch {
+                        self.saveErrorMessage = error.localizedDescription
+                        self.showingSaveError = true
+                    }
+                }
+                .disabled(self.isSaveDisabled)
+            }
+        }
+        .toolbarTitleDisplayMode(.inline)
+        .navigationTitle(self.viewModel.formTitle)
+        .alert("Oops", isPresented: $showingSaveError) {
+            Button("OK", role: .cancel) { }
+        } message: {
+            Text(saveErrorMessage.isEmpty ? "Failed to save" : saveErrorMessage)
+        }
+        .sheet(isPresented: $showingIconPicker) {
+            IconPicker(
+                landmarkIconName: $landmarkIconName,
+                iconsToShow: viewModel.iconsToShow
+            )
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .onAppear() {
