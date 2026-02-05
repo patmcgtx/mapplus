@@ -31,7 +31,7 @@ struct IconPicker: View {
             )
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "xmark") {
+                    Button("Close", systemImage: "x.circle") {
                         dismiss()
                     }
                 }
