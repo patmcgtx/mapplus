@@ -21,6 +21,7 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var mapSelectedItem: MKMapItem?
+    @State private var selectedLandmark: Landmark?
     
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
@@ -28,13 +29,14 @@ struct MainMapView: View {
     var body: some View {
         
         ZStack {
-            Map(position: $mapPosition, selection: $mapSelectedItem) {
+            Map(position: $mapPosition, selection: $selectedLandmark) {
                 ForEach(landmarks, id: \.self) { landmark in
                     Marker(
                         landmark.name,
                         systemImage: landmark.systemImageName,
                         coordinate: landmark.location
                     )
+                    .tag(landmark)
                 }
                 UserAnnotation()
             }
@@ -80,6 +82,19 @@ struct MainMapView: View {
                             .padding(.trailing, 16)
                     }
                 }
+            }
+            
+            // Landmark detail view
+            if let landmark = selectedLandmark {
+                VStack {
+                    Spacer()
+                    LandmarkDetailView(landmark: landmark) {
+                        selectedLandmark = nil
+                    }
+                    .padding()
+                }
+                .transition(.move(edge: .bottom))
+                .animation(.easeInOut, value: selectedLandmark)
             }
         }
         .onAppear(){
