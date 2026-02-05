@@ -20,7 +20,6 @@ struct MainMapView: View {
     
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
-    @State private var mapSelectedItem: MKMapItem?
     @State private var selectedLandmark: Landmark?
     
     // Persistence
