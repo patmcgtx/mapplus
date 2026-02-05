@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 /// A view that displays details about a selected landmark
 struct LandmarkDetailView: View {
@@ -65,8 +66,16 @@ struct LandmarkDetailView: View {
 }
 
 #Preview {
-    LandmarkDetailView(
-        landmark: LandmarkSampleData().sampleData.first!,
+    let sampleLandmark = LandmarkSampleData().sampleData.first ?? Landmark(
+        name: "Sample Place",
+        notes: "Sample notes",
+        formattedAddress: "123 Main St",
+        systemImageName: "mappin.circle",
+        location: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+    )
+    
+    return LandmarkDetailView(
+        landmark: sampleLandmark,
         onDismiss: {}
     )
 }
