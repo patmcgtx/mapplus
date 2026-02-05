@@ -14,17 +14,29 @@ struct IconPicker: View {
     @Binding var landmarkIconName: String
     
     let iconsToShow: [SFSymbol]
+    
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
-        SymbolsPicker(
-            selection: $landmarkIconName,
-            title: "Pick icon",
-            autoDismiss: true,
-            symbols: self.iconsToShow,
-            closeButton: {
-                // TODO hide this completely - bug #58
+        NavigationStack {
+            SymbolsPicker(
+                selection: $landmarkIconName,
+                title: "Pick icon",
+                autoDismiss: true,
+                symbols: self.iconsToShow,
+                closeButton: {
+                    // Provide empty view to hide the built-in close button
+                    EmptyView()
+                }
+            )
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close", systemImage: "x.circle") {
+                        dismiss()
+                    }
+                }
             }
-        )
+        }
     }
 }
 

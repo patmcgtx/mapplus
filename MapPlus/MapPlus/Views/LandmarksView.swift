@@ -13,6 +13,7 @@ struct LandmarksView : View {
     // UI state
     @Environment(\.dismiss) var dismiss
     @State private var showLandmarkForm: Bool = false
+    @State private var landmarkToEdit: Landmark? = nil
 
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -22,8 +23,8 @@ struct LandmarksView : View {
         NavigationStack {
             List {
                 ForEach(landmarks, id: \.id) { landmark in
-                    NavigationLink {
-                        LandmarkForm(mode: .edit(landmark))
+                    Button {
+                        self.landmarkToEdit = landmark
                     } label: {
                         Label(landmark.name, systemImage: landmark.systemImageName)
                     }
@@ -41,13 +42,20 @@ struct LandmarksView : View {
                     Button("Add a place", systemImage: "plus.circle") {
                         self.showLandmarkForm = true
                     }
-                    .sheet(isPresented: $showLandmarkForm) {
-                        LandmarkForm(mode: .create)
-                    }
                 }
             }
         }
         .foregroundStyle(.primary) // Set the style for all the forms
+        .sheet(isPresented: $showLandmarkForm) {
+            NavigationStack {
+                LandmarkForm(mode: .create)
+            }
+        }
+        .sheet(item: $landmarkToEdit) { landmark in
+            NavigationStack {
+                LandmarkForm(mode: .edit(landmark))
+            }
+        }
     }
     
     // MARK: - Helper Methods
