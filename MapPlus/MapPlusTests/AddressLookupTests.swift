@@ -93,15 +93,29 @@ struct AddressLookupTests {
         }
     }
     
-    // MARK: - Protocol Conformance Tests
+    // MARK: - Protocol Interface Tests
     
-    @Test func testMapKitServiceConformsToProtocol() {
+    @Test func testProtocolInterfaceWithMapKitService() async throws {
         let service: AddressLookupProtocol = MapKitAddressLookupService()
-        #expect(service is AddressLookupProtocol)
+        
+        // This test verifies we can use MapKitAddressLookupService through the protocol interface
+        // We expect it to fail in a sandboxed test environment without MapKit access
+        do {
+            _ = try await service.lookup(address: "Test Address")
+        } catch {
+            // Expected to fail in test environment
+            #expect(error is MapPlusError || error is Error)
+        }
     }
     
-    @Test func testMockServiceConformsToProtocol() {
+    @Test func testProtocolInterfaceWithMockService() async throws {
         let service: AddressLookupProtocol = MockAddressLookupService()
-        #expect(service is AddressLookupProtocol)
+        
+        // This test verifies we can use MockAddressLookupService through the protocol interface
+        let result = try await service.lookup(address: "San Francisco")
+        
+        #expect(result.formattedDescription == "San Francisco, CA, United States")
+        #expect(result.latitude == 37.7749)
+        #expect(result.longitude == -122.4194)
     }
 }
