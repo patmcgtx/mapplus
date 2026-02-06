@@ -10,12 +10,16 @@ import SFSafeSymbols
 
 struct LandmarkForm: View {
         
-    init(mode: LandmarkFormViewModel.Mode) {
+    init(mode: LandmarkFormViewModel.Mode, addressLookupService: AddressLookupProtocol = MapKitAddressLookupService()) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
+        self.addressLookupService = addressLookupService
     }
     
     // View model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
+    
+    // Location lookup service
+    private let addressLookupService: AddressLookupProtocol
 
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -38,8 +42,7 @@ struct LandmarkForm: View {
     @State private var showingSaveError: Bool = false
     @State private var saveErrorMessage: String = ""
 
-    // Location lookup
-    private let addressLookupService = AddressLookupService()
+    // Location lookup state
     @State private var landmarkAddressInput: String = ""
     @State private var isAddressSearchRunning = false
     @State private var resolvedAddress = AddressInfo()
