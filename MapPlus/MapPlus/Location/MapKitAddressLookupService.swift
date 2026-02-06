@@ -1,14 +1,14 @@
 //
-//  AddressLookupService.swift
+//  MapKitAddressLookupService.swift
 //  MapPlus
 //
-//  Created by Patrick McGonigle on 1/31/26.
+//  Created by Patrick McGonigle on 2/6/26.
 //
 import MapKit
 
 /// A service for performing asynchronous address lookups using MapKit.
 /// Used throughout MapPlus to resolve user-entered locations into structured data.
-struct AddressLookupService {
+struct MapKitAddressLookupService: AddressLookupProtocol {
     
     /// Provides lookup functionality for converting address strings into geographic coordinates and descriptions, using MapKit's local search capabilities.
     /// Converts a user-supplied address string into an AddressInfo object, or throws if no address could be found.
