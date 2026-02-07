@@ -8,25 +8,41 @@
 import SwiftUI
 
 struct LandmarkDetailsView: View {
-    
+
     let landmark: Landmark
-    
+
+    @Environment(\.dismiss) private var dismiss
+
     var body: some View {
-        // TODO patmcg this does need a close button, esp. for landscape orientation
         // TODO patmcg an edit button would be nice too
-        HStack {
-            VStack(alignment: .leading) {
-                HStack {
-                    Image(systemName: landmark.systemImageName)
-                    Text(landmark.name)
-                        .font(.title)
+        NavigationStack {
+            HStack {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Image(systemName: landmark.systemImageName)
+                        Text(landmark.name)
+                            .font(.title)
+                    }
+                    .padding()
+                    Text(landmark.notes)
+                        .padding(.leading)
+                    Spacer()
                 }
                 .padding()
-                Text(landmark.notes)
-                    .padding(.leading)
+                Spacer()
             }
-            .padding()
-            Spacer()
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close", systemImage: "x.circle") {
+                        dismiss()
+                    }
+                }
+                ToolbarItem(placement: .destructiveAction) {
+                    Button("Edit", systemImage: "square.and.pencil") {
+                        LandmarkForm(mode: .edit(landmark))
+                    }
+                }
+            }
         }
     }
 }
