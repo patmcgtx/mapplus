@@ -87,9 +87,10 @@ struct MainMapView: View {
                 }
             }
 
-            if let landmark = self.selectedLandmark {
-                Text(landmark.name)
-            }
+            // This actually shows it on *top* of the map since we're in a ZStack
+//            if let landmark = self.selectedLandmark {
+//                LandmarkDetailsView(landmark: landmark)
+//            }
         }
         .onAppear(){
             self.locationPermissionsService.requestPermissions() { _ in
