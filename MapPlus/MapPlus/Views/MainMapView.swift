@@ -40,7 +40,8 @@ struct MainMapView: View {
                 UserAnnotation()
             }
             .sheet(item: self.$selectedLandmark) { landmark in
-                Text(landmark.name)
+                LandmarkDetailsView(landmark: landmark)
+                    .presentationDetents([.fraction(0.25), .medium])
             }
             .mapStyle(MapStyle.standard(elevation: .realistic,
                                         emphasis: .muted,
