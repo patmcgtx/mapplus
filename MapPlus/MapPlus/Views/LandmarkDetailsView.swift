@@ -12,9 +12,10 @@ struct LandmarkDetailsView: View {
     let landmark: Landmark
 
     @Environment(\.dismiss) private var dismiss
+    
+    @State private var isEditing: Bool = false
 
     var body: some View {
-        // TODO patmcg an edit button would be nice too
         NavigationStack {
             HStack {
                 VStack(alignment: .leading) {
@@ -39,24 +40,18 @@ struct LandmarkDetailsView: View {
                 }
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Edit", systemImage: "square.and.pencil") {
-                        LandmarkForm(mode: .edit(landmark))
+                        self.isEditing = true
                     }
                 }
             }
+        }
+        .sheet(isPresented: self.$isEditing) {
+            // TODO patmcg add cancel + save buttons to this form
+            LandmarkForm(mode: .edit(landmark))
         }
     }
 }
 
 #Preview {
-    LandmarkDetailsView(
-        // TODO patmcg add a "sample landmark" method somewhere, or like SampleLandmarks().mozarts, etc.
-        // or a method with default params
-        landmark: Landmark(
-            name: "Mozart's on Lake Austin",
-            notes: "Great coffee on the lake and also great pastries!",
-            formattedAddress: "",
-            systemImageName: "arcade.stick",
-            location: LandmarkSampleData().sampleData.first!.location
-        )
-    )
+    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
 }

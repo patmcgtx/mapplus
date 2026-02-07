@@ -74,7 +74,7 @@ struct LandmarkForm: View {
                 Section("Location") {
                     HStack {
                         TextField(
-                            "Address",
+                            "Address or location name",
                             text: $landmarkAddressInput,
                             onEditingChanged: { _ in
                                 self.lookupAddress()
@@ -184,7 +184,7 @@ struct LandmarkForm: View {
         }
     }
     
-    // TODO patmcg fix this logic
+    // TODO patmcg fix this validation logic
     private var isSaveDisabled: Bool {
         !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
     }
@@ -201,7 +201,7 @@ struct LandmarkForm: View {
 
 #Preview("Edit") {
     LandmarkForm(
-        mode: .edit(LandmarkSampleData().sampleData.first!)
+        mode: .edit(LandmarkSampleData().capital)
     )
 }
     

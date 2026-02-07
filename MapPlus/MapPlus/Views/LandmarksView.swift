@@ -48,7 +48,6 @@ struct LandmarksView : View {
                 }
             }
         }
-        .foregroundStyle(.primary) // Set the style for all the forms
         .sheet(isPresented: $showLandmarkForm) {
             NavigationStack {
                 LandmarkForm(mode: .create)
