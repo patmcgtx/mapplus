@@ -64,27 +64,4 @@ struct LandmarkSampleData {
         ]
     }
     
-    // TODO patmcg move this to its own file about ModelContainers
-    @MainActor
-    func inMemorySampleContainer() throws -> ModelContainer {
-        
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        
-        for landmark in self.somePlaces {
-            container.mainContext.insert(landmark)
-        }
-        
-        try container.mainContext.save()
-        
-        return container
-    }
-    
-    // TODO patmcg move this to its own "real" / non-sample file
-    @MainActor
-    func persistentContainer() throws -> ModelContainer {
-        let config = ModelConfiguration()
-        let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        return container
-    }
 }

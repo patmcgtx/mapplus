@@ -41,7 +41,7 @@ struct MainMapView: View {
             }
             .sheet(item: self.$selectedLandmark) { landmark in
                 LandmarkDetailsView(landmark: landmark)
-                    .presentationDetents([.fraction(0.25), .medium])
+                    .presentationDetents([.fraction(0.33), .medium])
             }
             .mapStyle(MapStyle.standard(elevation: .realistic,
                                         emphasis: .muted,
@@ -114,5 +114,5 @@ struct MainMapView: View {
 
 #Preview {
     MainMapView()
-        .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }

@@ -77,5 +77,5 @@ struct LandmarksView : View {
 
 #Preview {
     LandmarksView()
-        .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
