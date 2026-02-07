@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// TODO patmcg doc
 struct LandmarkDetailsView: View {
 
     let landmark: Landmark
@@ -26,6 +27,9 @@ struct LandmarkDetailsView: View {
                     }
                     .padding()
                     Text(landmark.notes)
+                        .padding()
+                    Text(landmark.formattedAddress)
+                        .font(.footnote)
                         .padding(.leading)
                     Spacer()
                 }

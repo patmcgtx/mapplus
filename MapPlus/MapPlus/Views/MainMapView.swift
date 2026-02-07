@@ -9,7 +9,7 @@ import SwiftUI
 import SwiftData
 import MapKit
 
-/// The main map view
+/// The main map view, aka the "home" view.
 struct MainMapView: View {
 
     // Location
@@ -86,11 +86,6 @@ struct MainMapView: View {
                     }
                 }
             }
-
-            // This actually shows it on *top* of the map since we're in a ZStack
-//            if let landmark = self.selectedLandmark {
-//                LandmarkDetailsView(landmark: landmark)
-//            }
         }
         .onAppear(){
             self.locationPermissionsService.requestPermissions() { _ in

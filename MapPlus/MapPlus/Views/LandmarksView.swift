@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 
+// TODO patmcg doc
 struct LandmarksView : View {
 
     // UI state
