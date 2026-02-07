@@ -12,6 +12,8 @@ struct LandmarkDetailsView: View {
     let landmark: Landmark
     
     var body: some View {
+        // TODO patmcg this does need a close button, esp. for landscape orientation
+        // TODO patmcg an edit button would be nice too
         HStack {
             VStack(alignment: .leading) {
                 HStack {
@@ -21,7 +23,6 @@ struct LandmarkDetailsView: View {
                 }
                 .padding()
                 Text(landmark.notes)
-                    .font(.headline)
                     .padding(.leading)
             }
             .padding()
