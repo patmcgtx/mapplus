@@ -9,6 +9,7 @@ import SwiftUI
 import SFSafeSymbols
 import SFSymbolsPicker
 
+// TODO patmcg doc
 struct IconPicker: View {
         
     @Binding var landmarkIconName: String

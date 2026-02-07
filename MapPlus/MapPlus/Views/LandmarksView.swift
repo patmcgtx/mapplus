@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 
+// TODO patmcg doc
 struct LandmarksView : View {
 
     // UI state
@@ -48,7 +49,6 @@ struct LandmarksView : View {
                 }
             }
         }
-        .foregroundStyle(.primary) // Set the style for all the forms
         .sheet(isPresented: $showLandmarkForm) {
             NavigationStack {
                 LandmarkForm(mode: .create)
@@ -77,5 +77,5 @@ struct LandmarksView : View {
 
 #Preview {
     LandmarksView()
-        .modelContainer(try! LandmarkSampleData().inMemorySampleContainer())
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }

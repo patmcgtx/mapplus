@@ -15,6 +15,6 @@ struct MapPlusApp: App {
         WindowGroup {
             MainMapView()
         }
-        .modelContainer(try! LandmarkSampleData().persistentContainer())
+        .modelContainer(try! ModelContainer.persistentContainer())
     }
 }

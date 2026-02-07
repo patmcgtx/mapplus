@@ -9,16 +9,32 @@ import SwiftData
 import SwiftUI
 import MapKit
 
+/// Some sample landmarks around Austin, TX i.e. for testing.
 struct LandmarkSampleData {
     
     @State private var position: MapCameraPosition = .automatic
     
-    var sampleData: [Landmark] {
+    /// A conerete, sample landmark for testing
+    var capital: Landmark {
+        Landmark(
+            name: "Capital Lawn",
+            notes: "Lawn of the Texas state capital building",
+            formattedAddress: "1100 Congress Ave\nAustin, TX 78701",
+            systemImageName: "building",
+            location: CLLocationCoordinate2D(
+                latitude: 30.27381,
+                longitude: -97.74063
+            )
+        )
+    }
+    
+    /// A few conerete, sample landmarks for testing
+    var somePlaces: [Landmark] {
         [
             Landmark(
-                name: "Home",
-                notes: "Mi casa",
-                formattedAddress: "123 Home",
+                name: "A place",
+                notes: "Somewhere in Austin",
+                formattedAddress: "123 Somewhere Ln\nAustin TX",
                 systemImageName: "house",
                 location: CLLocationCoordinate2D(
                     latitude: 30.22791,
@@ -26,7 +42,7 @@ struct LandmarkSampleData {
                 )
             ),
             Landmark(
-                name: "Mom's work",
+                name: "Work",
                 notes: "Another day, another dollar.",
                 formattedAddress: "123 Work",
                 systemImageName: "arcade.stick",
@@ -48,25 +64,4 @@ struct LandmarkSampleData {
         ]
     }
     
-    @MainActor
-    func inMemorySampleContainer() throws -> ModelContainer {
-        
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        
-        for landmark in self.sampleData {
-            container.mainContext.insert(landmark)
-        }
-        
-        try container.mainContext.save()
-        
-        return container
-    }
-    
-    @MainActor
-    func persistentContainer() throws -> ModelContainer {
-        let config = ModelConfiguration()
-        let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        return container
-    }
 }
