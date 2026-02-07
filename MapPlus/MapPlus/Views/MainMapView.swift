@@ -15,7 +15,7 @@ struct MainMapView: View {
     // Location
     private var locationPermissionsService = LocationPermissonsService()
     
-    // Landamrks editing
+    // UI state
     @State private var showingLandmarkList: Bool = false
     
     // Map state
@@ -38,6 +38,9 @@ struct MainMapView: View {
                     .tag(landmark)
                 }
                 UserAnnotation()
+            }
+            .sheet(item: self.$selectedLandmark) { landmark in
+                Text(landmark.name)
             }
             .mapStyle(MapStyle.standard(elevation: .realistic,
                                         emphasis: .muted,
