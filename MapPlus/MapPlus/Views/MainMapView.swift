@@ -20,7 +20,7 @@ struct MainMapView: View {
     
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
-    @State private var mapSelectedItem: MKMapItem?
+    @State private var selectedLandmark: Landmark?
     
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
@@ -28,13 +28,14 @@ struct MainMapView: View {
     var body: some View {
         
         ZStack {
-            Map(position: $mapPosition, selection: $mapSelectedItem) {
+            Map(position: $mapPosition, selection: self.$selectedLandmark) {
                 ForEach(landmarks, id: \.self) { landmark in
                     Marker(
                         landmark.name,
                         systemImage: landmark.systemImageName,
                         coordinate: landmark.location
                     )
+                    .tag(landmark)
                 }
                 UserAnnotation()
             }
@@ -81,6 +82,10 @@ struct MainMapView: View {
                     }
                 }
             }
+
+            if let landmark = self.selectedLandmark {
+                Text(landmark.name)
+            }
         }
         .onAppear(){
             self.locationPermissionsService.requestPermissions() { _ in
@@ -91,6 +96,8 @@ struct MainMapView: View {
             LandmarksView()
         }
     }
+    
+    // MARK: - Helper Methods
     
     private func zoomTo(landmark: Landmark) {
         withAnimation {
