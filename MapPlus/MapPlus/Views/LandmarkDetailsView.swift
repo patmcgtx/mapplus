@@ -50,8 +50,9 @@ struct LandmarkDetailsView: View {
             }
         }
         .sheet(isPresented: self.$isEditing) {
-            // TODO patmcg add cancel + save buttons to this form
-            LandmarkForm(mode: .edit(landmark))
+            NavigationStack {
+                LandmarkForm(mode: .edit(landmark))
+            }
         }
     }
 }
