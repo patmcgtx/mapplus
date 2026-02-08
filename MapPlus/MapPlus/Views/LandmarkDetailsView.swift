@@ -20,20 +20,11 @@ struct LandmarkDetailsView: View {
         NavigationStack {
             HStack {
                 VStack(alignment: .leading) {
-                    HStack {
-                        Image(systemName: landmark.systemImageName)
-                        Text(landmark.name)
-                            .font(.title)
-                    }
-                    .padding()
                     Text(landmark.notes)
                         .padding()
-                    Text(landmark.formattedAddress)
-                        .font(.footnote)
-                        .padding(.leading)
                     Spacer()
                 }
-                .padding()
+                .padding(.leading)
                 Spacer()
             }
             .toolbar {
@@ -47,11 +38,16 @@ struct LandmarkDetailsView: View {
                         self.isEditing = true
                     }
                 }
+                ToolbarItem(placement: .title) {
+                    Text(landmark.name)
+                            .font(.headline)
+                }
             }
         }
         .sheet(isPresented: self.$isEditing) {
-            // TODO patmcg add cancel + save buttons to this form
-            LandmarkForm(mode: .edit(landmark))
+            NavigationStack {
+                LandmarkForm(mode: .edit(landmark))
+            }
         }
     }
 }
