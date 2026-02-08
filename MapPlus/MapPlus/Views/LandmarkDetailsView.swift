@@ -8,14 +8,15 @@
 import SwiftUI
 import MapKit
 
-// TODO patmcg doc
+/// Displays the details of the given landmark, including notes, address, and a lookaround preview.
 struct LandmarkDetailsView: View {
 
+    /// The landmark to dislpay
     let landmark: Landmark
 
+    // UI state
     @Environment(\.dismiss) private var dismiss
-    
-    @State private var isEditing: Bool = false
+    @State private var isEditorShowing: Bool = false
 
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
@@ -26,7 +27,8 @@ struct LandmarkDetailsView: View {
     @State private var selectedSection: Section = .details
     
     // Location preview
-    @State private var lookaroundScene: MKLookAroundScene?
+    @State private var lookaroundScene: MKLookAroundScene? = nil
+    @State private var lopokaroundError: Error? = nil
 
     var body: some View {
         NavigationStack {
@@ -54,8 +56,15 @@ struct LandmarkDetailsView: View {
                             .font(.footnote)
                             .padding(.leading)
                     case .preview:
-                        if let scene = self.lookaroundScene {
-                            LookAroundPreview(initialScene: scene)
+                        // TODO patmcg handle loading state
+                        // TODO patmcg test error state, which may legit just mean
+                        //      lookaround is not available there.  So handle it
+                        //      like as "not available" more than an "error" per se.
+                        if let lookaroundScene = self.lookaroundScene {
+                            LookAroundPreview(initialScene: lookaroundScene)
+                                .padding()
+                        } else if let lookaroundError = self.lopokaroundError {
+                            Text(lookaroundError.localizedDescription)
                                 .padding()
                         }
                     }
@@ -72,12 +81,12 @@ struct LandmarkDetailsView: View {
                 }
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Edit", systemImage: "square.and.pencil") {
-                        self.isEditing = true
+                        self.isEditorShowing = true
                     }
                 }
             }
         }
-        .sheet(isPresented: self.$isEditing) {
+        .sheet(isPresented: self.$isEditorShowing) {
             NavigationStack {
                 LandmarkForm(mode: .edit(landmark))
             }
@@ -90,6 +99,7 @@ struct LandmarkDetailsView: View {
     // MARK: - Private helpers
     
     func fetchLookaroundScene() {
+        // TODO patmcg consider moving this to a service
         if self.lookaroundScene == nil {
             let lookaroundRequest = MKLookAroundSceneRequest(coordinate: self.landmark.location)
             lookaroundRequest.getSceneWithCompletionHandler { (scene, error) in
@@ -98,7 +108,7 @@ struct LandmarkDetailsView: View {
                         self.lookaroundScene = sceneToShow
                     }
                 } else if let errorToShow = error {
-                    // TODO patmcg show error state
+                    self.lopokaroundError = errorToShow
                 }
             }
         }
