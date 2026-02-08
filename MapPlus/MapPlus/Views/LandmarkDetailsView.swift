@@ -16,6 +16,14 @@ struct LandmarkDetailsView: View {
     
     @State private var isEditing: Bool = false
 
+    // Segmented picker
+    private enum Section: String, CaseIterable, Identifiable {
+        case details = "Details"
+        case preview = "Preview"        
+        var id: Self { self }
+    }
+    @State private var selectedSection: Section = .details
+
     var body: some View {
         NavigationStack {
             HStack {
@@ -26,11 +34,24 @@ struct LandmarkDetailsView: View {
                             .font(.title)
                     }
                     .padding()
-                    Text(landmark.notes)
-                        .padding()
-                    Text(landmark.formattedAddress)
-                        .font(.footnote)
-                        .padding(.leading)
+                    
+                    Picker("Section", selection:$selectedSection) {
+                        ForEach(Section.allCases) { section in
+                            Text(section.rawValue)
+                        }
+                    }
+                    .pickerStyle(.segmented)
+                    
+                    switch selectedSection {
+                    case .details:
+                        Text(landmark.notes)
+                            .padding()
+                        Text(landmark.formattedAddress)
+                            .font(.footnote)
+                            .padding(.leading)
+                    case .preview:
+                        Text("Prwview Content Here")
+                    }
                     Spacer()
                 }
                 .padding()
