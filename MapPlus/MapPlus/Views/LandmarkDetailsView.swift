@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import MapKit
 
 // TODO patmcg doc
 struct LandmarkDetailsView: View {
@@ -23,6 +24,9 @@ struct LandmarkDetailsView: View {
         var id: Self { self }
     }
     @State private var selectedSection: Section = .details
+    
+    // Location preview
+    @State private var lookaroundScene: MKLookAroundScene?
 
     var body: some View {
         NavigationStack {
@@ -50,7 +54,10 @@ struct LandmarkDetailsView: View {
                             .font(.footnote)
                             .padding(.leading)
                     case .preview:
-                        Text("Prwview Content Here")
+                        if let scene = self.lookaroundScene {
+                            LookAroundPreview(initialScene: scene)
+                                .padding()
+                        }
                     }
                     Spacer()
                 }
@@ -73,6 +80,26 @@ struct LandmarkDetailsView: View {
         .sheet(isPresented: self.$isEditing) {
             NavigationStack {
                 LandmarkForm(mode: .edit(landmark))
+            }
+        }
+        .onAppear {
+            self.fetchLookaroundScene()
+        }
+    }
+    
+    // MARK: - Private helpers
+    
+    func fetchLookaroundScene() {
+        if self.lookaroundScene == nil {
+            let lookaroundRequest = MKLookAroundSceneRequest(coordinate: self.landmark.location)
+            lookaroundRequest.getSceneWithCompletionHandler { (scene, error) in
+                if let sceneToShow = scene {
+                    DispatchQueue.main.async {
+                        self.lookaroundScene = sceneToShow
+                    }
+                } else if let errorToShow = error {
+                    // TODO patmcg show error state
+                }
             }
         }
     }
