@@ -13,6 +13,8 @@ struct LandmarkTests {
         )
         let goldenGate = Landmark(
             name: "Golden Gate Bridge",
+            notes: "bridge",
+            formattedAddress: "San Francisco, CA",
             systemImageName: "bridge",
             location: coordinate
         )
@@ -37,6 +39,8 @@ struct LandmarkTests {
         let lon: CLLocationDegrees = -94.87794
         let beachPark = Landmark(
             name: "Sunny Beach Pocket Park",
+            notes: "Nice small beach with amenities",
+            formattedAddress: "123 Beach Rd, Sunnyville",
             systemImageName: "beach.umbrella",
             location: .init(
                 latitude: lat,
@@ -60,11 +64,15 @@ struct LandmarkTests {
         )
         let swmithville = Landmark(
             name: "Smithville",
+            notes: "",
+            formattedAddress: "Smithville, TX",
             systemImageName: "mappin.circle",
             location: coordinate
         )
         let swmithville4thStreet = Landmark(
             name: "4th Street",
+            notes: "",
+            formattedAddress: "4th St, Smithville, TX",
             systemImageName: "mappin",
             location: coordinate
         )
@@ -103,6 +111,8 @@ struct LandmarkTests {
         )
         let smithville = Landmark(
             name: "Smithville",
+            notes: "County seat",
+            formattedAddress: "Smithville, TX",
             systemImageName: "mappin.circle",
             location: coordinate
         )
