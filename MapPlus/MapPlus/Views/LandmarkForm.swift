@@ -25,6 +25,9 @@ struct LandmarkForm: View {
     // Location lookup service
     private let addressLookupService: AddressLookupProtocol
     
+    // TODO patmcg put this in the env?  At least have a way to mock it.
+    @StateObject private var locationService = LocationService()
+    
     // Environment
     @Environment(\.dismiss) private var dismiss
     
@@ -48,10 +51,10 @@ struct LandmarkForm: View {
     
     // Location lookup state
     @State private var landmarkAddressInput: String = ""
-    @State private var addressSearchState: AddressSearchState = .intial
+    @State private var addressSearchState: AddressSearchState = .initial
     
     private enum AddressSearchState {
-        case intial
+        case initial
         case searching
         case success(AddressInfo)
         case failure(Error)
@@ -117,7 +120,7 @@ struct LandmarkForm: View {
                         .padding()
                         Spacer()
                         switch self.addressSearchState {
-                        case .intial:
+                        case .initial:
                             EmptyView()
                         case .searching:
                             ProgressView()
@@ -144,7 +147,7 @@ struct LandmarkForm: View {
                 Button("Save") {
                     do {
                         switch self.addressSearchState {
-                        case .intial, .searching, .failure:
+                        case .initial, .searching, .failure:
                             break
                         case .success(let resolvedAddress):
                             try self.storageService.save(
@@ -196,8 +199,29 @@ struct LandmarkForm: View {
     
     // MARK: - Internal helpers
         
-    /// Runs a background location search and updates the UI with the result.
     private func getCurrentLocation() {
+        // TODO patmcg how to observe and update self.addressSearchState?
+        if let authStatus = self.locationService.authorizationStatus {
+            switch authStatus {
+            case .authorizedAlways, .authorizedWhenInUse:
+                // Request location in the background.
+                // self.locationService.currentLocation will get updated when ready.
+                self.locationService.getCurrentLocation()
+            case .notDetermined:
+                // TODO patmcg post feedback and request authorization
+                break
+            case .restricted, .denied:
+                // TODO patmcg show some "can't get your location" state
+                break
+            @unknown default:
+                // TODO patmcg show some "can't get your location" state
+                break
+            }
+        }
+    }
+    
+    /// Runs a background location search and updates the UI with the result.
+    private func getCurrentLocationOld() {
         Task {
             do {
                 self.addressSearchState = .searching
@@ -226,7 +250,7 @@ struct LandmarkForm: View {
     // TODO patmcg Validate landmark name too
     private var isSaveEnabled: Bool {
         switch self.addressSearchState {
-        case .intial, .searching, .failure: return false
+        case .initial, .searching, .failure: return false
         case .success: return true
         }
     }

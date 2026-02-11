@@ -6,6 +6,8 @@
 //
 import MapKit
 
+// TODO patmcg doc
+// TODO patmcg unit test 
 extension MKMapItem {
     
     var fullDescription: String {
