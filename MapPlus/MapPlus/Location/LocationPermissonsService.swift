@@ -5,6 +5,33 @@
 //
 import MapKit
 
+protocol UserLocationService {
+    
+    func requestPermissionsIfNeeded() async -> CLAuthorizationStatus
+    
+    func getCurrentAddress() async throws -> AddressInfo
+}
+
+struct MockUserLocationService: UserLocationService {
+    
+    func requestPermissionsIfNeeded() async -> CLAuthorizationStatus {
+        do {
+            try await Task.sleep(nanoseconds: 100_000_000)
+        } catch {}
+        return CLAuthorizationStatus.authorizedWhenInUse
+    }
+    
+    func getCurrentAddress() async throws -> AddressInfo {
+        try await Task.sleep(nanoseconds: 100_000_000)
+        let sample = LandmarkSampleData().capital
+        return AddressInfo(
+            formattedDescription: "Fake location\nFake city, Fake Country",
+            latitude: sample.location.latitude,
+            longitude: sample.location.longitude
+        )
+    }
+}
+
 /// Service that wraps CLLocationManager to request and report location authorization status.
 ///
 /// Use this class to request "When In Use" location permissions and receive the resulting

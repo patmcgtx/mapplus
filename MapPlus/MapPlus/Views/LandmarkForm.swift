@@ -11,7 +11,10 @@ import SFSafeSymbols
 // TODO patmcg doc
 struct LandmarkForm: View {
         
-    init(mode: LandmarkFormViewModel.Mode, addressLookupService: AddressLookupProtocol = MapKitAddressLookupService()) {
+    init(
+        mode: LandmarkFormViewModel.Mode,
+        addressLookupService: AddressLookupProtocol = MapKitAddressLookupService()
+    ) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
         self.addressLookupService = addressLookupService
     }
@@ -81,6 +84,11 @@ struct LandmarkForm: View {
                                 self.lookupAddress()
                             })
                         .autocorrectionDisabled()
+                        Button {
+                            self.getCurrentLocation()
+                        } label: {
+                            Image(systemName: "location")
+                        }
                         Button {
                             self.lookupAddress()
                         } label: {
@@ -168,18 +176,45 @@ struct LandmarkForm: View {
     
     // MARK: - Internal helpers
     
+    // TODO patmcg clean up / combine isAddressSearchRunning and resolvedAddress
+    
+    private func getCurrentLocation() {
+        Task {
+            do {
+                await MainActor.run {
+                    self.isAddressSearchRunning = true
+                }
+                // TODO patmcg implement and pass in the real service
+                let address = try await MockUserLocationService().getCurrentAddress()
+                await MainActor.run {
+                    self.isAddressSearchRunning = false
+                    self.resolvedAddress = address
+                }
+            } catch {
+                await MainActor.run {
+                    // TODO patmcg implement an error state with an icon and error message
+                    self.isAddressSearchRunning = false
+                }
+            }
+        }
+    }
+    
     /// Runs and address lookup in the background and updates the UI with the results..
     private func lookupAddress() {
         Task {
             do {
+                await MainActor.run {
+                    self.isAddressSearchRunning = true
+                }
                 let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
                 await MainActor.run {
+                    self.isAddressSearchRunning = false
                     self.resolvedAddress = resolved
                 }
             } catch {
                 await MainActor.run {
-                    self.resolvedAddress = AddressInfo(
-                        formattedDescription: MapPlusError.noAddressFound.errorMessage                    )
+                    // TODO patmcg implement an error state with an icon and error message
+                    self.isAddressSearchRunning = false
                 }
             }
         }
@@ -191,7 +226,7 @@ struct LandmarkForm: View {
     }
 
     private var isAddressInputValid: Bool {
-        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.noAddressFound.errorMessage
+        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.addressNotFound.localizedDescription
     }
     
 }

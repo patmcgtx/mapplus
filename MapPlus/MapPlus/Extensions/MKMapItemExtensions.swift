@@ -10,7 +10,7 @@ extension MKMapItem {
     
     var fullDescription: String {
         
-        var retval = MapPlusError.noAddressFound.errorMessage
+        var retval = MapPlusError.addressNotFound.localizedDescription
         
         if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             retval = fullAddress

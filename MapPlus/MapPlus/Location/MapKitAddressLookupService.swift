@@ -21,11 +21,11 @@ struct MapKitAddressLookupService: AddressLookupProtocol {
         let search = MKLocalSearch(request: request)
         let response = try await search.start()
         guard let item = response.mapItems.first else {
-            throw MapPlusError.noAddressFound
+            throw MapPlusError.addressNotFound
         }
         let coordinate = item.location.coordinate
         if !CLLocationCoordinate2DIsValid(coordinate) {
-            throw MapPlusError.noAddressFound
+            throw MapPlusError.addressNotFound
         }
         return AddressInfo(
             formattedDescription: item.fullDescription,

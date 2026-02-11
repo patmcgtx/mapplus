@@ -67,7 +67,7 @@ struct AddressLookupTests {
             _ = try await service.lookup(address: "Any Address")
             Issue.record("Expected lookup to throw, but it did not")
         } catch let error as MapPlusError {
-            #expect(error == .noAddressFound)
+            #expect(error == .addressNotFound)
         } catch {
             Issue.record("Expected MapPlusError.noAddressFound, but got: \(error)")
         }
