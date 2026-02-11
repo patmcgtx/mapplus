@@ -10,7 +10,7 @@ import SFSafeSymbols
 
 // TODO patmcg doc
 struct LandmarkForm: View {
-        
+    
     init(
         mode: LandmarkFormViewModel.Mode,
         addressLookupService: AddressLookupProtocol = MapKitAddressLookupService()
@@ -24,7 +24,7 @@ struct LandmarkForm: View {
     
     // Location lookup service
     private let addressLookupService: AddressLookupProtocol
-
+    
     // Environment
     @Environment(\.dismiss) private var dismiss
     
@@ -45,11 +45,17 @@ struct LandmarkForm: View {
     // Error state
     @State private var showingSaveError: Bool = false
     @State private var saveErrorMessage: String = ""
-
+    
     // Location lookup state
     @State private var landmarkAddressInput: String = ""
-    @State private var isAddressSearchRunning = false
-    @State private var resolvedAddress = AddressInfo()
+    @State private var addressSearchState: AddressSearchState = .intial
+    
+    private enum AddressSearchState {
+        case intial
+        case searching
+        case success(AddressInfo)
+        case failure(Error)
+    }
     
     var body: some View {
         Form {
@@ -110,10 +116,15 @@ struct LandmarkForm: View {
                         .multilineTextAlignment(.center)
                         .padding()
                         Spacer()
-                        if (self.isAddressSearchRunning) {
+                        switch self.addressSearchState {
+                        case .intial:
+                            EmptyView()
+                        case .searching:
                             ProgressView()
-                        } else {
-                            Text(self.resolvedAddress.formattedDescription)
+                        case .success(let resolvedAddress):
+                            Text(resolvedAddress.formattedDescription)
+                        case .failure(let error):
+                            Text(error.localizedDescription)
                         }
                         Spacer()
                     }
@@ -123,26 +134,33 @@ struct LandmarkForm: View {
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel", systemImage: "x.circle") {
+                Button {
                     dismiss()
+                } label: {
+                    Label("Cancel", systemImage: "x.circle")
                 }
             }
             ToolbarItem(placement: .confirmationAction) {
                 Button("Save") {
                     do {
-                        try self.storageService.save(
-                            address: self.resolvedAddress,
-                            name: self.landmarkName,
-                            notes: self.landmarkNotes,
-                            iconName: self.landmarkIconName
-                        )
+                        switch self.addressSearchState {
+                        case .intial, .searching, .failure:
+                            break
+                        case .success(let resolvedAddress):
+                            try self.storageService.save(
+                                address: resolvedAddress,
+                                name: self.landmarkName,
+                                notes: self.landmarkNotes,
+                                iconName: self.landmarkIconName
+                            )
+                        }
                         self.dismiss()
                     } catch {
                         self.saveErrorMessage = error.localizedDescription
                         self.showingSaveError = true
                     }
                 }
-                .disabled(self.isSaveDisabled)
+                .disabled(!self.isSaveEnabled)
             }
         }
         .toolbarTitleDisplayMode(.inline)
@@ -160,71 +178,59 @@ struct LandmarkForm: View {
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .onAppear() {
-            if let landmark = self.viewModel.landmarkToEdit {
+            switch self.viewModel.mode {
+            case .create:
+                break
+            case .edit(let landmark):
                 self.landmarkName = landmark.name
                 self.landmarkIconName = landmark.systemImageName
                 self.landmarkNotes = landmark.notes
-                self.resolvedAddress = AddressInfo(
+                self.addressSearchState = .success(AddressInfo(
                     formattedDescription: landmark.formattedAddress,
                     latitude: landmark.location.latitude,
-                    longitude: landmark.location.longitude
+                    longitude: landmark.location.longitude)
                 )
             }
         }
     }
     
-    
     // MARK: - Internal helpers
-    
-    // TODO patmcg clean up / combine isAddressSearchRunning and resolvedAddress
-    
+        
+    /// Runs a background location search and updates the UI with the result.
     private func getCurrentLocation() {
         Task {
             do {
-                await MainActor.run {
-                    self.isAddressSearchRunning = true
-                }
-                // TODO patmcg implement and pass in the real service
-                let address = try await MockUserLocationService().getCurrentAddress()
-                await MainActor.run {
-                    self.isAddressSearchRunning = false
-                    self.resolvedAddress = address
-                }
+                self.addressSearchState = .searching
+                // TODO patmcg pull in the real location service
+                let resolved = try await MockUserLocationService().getCurrentAddress()
+                self.addressSearchState = .success(resolved)
             } catch {
-                await MainActor.run {
-                    // TODO patmcg implement an error state with an icon and error message
-                    self.isAddressSearchRunning = false
-                }
+                self.addressSearchState = .failure(error)
             }
         }
     }
     
-    /// Runs and address lookup in the background and updates the UI with the results..
+    /// Runs a background address lookup and updates the UI with the result.
     private func lookupAddress() {
         Task {
             do {
-                await MainActor.run {
-                    self.isAddressSearchRunning = true
-                }
+                self.addressSearchState = .searching
                 let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
-                await MainActor.run {
-                    self.isAddressSearchRunning = false
-                    self.resolvedAddress = resolved
-                }
+                self.addressSearchState = .success(resolved)
             } catch {
-                await MainActor.run {
-                    // TODO patmcg implement an error state with an icon and error message
-                    self.isAddressSearchRunning = false
-                }
+                self.addressSearchState = .failure(error)
             }
         }
     }
     
-    // TODO patmcg fix this validation logic
-    private var isSaveDisabled: Bool {
-        !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
+    // TODO patmcg Validate landmark name too
+    private var isSaveEnabled: Bool {
+        switch self.addressSearchState {
+        case .intial, .searching, .failure: return false
+        case .success: return true
+        }
     }
-
+    
     private var isAddressInputValid: Bool {
         self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.addressNotFound.localizedDescription
     }
@@ -240,4 +246,4 @@ struct LandmarkForm: View {
         mode: .edit(LandmarkSampleData().capital)
     )
 }
-    
+
