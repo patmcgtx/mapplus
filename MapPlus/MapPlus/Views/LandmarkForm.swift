@@ -8,6 +8,43 @@
 import SwiftUI
 import SFSafeSymbols
 
+import SwiftUI
+import CoreLocation
+import MapKit
+
+@Observable
+class OldLocationManager: NSObject, CLLocationManagerDelegate {
+    
+    var location: CLLocation? = nil
+    var resolvedAddress: AddressInfo? = nil
+    
+    private let locationManager = CLLocationManager()
+    
+    override init() {
+        super.init()
+        locationManager.delegate = self
+    }
+    
+    func requestUserAuthorization() {
+        locationManager.requestWhenInUseAuthorization()
+    }
+    
+    func startCurrentLocationUpdates() {
+        locationManager.startUpdatingLocation()
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let location = locations.first else { return }
+        let mapItem = MKMapItem(location: location, address: nil)
+        self.location = location
+        self.resolvedAddress = AddressInfo(
+            formattedDescription: mapItem.fullDescription,
+            latitude: location.coordinate.latitude,
+            longitude: location.coordinate.longitude
+        )
+    }
+}
+
 // TODO patmcg doc
 struct LandmarkForm: View {
     
@@ -19,15 +56,14 @@ struct LandmarkForm: View {
         self.addressLookupService = addressLookupService
     }
     
+    @State var oldLocationManager = OldLocationManager()
+
     // View model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
     
     // Location lookup service
     private let addressLookupService: AddressLookupProtocol
-    
-    // TODO patmcg put this in the env?  At least have a way to mock it.
-    @StateObject private var locationService = LocationService()
-    
+        
     // Environment
     @Environment(\.dismiss) private var dismiss
     
@@ -115,6 +151,7 @@ struct LandmarkForm: View {
                             Spacer()
                             Text(self.landmarkName)
                             Spacer()
+                            Text("Old location manager: \(String(describing: oldLocationManager.resolvedAddress))")
                         }
                         .multilineTextAlignment(.center)
                         .padding()
@@ -195,43 +232,15 @@ struct LandmarkForm: View {
                 )
             }
         }
+        .task {
+            oldLocationManager.requestUserAuthorization()
+        }
     }
     
     // MARK: - Internal helpers
-        
+
     private func getCurrentLocation() {
-        // TODO patmcg how to observe and update self.addressSearchState?
-        if let authStatus = self.locationService.authorizationStatus {
-            switch authStatus {
-            case .authorizedAlways, .authorizedWhenInUse:
-                // Request location in the background.
-                // self.locationService.currentLocation will get updated when ready.
-                self.locationService.getCurrentLocation()
-            case .notDetermined:
-                // TODO patmcg post feedback and request authorization
-                break
-            case .restricted, .denied:
-                // TODO patmcg show some "can't get your location" state
-                break
-            @unknown default:
-                // TODO patmcg show some "can't get your location" state
-                break
-            }
-        }
-    }
-    
-    /// Runs a background location search and updates the UI with the result.
-    private func getCurrentLocationOld() {
-        Task {
-            do {
-                self.addressSearchState = .searching
-                // TODO patmcg pull in the real location service
-                let resolved = try await MockUserLocationService().getCurrentAddress()
-                self.addressSearchState = .success(resolved)
-            } catch {
-                self.addressSearchState = .failure(error)
-            }
-        }
+        oldLocationManager.startCurrentLocationUpdates()
     }
     
     /// Runs a background address lookup and updates the UI with the result.
