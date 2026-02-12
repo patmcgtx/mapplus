@@ -86,6 +86,11 @@ struct LandmarkForm: View {
                         } label: {
                             Image(systemName: "magnifyingglass")
                         }
+                        Button {
+                            self.getCurrentLocation()
+                        } label: {
+                            Image(systemName: "location.fill")
+                        }
                     }
                 }
             }
@@ -180,6 +185,29 @@ struct LandmarkForm: View {
                 await MainActor.run {
                     self.resolvedAddress = AddressInfo(
                         formattedDescription: MapPlusError.noAddressFound.errorMessage                    )
+                }
+            }
+        }
+    }
+    
+    /// Gets the user's current location and updates the UI with the results.
+    private func getCurrentLocation() {
+        Task {
+            do {
+                self.isAddressSearchRunning = true
+                let locationService = CurrentLocationService()
+                let resolved = try await locationService.getCurrentLocation()
+                await MainActor.run {
+                    self.resolvedAddress = resolved
+                    self.landmarkAddressInput = resolved.formattedDescription
+                    self.isAddressSearchRunning = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.resolvedAddress = AddressInfo(
+                        formattedDescription: MapPlusError.noAddressFound.errorMessage
+                    )
+                    self.isAddressSearchRunning = false
                 }
             }
         }
