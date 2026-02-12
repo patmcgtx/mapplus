@@ -5,11 +5,12 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 
+import Foundation
 import CoreLocation
 
 /// A model representing a geographic address or a point of interest, including a display description and coordinates.
 /// Used throughout MapPlus for representing user-selected or retrieved map locations.
-struct AddressInfo {
+struct AddressInfo: Equatable {
     
     /// Creates an `AddressInfo` instance with the specified description and coordinates.
     /// - Parameters:

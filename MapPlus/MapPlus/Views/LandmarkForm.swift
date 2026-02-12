@@ -34,7 +34,9 @@ class OldLocationManager: NSObject, CLLocationManagerDelegate {
     }
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        print("+++ Found user's location...")
         guard let location = locations.first else { return }
+        print("+++ Found user's location: \(location)")
         let mapItem = MKMapItem(location: location, address: nil)
         self.location = location
         self.resolvedAddress = AddressInfo(
@@ -42,6 +44,10 @@ class OldLocationManager: NSObject, CLLocationManagerDelegate {
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )
+    }
+    
+    func locationManager(_ manager: CLLocationManager, didFailWithError error: any Error) {
+        print("+++ Failed to find user's location: \(error.localizedDescription)")
     }
 }
 
@@ -151,7 +157,6 @@ struct LandmarkForm: View {
                             Spacer()
                             Text(self.landmarkName)
                             Spacer()
-                            Text("Old location manager: \(String(describing: oldLocationManager.resolvedAddress))")
                         }
                         .multilineTextAlignment(.center)
                         .padding()
@@ -166,6 +171,8 @@ struct LandmarkForm: View {
                         case .failure(let error):
                             Text(error.localizedDescription)
                         }
+//                        Spacer()
+                        Text(self.oldLocationManager.resolvedAddress?.formattedDescription ?? "current loc nil")
                         Spacer()
                     }
                     .padding()
@@ -235,11 +242,17 @@ struct LandmarkForm: View {
         .task {
             oldLocationManager.requestUserAuthorization()
         }
+//        .onChange(of: self.oldLocationManager.resolvedAddress) { oldValue, newValue in
+//            if let newValue {
+//                self.addressSearchState = .success(newValue)
+//            }
+//        }
     }
     
     // MARK: - Internal helpers
 
     private func getCurrentLocation() {
+        self.addressSearchState = .searching
         oldLocationManager.startCurrentLocationUpdates()
     }
     
