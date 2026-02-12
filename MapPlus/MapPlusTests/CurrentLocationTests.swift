@@ -6,7 +6,7 @@ struct CurrentLocationTests {
     // MARK: - MockCurrentLocationService Tests
     
     @Test func testMockCurrentLocationSuccess() async throws {
-        let service = MockCurrentLocationService()
+        let service: CurrentLocationProtocol = MockCurrentLocationService()
         
         let result = try await service.getCurrentLocation()
         
@@ -16,7 +16,7 @@ struct CurrentLocationTests {
     }
     
     @Test func testMockCurrentLocationFailure() async throws {
-        let service = MockCurrentLocationService(shouldSucceed: false)
+        let service: CurrentLocationProtocol = MockCurrentLocationService(shouldSucceed: false)
         
         do {
             _ = try await service.getCurrentLocation()
@@ -34,7 +34,7 @@ struct CurrentLocationTests {
             latitude: 40.7128,
             longitude: -74.0060
         )
-        let service = MockCurrentLocationService(customAddress: customAddress)
+        let service: CurrentLocationProtocol = MockCurrentLocationService(customAddress: customAddress)
         
         let result = try await service.getCurrentLocation()
         

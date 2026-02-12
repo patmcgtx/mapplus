@@ -9,7 +9,7 @@ import MapKit
 
 /// A service for obtaining the user's current location and converting it to an AddressInfo.
 /// Uses CLLocationManager to get the current coordinates and reverse geocoding to get a formatted address.
-class CurrentLocationService: NSObject, CLLocationManagerDelegate {
+class CurrentLocationService: NSObject, CurrentLocationProtocol, CLLocationManagerDelegate {
     
     private let locationManager = CLLocationManager()
     private var continuation: CheckedContinuation<CLLocation, Error>?
