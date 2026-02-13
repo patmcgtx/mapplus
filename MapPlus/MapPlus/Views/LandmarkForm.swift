@@ -11,16 +11,25 @@ import SFSafeSymbols
 // TODO patmcg doc
 struct LandmarkForm: View {
         
-    init(mode: LandmarkFormViewModel.Mode, addressLookupService: AddressLookupProtocol = MapKitAddressLookupService()) {
+    init(
+        mode: LandmarkFormViewModel.Mode,
+        // TODO patmcg bring these in from the env
+        addressLookupService: AddressLookupService = MapKitAddressLookupService(),
+        locationService: LocationService = MapKitLocationService()
+    ) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
         self.addressLookupService = addressLookupService
+        self.locationService = locationService
     }
     
     // View model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
     
     // Location lookup service
-    private let addressLookupService: AddressLookupProtocol
+    private let addressLookupService: AddressLookupService
+    
+    // Current location service
+    private let locationService: LocationService
 
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -85,6 +94,11 @@ struct LandmarkForm: View {
                             self.lookupAddress()
                         } label: {
                             Image(systemName: "magnifyingglass")
+                        }
+                        Button {
+                            self.getCurrentLocation()
+                        } label: {
+                            Image(systemName: "location.fill")
                         }
                     }
                 }
@@ -180,6 +194,30 @@ struct LandmarkForm: View {
                 await MainActor.run {
                     self.resolvedAddress = AddressInfo(
                         formattedDescription: MapPlusError.noAddressFound.errorMessage                    )
+                }
+            }
+        }
+    }
+    
+    /// Gets the user's current location and updates the UI with the results.
+    private func getCurrentLocation() {
+        Task {
+            await MainActor.run {
+                self.isAddressSearchRunning = true
+            }
+            do {
+                let resolved = try await self.locationService.getCurrentLocation()
+                await MainActor.run {
+                    self.resolvedAddress = resolved
+                    self.landmarkAddressInput = resolved.formattedDescription
+                    self.isAddressSearchRunning = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.resolvedAddress = AddressInfo(
+                        formattedDescription: MapPlusError.noAddressFound.errorMessage
+                    )
+                    self.isAddressSearchRunning = false
                 }
             }
         }

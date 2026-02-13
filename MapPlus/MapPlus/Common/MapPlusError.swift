@@ -6,8 +6,6 @@
 //
 
 /// Errors used by the MapPlus module.
-///  This enum represents the different error conditions that can occur
-///  when performing map-related lookups and operations within MapPlus.
 enum MapPlusError: Error {
     
     /// Indicates that a lookup (for example, reverse geocoding or address parsing)

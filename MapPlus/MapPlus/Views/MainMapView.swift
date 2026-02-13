@@ -13,7 +13,7 @@ import MapKit
 struct MainMapView: View {
 
     // Location
-    private var locationPermissionsService = LocationPermissonsService()
+    private var locationPermissionsService = LocationPermissionsService()
     
     // UI state
     @State private var showingLandmarkList: Bool = false

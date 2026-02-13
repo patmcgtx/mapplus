@@ -8,7 +8,8 @@ import Foundation
 
 /// A mock implementation of AddressLookupProtocol for testing and previews.
 /// Returns predefined addresses or throws errors based on the input.
-struct MockAddressLookupService: AddressLookupProtocol {
+/// (Thanks, Claude Sonnet.)
+struct MockAddressLookupService: AddressLookupService {
     
     /// Controls whether the mock should simulate a successful lookup or throw an error.
     var shouldSucceed: Bool = true
