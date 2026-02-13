@@ -29,7 +29,8 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         let location = try await requestCurrentLocation()
         
         // Then, reverse geocode to get a formatted address
-        // TODO patmcg user MapKit (CLGeocoder deprecated)
+        // TODO patmcg CLGeocoder deprecated, use MapKit?
+        //      Hmm that fails, so just send the lat/lon string to AddressLookupService?
         let geocoder = CLGeocoder()
         let placemarks = try await geocoder.reverseGeocodeLocation(location)
         
@@ -74,7 +75,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         }
     }
     
-    // TODO patmcg refactpr this into an extension
+    // TODO patmcg refactor this into an extension
     private func formatPlacemark(_ placemark: CLPlacemark) -> String {
         var components: [String] = []
         
