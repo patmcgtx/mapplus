@@ -19,7 +19,9 @@ import MapKit
 ///   status changes (the delegate method `locationManager(_:didChangeAuthorization:)`).
 /// - Depending on iOS version and the current authorization state, the delegate method may
 ///   be called immediately or after the system prompt is presented to the user.
-class LocationPermissonsService: NSObject, CLLocationManagerDelegate {
+class LocationPermissionsService: NSObject, CLLocationManagerDelegate {
+    
+    // TODO patmcg is this needed any more?  It's built into MapKitLocationService now, right?
     
     private var locationManager = CLLocationManager()
     private var callback: (_ status: CLAuthorizationStatus) -> Void = { status in }

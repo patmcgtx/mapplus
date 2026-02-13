@@ -6,9 +6,10 @@
 //
 import CoreLocation
 
-/// A mock implementation of CurrentLocationProtocol for testing and previews.
+/// A mock implementation of LocationService for testing and previews.
 /// Returns a predefined location or throws errors based on configuration.
-class MockCurrentLocationService: CurrentLocationProtocol {
+/// (Thanks, Claude Sonnet.)
+class MockLocationService: LocationService {
     
     /// Controls whether the mock should simulate a successful location fetch or throw an error.
     var shouldSucceed: Bool = true

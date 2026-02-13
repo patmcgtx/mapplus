@@ -96,7 +96,7 @@ struct AddressLookupTests {
     // MARK: - Protocol Interface Tests
     
     @Test func testProtocolInterfaceWithMapKitService() async throws {
-        let service: AddressLookupProtocol = MapKitAddressLookupService()
+        let service: AddressLookupService = MapKitAddressLookupService()
         
         // This test verifies we can use MapKitAddressLookupService through the protocol interface
         // We expect it to fail in a sandboxed test environment without MapKit access
@@ -109,7 +109,7 @@ struct AddressLookupTests {
     }
     
     @Test func testProtocolInterfaceWithMockService() async throws {
-        let service: AddressLookupProtocol = MockAddressLookupService()
+        let service: AddressLookupService = MockAddressLookupService()
         
         // This test verifies we can use MockAddressLookupService through the protocol interface
         let result = try await service.lookup(address: "San Francisco")

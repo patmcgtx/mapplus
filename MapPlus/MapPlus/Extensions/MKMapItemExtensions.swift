@@ -6,8 +6,11 @@
 //
 import MapKit
 
+// TODO patmcg doc
 extension MKMapItem {
     
+    // TODO patmcg doc
+    // TODO patmcg add unit tests
     var fullDescription: String {
         
         var retval = MapPlusError.noAddressFound.errorMessage

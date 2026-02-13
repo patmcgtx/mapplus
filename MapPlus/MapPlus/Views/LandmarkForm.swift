@@ -11,20 +11,25 @@ import SFSafeSymbols
 // TODO patmcg doc
 struct LandmarkForm: View {
         
-    init(mode: LandmarkFormViewModel.Mode, addressLookupService: AddressLookupProtocol = MapKitAddressLookupService(), currentLocationService: CurrentLocationProtocol = CurrentLocationService()) {
+    init(
+        mode: LandmarkFormViewModel.Mode,
+        // TODO patmcg bring these in from the env
+        addressLookupService: AddressLookupService = MapKitAddressLookupService(),
+        locationService: LocationService = MapKitLocationService()
+    ) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
         self.addressLookupService = addressLookupService
-        self.currentLocationService = currentLocationService
+        self.locationService = locationService
     }
     
     // View model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
     
     // Location lookup service
-    private let addressLookupService: AddressLookupProtocol
+    private let addressLookupService: AddressLookupService
     
     // Current location service
-    private let currentLocationService: CurrentLocationProtocol
+    private let locationService: LocationService
 
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -201,7 +206,7 @@ struct LandmarkForm: View {
                 self.isAddressSearchRunning = true
             }
             do {
-                let resolved = try await self.currentLocationService.getCurrentLocation()
+                let resolved = try await self.locationService.getCurrentLocation()
                 await MainActor.run {
                     self.resolvedAddress = resolved
                     self.landmarkAddressInput = resolved.formattedDescription
