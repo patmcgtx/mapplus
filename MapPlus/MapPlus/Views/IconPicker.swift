@@ -12,15 +12,16 @@ import SFSymbolsPicker
 /// A view that lets the user pic an icon a set up SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
 /// and then populating the provided binding.
 struct IconPicker: View {
-        
-    // TODO patmcg rename to something non-landmark-specific
-    /// Binding to capture the user-selected SF symbol name
-    @Binding var selectedSymbolName: String
     
     /// Which SF Symbols for the user to pick from, or all SF Symbols if this is let empty.
     let symbolOptions: [SFSymbol]
-    
+
+    // Environment
     @Environment(\.dismiss) private var dismiss
+
+    // TODO patmcg rename to something non-landmark-specific
+    /// Binding to capture the user-selected SF symbol name
+    @Binding var selectedSymbolName: String
 
     var body: some View {
         NavigationStack {
@@ -55,8 +56,8 @@ private struct IconPickerPreview: View {
 
     var body: some View {
         IconPicker(
-            selectedSymbolName: $iconName,
-            symbolOptions: self.iconsToShow
+            symbolOptions: self.iconsToShow,
+            selectedSymbolName: $iconName
         )
     }
 }

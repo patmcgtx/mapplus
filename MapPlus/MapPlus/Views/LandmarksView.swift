@@ -11,14 +11,17 @@ import SwiftData
 // TODO patmcg doc
 struct LandmarksView : View {
 
-    // UI state
+    // Environment
     @Environment(\.dismiss) var dismiss
+
+    // UI state
     @State private var showLandmarkForm: Bool = false
     @State private var landmarkToEdit: Landmark? = nil
 
     // Persistence
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .forward) var landmarks: [Landmark]
+    
     private var storageService: LandmarkStorageService {
         LandmarkStorageService(modelContext: self.modelContext)
     }
