@@ -46,29 +46,33 @@ struct LandmarkForm: View {
     @State private var landmarkNameInput: String = ""
     @State private var landmarkIconNameSelected: String = "mappin.circle"
     @State private var landmarkNotesInput: String = ""
-    
+    @State private var landmarkAddressInput: String = ""
+
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
     
     // Error state
-    // TODO patmcg refactor save state as an enum
-    @State private var showingSaveError: Bool = false
-    @State private var saveErrorMessage: String = ""
+    private enum SaveState {
+        case idle
+        case saved
+        case failed(Error)
+    }
+    
+    @State private var saveState: SaveState = .idle
     
     // Location lookup state
     private enum AddressSearchState {
         case initial
         case searching
         case resolved(AddressInfo)
-        case error(Error)
+        case failed(Error)
     }
+    
     @State private var addressSearchState: AddressSearchState = .initial
-    @State private var landmarkAddressInput: String = ""
-    //    @State private var isAddressSearchRunning = false
-//    @State private var resolvedAddress = AddressInfo()
     
     var body: some View {
         Form {
+            saveError
             Section("Details") {
                 nameInput
                 iconPicker
@@ -93,11 +97,6 @@ struct LandmarkForm: View {
         }
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(viewModel.formTitle)
-        .alert("Oops", isPresented: $showingSaveError) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(saveErrorMessage.isEmpty ? "Failed to save" : saveErrorMessage)
-        }
         .sheet(isPresented: $isShowingIconPicker) {
             IconPicker(
                 selectedSymbolName: $landmarkIconNameSelected,
@@ -131,6 +130,23 @@ struct LandmarkForm: View {
     }
     
     // MARK: - Subviews
+    
+    @ViewBuilder
+    private var saveError: some View {
+        switch saveState {
+        case .idle, .saved:
+            ErrorView(
+                message: "Failed to save",
+                error: MapPlusError.noAddressFound
+            )
+        case .failed(let error):
+            ErrorView(
+                message: "Failed to save",
+                error: error
+            )
+        }
+    }
+    
     
     private var nameInput: some View {
         HStack {
@@ -192,7 +208,7 @@ struct LandmarkForm: View {
         Button("Save") {
             do {
                 switch addressSearchState {
-                case .initial, .searching, .error:
+                case .initial, .searching, .failed:
                     break
                 case .resolved(let addressInfo):
                     try storageService.save(
@@ -201,11 +217,11 @@ struct LandmarkForm: View {
                         notes: landmarkNotesInput,
                         iconName: landmarkIconNameSelected
                     )
+                    saveState = .saved
                 }
                 dismiss()
             } catch {
-                saveErrorMessage = error.localizedDescription
-                showingSaveError = true
+                saveState = .failed(error)
             }
         }
         .disabled(!isSaveEnabled)
@@ -236,7 +252,7 @@ struct LandmarkForm: View {
                     ProgressView()
                 case .resolved(let addressInfo):
                     Text(addressInfo.formattedDescription)
-                case .error(let error):
+                case .failed(let error):
                     Text(error.localizedDescription)
                     Spacer()
                 }
@@ -262,7 +278,7 @@ struct LandmarkForm: View {
             } catch {
                 await MainActor.run {
                     // TODO patmcg better error display
-                    addressSearchState = .error(error)
+                    addressSearchState = .failed(error)
                 }
             }
         }
@@ -283,7 +299,7 @@ struct LandmarkForm: View {
             } catch {
                 await MainActor.run {
                     // TODO patmcg better error display
-                    addressSearchState = .error(error)
+                    addressSearchState = .failed(error)
                 }
             }
         }
@@ -292,7 +308,7 @@ struct LandmarkForm: View {
     private var isSaveEnabled: Bool {
         // TODO patmcg fix this validation logic?
         switch addressSearchState {
-        case .initial, .searching, .error:
+        case .initial, .searching, .failed:
             return false
         case .resolved:
             return landmarkNameInput.isPopulated
