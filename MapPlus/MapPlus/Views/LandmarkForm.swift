@@ -8,7 +8,7 @@
 import SwiftUI
 import SFSafeSymbols
 
-// TODO patmcg doc
+/// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
     
     // TODO patmcg use that private var trick to make the view elements easier to understand
@@ -135,18 +135,11 @@ struct LandmarkForm: View {
     private var saveError: some View {
         switch saveState {
         case .idle, .saved:
-            ErrorView(
-                message: "Failed to save",
-                error: MapPlusError.noAddressFound
-            )
+            EmptyView()
         case .failed(let error):
-            ErrorView(
-                message: "Failed to save",
-                error: error
-            )
+            ErrorView(message: "Failed to save", error: error)
         }
     }
-    
     
     private var nameInput: some View {
         HStack {
@@ -253,8 +246,7 @@ struct LandmarkForm: View {
                 case .resolved(let addressInfo):
                     Text(addressInfo.formattedDescription)
                 case .failed(let error):
-                    Text(error.localizedDescription)
-                    Spacer()
+                    ErrorView(message: "Location search failed", error: error)
                 }
             }
         }
@@ -277,7 +269,6 @@ struct LandmarkForm: View {
                 }
             } catch {
                 await MainActor.run {
-                    // TODO patmcg better error display
                     addressSearchState = .failed(error)
                 }
             }
@@ -298,7 +289,6 @@ struct LandmarkForm: View {
                 }
             } catch {
                 await MainActor.run {
-                    // TODO patmcg better error display
                     addressSearchState = .failed(error)
                 }
             }

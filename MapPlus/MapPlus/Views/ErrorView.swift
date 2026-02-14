@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-/// A view that presents an error.
+/// A view that presents an error, displayed with an ironic retro look.
 struct ErrorView: View {
     
     /// A contextual message to display to the user
@@ -22,11 +22,15 @@ struct ErrorView: View {
                 Image(systemName: "exclamationmark.circle")
                 Text(message)
             }
-            Text("-----")
+            Text("")
             Text(error.localizedDescription)
+                .font(.footnote)
         }
         .fontDesign(.monospaced)
         .foregroundStyle(Color.red)
+        .padding()
+        .border(Color.red)
+        .cornerRadius(15.0)
     }
 }
 
