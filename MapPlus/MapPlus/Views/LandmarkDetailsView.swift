@@ -100,6 +100,7 @@ struct LandmarkDetailsView: View {
     
     func fetchLookaroundScene() {
         // TODO patmcg consider moving this to a service
+        // TODO patmcg show placeholder if lookaround won't load
         if self.lookaroundScene == nil {
             let lookaroundRequest = MKLookAroundSceneRequest(coordinate: self.landmark.location)
             lookaroundRequest.getSceneWithCompletionHandler { (scene, error) in

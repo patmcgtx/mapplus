@@ -6,34 +6,30 @@
 //
 import MapKit
 
-// TODO patmcg doc
 extension MKMapItem {
     
-    // TODO patmcg doc
     // TODO patmcg add unit tests
+
+    /// Generates a user-facing description of this map item, such as full address and/or place name.
+    /// The result it typically a multi-line address but could be coordinates if no address is available.
     var fullDescription: String {
+
+        // TODO patmcg use result builder
+
+        // Start with the coordinates as a baseline        
+        var 🎯 = self.location.asLatLonString
         
-        // TODO patmcg user result builder
-        
-        // TODO patmcg move this logic to a CLLocation extension
-        var retval = [
-            // Format lat & long o  decimal places, just like  Maps
-            String(format: "%.5f", self.location.coordinate.latitude),
-            String(format: "%.5f", self.location.coordinate.longitude),
-        ]
-            .joined(separator: ", ")
-        
+        // Get the address info if available
         if let fullAddress = self.addressRepresentations?.fullAddress(
             includingRegion: false,
-            singleLine: false
-        ) {
-            retval = fullAddress
+            singleLine: false) {
+            🎯 = fullAddress
             if let itemName = self.name, !fullAddress.contains(itemName)  {
-                retval = [itemName, fullAddress].joined(separator: "\n")
+                🎯 = [itemName, fullAddress].joined(separator: "\n")
             }
         }
         
-        return retval
+        return 🎯
     }
     
 }

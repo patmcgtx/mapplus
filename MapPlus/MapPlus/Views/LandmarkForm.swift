@@ -8,16 +8,16 @@
 import SwiftUI
 import SFSafeSymbols
 
-// TODO patmcg doc
+/// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
-        
+    
     init(
         mode: LandmarkFormViewModel.Mode,
         // TODO patmcg bring these in from the env
         addressLookupService: AddressLookupService = MapKitAddressLookupService(),
         locationService: LocationService = MapKitLocationService()
     ) {
-        self.viewModel = LandmarkFormViewModel(mode: mode)
+        viewModel = LandmarkFormViewModel(mode: mode)
         self.addressLookupService = addressLookupService
         self.locationService = locationService
     }
@@ -30,151 +30,217 @@ struct LandmarkForm: View {
     
     // Current location service
     private let locationService: LocationService
-
+    
     // Environment
     @Environment(\.dismiss) private var dismiss
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
     private var storageService: LandmarkStorageService {
-        LandmarkStorageService(modelContext: self.modelContext)
+        LandmarkStorageService(modelContext: modelContext)
     }
     
     // Form state
-    @State private var landmarkName: String = ""
-    @State private var landmarkIconName: String = "mappin.circle"
-    @State private var landmarkNotes: String = ""
-    
+    @State private var landmarkNameInput: String = ""
+    @State private var landmarkIconNameSelected: String = "mappin.circle"
+    @State private var landmarkNotesInput: String = ""
+    @State private var landmarkAddressInput: String = ""
+
     // Icon picker state
-    @State private var showingIconPicker: Bool = false
+    @State private var isShowingIconPicker: Bool = false
     
     // Error state
-    @State private var showingSaveError: Bool = false
-    @State private var saveErrorMessage: String = ""
-
+    private enum SaveState {
+        case idle
+        case saved
+        case failed(Error)
+    }
+    
+    @State private var saveState: SaveState = .idle
+    
     // Location lookup state
-    @State private var landmarkAddressInput: String = ""
-    @State private var isAddressSearchRunning = false
-    @State private var resolvedAddress = AddressInfo()
+    private enum AddressSearchState {
+        case initial
+        case searching
+        case resolved(AddressInfo)
+        case failed(Error)
+    }
+    
+    @State private var addressSearchState: AddressSearchState = .initial
     
     var body: some View {
         Form {
+            saveError
             Section("Details") {
-                HStack {
-                    TextField("Name", text: $landmarkName,
-                              onEditingChanged: { _ in
-                    })
-                    .autocorrectionDisabled()
-                    Button {
-                        self.landmarkName = ""
-                    } label: {
-                        Image(systemName: "xmark.circle")
-                    }
-                }
-                Button {
-                    self.showingIconPicker = true
-                } label: {
-                    Label("Icon...", systemImage: landmarkIconName)
-                }
+                nameInput
+                iconPicker
             }
             Section("Notes") {
-                TextEditor(text: $landmarkNotes)
+                notesInput
             }
-            if case .create = self.viewModel.mode {
-                Section("Location") {
-                    HStack {
-                        TextField(
-                            "Address or location name",
-                            text: $landmarkAddressInput,
-                            onEditingChanged: { _ in
-                                self.lookupAddress()
-                            })
-                        .autocorrectionDisabled()
-                        Button {
-                            self.lookupAddress()
-                        } label: {
-                            Image(systemName: "magnifyingglass")
-                        }
-                        Button {
-                            self.getCurrentLocation()
-                        } label: {
-                            Image(systemName: "location.fill")
-                        }
-                    }
-                }
+            if case .create = viewModel.mode {
+                locationSearch
             }
             Section("Preview") {
-                HStack {
-                    HStack {
-                        VStack {
-                            Spacer()
-                            Image(systemName: self.landmarkIconName)
-                            Spacer()
-                            Text(self.landmarkName)
-                            Spacer()
-                        }
-                        .multilineTextAlignment(.center)
-                        .padding()
-                        Spacer()
-                        if (self.isAddressSearchRunning) {
-                            ProgressView()
-                        } else {
-                            Text(self.resolvedAddress.formattedDescription)
-                        }
-                        Spacer()
-                    }
-                    .padding()
-                }
+                previewArea
             }
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
-                Button("Cancel", systemImage: "x.circle") {
-                    dismiss()
-                }
+                cancelButton
             }
             ToolbarItem(placement: .confirmationAction) {
-                Button("Save") {
-                    do {
-                        try self.storageService.save(
-                            address: self.resolvedAddress,
-                            name: self.landmarkName,
-                            notes: self.landmarkNotes,
-                            iconName: self.landmarkIconName
-                        )
-                        self.dismiss()
-                    } catch {
-                        self.saveErrorMessage = error.localizedDescription
-                        self.showingSaveError = true
-                    }
-                }
-                .disabled(self.isSaveDisabled)
+                saveButton
             }
         }
         .toolbarTitleDisplayMode(.inline)
-        .navigationTitle(self.viewModel.formTitle)
-        .alert("Oops", isPresented: $showingSaveError) {
-            Button("OK", role: .cancel) { }
-        } message: {
-            Text(saveErrorMessage.isEmpty ? "Failed to save" : saveErrorMessage)
-        }
-        .sheet(isPresented: $showingIconPicker) {
+        .navigationTitle(viewModel.formTitle)
+        .sheet(isPresented: $isShowingIconPicker) {
             IconPicker(
-                landmarkIconName: $landmarkIconName,
-                iconsToShow: viewModel.iconsToShow
+                selectedSymbolName: $landmarkIconNameSelected,
+                symbolOptions: viewModel.iconsToShow
             )
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .onAppear() {
-            if let landmark = self.viewModel.landmarkToEdit {
-                self.landmarkName = landmark.name
-                self.landmarkIconName = landmark.systemImageName
-                self.landmarkNotes = landmark.notes
-                self.resolvedAddress = AddressInfo(
-                    formattedDescription: landmark.formattedAddress,
-                    latitude: landmark.location.latitude,
-                    longitude: landmark.location.longitude
+            switch viewModel.mode {
+            case .create:
+                break
+            case .edit(let landmark):
+                // Populate inputs with existing landmark info
+                landmarkNameInput = landmark.name
+                landmarkIconNameSelected = landmark.systemImageName
+                landmarkNotesInput = landmark.notes
+                addressSearchState = .resolved(
+                    AddressInfo(
+                        formattedDescription: landmark.formattedAddress,
+                        latitude: landmark.location.latitude,
+                        longitude: landmark.location.longitude
+                    )
                 )
+            }
+        }
+    }
+    
+    // MARK: - Subviews
+    
+    @ViewBuilder
+    private var saveError: some View {
+        switch saveState {
+        case .idle, .saved:
+            EmptyView()
+        case .failed(let error):
+            ErrorView(message: "Failed to save", error: error)
+        }
+    }
+    
+    private var nameInput: some View {
+        HStack {
+            TextField("Name", text: $landmarkNameInput,
+                      onEditingChanged: { _ in
+            })
+            .autocorrectionDisabled()
+            Button {
+                landmarkNameInput = ""
+            } label: {
+                Image(systemName: "xmark.circle")
+            }
+        }
+    }
+    
+    private var iconPicker: some View {
+        Button {
+            isShowingIconPicker = true
+        } label: {
+            Label("Icon...", systemImage: landmarkIconNameSelected)
+        }
+    }
+    
+    private var notesInput: some View {
+        TextEditor(text: $landmarkNotesInput)
+    }
+    
+    private var locationSearch: some View {
+        Section("Location") {
+            HStack {
+                TextField(
+                    "Address or location name",
+                    text: $landmarkAddressInput,
+                    onEditingChanged: { _ in
+                        lookupAddress()
+                    })
+                .autocorrectionDisabled()
+                Button {
+                    lookupAddress()
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
+                Button {
+                    getCurrentLocation()
+                } label: {
+                    Image(systemName: "location")
+                }
+            }
+        }
+    }
+    
+    private var cancelButton: some View {
+        Button("Cancel", systemImage: "x.circle") {
+            dismiss()
+        }
+    }
+    
+    private var saveButton: some View {
+        Button("Save") {
+            do {
+                switch addressSearchState {
+                case .initial, .searching, .failed:
+                    break
+                case .resolved(let addressInfo):
+                    try storageService.save(
+                        address: addressInfo,
+                        name: landmarkNameInput,
+                        notes: landmarkNotesInput,
+                        iconName: landmarkIconNameSelected
+                    )
+                    saveState = .saved
+                }
+                dismiss()
+            } catch {
+                saveState = .failed(error)
+            }
+        }
+        .disabled(!isSaveEnabled)
+    }
+    
+    @ViewBuilder
+    private var previewArea: some View {
+        HStack {
+            HStack {
+                
+                // Landark icon
+                VStack {
+                    Spacer()
+                    Image(systemName: landmarkIconNameSelected)
+                    Spacer()
+                    Text(landmarkNameInput)
+                    Spacer()
+                }
+                .multilineTextAlignment(.center)
+                .padding()
+                Spacer()
+                
+                // Landmark name
+                switch addressSearchState {
+                case .initial:
+                    EmptyView()
+                case .searching:
+                    ProgressView()
+                case .resolved(let addressInfo):
+                    Text(addressInfo.formattedDescription)
+                case .failed(let error):
+                    ErrorView(message: "Location search failed", error: error)
+                }
             }
         }
     }
@@ -184,16 +250,19 @@ struct LandmarkForm: View {
     
     /// Runs and address lookup in the background and updates the UI with the results..
     private func lookupAddress() {
+        // TODO patmcg sync this better with getCurrentLocation, possibly combine logic
         Task {
             do {
-                let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
+                let resolvedAddress = try await addressLookupService.lookup(address: landmarkAddressInput)
                 await MainActor.run {
-                    self.resolvedAddress = resolved
+                    addressSearchState = .resolved(resolvedAddress)
+                    if !landmarkNameInput.isPopulated {
+                        landmarkNameInput = resolvedAddress.formattedDescription
+                    }
                 }
             } catch {
                 await MainActor.run {
-                    self.resolvedAddress = AddressInfo(
-                        formattedDescription: MapPlusError.noAddressFound.errorMessage                    )
+                    addressSearchState = .failed(error)
                 }
             }
         }
@@ -201,35 +270,31 @@ struct LandmarkForm: View {
     
     /// Gets the user's current location and updates the UI with the results.
     private func getCurrentLocation() {
+        // TODO patmcg sync this better with lookupAddress, possibly combine logic
         Task {
             await MainActor.run {
-                self.isAddressSearchRunning = true
+                addressSearchState = .searching
             }
             do {
-                let resolved = try await self.locationService.getCurrentLocation()
+                let resolvedAddress = try await locationService.getCurrentLocation()
                 await MainActor.run {
-                    self.resolvedAddress = resolved
-                    self.landmarkAddressInput = resolved.formattedDescription
-                    self.isAddressSearchRunning = false
+                    addressSearchState = .resolved(resolvedAddress)
                 }
             } catch {
                 await MainActor.run {
-                    self.resolvedAddress = AddressInfo(
-                        formattedDescription: MapPlusError.noAddressFound.errorMessage
-                    )
-                    self.isAddressSearchRunning = false
+                    addressSearchState = .failed(error)
                 }
             }
         }
     }
     
-    // TODO patmcg fix this validation logic
-    private var isSaveDisabled: Bool {
-        !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
-    }
-
-    private var isAddressInputValid: Bool {
-        self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.noAddressFound.errorMessage
+    private var isSaveEnabled: Bool {
+        switch addressSearchState {
+        case .initial, .searching, .failed:
+            return false
+        case .resolved:
+            return landmarkNameInput.isPopulated
+        }
     }
     
 }
@@ -243,4 +308,4 @@ struct LandmarkForm: View {
         mode: .edit(LandmarkSampleData().capital)
     )
 }
-    
+
