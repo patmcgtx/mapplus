@@ -14,8 +14,10 @@ struct LandmarkDetailsView: View {
     /// The landmark to dislpay
     let landmark: Landmark
 
-    // UI state
+    // Environment
     @Environment(\.dismiss) private var dismiss
+
+    // UI state
     @State private var isEditorShowing: Bool = false
 
     // Segmented picker
