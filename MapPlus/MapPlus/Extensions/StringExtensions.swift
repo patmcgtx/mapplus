@@ -7,6 +7,8 @@
 
 // TODO patmcg add unit tests
 extension String {
+    
+    // TODO patmcg doc
     var isPopulated: Bool {
         !trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
