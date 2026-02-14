@@ -75,7 +75,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         }
     }
     
-    // TODO patmcg refactor this into an extension
+    // TODO patmcg refactor this into an extension - if needed any more
     private func formatPlacemark(_ placemark: CLPlacemark) -> String {
         var components: [String] = []
         

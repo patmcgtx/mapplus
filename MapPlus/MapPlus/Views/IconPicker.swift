@@ -9,22 +9,26 @@ import SwiftUI
 import SFSafeSymbols
 import SFSymbolsPicker
 
-// TODO patmcg doc
+/// A view that lets the user pic an icon a set up SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
+/// and then populating the provided binding.
 struct IconPicker: View {
         
-    @Binding var landmarkIconName: String
+    // TODO patmcg rename to something non-landmark-specific
+    /// Binding to capture the user-selected SF symbol name
+    @Binding var selectedSymbolName: String
     
-    let iconsToShow: [SFSymbol]
+    /// Which SF Symbols for the user to pick from, or all SF Symbols if this is let empty.
+    let symbolOptions: [SFSymbol]
     
     @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
             SymbolsPicker(
-                selection: $landmarkIconName,
+                selection: $selectedSymbolName,
                 title: "Pick icon",
                 autoDismiss: true,
-                symbols: self.iconsToShow,
+                symbols: self.symbolOptions,
                 closeButton: {
                     // Provide empty view to hide the built-in close button
                     EmptyView()
@@ -41,6 +45,8 @@ struct IconPicker: View {
     }
 }
 
+// MARK: - Previews
+
 private struct IconPickerPreview: View {
 
     let iconsToShow: [SFSymbol]
@@ -48,7 +54,10 @@ private struct IconPickerPreview: View {
     @State private var iconName: String = "mappin"
 
     var body: some View {
-        IconPicker(landmarkIconName: $iconName, iconsToShow: self.iconsToShow)
+        IconPicker(
+            selectedSymbolName: $iconName,
+            symbolOptions: self.iconsToShow
+        )
     }
 }
 

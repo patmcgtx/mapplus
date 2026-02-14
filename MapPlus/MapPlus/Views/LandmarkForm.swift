@@ -10,7 +10,9 @@ import SFSafeSymbols
 
 // TODO patmcg doc
 struct LandmarkForm: View {
-        
+
+    // TODO patmcg use that private var trick to make the view elements easier to understand
+
     init(
         mode: LandmarkFormViewModel.Mode,
         // TODO patmcg bring these in from the env
@@ -160,8 +162,8 @@ struct LandmarkForm: View {
         }
         .sheet(isPresented: $showingIconPicker) {
             IconPicker(
-                landmarkIconName: $landmarkIconName,
-                iconsToShow: viewModel.iconsToShow
+                selectedSymbolName: $landmarkIconName,
+                symbolOptions: viewModel.iconsToShow
             )
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
@@ -184,6 +186,7 @@ struct LandmarkForm: View {
     
     /// Runs and address lookup in the background and updates the UI with the results..
     private func lookupAddress() {
+        // TODO patmcg clean up search state and coordinate with address search
         Task {
             do {
                 let resolved = try await self.addressLookupService.lookup(address: self.landmarkAddressInput)
@@ -201,6 +204,7 @@ struct LandmarkForm: View {
     
     /// Gets the user's current location and updates the UI with the results.
     private func getCurrentLocation() {
+        // TODO patmcg clean up search state and coordinate with current location
         Task {
             await MainActor.run {
                 self.isAddressSearchRunning = true
@@ -228,6 +232,7 @@ struct LandmarkForm: View {
         !self.landmarkName.isPopulated || !self.resolvedAddress.formattedDescription.isPopulated
     }
 
+    // TODO patmcg fix this validation logic
     private var isAddressInputValid: Bool {
         self.landmarkAddressInput.isPopulated && self.landmarkAddressInput != MapPlusError.noAddressFound.errorMessage
     }

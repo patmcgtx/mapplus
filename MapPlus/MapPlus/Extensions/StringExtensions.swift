@@ -5,11 +5,11 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 
-// TODO patmcg add unit tests
 extension String {
     
-    // TODO patmcg doc
+    /// Determines whether this string is populated with any non-whitespace text
     var isPopulated: Bool {
+        // TODO patmcg add unit tests
         !trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 }
