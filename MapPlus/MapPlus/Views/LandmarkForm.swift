@@ -11,15 +11,16 @@ import SFSafeSymbols
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
     
-    // Environment vars
-    @Environment(\.locationService) private var locationService
-    @Environment(\.addressLookupService) private var addressLookupService
-    
+    /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
     }
+
+    // Environment
+    @Environment(\.locationService) private var locationService
+    @Environment(\.addressLookupService) private var addressLookupService
     
-    // View model owns the form mode and configuration
+    // The view model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
         
     // Environment
@@ -246,7 +247,9 @@ struct LandmarkForm: View {
     private func runLocationSearch(ofType searchType: LocationSearchType) {
         Task {
             do {
-                addressSearchState = .searching
+                await MainActor.run {
+                    addressSearchState = .searching
+                }
                 let resolvedAddress: AddressInfo
                 switch searchType {
                 case .textSearch(let searchString):
