@@ -11,15 +11,16 @@ import SFSafeSymbols
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
     
+    // Environment vars
+    @Environment(\.locationService) private var locationService
+    
     init(
         mode: LandmarkFormViewModel.Mode,
         // TODO patmcg bring these in from the env
         addressLookupService: AddressLookupService = MapKitAddressLookupService(),
-        locationService: LocationService = MapKitLocationService()
     ) {
         viewModel = LandmarkFormViewModel(mode: mode)
         self.addressLookupService = addressLookupService
-        self.locationService = locationService
     }
     
     // View model owns the form mode and configuration
@@ -27,10 +28,7 @@ struct LandmarkForm: View {
     
     // Location lookup service
     private let addressLookupService: AddressLookupService
-    
-    // Current location service
-    private let locationService: LocationService
-    
+        
     // Environment
     @Environment(\.dismiss) private var dismiss
     
@@ -301,6 +299,7 @@ struct LandmarkForm: View {
 
 #Preview("Create") {
     LandmarkForm(mode: .create)
+        .environment(\.locationService, MapKitLocationService())
 }
 
 #Preview("Edit") {
