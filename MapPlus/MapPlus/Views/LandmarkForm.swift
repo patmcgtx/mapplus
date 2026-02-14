@@ -11,8 +11,6 @@ import SFSafeSymbols
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
     
-    // TODO patmcg use that private var trick to make the view elements easier to understand
-    
     init(
         mode: LandmarkFormViewModel.Mode,
         // TODO patmcg bring these in from the env
@@ -109,15 +107,10 @@ struct LandmarkForm: View {
             case .create:
                 break
             case .edit(let landmark):
-                
-                // TODO patmcg is there a cleaner way to do this?!
-                
                 // Populate inputs with existing landmark info
                 landmarkNameInput = landmark.name
                 landmarkIconNameSelected = landmark.systemImageName
                 landmarkNotesInput = landmark.notes
-                
-                // Pre-set search state to the existing landmark
                 addressSearchState = .resolved(
                     AddressInfo(
                         formattedDescription: landmark.formattedAddress,
@@ -296,7 +289,6 @@ struct LandmarkForm: View {
     }
     
     private var isSaveEnabled: Bool {
-        // TODO patmcg fix this validation logic?
         switch addressSearchState {
         case .initial, .searching, .failed:
             return false
