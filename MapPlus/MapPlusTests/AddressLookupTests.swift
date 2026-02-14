@@ -82,7 +82,7 @@ struct AddressLookupTests {
             ("New York", "New York, NY, United States", 40.7128, -74.0060),
             ("London", "London, United Kingdom", 51.5074, -0.1278),
             ("Tokyo", "Tokyo, Japan", 35.6762, 139.6503),
-            ("1 Apple Park Way", "1 Apple Park Way, Cupertino, CA 95014, United States", 37.3349, -122.0090)
+            ("1 Infinite Loop", "1 Infinite Loop, Cupertino, CA 95014, United States", 37.3349, -122.0090)
         ]
         
         for (query, expectedDescription, expectedLat, expectedLon) in addresses {

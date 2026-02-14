@@ -13,21 +13,14 @@ struct LandmarkForm: View {
     
     // Environment vars
     @Environment(\.locationService) private var locationService
+    @Environment(\.addressLookupService) private var addressLookupService
     
-    init(
-        mode: LandmarkFormViewModel.Mode,
-        // TODO patmcg bring these in from the env
-        addressLookupService: AddressLookupService = MapKitAddressLookupService(),
-    ) {
-        viewModel = LandmarkFormViewModel(mode: mode)
-        self.addressLookupService = addressLookupService
+    init(mode: LandmarkFormViewModel.Mode) {
+        self.viewModel = LandmarkFormViewModel(mode: mode)
     }
     
     // View model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
-    
-    // Location lookup service
-    private let addressLookupService: AddressLookupService
         
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -297,9 +290,14 @@ struct LandmarkForm: View {
     
 }
 
-#Preview("Create") {
+#Preview("Create - mock services") {
+    LandmarkForm(mode: .create)
+}
+
+#Preview("Create - real services") {
     LandmarkForm(mode: .create)
         .environment(\.locationService, MapKitLocationService())
+        .environment(\.addressLookupService, MapKitAddressLookupService())
 }
 
 #Preview("Edit") {

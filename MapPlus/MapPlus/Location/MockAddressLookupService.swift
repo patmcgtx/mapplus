@@ -39,8 +39,8 @@ struct MockAddressLookupService: AddressLookupService {
             latitude: 35.6762,
             longitude: 139.6503
         ),
-        "1 Apple Park Way": AddressInfo(
-            formattedDescription: "1 Apple Park Way, Cupertino, CA 95014, United States",
+        "1 Infinite Loop": AddressInfo(
+            formattedDescription: "1 Infinite Loop, Cupertino, CA 95014, United States",
             latitude: 37.3349,
             longitude: -122.0090
         )
