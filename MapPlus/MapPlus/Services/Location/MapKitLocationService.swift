@@ -25,7 +25,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
     /// Gets the user's current location and converts it to an AddressInfo object.
     /// - Returns: An AddressInfo object containing the formatted address and coordinates.
     /// - Throws: MapPlusError.noAddressFound if location cannot be determined or reverse geocoding fails.
-    func getCurrentLocation() async throws -> AddressInfo {
+    func getCurrentLocation() async throws -> LocationInfo {
         
         // First, get the current coordinates
         let location = try await requestCurrentLocation()
@@ -43,7 +43,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         // Build a formatted address string
         let formattedAddress = formatPlacemark(placemark)
         
-        return AddressInfo(
+        return LocationInfo(
             formattedDescription: formattedAddress,
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude

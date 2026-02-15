@@ -61,7 +61,7 @@ struct LandmarkForm: View {
     private enum AddressSearchState {
         case searchInitial
         case searching
-        case searchResolved(AddressInfo)
+        case searchResolved(LocationInfo)
         case searchFailed(Error)
     }
     
@@ -111,7 +111,7 @@ struct LandmarkForm: View {
                 landmarkIconNameSelected = landmark.systemImageName
                 landmarkNotesInput = landmark.notes
                 addressSearchState = .searchResolved(
-                    AddressInfo(
+                    LocationInfo(
                         formattedDescription: landmark.formattedAddress,
                         latitude: landmark.location.latitude,
                         longitude: landmark.location.longitude
@@ -250,7 +250,7 @@ struct LandmarkForm: View {
                 await MainActor.run {
                     addressSearchState = .searching
                 }
-                let resolvedAddress: AddressInfo
+                let resolvedAddress: LocationInfo
                 switch searchType {
                 case .textSearch(let searchString):
                     resolvedAddress = try await addressLookupService.lookup(address: searchString)
