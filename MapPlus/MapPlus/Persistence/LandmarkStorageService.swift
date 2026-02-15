@@ -12,7 +12,7 @@ import CoreLocation
 
 /// A lightweight service responsible for persisting `Landmark` models
 /// using SwiftData. This type provides convenience helpers to translate
-/// app-level types (like `AddressInfo`) into persisted `Landmark` records.
+/// app-level types (like `LocationInfo`) into persisted `Landmark` records.
 struct LandmarkStorageService {
         
     /// The context under which to perform persistence operations
@@ -20,19 +20,19 @@ struct LandmarkStorageService {
     
     /// Saves a new `Landmark` and commits the change.
     ///
-    /// This method converts the supplied `AddressInfo` into a `CLLocationCoordinate2D`
+    /// This method converts the supplied `LocationInfo` into a `CLLocationCoordinate2D`
     /// and constructs a `Landmark` with the given name and system image. The new
     /// landmark is inserted into the context and the context is saved.
     ///
     /// - Parameters:
-    ///   - address: The address information that provides the latitude, longitude,
+    ///   - location: The location information that provides the latitude, longitude,
     ///              and formatted description for the landmark.
     ///   - name: The display name to assign to the landmark.
     ///   - notes: Descriptive notes about the landmark.
     ///   - iconName: The SF Symbols system image name associated with the landmark.
     /// - Throws: Re-throws any error encountered when saving the `modelContext`.
     func save(
-        address: LocationInfo,
+        location: LocationInfo,
         name: String,
         notes: String,
         iconName: String
@@ -41,9 +41,9 @@ struct LandmarkStorageService {
         let landmark = Landmark(
             name: name,
             notes: notes,
-            formattedAddress: address.formattedDescription,
+            formattedAddress: location.formattedDescription,
             systemImageName: iconName,
-            location: address.coordinates
+            location: location.coordinates
         )
         
         self.modelContext.insert(landmark)

@@ -1,5 +1,5 @@
 //
-//  AddressInfo.swift
+//  LocationInfo.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 1/31/26.

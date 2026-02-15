@@ -194,7 +194,7 @@ struct LandmarkForm: View {
                     break
                 case .searchResolved(let addressInfo):
                     try storageService.save(
-                        address: addressInfo,
+                        location: addressInfo,
                         name: landmarkNameInput,
                         notes: landmarkNotesInput,
                         iconName: landmarkIconNameSelected
