@@ -12,7 +12,7 @@ enum MapPlusError: Error {
     /// returned no address for the provided input.
     case noAddressFound
     
-    /// Indicates that a map look-around scene is not availabe
+    /// Indicates that a map look-around scene is not available
     case noLookAround
     
     // TODO patmcg support localizedDescription
