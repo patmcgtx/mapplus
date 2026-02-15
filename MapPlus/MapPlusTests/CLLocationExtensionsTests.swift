@@ -135,6 +135,9 @@ struct CLLocationExtensionsTests {
         }
     }
     
+    // Helper constants for separator detection
+    private static let separatorDetectionSamples = ["A", "B"]
+    
     // Helper function to parse coordinate components
     static func parseCoordinateComponents(from coordinateString: String) -> [String] {
         // Use ListFormatter to determine the separator pattern for the current locale
@@ -142,7 +145,7 @@ struct CLLocationExtensionsTests {
         listFormatter.locale = Locale.current
         
         // Generate a sample list to determine what separators ListFormatter uses
-        let sample = listFormatter.string(from: ["A", "B"]) ?? "A, B"
+        let sample = listFormatter.string(from: separatorDetectionSamples) ?? "A, B"
         
         // For a two-item list, ListFormatter typically uses a simple separator
         // We need to extract that separator pattern
@@ -150,8 +153,8 @@ struct CLLocationExtensionsTests {
         
         // Try to find the separator by removing the known items
         var separator = ", " // Default fallback
-        if sample.hasPrefix("A") && sample.hasSuffix("B") {
-            let middle = sample.dropFirst("A".count).dropLast("B".count)
+        if sample.hasPrefix(separatorDetectionSamples[0]) && sample.hasSuffix(separatorDetectionSamples[1]) {
+            let middle = sample.dropFirst(separatorDetectionSamples[0].count).dropLast(separatorDetectionSamples[1].count)
             separator = String(middle)
         }
         

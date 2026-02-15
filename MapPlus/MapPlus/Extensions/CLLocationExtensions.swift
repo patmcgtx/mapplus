@@ -17,6 +17,12 @@ extension CLLocation {
         return formatter
     }()
     
+    private static let listFormatter: ListFormatter = {
+        let formatter = ListFormatter()
+        formatter.locale = Locale.current
+        return formatter
+    }()
+    
     /// Creates a user-facing string with this location's latitude & longitude,
     /// formatted to 5 decimal places just like  Maps. ;-)
     var coordinateString: String {
@@ -27,9 +33,7 @@ extension CLLocation {
             CLLocation.coordinateFormatter.string(from: lon) ?? "--",
         ]
         
-        let listFormatter = ListFormatter()
-        listFormatter.locale = Locale.current
-        return listFormatter.string(from: coordinates) ?? coordinates.joined(separator: ", ")
+        return CLLocation.listFormatter.string(from: coordinates) ?? coordinates.joined(separator: ", ")
     }
 
 }
