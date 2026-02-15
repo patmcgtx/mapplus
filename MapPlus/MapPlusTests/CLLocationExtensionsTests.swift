@@ -68,16 +68,14 @@ struct CLLocationExtensionsTests {
         let coordinateString = location.coordinateString
         
         // The formatter should format to exactly 5 decimal places
-        let components = coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
-        #expect(components.count == 2)
+        let coordinateComponents = coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        #expect(coordinateComponents.count == 2)
         
         // Verify each component has exactly 5 decimal places
-        for component in components {
+        for component in coordinateComponents {
             if let decimalIndex = component.firstIndex(of: ".") {
                 let decimalPart = component[component.index(after: decimalIndex)...]
-                // Remove any negative sign for counting
-                let cleanDecimalPart = decimalPart.replacingOccurrences(of: "-", with: "")
-                #expect(cleanDecimalPart.count == 5)
+                #expect(decimalPart.count == 5)
             }
         }
     }
