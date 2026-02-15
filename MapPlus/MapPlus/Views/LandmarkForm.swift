@@ -283,15 +283,15 @@ struct LandmarkForm: View {
 
 #Preview("Create - mock services") {
     LandmarkForm(mode: .create)
+        .environment(\.locationService, MockLocationService())
+        .environment(\.addressLookupService, MockAddressLookupService())
 }
 
 #Preview("Create - real services") {
     LandmarkForm(mode: .create)
-        .environment(\.locationService, MapKitLocationService())
-        .environment(\.addressLookupService, MapKitAddressLookupService())
 }
 
-#Preview("Edit") {
+#Preview("Edit - real") {
     LandmarkForm(mode: .edit(
         LandmarkSampleData().capital)
     )
