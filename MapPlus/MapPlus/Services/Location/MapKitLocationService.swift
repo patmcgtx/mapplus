@@ -94,6 +94,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
             components.append(country)
         }
         
+        // TODO patmcg user ListFormatter!
         return components.isEmpty ? "current-location".localized : components.joined(separator: ", ")
     }
     
