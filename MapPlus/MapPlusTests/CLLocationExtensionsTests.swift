@@ -101,7 +101,7 @@ struct CLLocationExtensionsTests {
         let coordinateString = location.coordinateString
         let coordinateComponents = Self.parseCoordinateComponents(from: coordinateString)
         
-        // TODO patmcg verify the format is "latitude, longitude" / use different locales
+        // Verify latitude and longitude are properly formatted
         #expect(coordinateComponents.count == 2)
         #expect(coordinateComponents[0].contains(testCase.expectedLatString))
         #expect(coordinateComponents[1].contains(testCase.expectedLonString))
