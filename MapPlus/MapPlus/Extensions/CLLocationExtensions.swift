@@ -8,11 +8,7 @@ import CoreLocation
 
 extension CLLocation {
 
-    // TODO patmcg add unit tests
-    
     private static let coordinateFormatter: NumberFormatter = {
-        // TODO patmcg make sure this doesn't get re-executed each time.
-        //      If so, I may need create a location formatter.
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
