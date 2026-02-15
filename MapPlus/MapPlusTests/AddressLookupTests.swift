@@ -5,34 +5,77 @@ struct AddressLookupTests {
     
     // MARK: - MockAddressLookupService Tests
     
-    @Test func testMockAddressLookupSuccessWithExactMatch() async throws {
-        let service = MockAddressLookupService()
-        
-        let result = try await service.lookup(address: "San Francisco")
-        
-        #expect(result.formattedDescription == "San Francisco, CA, United States")
-        #expect(result.coordinates.latitude == 37.7749)
-        #expect(result.coordinates.longitude == -122.4194)
+    // Test data for parameterized address lookup tests
+    struct AddressLookupTestCase {
+        let query: String
+        let expectedDescription: String
+        let expectedLatitude: Double
+        let expectedLongitude: Double
+        let description: String
     }
     
-    @Test func testMockAddressLookupSuccessWithCaseInsensitiveMatch() async throws {
+    @Test("Mock address lookup success cases", arguments: [
+        AddressLookupTestCase(
+            query: "San Francisco",
+            expectedDescription: "San Francisco, CA, United States",
+            expectedLatitude: 37.7749,
+            expectedLongitude: -122.4194,
+            description: "Exact match"
+        ),
+        AddressLookupTestCase(
+            query: "san francisco",
+            expectedDescription: "San Francisco, CA, United States",
+            expectedLatitude: 37.7749,
+            expectedLongitude: -122.4194,
+            description: "Case insensitive match"
+        ),
+        AddressLookupTestCase(
+            query: "Francisco",
+            expectedDescription: "San Francisco, CA, United States",
+            expectedLatitude: 37.7749,
+            expectedLongitude: -122.4194,
+            description: "Partial match"
+        ),
+        AddressLookupTestCase(
+            query: "New York",
+            expectedDescription: "New York, NY, United States",
+            expectedLatitude: 40.7128,
+            expectedLongitude: -74.0060,
+            description: "New York exact match"
+        ),
+        AddressLookupTestCase(
+            query: "London",
+            expectedDescription: "London, United Kingdom",
+            expectedLatitude: 51.5074,
+            expectedLongitude: -0.1278,
+            description: "London exact match"
+        ),
+        AddressLookupTestCase(
+            query: "Tokyo",
+            expectedDescription: "Tokyo, Japan",
+            expectedLatitude: 35.6762,
+            expectedLongitude: 139.6503,
+            description: "Tokyo exact match"
+        ),
+        AddressLookupTestCase(
+            query: "1 Infinite Loop",
+            expectedDescription: "1 Infinite Loop, Cupertino, CA 95014, United States",
+            expectedLatitude: 37.3349,
+            expectedLongitude: -122.0090,
+            description: "Apple headquarters exact match"
+        )
+    ])
+    func testMockAddressLookupSuccess(testCase: AddressLookupTestCase) async throws {
         let service = MockAddressLookupService()
         
-        let result = try await service.lookup(address: "san francisco")
+        let result = try await service.lookup(address: testCase.query)
         
-        #expect(result.formattedDescription == "San Francisco, CA, United States")
-        #expect(result.coordinates.latitude == 37.7749)
-        #expect(result.coordinates.longitude == -122.4194)
-    }
-    
-    @Test func testMockAddressLookupSuccessWithPartialMatch() async throws {
-        let service = MockAddressLookupService()
-        
-        let result = try await service.lookup(address: "Francisco")
-        
-        #expect(result.formattedDescription == "San Francisco, CA, United States")
-        #expect(result.coordinates.latitude == 37.7749)
-        #expect(result.coordinates.longitude == -122.4194)
+        #expect(result.formattedDescription == testCase.expectedDescription,
+                "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
+        #expect(result.coordinates.latitude == testCase.expectedLatitude,
+                "Expected latitude \(testCase.expectedLatitude) for \(testCase.description)")
+        #expect(result.coordinates.longitude == testCase.expectedLongitude,
+                "Expected longitude \(testCase.expectedLongitude) for \(testCase.description)")
     }
     
     @Test func testMockAddressLookupSuccessWithCustomAddress() async throws {
@@ -70,26 +113,6 @@ struct AddressLookupTests {
             #expect(error == .noAddressFound)
         } catch {
             Issue.record("Expected MapPlusError.noAddressFound, but got: \(error)")
-        }
-    }
-    
-    @Test func testMockAddressLookupAllPredefinedAddresses() async throws {
-        let service = MockAddressLookupService()
-        
-        // Test all predefined addresses
-        let addresses = [
-            ("San Francisco", "San Francisco, CA, United States", 37.7749, -122.4194),
-            ("New York", "New York, NY, United States", 40.7128, -74.0060),
-            ("London", "London, United Kingdom", 51.5074, -0.1278),
-            ("Tokyo", "Tokyo, Japan", 35.6762, 139.6503),
-            ("1 Infinite Loop", "1 Infinite Loop, Cupertino, CA 95014, United States", 37.3349, -122.0090)
-        ]
-        
-        for (query, expectedDescription, expectedLat, expectedLon) in addresses {
-            let result = try await service.lookup(address: query)
-            #expect(result.formattedDescription == expectedDescription)
-            #expect(result.coordinates.latitude == expectedLat)
-            #expect(result.coordinates.longitude == expectedLon)
         }
     }
     
