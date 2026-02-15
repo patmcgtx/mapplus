@@ -18,5 +18,6 @@ struct MapPlusApp: App {
         .modelContainer(try! ModelContainer.persistentContainer())
         .environment(\.locationService, MapKitLocationService())
         .environment(\.addressLookupService, MapKitAddressLookupService())
+        .environment(\.lookAroundService, MapKitLookAroundService())
     }
 }

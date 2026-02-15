@@ -10,28 +10,35 @@ import MapKit
 
 /// Displays the details of the given landmark, including notes, address, and a lookaround preview.
 struct LandmarkDetailsView: View {
-
-    /// The landmark to dislpay
+    
+    /// The landmark to display
     let landmark: Landmark
-
+    
     // Environment
     @Environment(\.dismiss) private var dismiss
-
+    @Environment(\.lookAroundService) var lookAroundService
+    
     // UI state
     @State private var isEditorShowing: Bool = false
-
+    
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
         case details = "Details"
-        case preview = "Preview"        
+        case preview = "Preview"
         var id: Self { self }
     }
     @State private var selectedSection: Section = .details
     
-    // Location preview
-    @State private var lookaroundScene: MKLookAroundScene? = nil
-    @State private var lopokaroundError: Error? = nil
-
+    // Look-around location preview
+    private enum LookAroundState {
+        case initial
+        case loading
+        case resolved(MKLookAroundScene)
+        case notAvailable
+        case failure(Error)
+    }
+    @State private var lookAroundState: LookAroundState = .initial
+    
     var body: some View {
         NavigationStack {
             HStack {
@@ -52,23 +59,9 @@ struct LandmarkDetailsView: View {
                     
                     switch selectedSection {
                     case .details:
-                        Text(landmark.notes)
-                            .padding()
-                        Text(landmark.formattedAddress)
-                            .font(.footnote)
-                            .padding(.leading)
+                        detailsView
                     case .preview:
-                        // TODO patmcg handle loading state
-                        // TODO patmcg test error state, which may legit just mean
-                        //      lookaround is not available there.  So handle it
-                        //      like as "not available" more than an "error" per se.
-                        if let lookaroundScene = self.lookaroundScene {
-                            LookAroundPreview(initialScene: lookaroundScene)
-                                .padding()
-                        } else if let lookaroundError = self.lopokaroundError {
-                            Text(lookaroundError.localizedDescription)
-                                .padding()
-                        }
+                        lookAroundView
                     }
                     Spacer()
                 }
@@ -83,41 +76,84 @@ struct LandmarkDetailsView: View {
                 }
                 ToolbarItem(placement: .destructiveAction) {
                     Button("Edit", systemImage: "square.and.pencil") {
-                        self.isEditorShowing = true
+                        isEditorShowing = true
                     }
                 }
             }
         }
-        .sheet(isPresented: self.$isEditorShowing) {
+        .sheet(isPresented: $isEditorShowing) {
             NavigationStack {
                 LandmarkForm(mode: .edit(landmark))
             }
         }
-        .onAppear {
-            self.fetchLookaroundScene()
-        }
-    }
-    
-    // MARK: - Private helpers
-    
-    func fetchLookaroundScene() {
-        // TODO patmcg consider moving this to a service
-        // TODO patmcg show placeholder if lookaround won't load
-        if self.lookaroundScene == nil {
-            let lookaroundRequest = MKLookAroundSceneRequest(coordinate: self.landmark.location)
-            lookaroundRequest.getSceneWithCompletionHandler { (scene, error) in
-                if let sceneToShow = scene {
-                    DispatchQueue.main.async {
-                        self.lookaroundScene = sceneToShow
-                    }
-                } else if let errorToShow = error {
-                    self.lopokaroundError = errorToShow
+        .task {
+            do {
+                // Fetch the look-around scene when the view loads
+                lookAroundState = .loading
+                if let lookAroundScene = try await lookAroundService.lookAroundScene(
+                    for: landmark.location) {
+                    lookAroundState = .resolved(lookAroundScene)
+                } else {
+                    lookAroundState = .notAvailable
                 }
+            } catch {
+                lookAroundState = .failure(error)
             }
         }
     }
+    
+    // MARK: - Subviews
+    
+    @ViewBuilder
+    private var detailsView: some View {
+        Text(landmark.notes)
+            .padding()
+        Text(landmark.formattedAddress)
+            .font(.footnote)
+            .padding(.leading)
+    }
+    
+    @ViewBuilder
+    private var lookAroundView: some View {
+        switch lookAroundState {
+        case .initial:
+            EmptyView()
+        case .loading:
+            // TODO patmcg improve this view
+            ProgressView()
+        case .resolved(let scene):
+            LookAroundPreview(initialScene: scene)
+                .padding()
+        case .notAvailable:
+            // TODO patmcg improve this view
+            Text("Nothing to see here")
+        case .failure(let error):
+            // TODO patmcg improve this view
+            ErrorView(shortMessage: "Look-around issues", error: error)
+        }
+    }
+    
 }
 
-#Preview {
+#Preview("Real look-around") {
+    LandmarkDetailsView(landmark: LandmarkSampleData().tokyo)
+        .environment(\.lookAroundService, MapKitLookAroundService())
+}
+
+#Preview("Mock - no look-around") {
     LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+        .environment(\.lookAroundService, MockLookAroundService(
+            errorToThrow: nil,
+            sceneToReturn: nil,
+            networkDelaySeconds: 2.5
+        ))
+}
+
+#Preview("Mock - look-around error") {
+    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+        .environment(\.lookAroundService, MockLookAroundService(
+            errorToThrow: MapPlusError.noLookAround,
+            sceneToReturn: nil,
+            networkDelaySeconds: 8.0
+        ))
 }
