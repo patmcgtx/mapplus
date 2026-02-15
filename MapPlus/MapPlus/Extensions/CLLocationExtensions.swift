@@ -22,12 +22,14 @@ extension CLLocation {
     var coordinateString: String {
         let lat = NSNumber(value: self.coordinate.latitude)
         let lon = NSNumber(value: self.coordinate.longitude)
-        // TODO patmcg user ListFormatter!
-        return [
+        let coordinates = [
             CLLocation.coordinateFormatter.string(from: lat) ?? "--",
             CLLocation.coordinateFormatter.string(from: lon) ?? "--",
-            ]
-            .joined(separator: ", ")
+        ]
+        
+        let listFormatter = ListFormatter()
+        listFormatter.locale = Locale.current
+        return listFormatter.string(from: coordinates) ?? coordinates.joined(separator: ", ")
     }
 
 }

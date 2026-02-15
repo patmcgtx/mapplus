@@ -137,6 +137,33 @@ struct CLLocationExtensionsTests {
     
     // Helper function to parse coordinate components
     static func parseCoordinateComponents(from coordinateString: String) -> [String] {
-        coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        // Use ListFormatter to determine the separator pattern for the current locale
+        let listFormatter = ListFormatter()
+        listFormatter.locale = Locale.current
+        
+        // Generate a sample list to determine what separators ListFormatter uses
+        let sample = listFormatter.string(from: ["A", "B"]) ?? "A, B"
+        
+        // For a two-item list, ListFormatter typically uses a simple separator
+        // We need to extract that separator pattern
+        // Common patterns: "A, B" (English), "A y B" (Spanish), "A und B" (German), etc.
+        
+        // Try to find the separator by removing the known items
+        var separator = ", " // Default fallback
+        if sample.hasPrefix("A") && sample.hasSuffix("B") {
+            let middle = sample.dropFirst("A".count).dropLast("B".count)
+            separator = String(middle)
+        }
+        
+        // Split using the detected separator and trim whitespace
+        let components = coordinateString.components(separatedBy: separator)
+            .map { $0.trimmingCharacters(in: .whitespaces) }
+        
+        // If we didn't get exactly 2 components, try the fallback comma separator
+        if components.count != 2 {
+            return coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        }
+        
+        return components
     }
 }
