@@ -52,12 +52,9 @@ extension MKMapItem {
             fullAddress
         } else if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             fullAddress
-        } else if let location = self.location {
+        } else {
             // Fall back to coordinates if no address is available
             location.coordinateString
-        } else {
-            // Final fallback if location is also nil
-            "Unknown Location"
         }
     }
     

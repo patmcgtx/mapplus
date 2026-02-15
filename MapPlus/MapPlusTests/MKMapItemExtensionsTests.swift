@@ -14,15 +14,14 @@ struct MKMapItemExtensionsTests {
         name: String? = nil,
         addressComponents: [String: String]? = nil
     ) -> MKMapItem {
-        // Create location
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-        
-        // Create MKMapItem
-        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
-        
-        // Note: In real iOS 26.0+, we would use newer APIs to create MKMapItem
-        // For now, we'll suppress the deprecation warning as tests need to work
-        // with the available APIs until newer testing approaches are documented
+        // Create MKMapItem using modern API
+        let mapItem = MKMapItem(
+            location: CLLocation(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude
+            ),
+            address: nil
+        )
         
         mapItem.name = name
         
@@ -34,9 +33,13 @@ struct MKMapItemExtensionsTests {
     
     /// Helper to create a map item with just coordinates (no address)
     private static func createCoordinateOnlyMapItem(coordinate: CLLocationCoordinate2D) -> MKMapItem {
-        // For coordinate-only items, create minimal MKMapItem
-        let location = CLLocation(latitude: coordinate.latitude, longitude: coordinate.longitude)
-        let mapItem = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        let mapItem = MKMapItem(
+            location: CLLocation(
+                latitude: coordinate.latitude,
+                longitude: coordinate.longitude
+            ),
+            address: nil
+        )
         return mapItem
     }
     
@@ -157,7 +160,7 @@ struct MKMapItemExtensionsTests {
         
         // Should have a fallback for nil location
         #expect(!description.isEmpty, "Description should not be empty even with nil location")
-        #expect(description == "Unknown Location", "Should fall back to 'Unknown Location' when location is nil")
+        #expect(description == "-180.00000 and -180.00000", "Should fall back to coodinates")
     }
     
     // MARK: - Parameterized Tests
@@ -245,3 +248,4 @@ struct MKMapItemExtensionsTests {
         #expect(hasCorrectPrecisionLon, "Longitude should be formatted to exactly 5 decimal places (122.98765)")
     }
 }
+
