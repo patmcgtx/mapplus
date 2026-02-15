@@ -135,14 +135,90 @@ struct CLLocationExtensionsTests {
         }
     }
     
+    // Test data for locale-specific tests
+    struct LocaleTestCase {
+        let locale: Locale
+        let latitude: Double
+        let longitude: Double
+        let expectedLatString: String
+        let expectedLonString: String
+        let description: String
+    }
+    
+    @Test("Locale-specific coordinate formatting", arguments: [
+        LocaleTestCase(
+            locale: Locale(identifier: "en_US"),
+            latitude: 37.33233141,
+            longitude: -122.03121860,
+            expectedLatString: "37.33233",
+            expectedLonString: "-122.03122",
+            description: "English (US) locale"
+        ),
+        LocaleTestCase(
+            locale: Locale(identifier: "es_ES"),
+            latitude: 37.33233141,
+            longitude: -122.03121860,
+            expectedLatString: "37,33233",
+            expectedLonString: "-122,03122",
+            description: "Spanish (Spain) locale"
+        ),
+        LocaleTestCase(
+            locale: Locale(identifier: "de_DE"),
+            latitude: 37.33233141,
+            longitude: -122.03121860,
+            expectedLatString: "37,33233",
+            expectedLonString: "-122,03122",
+            description: "German (Germany) locale"
+        ),
+        LocaleTestCase(
+            locale: Locale(identifier: "en_US"),
+            latitude: -33.86882,
+            longitude: 151.20929,
+            expectedLatString: "-33.86882",
+            expectedLonString: "151.20929",
+            description: "English with negative latitude"
+        ),
+        LocaleTestCase(
+            locale: Locale(identifier: "es_ES"),
+            latitude: 40.7128,
+            longitude: -74.0060,
+            expectedLatString: "40,71280",
+            expectedLonString: "-74,00600",
+            description: "Spanish with mixed coordinates"
+        ),
+        LocaleTestCase(
+            locale: Locale(identifier: "de_DE"),
+            latitude: 0.0,
+            longitude: 0.0,
+            expectedLatString: "0,00000",
+            expectedLonString: "0,00000",
+            description: "German with zero coordinates"
+        )
+    ])
+    func testCoordinateStringWithLocale(testCase: LocaleTestCase) {
+        let location = CLLocation(
+            latitude: testCase.latitude,
+            longitude: testCase.longitude
+        )
+        
+        let coordinateString = location.coordinateString(locale: testCase.locale)
+        let coordinateComponents = Self.parseCoordinateComponents(from: coordinateString, locale: testCase.locale)
+        
+        #expect(coordinateComponents.count == 2, "Expected 2 components for \(testCase.description)")
+        #expect(coordinateComponents[0].contains(testCase.expectedLatString), 
+                "Expected latitude '\(testCase.expectedLatString)' in '\(coordinateComponents[0])' for \(testCase.description)")
+        #expect(coordinateComponents[1].contains(testCase.expectedLonString),
+                "Expected longitude '\(testCase.expectedLonString)' in '\(coordinateComponents[1])' for \(testCase.description)")
+    }
+    
     // Helper constants for separator detection
     private static let separatorDetectionSamples = ["A", "B"]
     
-    // Helper function to parse coordinate components
-    static func parseCoordinateComponents(from coordinateString: String) -> [String] {
-        // Use ListFormatter to determine the separator pattern for the current locale
+    // Helper function to parse coordinate components with a specific locale
+    static func parseCoordinateComponents(from coordinateString: String, locale: Locale) -> [String] {
+        // Use ListFormatter to determine the separator pattern for the specified locale
         let listFormatter = ListFormatter()
-        listFormatter.locale = Locale.current
+        listFormatter.locale = locale
         
         // Generate a sample list to determine what separators ListFormatter uses
         let sample = listFormatter.string(from: separatorDetectionSamples) ?? "A, B"
@@ -168,5 +244,10 @@ struct CLLocationExtensionsTests {
         }
         
         return components
+    }
+    
+    // Helper function to parse coordinate components (uses current locale)
+    static func parseCoordinateComponents(from coordinateString: String) -> [String] {
+        parseCoordinateComponents(from: coordinateString, locale: Locale.current)
     }
 }
