@@ -15,8 +15,6 @@ enum MapPlusError: Error {
     /// Indicates that a map look-around scene is not available for the location specifcied.
     case noLookAround
     
-    // TODO patmcg support localizedDescription
-    
     /// A human-readable description of the error.
     var errorMessage: String {
         switch self {
