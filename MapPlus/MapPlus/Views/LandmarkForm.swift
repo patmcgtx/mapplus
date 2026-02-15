@@ -214,7 +214,7 @@ struct LandmarkForm: View {
         HStack {
             HStack {
                 
-                // Landark icon
+                // Landmark icon
                 VStack {
                     Spacer()
                     Image(systemName: landmarkIconNameSelected)

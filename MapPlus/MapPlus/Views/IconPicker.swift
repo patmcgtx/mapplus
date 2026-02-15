@@ -9,7 +9,7 @@ import SwiftUI
 import SFSafeSymbols
 import SFSymbolsPicker
 
-/// A view that lets the user pic an icon a set up SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
+/// A view that lets the user pick an icon from a set of SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
 /// and then populating the provided binding.
 struct IconPicker: View {
     
