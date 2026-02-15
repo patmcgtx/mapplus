@@ -8,45 +8,42 @@
 import SwiftData
 import CoreLocation
 
+// TODO patmcg clean up these comments
+
 /// A lightweight service responsible for persisting `Landmark` models
 /// using SwiftData. This type provides convenience helpers to translate
-/// app-level types (like `AddressInfo`) into persisted `Landmark` records.
+/// app-level types (like `LocationInfo`) into persisted `Landmark` records.
 struct LandmarkStorageService {
         
     /// The context under which to perform persistence operations
     let modelContext: ModelContext
     
-    /// Saves a new `Landmark` and commites the change.
+    /// Saves a new `Landmark` and commits the change.
     ///
-    /// This method converts the supplied `AddressInfo` into a `CLLocationCoordinate2D`
+    /// This method converts the supplied `LocationInfo` into a `CLLocationCoordinate2D`
     /// and constructs a `Landmark` with the given name and system image. The new
     /// landmark is inserted into the context and the context is saved.
     ///
     /// - Parameters:
-    ///   - address: The address information that provides the latitude, longitude,
+    ///   - location: The location information that provides the latitude, longitude,
     ///              and formatted description for the landmark.
     ///   - name: The display name to assign to the landmark.
     ///   - notes: Descriptive notes about the landmark.
     ///   - iconName: The SF Symbols system image name associated with the landmark.
-    /// - Throws: Rethrows any error encountered when saving the `modelContext`.
+    /// - Throws: Re-throws any error encountered when saving the `modelContext`.
     func save(
-        address: AddressInfo,
+        location: LocationInfo,
         name: String,
         notes: String,
         iconName: String
     ) throws {
         
-        let coord = CLLocationCoordinate2D(
-            latitude: address.latitude,
-            longitude: address.longitude
-        )
-        
         let landmark = Landmark(
             name: name,
             notes: notes,
-            formattedAddress: address.formattedDescription,
+            formattedAddress: location.formattedDescription,
             systemImageName: iconName,
-            location: coord
+            location: location.coordinates
         )
         
         self.modelContext.insert(landmark)
@@ -55,7 +52,7 @@ struct LandmarkStorageService {
     
     /// Deletes the given `Landmark` and commits the change.
     /// - Parameters:
-    ///   - landmark: The landmakr to delete
+    ///   - landmark: The landmark to delete
     /// - Throws: Rethrows any error encountered when saving the `modelContext`.
     func delete(landmark: Landmark) throws {
         self.modelContext.delete(landmark)

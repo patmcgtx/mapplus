@@ -7,6 +7,8 @@
 import CoreLocation
 import MapKit
 
+// TODO patmcg cleanup / docs
+
 /// A service for obtaining the user's current location and converting it to an AddressInfo.
 /// This is basically an async wrapper for CLLocationManager (thanks, Claude Sonnet!).
 class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegate {
@@ -23,7 +25,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
     /// Gets the user's current location and converts it to an AddressInfo object.
     /// - Returns: An AddressInfo object containing the formatted address and coordinates.
     /// - Throws: MapPlusError.noAddressFound if location cannot be determined or reverse geocoding fails.
-    func getCurrentLocation() async throws -> AddressInfo {
+    func getCurrentLocation() async throws -> LocationInfo {
         
         // First, get the current coordinates
         let location = try await requestCurrentLocation()
@@ -41,7 +43,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         // Build a formatted address string
         let formattedAddress = formatPlacemark(placemark)
         
-        return AddressInfo(
+        return LocationInfo(
             formattedDescription: formattedAddress,
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
@@ -92,7 +94,8 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
             components.append(country)
         }
         
-        return components.isEmpty ? "Current Location" : components.joined(separator: ", ")
+        // TODO patmcg user ListFormatter!
+        return components.isEmpty ? "current-location".localized : components.joined(separator: ", ")
     }
     
     // MARK: - CLLocationManagerDelegate

@@ -12,19 +12,16 @@ enum MapPlusError: Error {
     /// returned no address for the provided input.
     case noAddressFound
     
-    /// Indicates that a map look-around scene is not available
+    /// Indicates that a map look-around scene is not available for the location specified.
     case noLookAround
-    
-    // TODO patmcg support localizedDescription
     
     /// A human-readable description of the error.
     var errorMessage: String {
-        // TODO patmcg localize
         switch self {
         case .noAddressFound:
-            return "No address found"
+            return "no-address-found".localized
         case .noLookAround:
-            return "No look-around available"
+            return "no-look-around".localized
         }
     }
 }

@@ -2,13 +2,11 @@
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 2/15/26.
-//
-//  -> Thanks, Claude Sonnet 4.5
+//  Thanks, Claude Sonnet 4.5
 //
 import MapKit
 
 /// A mock implementation of LookAroundService for testing and previews.
-/// Returns predefined look-around scenes or throws errors based on configuration.
 struct MockLookAroundService: LookAroundService {
     
     /// Optional error to throw

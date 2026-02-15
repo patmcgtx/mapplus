@@ -6,6 +6,8 @@
 //
 import Foundation
 
+// TODO patmcg cleanup?
+
 /// A mock implementation of AddressLookupProtocol for testing and previews.
 /// Returns predefined addresses or throws errors based on the input.
 /// (Thanks, Claude Sonnet.)
@@ -15,31 +17,31 @@ struct MockAddressLookupService: AddressLookupService {
     var shouldSucceed: Bool = true
     
     /// Optional custom address to return instead of using the default mock data.
-    var customAddress: AddressInfo?
+    var customAddress: LocationInfo?
     
     /// A collection of predefined mock addresses for common test scenarios.
-    static let mockAddresses: [String: AddressInfo] = [
-        "San Francisco": AddressInfo(
+    static let mockAddresses: [String: LocationInfo] = [
+        "San Francisco": LocationInfo(
             formattedDescription: "San Francisco, CA, United States",
             latitude: 37.7749,
             longitude: -122.4194
         ),
-        "New York": AddressInfo(
+        "New York": LocationInfo(
             formattedDescription: "New York, NY, United States",
             latitude: 40.7128,
             longitude: -74.0060
         ),
-        "London": AddressInfo(
+        "London": LocationInfo(
             formattedDescription: "London, United Kingdom",
             latitude: 51.5074,
             longitude: -0.1278
         ),
-        "Tokyo": AddressInfo(
+        "Tokyo": LocationInfo(
             formattedDescription: "Tokyo, Japan",
             latitude: 35.6762,
             longitude: 139.6503
         ),
-        "1 Infinite Loop": AddressInfo(
+        "1 Infinite Loop": LocationInfo(
             formattedDescription: "1 Infinite Loop, Cupertino, CA 95014, United States",
             latitude: 37.3349,
             longitude: -122.0090
@@ -50,7 +52,7 @@ struct MockAddressLookupService: AddressLookupService {
     /// - Parameter address: The address string to look up.
     /// - Returns: A mock AddressInfo object.
     /// - Throws: MapPlusError.noAddressFound if shouldSucceed is false or address is not in mock data.
-    func lookup(address: String) async throws -> AddressInfo {
+    func lookup(address: String) async throws -> LocationInfo {
         // Simulate network delay
         try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
         
@@ -75,7 +77,7 @@ struct MockAddressLookupService: AddressLookupService {
         }
         
         // Return a generic address for any other query
-        return AddressInfo(
+        return LocationInfo(
             formattedDescription: "\(address) (Mock Result)",
             latitude: 37.7749,
             longitude: -122.4194

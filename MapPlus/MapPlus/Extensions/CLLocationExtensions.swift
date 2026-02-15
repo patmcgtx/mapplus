@@ -8,11 +8,7 @@ import CoreLocation
 
 extension CLLocation {
 
-    // TODO patmcg add unit tests
-    
     private static let coordinateFormatter: NumberFormatter = {
-        // TODO patmcg make sure this doesn't get re-executed each time.
-        //      If so, I may need create a location formatter.
         let formatter = NumberFormatter()
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
@@ -23,9 +19,10 @@ extension CLLocation {
     
     /// Creates a user-facing string with this location's latitude & longitude,
     /// formatted to 5 decimal places just like  Maps. ;-)
-    var asLatLonString: String {
+    var coordinateString: String {
         let lat = NSNumber(value: self.coordinate.latitude)
         let lon = NSNumber(value: self.coordinate.longitude)
+        // TODO patmcg user ListFormatter!
         return [
             CLLocation.coordinateFormatter.string(from: lat) ?? "--",
             CLLocation.coordinateFormatter.string(from: lon) ?? "--",

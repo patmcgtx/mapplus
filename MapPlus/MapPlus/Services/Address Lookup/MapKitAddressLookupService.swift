@@ -6,6 +6,8 @@
 //
 import MapKit
 
+// TODO patmcg cleanup docs
+
 /// A service for performing asynchronous address lookups using MapKit.
 /// Used throughout MapPlus to resolve user-entered locations into structured data.
 struct MapKitAddressLookupService: AddressLookupService {
@@ -15,7 +17,7 @@ struct MapKitAddressLookupService: AddressLookupService {
     /// - Parameter address: The address or place name to search for, expressed as a user-friendly string.
     /// - Returns: An AddressInfo object containing a formatted description and coordinates of the first found location.
     /// - Throws: MapPlusError.noAddressFound if no matching address or coordinates can be found.
-    func lookup(address: String) async throws -> AddressInfo {
+    func lookup(address: String) async throws -> LocationInfo {
         let request = MKLocalSearch.Request()
         request.naturalLanguageQuery = address
         let search = MKLocalSearch(request: request)
@@ -27,7 +29,7 @@ struct MapKitAddressLookupService: AddressLookupService {
         if !CLLocationCoordinate2DIsValid(coordinate) {
             throw MapPlusError.noAddressFound
         }
-        return AddressInfo(
+        return LocationInfo(
             formattedDescription: item.fullDescription,
             latitude: coordinate.latitude,
             longitude: coordinate.longitude

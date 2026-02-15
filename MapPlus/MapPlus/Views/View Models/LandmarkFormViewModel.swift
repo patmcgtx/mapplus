@@ -7,6 +7,8 @@
 
 import SFSafeSymbols
 
+// TODO patmcg take a fresh look at this overall
+
 /// View model that provides display data for `LandmarkFormView`.
 ///
 /// This type encapsulates the state needed to present and edit a landmark in the form,
@@ -32,10 +34,9 @@ struct LandmarkFormViewModel {
     ///
     /// - Returns: "New Landmark" when creating, or the existing landmark's name when editing.
     var formTitle: String {
-        // TODO patmcg localize
         switch mode {
         case .create:
-            return "New Landmark"
+            return "new-landmark".localized
         case .edit(let landmark):
             return landmark.name
         }

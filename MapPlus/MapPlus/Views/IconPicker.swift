@@ -9,7 +9,7 @@ import SwiftUI
 import SFSafeSymbols
 import SFSymbolsPicker
 
-/// A view that lets the user pic an icon a set up SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
+/// A view that lets the user pick an icon from a set of SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
 /// and then populating the provided binding.
 struct IconPicker: View {
     
@@ -27,7 +27,7 @@ struct IconPicker: View {
         NavigationStack {
             SymbolsPicker(
                 selection: $selectedSymbolName,
-                title: "Pick icon",
+                title: "pick-icon".localized,
                 autoDismiss: true,
                 symbols: self.symbolOptions,
                 closeButton: {
@@ -37,7 +37,7 @@ struct IconPicker: View {
             )
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "x.circle") {
+                    Button("close".localized, systemImage: "x.circle") {
                         dismiss()
                     }
                 }
