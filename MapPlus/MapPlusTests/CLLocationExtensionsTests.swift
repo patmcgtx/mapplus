@@ -13,11 +13,6 @@ struct CLLocationExtensionsTests {
         let description: String
     }
     
-    // Helper function to parse coordinate components
-    private func parseCoordinateComponents(from coordinateString: String) -> [String] {
-        coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
-    }
-    
     @Test("Coordinate formatting", arguments: [
         CoordinateTestCase(
             latitude: 37.33233141,
@@ -104,11 +99,12 @@ struct CLLocationExtensionsTests {
         )
         
         let coordinateString = location.coordinateString
+        let coordinateComponents = Self.parseCoordinateComponents(from: coordinateString)
         
-        // Verify it contains formatted coordinates
-        #expect(coordinateString.contains(testCase.expectedLatString))
-        #expect(coordinateString.contains(testCase.expectedLonString))
-        #expect(coordinateString.contains(","))
+        // Verify the format is "latitude, longitude"
+        #expect(coordinateComponents.count == 2)
+        #expect(coordinateComponents[0].contains(testCase.expectedLatString))
+        #expect(coordinateComponents[1].contains(testCase.expectedLonString))
     }
     
     @Test("Decimal precision formatting", arguments: [
@@ -125,17 +121,22 @@ struct CLLocationExtensionsTests {
         )
         
         let coordinateString = location.coordinateString
+        let coordinateComponents = Self.parseCoordinateComponents(from: coordinateString)
         
-        // The formatter should format to exactly 5 decimal places
-        let coordinateComponents = parseCoordinateComponents(from: coordinateString)
         #expect(coordinateComponents.count == 2)
         
-        // Verify each component has exactly 5 decimal places
+        // Verify each component has a decimal point and exactly 5 decimal places
         for component in coordinateComponents {
+            #expect(component.contains("."))
             if let decimalIndex = component.firstIndex(of: ".") {
                 let decimalPart = component[component.index(after: decimalIndex)...]
                 #expect(decimalPart.count == 5)
             }
         }
+    }
+    
+    // Helper function to parse coordinate components
+    static func parseCoordinateComponents(from coordinateString: String) -> [String] {
+        coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
     }
 }
