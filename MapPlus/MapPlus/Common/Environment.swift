@@ -10,4 +10,5 @@ import SwiftUI
 extension EnvironmentValues {
     @Entry var locationService: LocationService = MockLocationService()
     @Entry var addressLookupService: AddressLookupService = MockAddressLookupService()
+    @Entry var lookAroundService: LookAroundService = MapKitLookAroundService()
 }
