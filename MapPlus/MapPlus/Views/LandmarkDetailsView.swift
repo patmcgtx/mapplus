@@ -28,7 +28,7 @@ struct LandmarkDetailsView: View {
         var id: Self { self }
         
         var localizedString: String {
-            String(localized: .init(self.rawValue))
+            String(localized: self.rawValue)
         }
     }
     @State private var selectedSection: Section = .details
