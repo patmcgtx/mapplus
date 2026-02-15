@@ -27,8 +27,8 @@ struct CLLocationExtensionsTests {
         let coordinateString = location.coordinateString
         
         // Verify it contains formatted coordinates with negative signs
-        #expect(coordinateString.contains("33.86882"))
-        #expect(coordinateString.contains("151.20929"))
+        #expect(coordinateString.contains("-33.86882"))
+        #expect(coordinateString.contains("-151.20929"))
         #expect(coordinateString.contains(","))
     }
     
@@ -42,7 +42,7 @@ struct CLLocationExtensionsTests {
         
         // Verify it contains formatted coordinates
         #expect(coordinateString.contains("40.71280"))
-        #expect(coordinateString.contains("74.00600"))
+        #expect(coordinateString.contains("-74.00600"))
         #expect(coordinateString.contains(","))
     }
     
@@ -70,6 +70,16 @@ struct CLLocationExtensionsTests {
         // The formatter should format to exactly 5 decimal places
         let components = coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
         #expect(components.count == 2)
+        
+        // Verify each component has exactly 5 decimal places
+        for component in components {
+            if let decimalIndex = component.firstIndex(of: ".") {
+                let decimalPart = component[component.index(after: decimalIndex)...]
+                // Remove any negative sign for counting
+                let cleanDecimalPart = decimalPart.replacingOccurrences(of: "-", with: "")
+                #expect(cleanDecimalPart.count == 5)
+            }
+        }
     }
     
     @Test func testCoordinateStringWithMaximumLatitude() {
@@ -93,7 +103,7 @@ struct CLLocationExtensionsTests {
         let coordinateString = location.coordinateString
         
         // Verify it handles minimum latitude
-        #expect(coordinateString.contains("90.00000"))
+        #expect(coordinateString.contains("-90.00000"))
     }
     
     @Test func testCoordinateStringWithMaximumLongitude() {
@@ -117,7 +127,7 @@ struct CLLocationExtensionsTests {
         let coordinateString = location.coordinateString
         
         // Verify it handles minimum longitude
-        #expect(coordinateString.contains("180.00000"))
+        #expect(coordinateString.contains("-180.00000"))
     }
     
     @Test func testCoordinateStringWithRealWorldLocations() {
@@ -131,7 +141,7 @@ struct CLLocationExtensionsTests {
         
         // Verify it formats real-world coordinates
         #expect(coordinateString.contains("37.81985"))
-        #expect(coordinateString.contains("122.47852"))
+        #expect(coordinateString.contains("-122.47852"))
     }
     
     @Test func testCoordinateStringWithHighPrecisionInput() {
@@ -145,7 +155,7 @@ struct CLLocationExtensionsTests {
         
         // Should be rounded to 5 decimal places
         #expect(coordinateString.contains("37.12346"))
-        #expect(coordinateString.contains("122.98765"))
+        #expect(coordinateString.contains("-122.98765"))
     }
     
     @Test func testCoordinateStringWithSmallDecimals() {
@@ -158,5 +168,6 @@ struct CLLocationExtensionsTests {
         
         // Verify small decimals are formatted correctly
         #expect(coordinateString.contains("1.00001"))
+        #expect(coordinateString.contains("-1.00001"))
     }
 }
