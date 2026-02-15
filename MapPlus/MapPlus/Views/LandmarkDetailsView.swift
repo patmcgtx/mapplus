@@ -135,7 +135,7 @@ struct LandmarkDetailsView: View {
     
 }
 
-#Preview("Real look-around)") {
+#Preview("Real look-around") {
     LandmarkDetailsView(landmark: LandmarkSampleData().tokyo)
         .environment(\.lookAroundService, MapKitLookAroundService())
 }
