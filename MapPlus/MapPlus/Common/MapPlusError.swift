@@ -19,12 +19,11 @@ enum MapPlusError: Error {
     
     /// A human-readable description of the error.
     var errorMessage: String {
-        // TODO patmcg localize
         switch self {
         case .noAddressFound:
-            return "No address found"
+            return String(localized: "No address found")
         case .noLookAround:
-            return "No look-around available"
+            return String(localized: "No look-around available")
         }
     }
 }

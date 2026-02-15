@@ -38,15 +38,15 @@ struct LandmarksView : View {
                 }
                 .onDelete(perform: deleteLandmarks)
             }
-            .navigationTitle("My Places")
+            .navigationTitle(String(localized: "My Places"))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Dismiss", systemImage: "xmark") {
+                    Button(String(localized: "Dismiss"), systemImage: "xmark") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("Add a place", systemImage: "plus.circle") {
+                    Button(String(localized: "Add a place"), systemImage: "plus.circle") {
                         self.showLandmarkForm = true
                     }
                 }

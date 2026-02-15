@@ -27,7 +27,7 @@ struct IconPicker: View {
         NavigationStack {
             SymbolsPicker(
                 selection: $selectedSymbolName,
-                title: "Pick icon",
+                title: String(localized: "Pick icon"),
                 autoDismiss: true,
                 symbols: self.symbolOptions,
                 closeButton: {
@@ -37,7 +37,7 @@ struct IconPicker: View {
             )
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "x.circle") {
+                    Button(String(localized: "Close"), systemImage: "x.circle") {
                         dismiss()
                     }
                 }

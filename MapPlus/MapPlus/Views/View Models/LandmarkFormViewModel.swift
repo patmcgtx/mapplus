@@ -34,10 +34,9 @@ struct LandmarkFormViewModel {
     ///
     /// - Returns: "New Landmark" when creating, or the existing landmark's name when editing.
     var formTitle: String {
-        // TODO patmcg localize
         switch mode {
         case .create:
-            return "New Landmark"
+            return String(localized: "New Landmark")
         case .edit(let landmark):
             return landmark.name
         }
