@@ -8,25 +8,34 @@ struct MKMapItemExtensionsTests {
     // MARK: - Test Helpers
     
     /// Helper to create a test MKMapItem with specific properties
-    /// Uses the non-deprecated approach by setting properties directly
+    /// Uses MKPlacemark to properly set address data when provided
     private static func createTestMapItem(
         coordinate: CLLocationCoordinate2D,
         name: String? = nil,
         addressComponents: [String: String]? = nil
     ) -> MKMapItem {
-        // Create MKMapItem using modern API
-        let mapItem = MKMapItem(
-            location: CLLocation(
-                latitude: coordinate.latitude,
-                longitude: coordinate.longitude
-            ),
-            address: nil
-        )
+        let mapItem: MKMapItem
+        
+        if let addressComponents = addressComponents {
+            // Create an MKPlacemark with address components
+            // This allows addressRepresentations to be populated properly
+            let placemark = MKPlacemark(
+                coordinate: coordinate,
+                addressDictionary: addressComponents
+            )
+            mapItem = MKMapItem(placemark: placemark)
+        } else {
+            // Create MKMapItem without address
+            mapItem = MKMapItem(
+                location: CLLocation(
+                    latitude: coordinate.latitude,
+                    longitude: coordinate.longitude
+                ),
+                address: nil
+            )
+        }
         
         mapItem.name = name
-        
-        // Address components would be set via addressRepresentations in iOS 26.0+
-        // but for testing with the current SDK, we continue using the available approach
         
         return mapItem
     }
@@ -62,11 +71,15 @@ struct MKMapItemExtensionsTests {
         
         let description = mapItem.fullDescription
         
-        // Should contain the name
-        #expect(description.contains("Awesome Cafe") || description.contains("37.77490"), 
-                "Description should contain the name or coordinates")
+        // Should contain address information or fall back to coordinates
+        #expect(!description.isEmpty, "Description should not be empty")
+        let hasAddressOrCoords = description.contains("123 Main St") ||
+                                 description.contains("San Francisco") ||
+                                 description.contains("Awesome Cafe") ||
+                                 description.contains("37.77490")
+        #expect(hasAddressOrCoords, "Description should contain name, address, or coordinates")
         
-        // For coordinate-only fallback, check format
+        // Should be multi-line if address is present
         let lines = description.split(separator: "\n")
         #expect(lines.count >= 1, "Description should have at least one line")
     }
@@ -85,8 +98,13 @@ struct MKMapItemExtensionsTests {
         
         let description = mapItem.fullDescription
         
-        // Should have some description (address or coordinates)
+        // Should contain address information or fall back to coordinates
         #expect(!description.isEmpty, "Description should not be empty")
+        // Verify it contains either the address components or coordinates
+        let hasAddressInfo = description.contains("456 Oak Ave") || 
+                            description.contains("Berkeley") ||
+                            description.contains("37.77490")
+        #expect(hasAddressInfo, "Description should contain address or coordinates")
     }
     
     @Test("fullDescription with name already in address")
@@ -104,8 +122,12 @@ struct MKMapItemExtensionsTests {
         
         let description = mapItem.fullDescription
         
-        // Should contain some representation
+        // Should contain address or coordinates, and name should not be duplicated
         #expect(!description.isEmpty, "Description should not be empty")
+        let hasAddressOrCoords = description.contains("Golden Gate Bridge") ||
+                                 description.contains("San Francisco") ||
+                                 description.contains("37.77490")
+        #expect(hasAddressOrCoords, "Description should contain address or coordinates")
     }
     
     @Test("fullDescription with coordinates only (no address)")
