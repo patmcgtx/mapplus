@@ -52,6 +52,15 @@ The `Localizable.xcstrings` file contains:
 - Translations for each supported language
 - State information (translated, needs review, etc.)
 
+## Info.plist Localization
+
+System strings like permission descriptions are localized using `InfoPlist.strings` files in language-specific `.lproj` directories:
+- `en.lproj/InfoPlist.strings` - English system strings
+- `es.lproj/InfoPlist.strings` - Spanish system strings
+
+Currently localized system strings:
+- `NSLocationWhenInUseUsageDescription` - Location permission message
+
 ## Testing
 
 To test localization:
