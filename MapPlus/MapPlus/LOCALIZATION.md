@@ -13,36 +13,44 @@ All user-facing strings are localized using the `Localizable.xcstrings` file, wh
 
 ### Using Localized Strings in Code
 
-The app provides a convenient `.localized` extension on `String` for accessing localized strings:
+The app uses abstracted kebab-case keys (max 24 characters) for localization. The app provides a convenient `.localized` extension on `String` for accessing localized strings:
 
 ```swift
 // For Text views
-Text("My Places".localized)
+Text("my-places".localized)
 
 // For Button labels
-Button("Save".localized) {
+Button("save".localized) {
     // action
 }
 
 // For navigation titles
-.navigationTitle("Details".localized)
+.navigationTitle("details".localized)
 
 // For TextField placeholders
-TextField("Name".localized, text: $name)
+TextField("name".localized, text: $name)
 
 // For Section headers
-Section("Details".localized) {
+Section("details".localized) {
     // content
 }
 ```
 
 Under the hood, `.localized` uses `String(localized:)` to look up translations in the String Catalog.
 
+### Localization Keys
+
+All keys use kebab-case format and are limited to 24 characters. Examples:
+- `"my-places"` → "My Places" (en) / "Mis lugares" (es)
+- `"failed-to-save"` → "Failed to save" (en) / "Error al guardar" (es)
+- `"addr-or-location-name"` → "Address or location name" (en) / "Dirección o nombre del lugar" (es)
+
 ### Adding New Strings
 
-1. Add the string to your code using `"Your String".localized`
-2. Build the app in Xcode - it will automatically detect the new string
-3. Add translations in the `Localizable.xcstrings` file
+1. Choose a descriptive kebab-case key (max 24 characters)
+2. Add the key to your code using `"your-key".localized`
+3. Add the key and translations to `Localizable.xcstrings`
+4. Build the app in Xcode to verify
 
 ### Adding a New Language
 
@@ -55,9 +63,15 @@ Under the hood, `.localized` uses `String(localized:)` to look up translations i
 
 The `Localizable.xcstrings` file contains:
 - Source language (English)
-- All localizable strings as keys
+- Abstracted kebab-case keys (max 24 chars) as identifiers
 - Translations for each supported language
 - State information (translated, needs review, etc.)
+
+Key examples:
+- `add-place` (9 chars)
+- `failed-to-save` (14 chars)
+- `addr-or-location-name` (21 chars)
+- `location-search-failed` (22 chars)
 
 ## Info.plist Localization
 

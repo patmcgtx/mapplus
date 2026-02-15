@@ -23,8 +23,8 @@ struct LandmarkDetailsView: View {
     
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
-        case details = "Details"
-        case preview = "Preview"
+        case details = "details"
+        case preview = "preview"
         var id: Self { self }
         
         var localizedString: String {
@@ -54,7 +54,7 @@ struct LandmarkDetailsView: View {
                     }
                     .padding()
                     
-                    Picker("Section".localized, selection:$selectedSection) {
+                    Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
                             Text(section.localizedString)
                         }
@@ -74,12 +74,12 @@ struct LandmarkDetailsView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close".localized, systemImage: "x.circle") {
+                    Button("close".localized, systemImage: "x.circle") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .destructiveAction) {
-                    Button("Edit".localized, systemImage: "square.and.pencil") {
+                    Button("edit".localized, systemImage: "square.and.pencil") {
                         isEditorShowing = true
                     }
                 }
@@ -130,10 +130,10 @@ struct LandmarkDetailsView: View {
                 .padding()
         case .notAvailable:
             // TODO patmcg improve this view
-            Text("Nothing to see here".localized)
+            Text("nothing-to-see".localized)
         case .failure(let error):
             // TODO patmcg improve this view
-            ErrorView(shortMessage: "Look-around issues".localized, error: error)
+            ErrorView(shortMessage: "look-around-issues".localized, error: error)
         }
     }
     

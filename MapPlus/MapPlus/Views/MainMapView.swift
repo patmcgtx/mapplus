@@ -64,7 +64,7 @@ struct MainMapView: View {
                 HStack {
                     Spacer()
                     Menu {
-                        Button("My Places...".localized, systemImage: "list.number") {
+                        Button("my-places-menu".localized, systemImage: "list.number") {
                             self.showingLandmarkList = true
                         }
                         Divider()
@@ -73,7 +73,7 @@ struct MainMapView: View {
                                 self.zoomTo(landmark: landmark)
                             }
                         }
-                        Button("Me".localized, systemImage: "location") {
+                        Button("me".localized, systemImage: "location") {
                             withAnimation {
                                 self.mapPosition = .userLocation(fallback: .automatic)
                             }
