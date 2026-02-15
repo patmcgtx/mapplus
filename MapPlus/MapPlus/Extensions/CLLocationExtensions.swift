@@ -17,6 +17,8 @@ extension CLLocation {
         return formatter
     }()
     
+    // Note: Locale is captured at initialization. Locale changes during runtime
+    // will require an app restart to take effect, which is standard iOS behavior.
     private static let listFormatter: ListFormatter = {
         let formatter = ListFormatter()
         formatter.locale = Locale.current
