@@ -128,6 +128,7 @@ struct LandmarkDetailsView: View {
             // TODO patmcg improve this view
             Text("Nothing to see here")
         case .failure(let error):
+            // TODO patmcg improve this view
             ErrorView(shortMessage: "Look-around issues", error: error)
         }
     }
