@@ -13,6 +13,11 @@ struct CLLocationExtensionsTests {
         let description: String
     }
     
+    // Helper function to parse coordinate components
+    private func parseCoordinateComponents(from coordinateString: String) -> [String] {
+        coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+    }
+    
     @Test("Coordinate formatting", arguments: [
         CoordinateTestCase(
             latitude: 37.33233141,
@@ -122,7 +127,7 @@ struct CLLocationExtensionsTests {
         let coordinateString = location.coordinateString
         
         // The formatter should format to exactly 5 decimal places
-        let coordinateComponents = coordinateString.split(separator: ",").map { $0.trimmingCharacters(in: .whitespaces) }
+        let coordinateComponents = parseCoordinateComponents(from: coordinateString)
         #expect(coordinateComponents.count == 2)
         
         // Verify each component has exactly 5 decimal places
