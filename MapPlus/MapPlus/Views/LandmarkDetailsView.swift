@@ -92,12 +92,12 @@ struct LandmarkDetailsView: View {
                 self.lookAroundState = .loading
                 if let lookAroundScene = try await lookAroundService.lookAroundScene(
                     for: landmark.location) {
-                    lookAroundState = .resolved(lookAroundScene)
+                    self.lookAroundState = .resolved(lookAroundScene)
                 } else {
-                    lookAroundState = .notAvailable
+                    self.lookAroundState = .notAvailable
                 }
             } catch {
-                lookAroundState = .failure(error)
+                self.lookAroundState = .failure(error)
             }
         }
     }
