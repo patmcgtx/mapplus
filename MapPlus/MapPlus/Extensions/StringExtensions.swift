@@ -22,8 +22,8 @@ extension String {
     ///
     /// Example usage:
     /// ```swift
-    /// let title = "My Places".localized
-    /// Button("Save".localized) { save() }
+    /// let title = "my-places-title".localized
+    /// Button("save-button-title".localized) { save() }
     /// ```
     var localized: String {
         String(localized: .init(self))
