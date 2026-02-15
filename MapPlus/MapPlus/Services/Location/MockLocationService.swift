@@ -6,11 +6,15 @@
 //
 import CoreLocation
 
+// TODO patmcg cleanup docs
+
 /// A mock implementation of LocationService for testing and previews.
 /// Returns a predefined location or throws errors based on configuration.
 /// (Thanks, Claude Sonnet.)
 class MockLocationService: LocationService {
     
+    // TODO patmcg simplify like MockLookAroundService
+
     /// Controls whether the mock should simulate a successful location fetch or throw an error.
     var shouldSucceed: Bool = true
     

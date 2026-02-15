@@ -5,6 +5,8 @@
 //
 import MapKit
 
+// TODO patmcg cleanup docs
+
 /// Service that wraps CLLocationManager to request and report location authorization status.
 ///
 /// Use this class to request "When In Use" location permissions and receive the resulting

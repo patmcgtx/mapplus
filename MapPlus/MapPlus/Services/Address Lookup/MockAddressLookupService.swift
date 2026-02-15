@@ -6,6 +6,8 @@
 //
 import Foundation
 
+// TODO patmcg cleanup?
+
 /// A mock implementation of AddressLookupProtocol for testing and previews.
 /// Returns predefined addresses or throws errors based on the input.
 /// (Thanks, Claude Sonnet.)

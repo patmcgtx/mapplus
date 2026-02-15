@@ -17,7 +17,7 @@ extension MKMapItem {
         // TODO patmcg use result builder
 
         // Start with the coordinates as a baseline        
-        var 🎯 = self.location.asLatLonString
+        var 🎯 = self.location.coordinateString
         
         // Get the address info if available
         if let fullAddress = self.addressRepresentations?.fullAddress(

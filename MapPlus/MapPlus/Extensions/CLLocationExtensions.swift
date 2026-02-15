@@ -23,7 +23,7 @@ extension CLLocation {
     
     /// Creates a user-facing string with this location's latitude & longitude,
     /// formatted to 5 decimal places just like  Maps. ;-)
-    var asLatLonString: String {
+    var coordinateString: String {
         let lat = NSNumber(value: self.coordinate.latitude)
         let lon = NSNumber(value: self.coordinate.longitude)
         return [

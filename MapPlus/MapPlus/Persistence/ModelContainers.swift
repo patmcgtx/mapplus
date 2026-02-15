@@ -9,6 +9,7 @@ import SwiftData
 extension ModelContainer {
         
     @MainActor
+    // TODO patmcg doc
     static func persistentContainer() throws -> ModelContainer {
         let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
@@ -16,6 +17,7 @@ extension ModelContainer {
     }
 
     @MainActor
+    // TODO patmcg doc
     static func inMemorySampleContainer() throws -> ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)

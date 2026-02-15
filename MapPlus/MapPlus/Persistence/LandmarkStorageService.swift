@@ -8,6 +8,8 @@
 import SwiftData
 import CoreLocation
 
+// TODO patmcg clean up these comments
+
 /// A lightweight service responsible for persisting `Landmark` models
 /// using SwiftData. This type provides convenience helpers to translate
 /// app-level types (like `AddressInfo`) into persisted `Landmark` records.

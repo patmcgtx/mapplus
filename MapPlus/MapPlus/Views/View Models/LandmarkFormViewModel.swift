@@ -7,6 +7,8 @@
 
 import SFSafeSymbols
 
+// TODO patmcg take a fresh look at this overall
+
 /// View model that provides display data for `LandmarkFormView`.
 ///
 /// This type encapsulates the state needed to present and edit a landmark in the form,

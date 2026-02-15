@@ -35,6 +35,8 @@ struct ErrorView: View {
     }
 }
 
+// MARK: - Previews
+
 #Preview {
     ErrorView(
         shortMessage: "No address found",

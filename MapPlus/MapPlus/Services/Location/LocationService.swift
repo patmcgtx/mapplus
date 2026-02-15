@@ -7,11 +7,9 @@
 import Foundation
 
 /// An async protocol for obtaining the user's current location.
-/// Implementations can use CLLocationManager, mock data, or other location services.
 protocol LocationService {
     
-    /// Gets the user's current location and converts it to an AddressInfo object.
-    /// - Returns: An AddressInfo object containing the formatted address and coordinates.
-    /// - Throws: MapPlusError.noAddressFound if location cannot be determined or reverse geocoding fails.
+    /// Gets the user's current location and converts it to an common `AddressInfo`value.
+    /// - Returns: An `AddressInfo` value containing the formatted address and coordinates.
     func getCurrentLocation() async throws -> AddressInfo
 }

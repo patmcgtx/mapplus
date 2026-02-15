@@ -7,6 +7,9 @@
 
 import CoreLocation
 
+// TODO patmcg rename to LocationInfo
+// TODO patmcg use CLLocationCoordinate2D
+
 /// A model representing a geographic location, including a display description and coordinates.
 /// Used across layers of the app as a common in-memory representation of a location.
 struct AddressInfo {

@@ -8,6 +8,7 @@
 import SwiftUI
 
 extension EnvironmentValues {
+    // TODO patmcg user the real services by default
     @Entry var locationService: LocationService = MockLocationService()
     @Entry var addressLookupService: AddressLookupService = MockAddressLookupService()
     @Entry var lookAroundService: LookAroundService = MockLookAroundService(

@@ -6,6 +6,8 @@
 //
 import MapKit
 
+// TODO patmcg cleanup docs
+
 /// A service for performing asynchronous address lookups using MapKit.
 /// Used throughout MapPlus to resolve user-entered locations into structured data.
 struct MapKitAddressLookupService: AddressLookupService {
