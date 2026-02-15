@@ -11,6 +11,8 @@ import MapKit
 /// Displays the details of the given landmark, including notes, address, and a lookaround preview.
 struct LandmarkDetailsView: View {
 
+    @Environment(\.lookAroundService) var lookAroundService
+    
     /// The landmark to dislpay
     let landmark: Landmark
 
@@ -29,8 +31,8 @@ struct LandmarkDetailsView: View {
     @State private var selectedSection: Section = .details
     
     // Location preview
-    @State private var lookaroundScene: MKLookAroundScene? = nil
-    @State private var lopokaroundError: Error? = nil
+    @State private var lookAroundScene: MKLookAroundScene? = nil
+    @State private var lookAroundError: Error? = nil
 
     var body: some View {
         NavigationStack {
@@ -58,16 +60,11 @@ struct LandmarkDetailsView: View {
                             .font(.footnote)
                             .padding(.leading)
                     case .preview:
-                        // TODO patmcg handle loading state
-                        // TODO patmcg test error state, which may legit just mean
-                        //      lookaround is not available there.  So handle it
-                        //      like as "not available" more than an "error" per se.
-                        if let lookaroundScene = self.lookaroundScene {
-                            LookAroundPreview(initialScene: lookaroundScene)
+                        if let scene = self.lookAroundScene {
+                            LookAroundPreview(initialScene: scene)
                                 .padding()
-                        } else if let lookaroundError = self.lopokaroundError {
-                            Text(lookaroundError.localizedDescription)
-                                .padding()
+                        } else {
+                            // TODO patmcg
                         }
                     }
                     Spacer()
@@ -93,29 +90,34 @@ struct LandmarkDetailsView: View {
                 LandmarkForm(mode: .edit(landmark))
             }
         }
-        .onAppear {
-            self.fetchLookaroundScene()
+        .task {
+            do {
+                lookAroundScene = try await lookAroundService.lookAroundScene(for: self.landmark.location)
+            } catch {
+                lookAroundError = error
+            }
+
         }
     }
     
     // MARK: - Private helpers
     
-    func fetchLookaroundScene() {
-        // TODO patmcg consider moving this to a service
-        // TODO patmcg show placeholder if lookaround won't load
-        if self.lookaroundScene == nil {
-            let lookaroundRequest = MKLookAroundSceneRequest(coordinate: self.landmark.location)
-            lookaroundRequest.getSceneWithCompletionHandler { (scene, error) in
-                if let sceneToShow = scene {
-                    DispatchQueue.main.async {
-                        self.lookaroundScene = sceneToShow
-                    }
-                } else if let errorToShow = error {
-                    self.lopokaroundError = errorToShow
-                }
-            }
-        }
-    }
+//    func fetchLookaroundScene() {
+//        // TODO patmcg consider moving this to a service
+//        // TODO patmcg show placeholder if lookaround won't load
+//        if self.lookaroundScene == nil {
+//            let lookaroundRequest = MKLookAroundSceneRequest(coordinate: self.landmark.location)
+//            lookaroundRequest.getSceneWithCompletionHandler { (scene, error) in
+//                if let sceneToShow = scene {
+//                    DispatchQueue.main.async {
+//                        self.lookaroundScene = sceneToShow
+//                    }
+//                } else if let errorToShow = error {
+//                    self.lopokaroundError = errorToShow
+//                }
+//            }
+//        }
+//    }
 }
 
 #Preview {
