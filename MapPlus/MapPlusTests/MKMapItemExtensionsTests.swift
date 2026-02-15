@@ -141,7 +141,7 @@ struct MKMapItemExtensionsTests {
         let addressDict: [String: Any]?
         let name: String?
         let expectedToContain: [String]
-        let description: String
+        let testDescription: String
     }
     
     @Test("fullDescription with various scenarios", arguments: [
@@ -153,7 +153,7 @@ struct MKMapItemExtensionsTests {
             ],
             name: "Central Park",
             expectedToContain: ["Central Park", "New York"],
-            description: "City location with name"
+            testDescription: "City location with name"
         ),
         FullDescriptionTestCase(
             coordinate: CLLocationCoordinate2D(latitude: 51.5074, longitude: -0.1278),
@@ -162,14 +162,14 @@ struct MKMapItemExtensionsTests {
             ],
             name: nil,
             expectedToContain: ["London"],
-            description: "International city without name"
+            testDescription: "International city without name"
         ),
         FullDescriptionTestCase(
             coordinate: CLLocationCoordinate2D(latitude: 35.6762, longitude: 139.6503),
             addressDict: nil,
             name: "Tokyo Tower",
             expectedToContain: ["35.67620", "139.65030"],
-            description: "Named location with no address"
+            testDescription: "Named location with no address"
         )
     ])
     func testFullDescriptionVariousScenarios(testCase: FullDescriptionTestCase) {
@@ -190,7 +190,7 @@ struct MKMapItemExtensionsTests {
             let normalizedExpected = expectedString.replacingOccurrences(of: ".", with: ",")
             let hasExpected = description.contains(expectedString) || description.contains(normalizedExpected)
             #expect(hasExpected, 
-                    "Description '\(description)' should contain '\(expectedString)' for \(testCase.description)")
+                    "Description '\(description)' should contain '\(expectedString)' for \(testCase.testDescription)")
         }
     }
     
@@ -208,18 +208,28 @@ struct MKMapItemExtensionsTests {
     
     @Test("fullDescription coordinate precision")
     func testFullDescriptionCoordinatePrecision() {
-        // Test that coordinates are formatted to 5 decimal places
+        // Test that coordinates are formatted to exactly 5 decimal places
         let coordinate = CLLocationCoordinate2D(latitude: 37.123456789, longitude: -122.987654321)
         let placemark = MKPlacemark(coordinate: coordinate)
         let mapItem = MKMapItem(placemark: placemark)
         
         let description = mapItem.fullDescription
         
-        // Should contain 5 decimal places (or the localized equivalent with comma)
+        // Extract coordinate components - they should be separated by a list separator
+        // The coordinate string should match the pattern of 5 decimal places
+        let coordinatePattern = "\\d+[.,]\\d{5}"
+        let regex = try? NSRegularExpression(pattern: coordinatePattern)
+        let range = NSRange(description.startIndex..., in: description)
+        let matches = regex?.matches(in: description, range: range) ?? []
+        
+        // Should find at least 2 coordinate components (latitude and longitude)
+        #expect(matches.count >= 2, "Should find at least 2 coordinate values with 5 decimal places")
+        
+        // Verify the specific values are present with correct precision
         let hasCorrectPrecisionLat = description.contains("37.12346") || description.contains("37,12346")
         let hasCorrectPrecisionLon = description.contains("122.98765") || description.contains("122,98765")
         
-        #expect(hasCorrectPrecisionLat, "Latitude should be formatted to 5 decimal places")
-        #expect(hasCorrectPrecisionLon, "Longitude should be formatted to 5 decimal places")
+        #expect(hasCorrectPrecisionLat, "Latitude should be formatted to exactly 5 decimal places (37.12346)")
+        #expect(hasCorrectPrecisionLon, "Longitude should be formatted to exactly 5 decimal places (122.98765)")
     }
 }
