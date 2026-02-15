@@ -21,7 +21,7 @@ import MapKit
 ///   be called immediately or after the system prompt is presented to the user.
 class LocationPermissionsService: NSObject, CLLocationManagerDelegate {
     
-    // TODO patmcg is this needed any more?  It's built into MapKitLocationService now, right?
+    // TODO patmcg can this be folded into LocationService?
     
     private var locationManager = CLLocationManager()
     private var callback: (_ status: CLAuthorizationStatus) -> Void = { status in }
