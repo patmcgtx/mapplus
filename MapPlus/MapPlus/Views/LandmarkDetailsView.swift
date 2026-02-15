@@ -28,7 +28,7 @@ struct LandmarkDetailsView: View {
         var id: Self { self }
         
         var localizedString: String {
-            String(localized: self.rawValue)
+            self.rawValue.localized
         }
     }
     @State private var selectedSection: Section = .details
@@ -54,7 +54,7 @@ struct LandmarkDetailsView: View {
                     }
                     .padding()
                     
-                    Picker(String(localized: "Section"), selection:$selectedSection) {
+                    Picker("Section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
                             Text(section.localizedString)
                         }
@@ -74,12 +74,12 @@ struct LandmarkDetailsView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button(String(localized: "Close"), systemImage: "x.circle") {
+                    Button("Close".localized, systemImage: "x.circle") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .destructiveAction) {
-                    Button(String(localized: "Edit"), systemImage: "square.and.pencil") {
+                    Button("Edit".localized, systemImage: "square.and.pencil") {
                         isEditorShowing = true
                     }
                 }
@@ -130,10 +130,10 @@ struct LandmarkDetailsView: View {
                 .padding()
         case .notAvailable:
             // TODO patmcg improve this view
-            Text(String(localized: "Nothing to see here"))
+            Text("Nothing to see here".localized)
         case .failure(let error):
             // TODO patmcg improve this view
-            ErrorView(shortMessage: String(localized: "Look-around issues"), error: error)
+            ErrorView(shortMessage: "Look-around issues".localized, error: error)
         }
     }
     

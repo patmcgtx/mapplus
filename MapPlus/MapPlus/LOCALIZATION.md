@@ -13,27 +13,34 @@ All user-facing strings are localized using the `Localizable.xcstrings` file, wh
 
 ### Using Localized Strings in Code
 
-In SwiftUI views, use the `String(localized:)` initializer:
+The app provides a convenient `.localized` extension on `String` for accessing localized strings:
 
 ```swift
 // For Text views
-Text(String(localized: "My Places"))
+Text("My Places".localized)
 
 // For Button labels
-Button(String(localized: "Save")) {
+Button("Save".localized) {
     // action
 }
 
 // For navigation titles
-.navigationTitle(String(localized: "Details"))
+.navigationTitle("Details".localized)
 
 // For TextField placeholders
-TextField(String(localized: "Name"), text: $name)
+TextField("Name".localized, text: $name)
+
+// For Section headers
+Section("Details".localized) {
+    // content
+}
 ```
+
+Under the hood, `.localized` uses `String(localized:)` to look up translations in the String Catalog.
 
 ### Adding New Strings
 
-1. Add the string to your code using `String(localized: "Your String")`
+1. Add the string to your code using `"Your String".localized`
 2. Build the app in Xcode - it will automatically detect the new string
 3. Add translations in the `Localizable.xcstrings` file
 

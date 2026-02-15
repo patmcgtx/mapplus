@@ -21,9 +21,9 @@ enum MapPlusError: Error {
     var errorMessage: String {
         switch self {
         case .noAddressFound:
-            return String(localized: "No address found")
+            return "No address found".localized
         case .noLookAround:
-            return String(localized: "No look-around available")
+            return "No look-around available".localized
         }
     }
 }

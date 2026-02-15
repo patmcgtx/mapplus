@@ -36,7 +36,7 @@ struct LandmarkFormViewModel {
     var formTitle: String {
         switch mode {
         case .create:
-            return String(localized: "New Landmark")
+            return "New Landmark".localized
         case .edit(let landmark):
             return landmark.name
         }

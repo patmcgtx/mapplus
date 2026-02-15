@@ -94,7 +94,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
             components.append(country)
         }
         
-        return components.isEmpty ? String(localized: "Current Location") : components.joined(separator: ", ")
+        return components.isEmpty ? "Current Location".localized : components.joined(separator: ", ")
     }
     
     // MARK: - CLLocationManagerDelegate
