@@ -18,7 +18,7 @@ struct LandmarkStorageService {
     /// The context under which to perform persistence operations
     let modelContext: ModelContext
     
-    /// Saves a new `Landmark` and commites the change.
+    /// Saves a new `Landmark` and commits the change.
     ///
     /// This method converts the supplied `AddressInfo` into a `CLLocationCoordinate2D`
     /// and constructs a `Landmark` with the given name and system image. The new
@@ -57,7 +57,7 @@ struct LandmarkStorageService {
     
     /// Deletes the given `Landmark` and commits the change.
     /// - Parameters:
-    ///   - landmark: The landmakr to delete
+    ///   - landmark: The landmark to delete
     /// - Throws: Rethrows any error encountered when saving the `modelContext`.
     func delete(landmark: Landmark) throws {
         self.modelContext.delete(landmark)
