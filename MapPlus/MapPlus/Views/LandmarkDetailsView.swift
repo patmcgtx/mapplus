@@ -89,15 +89,15 @@ struct LandmarkDetailsView: View {
         .task {
             do {
                 // Fetch the look-around scene when the view loads
-                self.lookAroundState = .loading
+                lookAroundState = .loading
                 if let lookAroundScene = try await lookAroundService.lookAroundScene(
                     for: landmark.location) {
-                    self.lookAroundState = .resolved(lookAroundScene)
+                    lookAroundState = .resolved(lookAroundScene)
                 } else {
-                    self.lookAroundState = .notAvailable
+                    lookAroundState = .notAvailable
                 }
             } catch {
-                self.lookAroundState = .failure(error)
+                lookAroundState = .failure(error)
             }
         }
     }
