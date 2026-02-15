@@ -108,18 +108,30 @@ struct MKMapItemExtensionsTests {
     
     @Test("fullDescription with negative coordinates")
     func testFullDescriptionWithNegativeCoordinates() {
-        let coordinate = CLLocationCoordinate2D(latitude: -33.86882, longitude: -151.20929)
+        // Sydney, Australia - valid negative coordinates
+        let coordinate = CLLocationCoordinate2D(latitude: -33.86882, longitude: 151.20929)
         let placemark = MKPlacemark(coordinate: coordinate)
         let mapItem = MKMapItem(placemark: placemark)
         
         let description = mapItem.fullDescription
         
-        // Should handle negative coordinates
+        // Should handle negative latitude correctly
         #expect(description.contains("-33.86882") || description.contains("-33,86882"), 
                 "Description should contain negative latitude")
-        #expect(description.contains("-151.20929") || description.contains("-151,20929") || 
-                description.contains("151.20929") || description.contains("151,20929"), 
-                "Description should contain negative longitude")
+        #expect(description.contains("151.20929") || description.contains("151,20929"), 
+                "Description should contain positive longitude")
+    }
+    
+    @Test("fullDescription with nil location")
+    func testFullDescriptionWithNilLocation() {
+        // Create a map item without a location (edge case)
+        let mapItem = MKMapItem()
+        
+        let description = mapItem.fullDescription
+        
+        // Should have a fallback for nil location
+        #expect(!description.isEmpty, "Description should not be empty even with nil location")
+        #expect(description == "Unknown Location", "Should fall back to 'Unknown Location' when location is nil")
     }
     
     // MARK: - Parameterized Tests
@@ -192,5 +204,22 @@ struct MKMapItemExtensionsTests {
         let description = mapItem.fullDescription
         
         #expect(!description.isEmpty, "fullDescription should never be empty")
+    }
+    
+    @Test("fullDescription coordinate precision")
+    func testFullDescriptionCoordinatePrecision() {
+        // Test that coordinates are formatted to 5 decimal places
+        let coordinate = CLLocationCoordinate2D(latitude: 37.123456789, longitude: -122.987654321)
+        let placemark = MKPlacemark(coordinate: coordinate)
+        let mapItem = MKMapItem(placemark: placemark)
+        
+        let description = mapItem.fullDescription
+        
+        // Should contain 5 decimal places (or the localized equivalent with comma)
+        let hasCorrectPrecisionLat = description.contains("37.12346") || description.contains("37,12346")
+        let hasCorrectPrecisionLon = description.contains("122.98765") || description.contains("122,98765")
+        
+        #expect(hasCorrectPrecisionLat, "Latitude should be formatted to 5 decimal places")
+        #expect(hasCorrectPrecisionLon, "Longitude should be formatted to 5 decimal places")
     }
 }
