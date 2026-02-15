@@ -10,7 +10,6 @@ extension CLLocation {
 
     private static let coordinateFormatter: NumberFormatter = {
         let formatter = NumberFormatter()
-        formatter.locale = Locale.current
         formatter.numberStyle = .decimal
         formatter.locale = Locale.current
         formatter.minimumFractionDigits = 5
