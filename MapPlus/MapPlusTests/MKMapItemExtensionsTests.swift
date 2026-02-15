@@ -8,11 +8,11 @@ struct MKMapItemExtensionsTests {
     // MARK: - Test Helpers
     
     /// Helper to create a test MKMapItem with specific properties
-    /// Uses the non-deprecated approach by setting properties directly
+    /// Note: This helper creates items without address data. Tests using this helper
+    /// will always fall back to coordinate-based descriptions.
     private static func createTestMapItem(
         coordinate: CLLocationCoordinate2D,
-        name: String? = nil,
-        addressComponents: [String: String]? = nil
+        name: String? = nil
     ) -> MKMapItem {
         // Create MKMapItem using modern API
         let mapItem = MKMapItem(
@@ -25,8 +25,8 @@ struct MKMapItemExtensionsTests {
         
         mapItem.name = name
         
-        // Address components would be set via addressRepresentations in iOS 26.0+
-        // but for testing with the current SDK, we continue using the available approach
+        // Note: Address components cannot be set directly via public API in current iOS versions.
+        // Tests using this helper verify coordinate-based fallback behavior.
         
         return mapItem
     }
@@ -45,67 +45,55 @@ struct MKMapItemExtensionsTests {
     
     // MARK: - fullDescription Tests
     
-    @Test("fullDescription with name and address")
+    @Test("fullDescription with name but no address (falls back to coordinates)")
     func testFullDescriptionWithNameAndAddress() {
-        // Create a map item with both name and address
+        // Create a map item with name but no address (tests coordinate fallback)
         let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
         let mapItem = Self.createTestMapItem(
             coordinate: coordinate,
-            name: "Awesome Cafe",
-            addressComponents: [
-                CNPostalAddressStreetKey: "123 Main St",
-                CNPostalAddressCityKey: "San Francisco",
-                CNPostalAddressStateKey: "CA",
-                CNPostalAddressPostalCodeKey: "94102"
-            ]
+            name: "Awesome Cafe"
         )
         
         let description = mapItem.fullDescription
         
-        // Should contain the name
-        #expect(description.contains("Awesome Cafe") || description.contains("37.77490"), 
-                "Description should contain the name or coordinates")
+        // Without address data, should fall back to coordinates
+        #expect(description.contains("37.77490") || description.contains("37,77490"), 
+                "Description should contain latitude coordinate")
         
         // For coordinate-only fallback, check format
         let lines = description.split(separator: "\n")
         #expect(lines.count >= 1, "Description should have at least one line")
     }
     
-    @Test("fullDescription with address only (no name)")
+    @Test("fullDescription with no address (falls back to coordinates)")
     func testFullDescriptionWithAddressOnly() {
         let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
         let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            addressComponents: [
-                CNPostalAddressStreetKey: "456 Oak Ave",
-                CNPostalAddressCityKey: "Berkeley",
-                CNPostalAddressStateKey: "CA"
-            ]
+            coordinate: coordinate
         )
         
         let description = mapItem.fullDescription
         
-        // Should have some description (address or coordinates)
+        // Should fall back to coordinates since no address is set
         #expect(!description.isEmpty, "Description should not be empty")
+        #expect(description.contains("37.77490") || description.contains("37,77490"), 
+                "Description should contain coordinate")
     }
     
-    @Test("fullDescription with name already in address")
+    @Test("fullDescription with name but no address (falls back to coordinates)")
     func testFullDescriptionWithNameInAddress() {
         let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
         let mapItem = Self.createTestMapItem(
             coordinate: coordinate,
-            name: "Golden Gate Bridge",
-            addressComponents: [
-                CNPostalAddressStreetKey: "Golden Gate Bridge",
-                CNPostalAddressCityKey: "San Francisco",
-                CNPostalAddressStateKey: "CA"
-            ]
+            name: "Golden Gate Bridge"
         )
         
         let description = mapItem.fullDescription
         
-        // Should contain some representation
+        // Without address data, should fall back to coordinates
         #expect(!description.isEmpty, "Description should not be empty")
+        #expect(description.contains("37.77490") || description.contains("37,77490"), 
+                "Description should contain coordinate")
     }
     
     @Test("fullDescription with coordinates only (no address)")
@@ -160,7 +148,7 @@ struct MKMapItemExtensionsTests {
         
         // Should have a fallback for nil location
         #expect(!description.isEmpty, "Description should not be empty even with nil location")
-        #expect(description == "-180.00000 and -180.00000", "Should fall back to coodinates")
+        #expect(description == "Unknown Location", "Should fall back to 'Unknown Location' for nil coordinates")
     }
     
     // MARK: - Parameterized Tests

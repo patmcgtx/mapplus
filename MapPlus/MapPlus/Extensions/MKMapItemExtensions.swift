@@ -53,8 +53,8 @@ extension MKMapItem {
         } else if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             fullAddress
         } else {
-            // Fall back to coordinates if no address is available
-            location.coordinateString
+            // Fall back to coordinates if no address is available, or "Unknown Location" if coordinates are missing
+            location?.coordinateString ?? "Unknown Location"
         }
     }
     
