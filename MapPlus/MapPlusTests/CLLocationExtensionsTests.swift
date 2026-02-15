@@ -4,65 +4,119 @@ import CoreLocation
 
 struct CLLocationExtensionsTests {
     
-    @Test func testCoordinateStringWithPositiveCoordinates() {
-        let location = CLLocation(
-            latitude: 37.33233141,
-            longitude: 122.03121860
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it contains formatted coordinates
-        #expect(coordinateString.contains("37.33233"))
-        #expect(coordinateString.contains("122.03122"))
-        #expect(coordinateString.contains(","))
+    // Test data for parameterized tests
+    struct CoordinateTestCase {
+        let latitude: Double
+        let longitude: Double
+        let expectedLatString: String
+        let expectedLonString: String
+        let description: String
     }
     
-    @Test func testCoordinateStringWithNegativeCoordinates() {
-        let location = CLLocation(
+    @Test("Coordinate formatting", arguments: [
+        CoordinateTestCase(
+            latitude: 37.33233141,
+            longitude: 122.03121860,
+            expectedLatString: "37.33233",
+            expectedLonString: "122.03122",
+            description: "Positive coordinates"
+        ),
+        CoordinateTestCase(
             latitude: -33.86882,
-            longitude: -151.20929
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it contains formatted coordinates with negative signs
-        #expect(coordinateString.contains("-33.86882"))
-        #expect(coordinateString.contains("-151.20929"))
-        #expect(coordinateString.contains(","))
-    }
-    
-    @Test func testCoordinateStringWithMixedCoordinates() {
-        let location = CLLocation(
+            longitude: -151.20929,
+            expectedLatString: "-33.86882",
+            expectedLonString: "-151.20929",
+            description: "Negative coordinates"
+        ),
+        CoordinateTestCase(
             latitude: 40.7128,
-            longitude: -74.0060
+            longitude: -74.0060,
+            expectedLatString: "40.71280",
+            expectedLonString: "-74.00600",
+            description: "Mixed positive/negative coordinates"
+        ),
+        CoordinateTestCase(
+            latitude: 0.0,
+            longitude: 0.0,
+            expectedLatString: "0.00000",
+            expectedLonString: "0.00000",
+            description: "Zero coordinates"
+        ),
+        CoordinateTestCase(
+            latitude: 90.0,
+            longitude: 0.0,
+            expectedLatString: "90.00000",
+            expectedLonString: "0.00000",
+            description: "Maximum latitude"
+        ),
+        CoordinateTestCase(
+            latitude: -90.0,
+            longitude: 0.0,
+            expectedLatString: "-90.00000",
+            expectedLonString: "0.00000",
+            description: "Minimum latitude"
+        ),
+        CoordinateTestCase(
+            latitude: 0.0,
+            longitude: 180.0,
+            expectedLatString: "0.00000",
+            expectedLonString: "180.00000",
+            description: "Maximum longitude"
+        ),
+        CoordinateTestCase(
+            latitude: 0.0,
+            longitude: -180.0,
+            expectedLatString: "0.00000",
+            expectedLonString: "-180.00000",
+            description: "Minimum longitude"
+        ),
+        CoordinateTestCase(
+            latitude: 37.81985,
+            longitude: -122.47852,
+            expectedLatString: "37.81985",
+            expectedLonString: "-122.47852",
+            description: "Real world location (Golden Gate Bridge)"
+        ),
+        CoordinateTestCase(
+            latitude: 37.123456789,
+            longitude: -122.987654321,
+            expectedLatString: "37.12346",
+            expectedLonString: "-122.98765",
+            description: "High precision input with rounding"
+        ),
+        CoordinateTestCase(
+            latitude: 1.00001,
+            longitude: -1.00001,
+            expectedLatString: "1.00001",
+            expectedLonString: "-1.00001",
+            description: "Small decimal values"
+        )
+    ])
+    func testCoordinateStringFormatting(testCase: CoordinateTestCase) {
+        let location = CLLocation(
+            latitude: testCase.latitude,
+            longitude: testCase.longitude
         )
         
         let coordinateString = location.coordinateString
         
         // Verify it contains formatted coordinates
-        #expect(coordinateString.contains("40.71280"))
-        #expect(coordinateString.contains("-74.00600"))
+        #expect(coordinateString.contains(testCase.expectedLatString))
+        #expect(coordinateString.contains(testCase.expectedLonString))
         #expect(coordinateString.contains(","))
     }
     
-    @Test func testCoordinateStringWithZeroCoordinates() {
+    @Test("Decimal precision formatting", arguments: [
+        (37.33233141, -122.03121860),
+        (40.7128, -74.0060),
+        (1.23456789, -9.87654321),
+        (90.0, -180.0),
+        (0.0, 0.0)
+    ])
+    func testCoordinateStringHasFiveDecimalPlaces(latitude: Double, longitude: Double) {
         let location = CLLocation(
-            latitude: 0.0,
-            longitude: 0.0
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it formats zero correctly
-        #expect(coordinateString.contains("0.00000"))
-        #expect(coordinateString.contains(","))
-    }
-    
-    @Test func testCoordinateStringFormattingPrecision() {
-        let location = CLLocation(
-            latitude: 37.33233141,
-            longitude: -122.03121860
+            latitude: latitude,
+            longitude: longitude
         )
         
         let coordinateString = location.coordinateString
@@ -78,94 +132,5 @@ struct CLLocationExtensionsTests {
                 #expect(decimalPart.count == 5)
             }
         }
-    }
-    
-    @Test func testCoordinateStringWithMaximumLatitude() {
-        let location = CLLocation(
-            latitude: 90.0,
-            longitude: 0.0
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it handles maximum latitude
-        #expect(coordinateString.contains("90.00000"))
-    }
-    
-    @Test func testCoordinateStringWithMinimumLatitude() {
-        let location = CLLocation(
-            latitude: -90.0,
-            longitude: 0.0
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it handles minimum latitude
-        #expect(coordinateString.contains("-90.00000"))
-    }
-    
-    @Test func testCoordinateStringWithMaximumLongitude() {
-        let location = CLLocation(
-            latitude: 0.0,
-            longitude: 180.0
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it handles maximum longitude
-        #expect(coordinateString.contains("180.00000"))
-    }
-    
-    @Test func testCoordinateStringWithMinimumLongitude() {
-        let location = CLLocation(
-            latitude: 0.0,
-            longitude: -180.0
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify it handles minimum longitude
-        #expect(coordinateString.contains("-180.00000"))
-    }
-    
-    @Test func testCoordinateStringWithRealWorldLocations() {
-        // Test with known locations
-        let goldenGate = CLLocation(
-            latitude: 37.81985,
-            longitude: -122.47852
-        )
-        
-        let coordinateString = goldenGate.coordinateString
-        
-        // Verify it formats real-world coordinates
-        #expect(coordinateString.contains("37.81985"))
-        #expect(coordinateString.contains("-122.47852"))
-    }
-    
-    @Test func testCoordinateStringWithHighPrecisionInput() {
-        // Test with very high precision input to ensure proper rounding
-        let location = CLLocation(
-            latitude: 37.123456789,
-            longitude: -122.987654321
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Should be rounded to 5 decimal places
-        #expect(coordinateString.contains("37.12346"))
-        #expect(coordinateString.contains("-122.98765"))
-    }
-    
-    @Test func testCoordinateStringWithSmallDecimals() {
-        let location = CLLocation(
-            latitude: 1.00001,
-            longitude: -1.00001
-        )
-        
-        let coordinateString = location.coordinateString
-        
-        // Verify small decimals are formatted correctly
-        #expect(coordinateString.contains("1.00001"))
-        #expect(coordinateString.contains("-1.00001"))
     }
 }
