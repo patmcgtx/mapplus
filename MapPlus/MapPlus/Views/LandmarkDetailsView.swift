@@ -23,9 +23,13 @@ struct LandmarkDetailsView: View {
     
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
-        case details = "Details"
-        case preview = "Preview"
+        case details = "details"
+        case preview = "preview"
         var id: Self { self }
+        
+        var localizedString: String {
+            self.rawValue.localized
+        }
     }
     @State private var selectedSection: Section = .details
     
@@ -50,9 +54,9 @@ struct LandmarkDetailsView: View {
                     }
                     .padding()
                     
-                    Picker("Section", selection:$selectedSection) {
+                    Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
-                            Text(section.rawValue)
+                            Text(section.localizedString)
                         }
                     }
                     .pickerStyle(.segmented)
@@ -70,12 +74,12 @@ struct LandmarkDetailsView: View {
             }
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
-                    Button("Close", systemImage: "x.circle") {
+                    Button("close".localized, systemImage: "x.circle") {
                         dismiss()
                     }
                 }
                 ToolbarItem(placement: .destructiveAction) {
-                    Button("Edit", systemImage: "square.and.pencil") {
+                    Button("edit".localized, systemImage: "square.and.pencil") {
                         isEditorShowing = true
                     }
                 }
@@ -126,10 +130,10 @@ struct LandmarkDetailsView: View {
                 .padding()
         case .notAvailable:
             // TODO patmcg improve this view
-            Text("Nothing to see here")
+            Text("nothing-to-see".localized)
         case .failure(let error):
             // TODO patmcg improve this view
-            ErrorView(shortMessage: "Look-around issues", error: error)
+            ErrorView(shortMessage: "look-around-issues".localized, error: error)
         }
     }
     

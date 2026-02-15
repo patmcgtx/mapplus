@@ -70,17 +70,17 @@ struct LandmarkForm: View {
     var body: some View {
         Form {
             saveError
-            Section("Details") {
+            Section("details".localized) {
                 nameInput
                 iconPicker
             }
-            Section("Notes") {
+            Section("notes".localized) {
                 notesInput
             }
             if case .create = viewModel.mode {
                 locationSearch
             }
-            Section("Preview") {
+            Section("preview".localized) {
                 previewArea
             }
         }
@@ -129,13 +129,13 @@ struct LandmarkForm: View {
         case .saveInitial, .saved:
             EmptyView()
         case .saveFailed(let error):
-            ErrorView(shortMessage: "Failed to save", error: error)
+            ErrorView(shortMessage: "failed-to-save".localized, error: error)
         }
     }
     
     private var nameInput: some View {
         HStack {
-            TextField("Name", text: $landmarkNameInput,
+            TextField("name".localized, text: $landmarkNameInput,
                       onEditingChanged: { _ in
             })
             .autocorrectionDisabled()
@@ -151,7 +151,7 @@ struct LandmarkForm: View {
         Button {
             isShowingIconPicker = true
         } label: {
-            Label("Icon...", systemImage: landmarkIconNameSelected)
+            Label("icon".localized, systemImage: landmarkIconNameSelected)
         }
     }
     
@@ -160,10 +160,10 @@ struct LandmarkForm: View {
     }
     
     private var locationSearch: some View {
-        Section("Location") {
+        Section("location".localized) {
             HStack {
                 TextField(
-                    "Address or location name",
+                    "addr-or-location-name".localized,
                     text: $locationSearchInput)
                 .autocorrectionDisabled()
                 Button {
@@ -181,13 +181,13 @@ struct LandmarkForm: View {
     }
     
     private var cancelButton: some View {
-        Button("Cancel", systemImage: "x.circle") {
+        Button("cancel".localized, systemImage: "x.circle") {
             dismiss()
         }
     }
     
     private var saveButton: some View {
-        Button("Save") {
+        Button("save".localized) {
             do {
                 switch addressSearchState {
                 case .searchInitial, .searching, .searchFailed:
@@ -235,7 +235,7 @@ struct LandmarkForm: View {
                 case .searchResolved(let addressInfo):
                     Text(addressInfo.formattedDescription)
                 case .searchFailed(let error):
-                    ErrorView(shortMessage: "Location search failed", error: error)
+                    ErrorView(shortMessage: "location-search-failed".localized, error: error)
                 }
             }
         }
