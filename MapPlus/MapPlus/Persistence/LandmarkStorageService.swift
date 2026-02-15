@@ -30,25 +30,20 @@ struct LandmarkStorageService {
     ///   - name: The display name to assign to the landmark.
     ///   - notes: Descriptive notes about the landmark.
     ///   - iconName: The SF Symbols system image name associated with the landmark.
-    /// - Throws: Rethrows any error encountered when saving the `modelContext`.
+    /// - Throws: Re-throws any error encountered when saving the `modelContext`.
     func save(
-        address: AddressInfo,
+        address: LocationInfo,
         name: String,
         notes: String,
         iconName: String
     ) throws {
-        
-        let coord = CLLocationCoordinate2D(
-            latitude: address.latitude,
-            longitude: address.longitude
-        )
         
         let landmark = Landmark(
             name: name,
             notes: notes,
             formattedAddress: address.formattedDescription,
             systemImageName: iconName,
-            location: coord
+            location: address.coordinates
         )
         
         self.modelContext.insert(landmark)

@@ -7,7 +7,7 @@
 
 import MapKit
 
-/// This service provides a map look-around view
+/// A protocol to obtain a map look-around view.
 protocol LookAroundService {
 
     /// Gets a look-around scene for a given location, if available.
