@@ -10,5 +10,9 @@ import SwiftUI
 extension EnvironmentValues {
     @Entry var locationService: LocationService = MockLocationService()
     @Entry var addressLookupService: AddressLookupService = MockAddressLookupService()
-    @Entry var lookAroundService: LookAroundService = MockLookAroundService()
+    @Entry var lookAroundService: LookAroundService = MockLookAroundService(
+        errorToThrow: nil,
+        sceneToReturn: nil,
+        networkDelaySeconds: 1.5
+    )
 }

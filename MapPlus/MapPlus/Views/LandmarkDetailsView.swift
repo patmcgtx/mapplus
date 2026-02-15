@@ -13,18 +13,18 @@ struct LandmarkDetailsView: View {
     
     /// The landmark to display
     let landmark: Landmark
-
+    
     // Environment
     @Environment(\.dismiss) private var dismiss
     @Environment(\.lookAroundService) var lookAroundService
-
+    
     // UI state
     @State private var isEditorShowing: Bool = false
-
+    
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
         case details = "Details"
-        case preview = "Preview"        
+        case preview = "Preview"
         var id: Self { self }
     }
     @State private var selectedSection: Section = .details
@@ -32,12 +32,13 @@ struct LandmarkDetailsView: View {
     // Look-around location preview
     private enum LookAroundState {
         case initial
+        case loading
         case resolved(MKLookAroundScene)
         case notAvailable
         case failure(Error)
     }
     @State private var lookAroundState: LookAroundState = .initial
-
+    
     var body: some View {
         NavigationStack {
             HStack {
@@ -67,18 +68,18 @@ struct LandmarkDetailsView: View {
                 .padding()
                 Spacer()
             }
-                .toolbar {
-                    ToolbarItem(placement: .cancellationAction) {
-                        Button("Close", systemImage: "x.circle") {
-                            dismiss()
-                        }
-                    }
-                    ToolbarItem(placement: .destructiveAction) {
-                        Button("Edit", systemImage: "square.and.pencil") {
-                            isEditorShowing = true
-                        }
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Close", systemImage: "x.circle") {
+                        dismiss()
                     }
                 }
+                ToolbarItem(placement: .destructiveAction) {
+                    Button("Edit", systemImage: "square.and.pencil") {
+                        isEditorShowing = true
+                    }
+                }
+            }
         }
         .sheet(isPresented: $isEditorShowing) {
             NavigationStack {
@@ -88,6 +89,7 @@ struct LandmarkDetailsView: View {
         .task {
             do {
                 // Fetch the look-around scene when the view loads
+                self.lookAroundState = .loading
                 if let lookAroundScene = try await lookAroundService.lookAroundScene(
                     for: landmark.location) {
                     lookAroundState = .resolved(lookAroundScene)
@@ -114,8 +116,11 @@ struct LandmarkDetailsView: View {
     @ViewBuilder
     private var lookAroundView: some View {
         switch lookAroundState {
-            case .initial:
+        case .initial:
             EmptyView()
+        case .loading:
+            // TODO patmcg improve this view
+            ProgressView()
         case .resolved(let scene):
             LookAroundPreview(initialScene: scene)
                 .padding()
@@ -130,10 +135,24 @@ struct LandmarkDetailsView: View {
 }
 
 #Preview("Real look-around)") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+    LandmarkDetailsView(landmark: LandmarkSampleData().tokyo)
         .environment(\.lookAroundService, MapKitLookAroundService())
 }
 
-#Preview("Mock look-around") {
+#Preview("Mock - no look-around") {
     LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+        .environment(\.lookAroundService, MockLookAroundService(
+            errorToThrow: nil,
+            sceneToReturn: nil,
+            networkDelaySeconds: 2.5
+        ))
+}
+
+#Preview("Mock - look-around error") {
+    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+        .environment(\.lookAroundService, MockLookAroundService(
+            errorToThrow: MapPlusError.noLookAround,
+            sceneToReturn: nil,
+            networkDelaySeconds: 8.0
+        ))
 }
