@@ -46,7 +46,7 @@ struct LandmarksView : View {
                     }
                 }
                 ToolbarItem(placement: .primaryAction) {
-                    Button("add-place".localized, systemImage: "plus.circle") {
+                    Button("add-place".localized, systemImage: "plus") {
                         self.showLandmarkForm = true
                     }
                 }

@@ -63,27 +63,45 @@ struct MainMapView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    Menu {
-                        Button("my-places-menu".localized, systemImage: "list.number") {
-                            self.showingLandmarkList = true
-                        }
-                        Divider()
-                        ForEach(self.landmarks, id: \.self) { landmark in
-                            Button(landmark.name, systemImage: landmark.systemImageName) {
-                                self.zoomTo(landmark: landmark)
-                            }
-                        }
-                        Button("me".localized, systemImage: "location") {
+                    VStack(spacing: 16) {
+                        // "Me" button with liquid glass effect
+                        Button(action: {
                             withAnimation {
                                 self.mapPosition = .userLocation(fallback: .automatic)
                             }
+                        }) {
+                            Image(systemName: "location")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.primary)
+                                .padding(16)
                         }
-                    } label: {
-                        Image(systemName: "mappin.circle")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .padding(.trailing, 16)
+                        .accessibilityLabel("me".localized)
+                        .glassEffect()
+                        
+                        // Menu button with liquid glass effect
+                        Menu {
+                            Button("my-places-menu".localized, systemImage: "list.bullet") {
+                                self.showingLandmarkList = true
+                            }
+                            Divider()
+                            ForEach(self.landmarks, id: \.self) { landmark in
+                                Button(landmark.name, systemImage: landmark.systemImageName) {
+                                    self.zoomTo(landmark: landmark)
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "list.bullet")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.primary)
+                                .padding(16)
+                        }
+                        .accessibilityLabel("my-places-menu".localized)
+                        .glassEffect()
                     }
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 16)
                 }
             }
         }

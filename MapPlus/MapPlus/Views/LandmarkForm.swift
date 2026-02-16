@@ -181,7 +181,7 @@ struct LandmarkForm: View {
     }
     
     private var cancelButton: some View {
-        Button("cancel".localized, systemImage: "x.circle") {
+        Button("cancel".localized, systemImage: "xmark") {
             dismiss()
         }
     }
