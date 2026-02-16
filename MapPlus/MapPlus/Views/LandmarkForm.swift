@@ -36,6 +36,7 @@ struct LandmarkForm: View {
     @State private var landmarkNameInput: String = ""
     @State private var landmarkIconNameSelected: String = "mappin.circle"
     @State private var landmarkNotesInput: String = ""
+    @State private var isNotesPreviewEnabled: Bool = false
 
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
@@ -145,17 +146,37 @@ struct LandmarkForm: View {
                 Label("icon".localized, systemImage: landmarkIconNameSelected)
             }
         }
-    }    
+    }
     
     @ViewBuilder
     private var notesSection: some View {
         Section(
             header: Text("notes".localized),
-            footer: MarkdownNote()
+            footer: markdownNote
         ) {
-            TextEditor(text: $landmarkNotesInput)
+            if isNotesPreviewEnabled {
+                if let markdown = landmarkNotesInput.withMarkdown {
+                    Text(markdown)
+                } else {
+                    Text(landmarkNotesInput)
+                }
+            } else {
+                TextEditor(text: $landmarkNotesInput)
+            }
         }
     }    
+        
+    @ViewBuilder
+    private var markdownNote: some View {
+        HStack {
+            MarkdownNote()
+            Spacer()
+            Toggle("show-me", systemImage: "eye",
+                   isOn: $isNotesPreviewEnabled)
+                .toggleStyle(.button)
+                .font(.footnote)
+        }
+    }
     
     private var locationSearchSection: some View {
         Section("location".localized) {

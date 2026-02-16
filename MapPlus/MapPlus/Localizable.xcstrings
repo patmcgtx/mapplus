@@ -437,6 +437,23 @@
           }
         }
       }
+    },
+    "show-me" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Show me"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "muéstrame"
+          }
+        }
+      }
     }
   },
   "version" : "1.0"
