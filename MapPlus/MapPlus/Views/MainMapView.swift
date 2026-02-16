@@ -77,8 +77,7 @@ struct MainMapView: View {
                                 .padding(16)
                         }
                         .accessibilityLabel("me".localized)
-                        .background(.ultraThinMaterial, in: Circle())
-                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        .glassEffect()
                         
                         // Menu button with liquid glass effect
                         Menu {
@@ -99,8 +98,7 @@ struct MainMapView: View {
                                 .padding(16)
                         }
                         .accessibilityLabel("my-places-menu".localized)
-                        .background(.ultraThinMaterial, in: Circle())
-                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        .glassEffect()
                     }
                     .padding(.trailing, 16)
                     .padding(.bottom, 16)
