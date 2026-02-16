@@ -117,6 +117,29 @@ struct MainMapView: View {
                 )
                 .scaleEffect(isDragging ? 1.1 : 1.0)
                 .animation(.spring(response: 0.3), value: isDragging)
+                
+                // "Me" button - fixed position in bottom-right corner
+                VStack {
+                    Spacer()
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            withAnimation {
+                                self.mapPosition = .userLocation(fallback: .automatic)
+                            }
+                        }) {
+                            Image(systemName: "location")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.primary)
+                                .padding(16)
+                        }
+                        .accessibilityLabel("me".localized)
+                        .glassEffect()
+                        .padding(.trailing, 16)
+                        .padding(.bottom, 16)
+                    }
+                }
             }
             .onAppear(){
                 self.locationPermissionsService.requestPermissions() { _ in
