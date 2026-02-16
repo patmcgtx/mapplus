@@ -1,3 +1,5 @@
+// Thanks, Claude Sonnet
+
 import Testing
 import CoreLocation
 @testable import MapPlus

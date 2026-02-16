@@ -6,6 +6,8 @@
 //
 import CoreLocation
 
+#if DEBUG
+
 // TODO patmcg cleanup docs
 
 /// A mock implementation of LocationService for testing and previews.
@@ -44,3 +46,5 @@ class MockLocationService: LocationService {
         )
     }
 }
+
+#endif // DEBUG

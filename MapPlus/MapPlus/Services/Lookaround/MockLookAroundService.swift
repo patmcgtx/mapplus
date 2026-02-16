@@ -6,6 +6,8 @@
 //
 import MapKit
 
+#if DEBUG
+
 /// A mock implementation of LookAroundService for testing and previews.
 struct MockLookAroundService: LookAroundService {
     
@@ -45,3 +47,5 @@ struct MockLookAroundService: LookAroundService {
         return sceneToReturn
     }
 }
+
+#endif // DEBUG
