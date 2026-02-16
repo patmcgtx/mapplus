@@ -6,6 +6,8 @@
 //
 import Foundation
 
+#if DEBUG
+
 // TODO patmcg cleanup?
 
 /// A mock implementation of AddressLookupProtocol for testing and previews.
@@ -84,3 +86,5 @@ struct MockAddressLookupService: AddressLookupService {
         )
     }
 }
+
+#endif // DEBUG

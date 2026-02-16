@@ -1,3 +1,5 @@
+// Thanks, Claude Sonnet
+
 import Testing
 @testable import MapPlus
 
