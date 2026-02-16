@@ -36,6 +36,7 @@ struct LandmarkForm: View {
     @State private var landmarkNameInput: String = ""
     @State private var landmarkIconNameSelected: String = "mappin.circle"
     @State private var landmarkNotesInput: String = ""
+    @State private var isNotesPreviewEnabled: Bool = false
 
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
@@ -70,19 +71,12 @@ struct LandmarkForm: View {
     var body: some View {
         Form {
             saveError
-            Section("details".localized) {
-                nameInput
-                iconPicker
-            }
-            Section("notes".localized) {
-                notesInput
-            }
+            detailsSection
+            notesSection
             if case .create = viewModel.mode {
-                locationSearch
+                locationSearchSection
             }
-            Section("preview".localized) {
-                previewArea
-            }
+            previewSection
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -133,33 +127,58 @@ struct LandmarkForm: View {
         }
     }
     
-    private var nameInput: some View {
-        HStack {
-            TextField("name".localized, text: $landmarkNameInput,
-                      onEditingChanged: { _ in
-            })
-            .autocorrectionDisabled()
+    private var detailsSection: some View {
+        Section("details".localized) {
+            HStack {
+                TextField("name".localized, text: $landmarkNameInput,
+                          onEditingChanged: { _ in
+                })
+                .autocorrectionDisabled()
+                Button {
+                    landmarkNameInput = ""
+                } label: {
+                    Image(systemName: "xmark.circle")
+                }
+            }
             Button {
-                landmarkNameInput = ""
+                isShowingIconPicker = true
             } label: {
-                Image(systemName: "xmark.circle")
+                Label("icon".localized, systemImage: landmarkIconNameSelected)
             }
         }
     }
     
-    private var iconPicker: some View {
-        Button {
-            isShowingIconPicker = true
-        } label: {
-            Label("icon".localized, systemImage: landmarkIconNameSelected)
+    @ViewBuilder
+    private var notesSection: some View {
+        Section(
+            header: Text("notes".localized),
+            footer: markdownNote
+        ) {
+            if isNotesPreviewEnabled {
+                if let markdown = landmarkNotesInput.withMarkdown {
+                    Text(markdown)
+                } else {
+                    Text(landmarkNotesInput)
+                }
+            } else {
+                TextEditor(text: $landmarkNotesInput)
+            }
+        }
+    }    
+        
+    @ViewBuilder
+    private var markdownNote: some View {
+        HStack {
+            MarkdownNote()
+            Spacer()
+            Toggle("show-me", systemImage: "eye",
+                   isOn: $isNotesPreviewEnabled)
+                .toggleStyle(.button)
+                .font(.footnote)
         }
     }
     
-    private var notesInput: some View {
-        TextEditor(text: $landmarkNotesInput)
-    }
-    
-    private var locationSearch: some View {
+    private var locationSearchSection: some View {
         Section("location".localized) {
             HStack {
                 TextField(
@@ -210,32 +229,34 @@ struct LandmarkForm: View {
     }
     
     @ViewBuilder
-    private var previewArea: some View {
-        HStack {
+    private var previewSection: some View {
+        Section("preview".localized) {
             HStack {
-                
-                // Landmark icon
-                VStack {
+                HStack {
+                    
+                    // Landmark icon
+                    VStack {
+                        Spacer()
+                        Image(systemName: landmarkIconNameSelected)
+                        Spacer()
+                        Text(landmarkNameInput)
+                        Spacer()
+                    }
+                    .multilineTextAlignment(.center)
+                    .padding()
                     Spacer()
-                    Image(systemName: landmarkIconNameSelected)
-                    Spacer()
-                    Text(landmarkNameInput)
-                    Spacer()
-                }
-                .multilineTextAlignment(.center)
-                .padding()
-                Spacer()
-                
-                // Landmark description
-                switch addressSearchState {
-                case .searchInitial:
-                    EmptyView()
-                case .searching:
-                    ProgressView()
-                case .searchResolved(let addressInfo):
-                    Text(addressInfo.formattedDescription)
-                case .searchFailed(let error):
-                    ErrorView(shortMessage: "location-search-failed".localized, error: error)
+                    
+                    // Landmark description
+                    switch addressSearchState {
+                    case .searchInitial:
+                        EmptyView()
+                    case .searching:
+                        ProgressView()
+                    case .searchResolved(let addressInfo):
+                        Text(addressInfo.formattedDescription)
+                    case .searchFailed(let error):
+                        ErrorView(shortMessage: "location-search-failed".localized, error: error)
+                    }
                 }
             }
         }
