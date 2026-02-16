@@ -82,7 +82,7 @@ struct MainMapView: View {
                         
                         // Menu button with liquid glass effect
                         Menu {
-                            Button("my-places-menu".localized, systemImage: "list.number") {
+                            Button("my-places-menu".localized, systemImage: "list.bullet") {
                                 self.showingLandmarkList = true
                             }
                             Divider()
@@ -92,7 +92,7 @@ struct MainMapView: View {
                                 }
                             }
                         } label: {
-                            Image(systemName: "mappin.circle")
+                            Image(systemName: "list.bullet")
                                 .resizable()
                                 .frame(width: 24, height: 24)
                                 .foregroundStyle(.primary)
