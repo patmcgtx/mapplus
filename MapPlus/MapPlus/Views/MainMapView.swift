@@ -27,12 +27,16 @@ struct MainMapView: View {
     @AppStorage("menuButtonY") private var menuButtonY: Double = 0
     @State private var buttonOffset: CGSize = .zero
     @State private var isDragging: Bool = false
+    @State private var hasInitializedPosition: Bool = false
     
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
 
     var body: some View {
         GeometryReader { geometry in
+            let defaultButtonPadding: CGFloat = 44 // Distance from edge to button center
+            let buttonSize: CGFloat = 56 // 24 icon + 16 padding on each side
+            
             ZStack {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
                     ForEach(landmarks, id: \.self) { landmark in
@@ -86,8 +90,8 @@ struct MainMapView: View {
                 .accessibilityLabel("my-places-menu".localized)
                 .glassEffect()
                 .position(
-                    x: menuButtonX == 0 ? geometry.size.width - 44 : menuButtonX + buttonOffset.width,
-                    y: menuButtonY == 0 ? geometry.size.height - 44 : menuButtonY + buttonOffset.height
+                    x: menuButtonX == 0 ? geometry.size.width - defaultButtonPadding : menuButtonX + buttonOffset.width,
+                    y: menuButtonY == 0 ? geometry.size.height - defaultButtonPadding : menuButtonY + buttonOffset.height
                 )
                 .gesture(
                     DragGesture()
@@ -99,9 +103,8 @@ struct MainMapView: View {
                             self.isDragging = false
                             
                             // Calculate new position
-                            let buttonSize: CGFloat = 56 // 24 + 16 padding on each side
-                            var newX = (menuButtonX == 0 ? geometry.size.width - 44 : menuButtonX) + value.translation.width
-                            var newY = (menuButtonY == 0 ? geometry.size.height - 44 : menuButtonY) + value.translation.height
+                            var newX = (menuButtonX == 0 ? geometry.size.width - defaultButtonPadding : menuButtonX) + value.translation.width
+                            var newY = (menuButtonY == 0 ? geometry.size.height - defaultButtonPadding : menuButtonY) + value.translation.height
                             
                             // Constrain to screen bounds
                             newX = max(buttonSize / 2, min(geometry.size.width - buttonSize / 2, newX))
@@ -146,10 +149,11 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
                 
-                // Initialize default position if not set
-                if menuButtonX == 0 && menuButtonY == 0 {
-                    self.menuButtonX = geometry.size.width - 44
-                    self.menuButtonY = geometry.size.height - 44
+                // Initialize default position only once
+                if !hasInitializedPosition && menuButtonX == 0 && menuButtonY == 0 {
+                    self.menuButtonX = geometry.size.width - defaultButtonPadding
+                    self.menuButtonY = geometry.size.height - defaultButtonPadding
+                    self.hasInitializedPosition = true
                 }
             }
             .sheet(isPresented: $showingLandmarkList) {
