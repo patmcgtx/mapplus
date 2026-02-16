@@ -27,7 +27,6 @@ struct MainMapView: View {
     @AppStorage("menuButtonY") private var menuButtonY: Double = 0
     @State private var buttonOffset: CGSize = .zero
     @State private var isDragging: Bool = false
-    @State private var hasInitializedPosition: Bool = false
     
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
@@ -149,13 +148,6 @@ struct MainMapView: View {
             .onAppear(){
                 self.locationPermissionsService.requestPermissions() { _ in
                     // TODO patmcg handle issues on the location permissions request
-                }
-                
-                // Initialize default position only once
-                if !hasInitializedPosition && menuButtonX == 0 && menuButtonY == 0 {
-                    self.menuButtonX = geometry.size.width - defaultButtonPadding
-                    self.menuButtonY = geometry.size.height - defaultButtonPadding
-                    self.hasInitializedPosition = true
                 }
             }
             .sheet(isPresented: $showingLandmarkList) {
