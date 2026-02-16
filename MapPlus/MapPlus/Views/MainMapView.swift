@@ -63,27 +63,45 @@ struct MainMapView: View {
                 Spacer()
                 HStack {
                     Spacer()
-                    Menu {
-                        Button("my-places-menu".localized, systemImage: "list.number") {
-                            self.showingLandmarkList = true
-                        }
-                        Divider()
-                        ForEach(self.landmarks, id: \.self) { landmark in
-                            Button(landmark.name, systemImage: landmark.systemImageName) {
-                                self.zoomTo(landmark: landmark)
-                            }
-                        }
-                        Button("me".localized, systemImage: "location") {
+                    VStack(spacing: 16) {
+                        // "Me" button with liquid glass effect
+                        Button(action: {
                             withAnimation {
                                 self.mapPosition = .userLocation(fallback: .automatic)
                             }
+                        }) {
+                            Image(systemName: "location")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.primary)
+                                .padding(16)
                         }
-                    } label: {
-                        Image(systemName: "mappin.circle")
-                            .resizable()
-                            .frame(width: 80, height: 80)
-                            .padding(.trailing, 16)
+                        .background(.ultraThinMaterial, in: Circle())
+                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
+                        
+                        // Menu button with liquid glass effect
+                        Menu {
+                            Button("my-places-menu".localized, systemImage: "list.number") {
+                                self.showingLandmarkList = true
+                            }
+                            Divider()
+                            ForEach(self.landmarks, id: \.self) { landmark in
+                                Button(landmark.name, systemImage: landmark.systemImageName) {
+                                    self.zoomTo(landmark: landmark)
+                                }
+                            }
+                        } label: {
+                            Image(systemName: "mappin.circle")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.primary)
+                                .padding(16)
+                        }
+                        .background(.ultraThinMaterial, in: Circle())
+                        .shadow(color: .black.opacity(0.1), radius: 10, x: 0, y: 5)
                     }
+                    .padding(.trailing, 16)
+                    .padding(.bottom, 16)
                 }
             }
         }
