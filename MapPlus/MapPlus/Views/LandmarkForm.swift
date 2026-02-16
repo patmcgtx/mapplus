@@ -37,6 +37,17 @@ struct LandmarkForm: View {
     @State private var landmarkIconNameSelected: String = "mappin.circle"
     @State private var landmarkNotesInput: String = ""
     @State private var isNotesPreviewEnabled: Bool = false
+    
+    // Computed height for notes TextEditor
+    private var notesEditorHeight: CGFloat {
+        let lineHeight: CGFloat = 20
+        let padding: CGFloat = 16
+        let minHeight: CGFloat = 100
+        
+        // Calculate approximate number of lines
+        let lineCount = max(landmarkNotesInput.components(separatedBy: .newlines).count, 5)
+        return max(minHeight, CGFloat(lineCount) * lineHeight + padding)
+    }
 
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
@@ -162,6 +173,7 @@ struct LandmarkForm: View {
                 }
             } else {
                 TextEditor(text: $landmarkNotesInput)
+                    .frame(height: notesEditorHeight)
             }
         }
     }    
