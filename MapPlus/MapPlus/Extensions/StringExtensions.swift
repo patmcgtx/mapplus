@@ -5,6 +5,8 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 
+import Foundation
+
 extension String {
     
     /// Returns the localized version of this string.
@@ -19,7 +21,17 @@ extension String {
     /// ```
     var localized: String {
         String(localized: .init(self))
-    }    
+    }
+        
+    /// Creates an`AttributedString` from this string, including markdown formatting.
+    /// - Returns:A markdown-formatted an`AttributedString`, or nil if there is an issue
+    var withMarkdown: AttributedString? {
+        do {
+            return try AttributedString(markdown: self)
+        } catch {
+            return nil
+        }
+    }
     
     /// Determines whether this string is populated with any non-whitespace text
     var isPopulated: Bool {

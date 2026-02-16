@@ -110,8 +110,13 @@ struct LandmarkDetailsView: View {
     
     @ViewBuilder
     private var detailsView: some View {
-        Text(landmark.notes)
-            .padding()
+        if let markdown = landmark.notes.withMarkdown {
+            Text(markdown)
+                .padding()
+        } else {
+            Text(landmark.notes)
+                .padding()
+        }
         Text(landmark.formattedAddress)
             .font(.footnote)
             .padding(.leading)

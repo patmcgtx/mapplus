@@ -212,6 +212,24 @@
         }
       }
     },
+    "markdown-note" : {
+      "comment" : "The markdown note is _in_ markdown!",
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Works with [Markdown](https://commonmark.org/help/)"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Funciona con [Markdown](https://commonmark.org/help/)"
+          }
+        }
+      }
+    },
     "me" : {
       "localizations" : {
         "en" : {
