@@ -31,12 +31,13 @@ struct MainMapView: View {
     
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
+    
+    // Constants for button positioning
+    private let defaultButtonPadding: CGFloat = 44 // Distance from edge to button center
+    private let buttonSize: CGFloat = 56 // 24 icon + (16 * 2) padding on both sides
 
     var body: some View {
         GeometryReader { geometry in
-            let defaultButtonPadding: CGFloat = 44 // Distance from edge to button center
-            let buttonSize: CGFloat = 56 // 24 icon + 16 padding on each side
-            
             ZStack {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
                     ForEach(landmarks, id: \.self) { landmark in
@@ -90,8 +91,8 @@ struct MainMapView: View {
                 .accessibilityLabel("my-places-menu".localized)
                 .glassEffect()
                 .position(
-                    x: menuButtonX == 0 ? geometry.size.width - defaultButtonPadding : menuButtonX + buttonOffset.width,
-                    y: menuButtonY == 0 ? geometry.size.height - defaultButtonPadding : menuButtonY + buttonOffset.height
+                    x: effectiveButtonPosition(geometry: geometry, offset: buttonOffset).x,
+                    y: effectiveButtonPosition(geometry: geometry, offset: buttonOffset).y
                 )
                 .gesture(
                     DragGesture()
@@ -102,9 +103,10 @@ struct MainMapView: View {
                         .onEnded { value in
                             self.isDragging = false
                             
-                            // Calculate new position
-                            var newX = (menuButtonX == 0 ? geometry.size.width - defaultButtonPadding : menuButtonX) + value.translation.width
-                            var newY = (menuButtonY == 0 ? geometry.size.height - defaultButtonPadding : menuButtonY) + value.translation.height
+                            // Calculate new position using helper
+                            let position = effectiveButtonPosition(geometry: geometry, offset: value.translation)
+                            var newX = position.x
+                            var newY = position.y
                             
                             // Constrain to screen bounds
                             newX = max(buttonSize / 2, min(geometry.size.width - buttonSize / 2, newX))
@@ -163,6 +165,13 @@ struct MainMapView: View {
     }
     
     // MARK: - Helper Methods
+    
+    /// Computes the effective position of the menu button based on stored position and current offset
+    private func effectiveButtonPosition(geometry: GeometryProxy, offset: CGSize = .zero) -> CGPoint {
+        let x = (menuButtonX == 0 ? geometry.size.width - defaultButtonPadding : menuButtonX) + offset.width
+        let y = (menuButtonY == 0 ? geometry.size.height - defaultButtonPadding : menuButtonY) + offset.height
+        return CGPoint(x: x, y: y)
+    }
     
     private func zoomTo(landmark: Landmark) {
         withAnimation {
