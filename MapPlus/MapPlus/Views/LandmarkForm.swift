@@ -174,6 +174,7 @@ struct LandmarkForm: View {
             } else {
                 TextEditor(text: $landmarkNotesInput)
                     .frame(height: notesEditorHeight)
+                    .animation(.easeInOut(duration: 0.2), value: notesEditorHeight)
             }
         }
     }    
