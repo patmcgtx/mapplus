@@ -163,7 +163,7 @@ struct LandmarkForm: View {
                             Text(landmarkNotesInput)
                         }
                     }
-                    .monospaced()
+                    .padding()
                     .frame(
                         maxWidth: .infinity,
                         alignment: .top

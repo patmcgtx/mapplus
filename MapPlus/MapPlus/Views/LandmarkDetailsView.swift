@@ -110,14 +110,14 @@ struct LandmarkDetailsView: View {
     
     @ViewBuilder
     private var detailsView: some View {
-        if let markdown = landmark.notes.withMarkdown {
-            Text(markdown)
-                .monospaced()
-                .padding()
-        } else {
-            Text(landmark.notes)
-                .monospaced()
-                .padding()
+        ScrollView {
+            if let markdown = landmark.notes.withMarkdown {
+                Text(markdown)
+                    .padding()
+            } else {
+                Text(landmark.notes)
+                    .padding()
+            }
         }
         HStack(alignment: .top) {
             Text(landmark.formattedAddress)
