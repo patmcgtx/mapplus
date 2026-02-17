@@ -133,7 +133,8 @@ struct LandmarkDetailsView: View {
                     landmark.openInMaps()
                 }
             }
-            .padding(.horizontal)
+            .padding(.trailing)
+            Spacer()
         }
     }
     
