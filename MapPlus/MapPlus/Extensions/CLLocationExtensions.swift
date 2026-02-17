@@ -5,7 +5,6 @@
 //  Created by Patrick McGonigle on 2/13/26.
 //
 import CoreLocation
-import MapKit
 
 extension CLLocation {
 
@@ -14,7 +13,7 @@ extension CLLocation {
     var coordinateString: String {
         coordinateString(locale: Locale.current)
     }
-
+    
     /// Creates a user-facing string with this location's latitude & longitude,
     /// formatted to 5 decimal places with a specific locale.
     /// - Parameter locale: The locale to use for formatting
