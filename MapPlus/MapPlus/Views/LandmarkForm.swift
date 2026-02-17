@@ -155,13 +155,31 @@ struct LandmarkForm: View {
             footer: markdownNote
         ) {
             if isNotesPreviewEnabled {
-                if let markdown = landmarkNotesInput.withMarkdown {
-                    Text(markdown)
-                } else {
-                    Text(landmarkNotesInput)
+                ScrollView {
+                    VStack {
+                        if let md = landmarkNotesInput.withMarkdown {
+                            Text(md)
+                        } else {
+                            Text(landmarkNotesInput)
+                        }
+                    }
+                    .monospaced()
+                    .frame(
+                        maxWidth: .infinity,
+                        alignment: .top
+                    )
+                    .background(
+                        Color.accentColor.opacity(0.1)
+                    )
                 }
             } else {
                 TextEditor(text: $landmarkNotesInput)
+                    .monospaced()
+                    .frame(
+                        maxWidth: .infinity,
+                        idealHeight: 120,
+                        alignment: .top
+                    )
             }
         }
     }    
@@ -233,7 +251,6 @@ struct LandmarkForm: View {
         Section("preview".localized) {
             HStack {
                 HStack {
-                    
                     // Landmark icon
                     VStack {
                         Spacer()
@@ -244,7 +261,7 @@ struct LandmarkForm: View {
                     }
                     .multilineTextAlignment(.center)
                     .padding()
-                    Spacer()
+                    EmptyView()
                     
                     // Landmark description
                     switch addressSearchState {

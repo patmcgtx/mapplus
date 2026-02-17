@@ -77,7 +77,7 @@ struct LandmarkSampleData {
     var nyc: Landmark {
         Landmark(
             name: "By the Brooklyn Bridge",
-            notes: "Under the bridge, views of Manhattan",
+            notes: "Under the bridge, _amazing_ views of Manhattan",
             formattedAddress: "1 Water St\nBrooklyn, NY 11201",
             systemImageName: "theatermasks",
             location: CLLocationCoordinate2D(

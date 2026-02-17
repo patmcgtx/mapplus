@@ -112,16 +112,17 @@ struct LandmarkDetailsView: View {
     private var detailsView: some View {
         if let markdown = landmark.notes.withMarkdown {
             Text(markdown)
+                .monospaced()
                 .padding()
         } else {
             Text(landmark.notes)
+                .monospaced()
                 .padding()
         }
         HStack(alignment: .top) {
             Text(landmark.formattedAddress)
                 .font(.footnote)
-                .padding(.leading)
-            Spacer()
+                .padding(.horizontal)
             VStack(alignment: .leading) {
                 Button("get-directions", systemImage: "arrow.trianglehead.turn.up.right.circle") {
                     landmark.openInMaps(
@@ -132,7 +133,7 @@ struct LandmarkDetailsView: View {
                     landmark.openInMaps()
                 }
             }
-            Spacer()
+            .padding(.horizontal)
         }
     }
     
@@ -175,7 +176,7 @@ struct LandmarkDetailsView: View {
 }
 
 #Preview("Mock - look-around error") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().london)
+    LandmarkDetailsView(landmark: LandmarkSampleData().nyc)
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: MapPlusError.noLookAround,
             sceneToReturn: nil,
