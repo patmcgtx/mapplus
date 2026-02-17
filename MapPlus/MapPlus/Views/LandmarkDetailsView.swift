@@ -123,12 +123,12 @@ struct LandmarkDetailsView: View {
                 .padding(.leading)
             Spacer()
             VStack(alignment: .leading) {
-                Button("Directions", systemImage: "arrow.trianglehead.turn.up.right.circle") {
+                Button("get-directions", systemImage: "arrow.trianglehead.turn.up.right.circle") {
                     landmark.openInMaps(
                         mapsOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault]
                     )
                 }
-                Button("Show in Maps", systemImage: "map") {
+                Button("show-in-maps", systemImage: "map") {
                     landmark.openInMaps()
                 }
             }
@@ -175,7 +175,7 @@ struct LandmarkDetailsView: View {
 }
 
 #Preview("Mock - look-around error") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+    LandmarkDetailsView(landmark: LandmarkSampleData().london)
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: MapPlusError.noLookAround,
             sceneToReturn: nil,

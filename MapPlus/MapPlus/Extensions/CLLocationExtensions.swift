@@ -15,22 +15,6 @@ extension CLLocation {
         coordinateString(locale: Locale.current)
     }
 
-    private var tightCoordinateString: String {
-        let coordinateFormatter = NumberFormatter()
-        coordinateFormatter.numberStyle = .decimal
-        coordinateFormatter.minimumFractionDigits = 5
-        coordinateFormatter.maximumFractionDigits = 5
-        
-        let lat = NSNumber(value: self.coordinate.latitude)
-        let lon = NSNumber(value: self.coordinate.longitude)
-        let coordinates = [
-            coordinateFormatter.string(from: lat) ?? "--",
-            coordinateFormatter.string(from: lon) ?? "--",
-        ]
-        
-        return coordinates.joined(separator: ", ")
-    }
-
     /// Creates a user-facing string with this location's latitude & longitude,
     /// formatted to 5 decimal places with a specific locale.
     /// - Parameter locale: The locale to use for formatting
