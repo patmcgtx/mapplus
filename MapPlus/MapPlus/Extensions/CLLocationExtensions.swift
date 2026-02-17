@@ -5,20 +5,7 @@
 //  Created by Patrick McGonigle on 2/13/26.
 //
 import CoreLocation
-
-extension CLLocationCoordinate2D {
-
-    // TODO pamtcg doc
-    var mapsURL: URL? {
-        URL(string: "https://maps.apple.com/?ll=\(self.latitude),\(self.longitude)")
-    }
-
-    // TODO pamtcg doc
-    var mapsDirectionsURL: URL? {
-        URL(string: "https://maps.apple.com/directions?destination=\(self.latitude),\(self.longitude)")
-    }
-
-}
+import MapKit
 
 extension CLLocation {
 

@@ -123,15 +123,13 @@ struct LandmarkDetailsView: View {
                 .padding(.leading)
             Spacer()
             VStack(alignment: .leading) {
-                if let directionsURL = landmark.location.mapsDirectionsURL {
-                    Button("Directions", systemImage: "arrow.trianglehead.turn.up.right.circle") {
-                        UIApplication.shared.open(directionsURL)
-                    }
+                Button("Directions", systemImage: "arrow.trianglehead.turn.up.right.circle") {
+                    landmark.openInMaps(
+                        mapsOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault]
+                    )
                 }
-                if let mapsURL = landmark.location.mapsURL {
-                    Button("Show in Maps", systemImage: "map") {
-                        UIApplication.shared.open(mapsURL)
-                    }
+                Button("Show in Maps", systemImage: "map") {
+                    landmark.openInMaps()
                 }
             }
             Spacer()
