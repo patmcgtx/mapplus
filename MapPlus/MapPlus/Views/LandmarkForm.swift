@@ -133,7 +133,6 @@ struct LandmarkForm: View {
                 TextField("name".localized, text: $landmarkNameInput,
                           onEditingChanged: { _ in
                 })
-                .autocorrectionDisabled()
                 Button {
                     landmarkNameInput = ""
                 } label: {
@@ -181,15 +180,15 @@ struct LandmarkForm: View {
     private var locationSearchSection: some View {
         Section("location".localized) {
             HStack {
-                TextField(
-                    "addr-or-location-name".localized,
-                    text: $locationSearchInput)
-                .autocorrectionDisabled()
                 Button {
                     runLocationSearch(ofType: .textSearch(locationSearchInput))
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
+                TextField(
+                    "addr-or-location-name".localized,
+                    text: $locationSearchInput)
+                .submitLabel(.search)
                 Button {
                     runLocationSearch(ofType: .currentLocation)
                 } label: {
