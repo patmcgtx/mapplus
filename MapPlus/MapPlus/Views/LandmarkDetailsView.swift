@@ -110,6 +110,15 @@ struct LandmarkDetailsView: View {
     
     @ViewBuilder
     private var detailsView: some View {
+        if !landmark.categories.isEmpty {
+            FlowLayout(horizontalSpacing: 8, verticalSpacing: 8) {
+                ForEach(landmark.categories, id: \.id) { category in
+                    CategoryCapsuleView(category: category)
+                }
+            }
+            .padding(.horizontal)
+            .padding(.top, 4)
+        }
         if let markdown = landmark.notes.withMarkdown {
             Text(markdown)
                 .padding()

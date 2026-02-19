@@ -30,12 +30,14 @@ struct LandmarkStorageService {
     ///   - name: The display name to assign to the landmark.
     ///   - notes: Descriptive notes about the landmark.
     ///   - iconName: The SF Symbols system image name associated with the landmark.
+    ///   - categories: The categories to assign to the landmark.
     /// - Throws: Re-throws any error encountered when saving the `modelContext`.
     func save(
         location: LocationInfo,
         name: String,
         notes: String,
-        iconName: String
+        iconName: String,
+        categories: [LandmarkCategory] = []
     ) throws {
         
         let landmark = Landmark(
@@ -45,8 +47,32 @@ struct LandmarkStorageService {
             systemImageName: iconName,
             location: location.coordinates
         )
+        landmark.categories = categories
         
         self.modelContext.insert(landmark)
+        try modelContext.save()
+    }
+    
+    /// Updates an existing `Landmark` in place and commits the change.
+    ///
+    /// - Parameters:
+    ///   - landmark: The existing landmark to update.
+    ///   - name: The updated display name.
+    ///   - notes: The updated descriptive notes.
+    ///   - iconName: The updated SF Symbols system image name.
+    ///   - categories: The updated categories.
+    /// - Throws: Re-throws any error encountered when saving the `modelContext`.
+    func update(
+        landmark: Landmark,
+        name: String,
+        notes: String,
+        iconName: String,
+        categories: [LandmarkCategory] = []
+    ) throws {
+        landmark.name = name
+        landmark.notes = notes
+        landmark.systemImageName = iconName
+        landmark.categories = categories
         try modelContext.save()
     }
     

@@ -4,6 +4,22 @@
     "" : {
 
     },
+    "add-category" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Add Category"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Agregar categoría"
+          }
+        }
+      }
+    },
     "add-place" : {
       "localizations" : {
         "en" : {
@@ -36,6 +52,22 @@
         }
       }
     },
+    "categories" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categories"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categorías"
+          }
+        }
+      }
+    },
     "cancel" : {
       "localizations" : {
         "en" : {
@@ -52,6 +84,22 @@
         }
       }
     },
+    "clear-filter" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Clear Filter"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar filtro"
+          }
+        }
+      }
+    },
     "close" : {
       "localizations" : {
         "en" : {
@@ -64,6 +112,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cerrar"
+          }
+        }
+      }
+    },
+    "color" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Color"
           }
         }
       }
@@ -116,6 +180,22 @@
         }
       }
     },
+    "done" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Done"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Listo"
+          }
+        }
+      }
+    },
     "edit" : {
       "localizations" : {
         "en" : {
@@ -132,6 +212,22 @@
         }
       }
     },
+    "edit-category" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Edit Category"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Editar categoría"
+          }
+        }
+      }
+    },
     "failed-to-save" : {
       "localizations" : {
         "en" : {
@@ -144,6 +240,22 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error al guardar"
+          }
+        }
+      }
+    },
+    "filter-by-category" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter by Category"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filtrar por categoría"
           }
         }
       }
@@ -312,6 +424,22 @@
         }
       }
     },
+    "new-category" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "New Category"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Nueva categoría"
+          }
+        }
+      }
+    },
     "new-landmark" : {
       "localizations" : {
         "en" : {
@@ -420,6 +548,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vista previa"
+          }
+        }
+      }
+    },
+    "remove-category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Remove category"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Quitar categoría"
           }
         }
       }

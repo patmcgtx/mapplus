@@ -26,6 +26,9 @@ class Landmark: Identifiable, Hashable {
     /// The full address description from MapKit
     var formattedAddress: String = ""
     
+    /// The categories this landmark belongs to
+    var categories: [LandmarkCategory] = []
+
     @Attribute private var latitude: CLLocationDegrees
     @Attribute private var longitude: CLLocationDegrees
     

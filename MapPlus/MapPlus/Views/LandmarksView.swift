@@ -17,6 +17,7 @@ struct LandmarksView : View {
     // UI state
     @State private var showLandmarkForm: Bool = false
     @State private var landmarkToEdit: Landmark? = nil
+    @State private var isShowingCategoriesEditor: Bool = false
 
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -50,6 +51,11 @@ struct LandmarksView : View {
                         self.showLandmarkForm = true
                     }
                 }
+                ToolbarItem(placement: .secondaryAction) {
+                    Button("categories".localized, systemImage: "tag") {
+                        self.isShowingCategoriesEditor = true
+                    }
+                }
             }
         }
         .sheet(isPresented: $showLandmarkForm) {
@@ -61,6 +67,9 @@ struct LandmarksView : View {
             NavigationStack {
                 LandmarkForm(mode: .edit(landmark))
             }
+        }
+        .sheet(isPresented: $isShowingCategoriesEditor) {
+            CategoriesEditorView()
         }
     }
     

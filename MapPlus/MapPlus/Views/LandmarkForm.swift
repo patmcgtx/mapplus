@@ -36,6 +36,11 @@ struct LandmarkForm: View {
     @State private var landmarkNameInput: String = ""
     @State private var landmarkIconNameSelected: String = "mappin.circle"
     @State private var landmarkNotesInput: String = ""
+    @State private var selectedCategories: [LandmarkCategory] = []
+
+    // All available categories for the picker
+    @Query(sort: \LandmarkCategory.name, order: .forward)
+    private var allCategories: [LandmarkCategory]
 
     // Notes preview
     @State private var isNotesPreviewEnabled: Bool = false
@@ -74,6 +79,7 @@ struct LandmarkForm: View {
         Form {
             saveError
             detailsSection
+            categoriesSection
             notesSection
             if case .create = viewModel.mode {
                 locationSearchSection
@@ -106,6 +112,7 @@ struct LandmarkForm: View {
                 landmarkNameInput = landmark.name
                 landmarkIconNameSelected = landmark.systemImageName
                 landmarkNotesInput = landmark.notes
+                selectedCategories = landmark.categories
                 addressSearchState = .searchResolved(
                     LocationInfo(
                         formattedDescription: landmark.formattedAddress,
@@ -145,6 +152,36 @@ struct LandmarkForm: View {
                 isShowingIconPicker = true
             } label: {
                 Label("icon".localized, systemImage: landmarkIconNameSelected)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var categoriesSection: some View {
+        Section("categories".localized) {
+            if !selectedCategories.isEmpty {
+                FlowLayout(horizontalSpacing: 8, verticalSpacing: 8) {
+                    ForEach(selectedCategories, id: \.id) { category in
+                        CategoryCapsuleView(category: category) {
+                            selectedCategories.removeAll { $0.id == category.id }
+                        }
+                    }
+                }
+                .padding(.vertical, 4)
+            }
+            let unselected = allCategories.filter { cat in
+                !selectedCategories.contains { $0.id == cat.id }
+            }
+            if !unselected.isEmpty {
+                Menu {
+                    ForEach(unselected) { category in
+                        Button(category.name) {
+                            selectedCategories.append(category)
+                        }
+                    }
+                } label: {
+                    Label("add-category".localized, systemImage: "plus.circle")
+                }
             }
         }
     }
@@ -205,15 +242,25 @@ struct LandmarkForm: View {
     private var saveButton: some View {
         Button("save".localized) {
             do {
-                switch addressSearchState {
-                case .searchInitial, .searching, .searchFailed:
-                    break
-                case .searchResolved(let addressInfo):
-                    try storageService.save(
-                        location: addressInfo,
+                switch viewModel.mode {
+                case .create:
+                    if case .searchResolved(let addressInfo) = addressSearchState {
+                        try storageService.save(
+                            location: addressInfo,
+                            name: landmarkNameInput,
+                            notes: landmarkNotesInput,
+                            iconName: landmarkIconNameSelected,
+                            categories: selectedCategories
+                        )
+                        saveState = .saved
+                    }
+                case .edit(let landmark):
+                    try storageService.update(
+                        landmark: landmark,
                         name: landmarkNameInput,
                         notes: landmarkNotesInput,
-                        iconName: landmarkIconNameSelected
+                        iconName: landmarkIconNameSelected,
+                        categories: selectedCategories
                     )
                     saveState = .saved
                 }
@@ -287,11 +334,16 @@ struct LandmarkForm: View {
     }
     
     private var isSaveEnabled: Bool {
-        switch addressSearchState {
-        case .searchInitial, .searching, .searchFailed:
-            return false
-        case .searchResolved:
+        switch viewModel.mode {
+        case .edit:
             return landmarkNameInput.isPopulated
+        case .create:
+            switch addressSearchState {
+            case .searchInitial, .searching, .searchFailed:
+                return false
+            case .searchResolved:
+                return landmarkNameInput.isPopulated
+            }
         }
     }
     
@@ -303,15 +355,18 @@ struct LandmarkForm: View {
     LandmarkForm(mode: .create)
         .environment(\.locationService, MockLocationService())
         .environment(\.addressLookupService, MockAddressLookupService())
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("Create - real services") {
     LandmarkForm(mode: .create)
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("Edit - real") {
     LandmarkForm(mode: .edit(
         LandmarkSampleData().capital)
     )
+    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
