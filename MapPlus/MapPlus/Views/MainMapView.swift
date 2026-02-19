@@ -17,6 +17,7 @@ struct MainMapView: View {
     
     // UI state
     @State private var showingLandmarkList: Bool = false
+    @State private var isShowingAddLandmarkSheet: Bool = false
     
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -64,7 +65,18 @@ struct MainMapView: View {
                 HStack {
                     Spacer()
                     VStack(spacing: 16) {
-                        // "Me" button with liquid glass effect
+  
+                        Button(action: {
+                            isShowingAddLandmarkSheet = true
+                        }) {
+                            Image(systemName: "plus")
+                                .resizable()
+                                .frame(width: 24, height: 24)
+                                .foregroundStyle(.primary)
+                                .padding(16)
+                        }
+                        .glassEffect()
+                        
                         Button(action: {
                             withAnimation {
                                 self.mapPosition = .userLocation(fallback: .automatic)
@@ -79,7 +91,6 @@ struct MainMapView: View {
                         .accessibilityLabel("me".localized)
                         .glassEffect()
                         
-                        // Menu button with liquid glass effect
                         Menu {
                             Button("my-places-menu".localized, systemImage: "list.bullet") {
                                 self.showingLandmarkList = true
@@ -112,6 +123,11 @@ struct MainMapView: View {
         }
         .sheet(isPresented: $showingLandmarkList) {
             LandmarksView()
+        }
+        .sheet(isPresented: $isShowingAddLandmarkSheet) {
+            NavigationStack {
+                LandmarkForm(mode: .create)
+            }
         }
     }
     
