@@ -36,6 +36,8 @@ struct LandmarkForm: View {
     @State private var landmarkNameInput: String = ""
     @State private var landmarkIconNameSelected: String = "mappin.circle"
     @State private var landmarkNotesInput: String = ""
+
+    // Notes preview
     @State private var isNotesPreviewEnabled: Bool = false
 
     // Icon picker state
@@ -133,7 +135,6 @@ struct LandmarkForm: View {
                 TextField("name".localized, text: $landmarkNameInput,
                           onEditingChanged: { _ in
                 })
-                .autocorrectionDisabled()
                 Button {
                     landmarkNameInput = ""
                 } label: {
@@ -155,11 +156,7 @@ struct LandmarkForm: View {
             footer: markdownNote
         ) {
             if isNotesPreviewEnabled {
-                if let markdown = landmarkNotesInput.withMarkdown {
-                    Text(markdown)
-                } else {
-                    Text(landmarkNotesInput)
-                }
+                MarkdownPreview(markdown: landmarkNotesInput)
             } else {
                 TextEditor(text: $landmarkNotesInput)
             }
@@ -169,7 +166,7 @@ struct LandmarkForm: View {
     @ViewBuilder
     private var markdownNote: some View {
         HStack {
-            MarkdownNote()
+            MarkdownUsageNote()
             Spacer()
             Toggle("show-me", systemImage: "eye",
                    isOn: $isNotesPreviewEnabled)
@@ -181,15 +178,15 @@ struct LandmarkForm: View {
     private var locationSearchSection: some View {
         Section("location".localized) {
             HStack {
-                TextField(
-                    "addr-or-location-name".localized,
-                    text: $locationSearchInput)
-                .autocorrectionDisabled()
                 Button {
                     runLocationSearch(ofType: .textSearch(locationSearchInput))
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
+                TextField(
+                    "addr-or-location-name".localized,
+                    text: $locationSearchInput)
+                .submitLabel(.search)
                 Button {
                     runLocationSearch(ofType: .currentLocation)
                 } label: {
