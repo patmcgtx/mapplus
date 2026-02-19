@@ -26,6 +26,8 @@ struct MainMapView: View {
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
 
+    @Namespace private var glassNamespace
+
     var body: some View {
         
         ZStack {
@@ -65,12 +67,16 @@ struct MainMapView: View {
                 HStack {
                     Spacer()
                     VStack(spacing: 16) {
-                        addButton
-                        locateButton
-                        landmarksMenu
+                        GlassEffectContainer {
+                            addButton
+                                .glassEffectID("addButton", in: glassNamespace)
+                            locateButton
+                                .glassEffectID("locateButton", in: glassNamespace)
+                            landmarksMenu
+                                .glassEffectID("landmarksMenu", in: glassNamespace)
+                        }
                     }
                     .padding(.trailing, 16)
-                    .padding(.bottom, 16)
                 }
             }
         }
