@@ -6,7 +6,8 @@
 //
 import SwiftUI
 
-struct MarkdownNote: View {
+/// A note about working with Markdown with a link out to a Markdown reference
+struct MarkdownUsageNote: View {
     var body: some View {
         if let markdownNote = "markdown-note".localized.withMarkdown {
             Text(markdownNote)
@@ -17,5 +18,5 @@ struct MarkdownNote: View {
 }
 
 #Preview {
-    MarkdownNote()
+    MarkdownUsageNote()
 }
