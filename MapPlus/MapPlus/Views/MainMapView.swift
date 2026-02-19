@@ -65,51 +65,9 @@ struct MainMapView: View {
                 HStack {
                     Spacer()
                     VStack(spacing: 16) {
-  
-                        Button(action: {
-                            isShowingAddLandmarkSheet = true
-                        }) {
-                            Image(systemName: "plus")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(.primary)
-                                .padding(16)
-                        }
-                        .glassEffect()
-                        
-                        Button(action: {
-                            withAnimation {
-                                self.mapPosition = .userLocation(fallback: .automatic)
-                            }
-                        }) {
-                            Image(systemName: "location")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(.primary)
-                                .padding(16)
-                        }
-                        .accessibilityLabel("me".localized)
-                        .glassEffect()
-                        
-                        Menu {
-                            Button("my-places-menu".localized, systemImage: "list.bullet") {
-                                self.showingLandmarkList = true
-                            }
-                            Divider()
-                            ForEach(self.landmarks, id: \.self) { landmark in
-                                Button(landmark.name, systemImage: landmark.systemImageName) {
-                                    self.zoomTo(landmark: landmark)
-                                }
-                            }
-                        } label: {
-                            Image(systemName: "list.bullet")
-                                .resizable()
-                                .frame(width: 24, height: 24)
-                                .foregroundStyle(.primary)
-                                .padding(16)
-                        }
-                        .accessibilityLabel("my-places-menu".localized)
-                        .glassEffect()
+                        addButton
+                        locateButton
+                        landmarksMenu
                     }
                     .padding(.trailing, 16)
                     .padding(.bottom, 16)
@@ -129,6 +87,59 @@ struct MainMapView: View {
                 LandmarkForm(mode: .create)
             }
         }
+    }
+    
+    // MARK: - Subviews
+    
+    var addButton: some View {
+        Button(action: {
+            isShowingAddLandmarkSheet = true
+        }) {
+            Image(systemName: "plus")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(.primary)
+                .padding(16)
+        }
+        .glassEffect()
+    }
+    
+    var locateButton: some View {
+        Button(action: {
+            withAnimation {
+                self.mapPosition = .userLocation(fallback: .automatic)
+            }
+        }) {
+            Image(systemName: "location")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(.primary)
+                .padding(16)
+        }
+        .accessibilityLabel("me".localized)
+        .glassEffect()
+    }
+    
+    var landmarksMenu : some View {
+        Menu {
+            Button("my-places-menu".localized, systemImage: "list.bullet") {
+                self.showingLandmarkList = true
+            }
+            Divider()
+            ForEach(self.landmarks, id: \.self) { landmark in
+                Button(landmark.name, systemImage: landmark.systemImageName) {
+                    self.zoomTo(landmark: landmark)
+                }
+            }
+        } label: {
+            Image(systemName: "list.bullet")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(.primary)
+                .padding(16)
+        }
+        .accessibilityLabel("my-places-menu".localized)
+        .glassEffect()
     }
     
     // MARK: - Helper Methods
