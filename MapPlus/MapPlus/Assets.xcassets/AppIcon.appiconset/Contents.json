@@ -1,7 +1,7 @@
 {
   "images" : [
     {
-      "filename" : "AppIcon.png",
+      "filename" : "AppIcon~ios-marketing.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
@@ -24,6 +24,7 @@
           "value" : "tinted"
         }
       ],
+      "filename" : "AppIcon~ios-marketing 1.png",
       "idiom" : "universal",
       "platform" : "ios",
       "size" : "1024x1024"
