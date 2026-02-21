@@ -8,15 +8,15 @@ import SwiftUI
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
+    
+    // TODO patmcg doc
+    let category: LandmarkCategory
+
+    // TODO patmcg doc
+    @Binding var fromCategories: [LandmarkCategory]
 
     // Persistence
     @Environment(\.modelContext) private var modelContext
-    private var storageService: LandmarkStorageService {
-        LandmarkStorageService(modelContext: modelContext)
-    }
-
-    // TODO patmcg doc
-    let category: LandmarkCategory
 
     var body: some View {
         HStack {
@@ -25,9 +25,12 @@ struct CategoryCapsule: View {
                 .fontDesign(.rounded)
                 .shadow(radius: 1.0)
             
-            // TODO patmcg needed?
+            // TODO patmcg make button optional
             Button(action: {
-                // TODO patmcg needed?
+                print("+++ Removing category: \(category.name)")
+                withAnimation {
+                    self.fromCategories.removeAll { $0.name == category.name }
+                }
             }, label: {
                 Image(systemName: "x.circle")
             })
@@ -50,18 +53,28 @@ struct CategoryCapsule: View {
 }
 
 #Preview("Short") {
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"))
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "Cafes")
+    ]
+    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
+                    fromCategories: $categories)
 }
 
 #Preview("Short with delete") {
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"))
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "Cafes"),
+        LandmarkCategory(name: "Restaurants"),
+        LandmarkCategory(name: "Hotels")
+    ]
+    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
+                    fromCategories: $categories)
 }
 
 #Preview("Medium long name") {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "Pretty long category name"
-        )
+        ), fromCategories: .constant([])
     )
 }
 
@@ -69,6 +82,6 @@ struct CategoryCapsule: View {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "This is a really long category name and it is going to be really long and it will probably break the preview"
-        )
+        ), fromCategories: .constant([])
     )
 }

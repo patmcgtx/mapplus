@@ -18,7 +18,8 @@ struct CategoryFlow: View {
         } else {
             HFlow {
                 ForEach(categories) { category in
-                    CategoryCapsule(category: category)
+                    CategoryCapsule(category: category,
+                                    fromCategories: $categories)
                 }
             }
         }
@@ -26,48 +27,45 @@ struct CategoryFlow: View {
 }
 
 #Preview("Several") {
-    CategoryFlow(
-        categories: .constant([
-            LandmarkCategory(name: "one"),
-            LandmarkCategory(name: "two"),
-            LandmarkCategory(name: "three"),
-            LandmarkCategory(name: "four"),
-            LandmarkCategory(name: "five"),
-            LandmarkCategory(name: "six"),
-            LandmarkCategory(name: "seven"),
-            LandmarkCategory(name: "eight"),
-        ])
-    )
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "one"),
+        LandmarkCategory(name: "two"),
+        LandmarkCategory(name: "three"),
+        LandmarkCategory(name: "four"),
+        LandmarkCategory(name: "five"),
+        LandmarkCategory(name: "six"),
+        LandmarkCategory(name: "seven"),
+        LandmarkCategory(name: "eight"),
+    ]
+    CategoryFlow(categories: $categories)
 }
 
 #Preview("One") {
-    CategoryFlow(
-        categories: .constant([
-            LandmarkCategory(name: "one"),
-        ])
-    )
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "one")
+    ]
+    CategoryFlow(categories: $categories)
 }
 
 #Preview("Two - delete") {
-    CategoryFlow(
-        categories: .constant([
-            LandmarkCategory(name: "one"),
-            LandmarkCategory(name: "two")
-        ])
-    )
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "one"),
+        LandmarkCategory(name: "two")
+    ]
+    CategoryFlow(categories: $categories)
 }
 
 #Preview("Three") {
-    CategoryFlow(
-        categories: .constant([
-            LandmarkCategory(name: "one"),
-            LandmarkCategory(name: "two"),
-            LandmarkCategory(name: "three")
-        ])
-    )
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "one"),
+        LandmarkCategory(name: "two"),
+        LandmarkCategory(name: "three")
+    ]
+    CategoryFlow(categories: $categories)
 }
 
 #Preview("None") {
-    CategoryFlow(categories: .constant([]))
+    @Previewable @State var categories: [LandmarkCategory] = []
+    CategoryFlow(categories: $categories)
 }
 
