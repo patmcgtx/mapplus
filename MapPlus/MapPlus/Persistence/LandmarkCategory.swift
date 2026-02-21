@@ -12,7 +12,7 @@ import SwiftData
 class LandmarkCategory: Identifiable, Hashable {
     
     #Unique<LandmarkCategory>([\.name])
-
+    
     var name: String
     
     @Relationship(inverse: \Landmark.categories)
@@ -22,4 +22,7 @@ class LandmarkCategory: Identifiable, Hashable {
         self.name = name
     }
     
+    var id: String {
+        return name
+    }
 }

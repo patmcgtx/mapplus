@@ -21,7 +21,7 @@ struct CategoryFlow: View {
             EmptyView()
         } else {
             HFlow {
-                ForEach(categories) { category in
+                ForEach(categories, id: \.id) { category in
                     CategoryCapsule(category: category,
                                     mode: mode,
                                     fromCategories: $categories)

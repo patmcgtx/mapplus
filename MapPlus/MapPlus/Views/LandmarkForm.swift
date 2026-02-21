@@ -134,7 +134,7 @@ struct LandmarkForm: View {
             HStack {
                 CategoryFlow(categories: $selectedCategories, mode: .edit)
                 Menu {
-                    ForEach(allCategories, id: \.self) { category in
+                    ForEach(allCategories, id: \.id) { category in
                         Button(category.name) {
                             withAnimation {
                                 selectedCategories.append(category)
