@@ -12,6 +12,24 @@ import MapKit
 /// Some sample landmarks for development and testing.
 struct LandmarkSampleData {
     
+    // MARK: - Landmark categories
+
+    var categoryCafes: LandmarkCategory {
+        LandmarkCategory(name: "Cafes")
+    }
+    
+    var categoryPersonal: LandmarkCategory {
+        LandmarkCategory(name: "Personal")
+    }
+    
+    var categoryFun: LandmarkCategory {
+        LandmarkCategory(name: "Fun")
+    }
+
+    var categoryHotel: LandmarkCategory {
+        LandmarkCategory(name: "Hotel")
+    }
+    
     // MARK: - Around Austin
 
     var capital: Landmark {
@@ -23,7 +41,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.27381,
                 longitude: -97.74063
-            )
+            ),
+            categories: [categoryFun]
         )
     }
 
@@ -36,7 +55,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.22744,
                 longitude: -97.76237
-            )
+            ),
+            categories: [categoryCafes, categoryFun]
         )
     }
     
@@ -49,7 +69,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.20632,
                 longitude: -97.77506
-            )
+            ),
+            categories: [categoryPersonal]
         )
     }
     
@@ -62,7 +83,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.27267,
                 longitude: -97.74109
-            )
+            ),
+            categories: [categoryPersonal]
         )
     }
 
@@ -83,7 +105,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 40.70352,
                 longitude: -73.99449
-            )
+            ),
+            categories: [categoryFun]
         )
     }
     
@@ -96,7 +119,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 51.5074,
                 longitude: -0.1278
-            )
+            ),
+            categories: [categoryFun]
         )
     }
     
@@ -109,7 +133,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 35.68529,
                 longitude: 139.69072
-            )
+            ),
+            categories: [categoryFun, categoryHotel]
         )
     }
 

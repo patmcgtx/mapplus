@@ -22,11 +22,15 @@ extension ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        
+                
         for landmark in LandmarkSampleData().austinPlaces {
             container.mainContext.insert(landmark)
         }
-        
+
+        for landmark in LandmarkSampleData().globalPlaces {
+            container.mainContext.insert(landmark)
+        }
+
         try container.mainContext.save()
         
         return container

@@ -18,13 +18,16 @@ class Landmark: Identifiable, Hashable {
     var name: String
     
     /// Descriptive notes for a landmark
-    var notes: String = ""
+    var notes: String
     
     /// The SF Symbols icon name for this landmark
     var systemImageName: String = "mappin.circle"
     
     /// The full address description from MapKit
-    var formattedAddress: String = ""
+    var formattedAddress: String
+    
+    /// Which categories this landmark is in
+    var categories: [LandmarkCategory]
     
     @Attribute private var latitude: CLLocationDegrees
     @Attribute private var longitude: CLLocationDegrees
@@ -38,7 +41,8 @@ class Landmark: Identifiable, Hashable {
         notes: String,
         formattedAddress: String,
         systemImageName: String,
-        location: CLLocationCoordinate2D
+        location: CLLocationCoordinate2D,
+        categories: [LandmarkCategory] = []
     ) {
         self.name = name
         self.notes = notes
@@ -46,6 +50,7 @@ class Landmark: Identifiable, Hashable {
         self.systemImageName = systemImageName
         self.latitude = location.latitude
         self.longitude = location.longitude
+        self.categories = categories
     }
 
 }

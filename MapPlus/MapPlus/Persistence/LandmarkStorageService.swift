@@ -31,12 +31,11 @@ struct LandmarkStorageService {
     ///   - notes: Descriptive notes about the landmark.
     ///   - iconName: The SF Symbols system image name associated with the landmark.
     /// - Throws: Re-throws any error encountered when saving the `modelContext`.
-    func save(
-        location: LocationInfo,
-        name: String,
-        notes: String,
-        iconName: String
-    ) throws {
+    // TODO patmcg unit tests
+    func save(location: LocationInfo,
+              name: String,
+              notes: String,
+              iconName: String) throws {
         
         let landmark = Landmark(
             name: name,
@@ -53,9 +52,21 @@ struct LandmarkStorageService {
     /// Deletes the given `Landmark` and commits the change.
     /// - Parameters:
     ///   - landmark: The landmark to delete
-    /// - Throws: Rethrows any error encountered when saving the `modelContext`.
+    /// - Throws: Re-throws any error encountered when saving the `modelContext`.
+    // TODO patmcg unit tests
     func delete(landmark: Landmark) throws {
         self.modelContext.delete(landmark)
+        try modelContext.save()
+    }
+    
+    // TODO patmcg doc
+    // TODO patmcg unit tests
+    func remove(category: LandmarkCategory,
+                from landmark: Landmark) throws {
+        let updatedCategories = landmark.categories.filter {
+            $0.id != category.id
+        }
+        landmark.categories = updatedCategories
         try modelContext.save()
     }
 }

@@ -53,7 +53,11 @@ struct LandmarkDetailsView: View {
                             .font(.title)
                     }
                     .padding()
-                    
+                       
+                    CategoryFlow(categories: landmark.categories,
+                                 landmark: landmark,
+                                 includeDeleteButtons: false)
+
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
                             Text(section.localizedString)
@@ -161,7 +165,7 @@ struct LandmarkDetailsView: View {
 // MARK: - Previews
 
 #Preview("Real look-around") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().tokyo)
+    LandmarkDetailsView(landmark: LandmarkSampleData().coffee)
         .environment(\.lookAroundService, MapKitLookAroundService())
 }
 

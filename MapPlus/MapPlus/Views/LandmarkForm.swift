@@ -75,6 +75,7 @@ struct LandmarkForm: View {
             saveError
             detailsSection
             notesSection
+            categoriesSection
             if case .create = viewModel.mode {
                 locationSearchSection
             }
@@ -118,6 +119,25 @@ struct LandmarkForm: View {
     }
     
     // MARK: - Subviews
+    
+    @ViewBuilder
+    private var categoriesSection: some View {
+        Section("Categories") {
+            HStack {
+                switch viewModel.mode {
+                case .create:
+                    EmptyView()
+                case .edit(let landmark):
+                    CategoryFlow(categories: landmark.categories,
+                                 landmark: landmark,
+                                 includeDeleteButtons: true)
+                }
+                Button(action: {}, label: {
+                    Image(systemName: "plus.circle")
+                })
+            }
+        }
+    }
     
     @ViewBuilder
     private var saveError: some View {
@@ -311,7 +331,7 @@ struct LandmarkForm: View {
 
 #Preview("Edit - real") {
     LandmarkForm(mode: .edit(
-        LandmarkSampleData().capital)
+        LandmarkSampleData().coffee)
     )
 }
 

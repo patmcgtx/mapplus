@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		696E35A32F48E2600071C442 /* Flow in Frameworks */ = {isa = PBXBuildFile; productRef = 696E35A22F48E2600071C442 /* Flow */; };
 		69DB796D2F2AD79700F9C3EA /* SFSymbolsPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */; };
 /* End PBXBuildFile section */
 
@@ -69,6 +70,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				696E35A32F48E2600071C442 /* Flow in Frameworks */,
 				69DB796D2F2AD79700F9C3EA /* SFSymbolsPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -131,6 +133,7 @@
 			name = MapPlus;
 			packageProductDependencies = (
 				69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */,
+				696E35A22F48E2600071C442 /* Flow */,
 			);
 			productName = MapPlus;
 			productReference = 69A020452E6CE46700871D38 /* MapPlus.app */;
@@ -217,6 +220,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */,
+				696E35A12F48E2600071C442 /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 69A020462E6CE46700871D38 /* Products */;
@@ -644,6 +648,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		696E35A12F48E2600071C442 /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/tevelee/SwiftUI-Flow";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.1.1;
+			};
+		};
 		69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/alessiorubicini/SFSymbolsPickerForSwiftUI";
@@ -655,6 +667,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		696E35A22F48E2600071C442 /* Flow */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 696E35A12F48E2600071C442 /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */;
+			productName = Flow;
+		};
 		69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */;
