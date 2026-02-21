@@ -20,7 +20,7 @@ struct LandmarkDetailsView: View {
     
     // UI state
     @State private var isEditorShowing: Bool = false
-    
+
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
         case details = "details"
@@ -53,6 +53,8 @@ struct LandmarkDetailsView: View {
                             .font(.title)
                     }
                     .padding()
+                    
+                    CategoryFlow(categories: .constant(landmark.categories), mode: .view)
                     
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
