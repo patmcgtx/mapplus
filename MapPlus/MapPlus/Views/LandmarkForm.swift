@@ -134,10 +134,19 @@ struct LandmarkForm: View {
             HStack {
                 CategoryFlow(categories: $selectedCategories, mode: .edit)
                 Menu {
-                    ForEach(allCategories, id: \.id) { category in
+                    // TODO patmcg hide categories - encapsulate this with an onChange: or something?
+                    let availableCategories = allCategories.filter { self.selectedCategories.contains($0) == false }
+                    ForEach(availableCategories, id: \.id) { category in
                         Button(category.name) {
                             withAnimation {
                                 selectedCategories.append(category)
+                                // TODO patmcg encapsulate this sorting, also update LandmarkDetailsView
+                                selectedCategories = selectedCategories.sorted(
+                                    by: { lhs, rhs in
+                                        lhs.name.localizedStandardCompare(
+                                            rhs.name
+                                        ) == .orderedAscending
+                                    })
                             }
                         }
                     }

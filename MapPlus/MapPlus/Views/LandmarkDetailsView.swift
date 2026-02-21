@@ -53,10 +53,10 @@ struct LandmarkDetailsView: View {
                             .font(.title)
                     }
                     .padding()
-                       
+                    
                     CategoryFlow(categories: .constant(landmark.categories), mode: .view)
 
-                    Picker("section".localized, selection:$selectedSection) {
+                    Picker("section".localized, selection: $selectedSection) {
                         ForEach(Section.allCases, id: \.id) { section in
                             Text(section.localizedString)
                         }
