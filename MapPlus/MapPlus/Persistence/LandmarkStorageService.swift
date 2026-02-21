@@ -43,7 +43,8 @@ struct LandmarkStorageService {
             notes: notes,
             formattedAddress: location.formattedDescription,
             systemImageName: iconName,
-            location: location.coordinates
+            location: location.coordinates,
+            categories: categories
         )
         
         self.modelContext.insert(landmark)

@@ -13,6 +13,13 @@ extension ModelContainer {
     static func persistentContainer() throws -> ModelContainer {
         let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
+        
+        // TODO finalize and localize, AND respect any deletions made by the user!
+        for category in LandmarkSampleData().allCategories {
+            container.mainContext.insert(category)
+        }
+        try container.mainContext.save()
+        
         return container
     }
 

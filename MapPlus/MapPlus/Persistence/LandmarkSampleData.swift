@@ -30,6 +30,10 @@ struct LandmarkSampleData {
         LandmarkCategory(name: "Hotel")
     }
     
+    var allCategories: [LandmarkCategory] {
+        [categoryCafes, categoryPersonal, categoryFun, categoryHotel]
+    }
+    
     // MARK: - Around Austin
 
     var capital: Landmark {

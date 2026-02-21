@@ -136,7 +136,9 @@ struct LandmarkForm: View {
                 Menu {
                     ForEach(allCategories, id: \.self) { category in
                         Button(category.name) {
-                            selectedCategories.append(category)
+                            withAnimation {
+                                selectedCategories.append(category)
+                            }
                         }
                     }
                 } label: {

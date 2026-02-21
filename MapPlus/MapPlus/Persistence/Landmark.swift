@@ -42,7 +42,7 @@ class Landmark: Identifiable, Hashable {
         formattedAddress: String,
         systemImageName: String,
         location: CLLocationCoordinate2D,
-        categories: [LandmarkCategory] = []
+        categories: [LandmarkCategory]
     ) {
         self.name = name
         self.notes = notes
