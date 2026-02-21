@@ -46,6 +46,11 @@ struct LandmarkForm: View {
     private var allCategories: [LandmarkCategory]
     
     @State private var selectedCategories: [LandmarkCategory] = []
+
+    private var availableCategories: [LandmarkCategory] {
+        allCategories.filter { !selectedCategories.contains($0) }
+    }
+
     
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
@@ -134,8 +139,6 @@ struct LandmarkForm: View {
             HStack {
                 CategoryFlow(categories: $selectedCategories, mode: .edit)
                 Menu {
-                    // TODO patmcg hide categories - encapsulate this with an onChange: or something?
-                    let availableCategories = allCategories.filter { self.selectedCategories.contains($0) == false }
                     ForEach(availableCategories, id: \.id) { category in
                         Button(category.name) {
                             withAnimation {
