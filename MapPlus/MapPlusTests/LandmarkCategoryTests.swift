@@ -58,6 +58,7 @@ struct LandmarkCategoryTests {
 
         // Add a category
         container.mainContext.insert(cafes)
+        try container.mainContext.save()
         allCategories = try container.mainContext.fetch(descriptor)
 
         #expect(allCategories.count == 1)
@@ -65,6 +66,7 @@ struct LandmarkCategoryTests {
         // Insert a second instance with the same name
         let cafesAgain = LandmarkCategory(name: "Cafes")
         container.mainContext.insert(cafesAgain)
+        try container.mainContext.save()
         allCategories = try container.mainContext.fetch(descriptor)
 
         #expect(allCategories.count == 1)
