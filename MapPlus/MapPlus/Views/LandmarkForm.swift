@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 import SFSafeSymbols
 
 /// A  view for creating or editing landmarks.
@@ -14,6 +15,7 @@ struct LandmarkForm: View {
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
+        self.selectedCategories = viewModel.landmarkToEdit?.categories ?? []
     }
 
     // Environment
@@ -39,7 +41,12 @@ struct LandmarkForm: View {
 
     // Notes preview
     @State private var isNotesPreviewEnabled: Bool = false
-
+    
+    // Categories
+    @Query(sort: \LandmarkCategory.name, order: .forward)
+    private var allCategories: [LandmarkCategory]
+    @State private var selectedCategories: [LandmarkCategory]
+    
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
     
@@ -128,13 +135,21 @@ struct LandmarkForm: View {
                 case .create:
                     EmptyView()
                 case .edit(let landmark):
-                    CategoryFlow(categories: landmark.categories,
+                    CategoryFlow(categories: selectedCategories,
                                  landmark: landmark,
                                  includeDeleteButtons: true)
                 }
-                Button(action: {}, label: {
+                Menu {
+                    ForEach(allCategories, id: \.self) { category in
+                        Button(category.name) {
+                            withAnimation {
+                                selectedCategories.append(category)
+                            }
+                        }
+                    }
+                } label: {
                     Image(systemName: "plus.circle")
-                })
+                }
             }
         }
     }
@@ -323,15 +338,18 @@ struct LandmarkForm: View {
     LandmarkForm(mode: .create)
         .environment(\.locationService, MockLocationService())
         .environment(\.addressLookupService, MockAddressLookupService())
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("Create - real services") {
     LandmarkForm(mode: .create)
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("Edit - real") {
     LandmarkForm(mode: .edit(
         LandmarkSampleData().coffee)
     )
+    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
