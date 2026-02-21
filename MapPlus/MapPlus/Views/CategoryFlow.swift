@@ -10,7 +10,11 @@ import Flow
 /// Displays a list of landmark categories in a horizontal flow layout
 struct CategoryFlow: View {
     
+    // TODO patmcg doc
     @Binding var categories: [LandmarkCategory]
+    
+    // TODO patmcg doc
+    let mode: CategoryCapsule.Mode
 
     var body: some View {
         if categories.isEmpty {
@@ -19,6 +23,7 @@ struct CategoryFlow: View {
             HFlow {
                 ForEach(categories) { category in
                     CategoryCapsule(category: category,
+                                    mode: mode,
                                     fromCategories: $categories)
                 }
             }
@@ -37,35 +42,55 @@ struct CategoryFlow: View {
         LandmarkCategory(name: "seven"),
         LandmarkCategory(name: "eight"),
     ]
-    CategoryFlow(categories: $categories)
+    CategoryFlow(categories: $categories, mode: .view)
+}
+
+#Preview("Several - edit") {
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "one"),
+        LandmarkCategory(name: "two"),
+        LandmarkCategory(name: "three"),
+        LandmarkCategory(name: "four"),
+        LandmarkCategory(name: "five"),
+        LandmarkCategory(name: "six"),
+        LandmarkCategory(name: "seven"),
+        LandmarkCategory(name: "eight"),
+    ]
+    CategoryFlow(categories: $categories, mode: .edit)
 }
 
 #Preview("One") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "one")
     ]
-    CategoryFlow(categories: $categories)
+    CategoryFlow(categories: $categories, mode: .view)
 }
 
-#Preview("Two - delete") {
+#Preview("One - edit") {
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "one")
+    ]
+    CategoryFlow(categories: $categories, mode: .edit)
+}
+
+#Preview("Two") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "one"),
         LandmarkCategory(name: "two")
     ]
-    CategoryFlow(categories: $categories)
+    CategoryFlow(categories: $categories, mode: .view)
 }
 
-#Preview("Three") {
+#Preview("Two - edit") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "one"),
-        LandmarkCategory(name: "two"),
-        LandmarkCategory(name: "three")
+        LandmarkCategory(name: "two")
     ]
-    CategoryFlow(categories: $categories)
+    CategoryFlow(categories: $categories, mode: .edit)
 }
 
 #Preview("None") {
     @Previewable @State var categories: [LandmarkCategory] = []
-    CategoryFlow(categories: $categories)
+    CategoryFlow(categories: $categories, mode: .view)
 }
 

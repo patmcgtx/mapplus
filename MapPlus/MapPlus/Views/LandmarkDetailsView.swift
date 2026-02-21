@@ -54,7 +54,7 @@ struct LandmarkDetailsView: View {
                     }
                     .padding()
                        
-                    CategoryFlow(categories: .constant(landmark.categories))
+                    CategoryFlow(categories: .constant(landmark.categories), mode: .view)
 
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in

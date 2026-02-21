@@ -132,7 +132,7 @@ struct LandmarkForm: View {
     private var categoriesSection: some View {
         Section("Categories") {
             HStack {
-                CategoryFlow(categories: $selectedCategories)
+                CategoryFlow(categories: $selectedCategories, mode: .edit)
                 Menu {
                     ForEach(allCategories, id: \.self) { category in
                         Button(category.name) {

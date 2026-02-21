@@ -10,7 +10,16 @@ import SwiftUI
 struct CategoryCapsule: View {
     
     // TODO patmcg doc
+    enum Mode {
+        case view
+        case edit
+    }
+    
+    // TODO patmcg doc
     let category: LandmarkCategory
+    
+    // TODO patmcg doc
+    let mode: Mode
 
     // TODO patmcg doc
     @Binding var fromCategories: [LandmarkCategory]
@@ -25,15 +34,15 @@ struct CategoryCapsule: View {
                 .fontDesign(.rounded)
                 .shadow(radius: 1.0)
             
-            // TODO patmcg make button optional
-            Button(action: {
-                print("+++ Removing category: \(category.name)")
-                withAnimation {
-                    self.fromCategories.removeAll { $0.name == category.name }
-                }
-            }, label: {
-                Image(systemName: "x.circle")
-            })
+            if .edit == mode {
+                Button(action: {
+                    withAnimation {
+                        self.fromCategories.removeAll { $0.name == category.name }
+                    }
+                }, label: {
+                    Image(systemName: "x.circle")
+                })
+            }
         }
         .foregroundStyle(.primary)
         .colorInvert()
@@ -57,6 +66,7 @@ struct CategoryCapsule: View {
         LandmarkCategory(name: "Cafes")
     ]
     CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
+                    mode: .view,
                     fromCategories: $categories)
 }
 
@@ -67,6 +77,7 @@ struct CategoryCapsule: View {
         LandmarkCategory(name: "Hotels")
     ]
     CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
+                    mode: .view,
                     fromCategories: $categories)
 }
 
@@ -74,7 +85,9 @@ struct CategoryCapsule: View {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "Pretty long category name"
-        ), fromCategories: .constant([])
+        ),
+        mode: .view,
+        fromCategories: .constant([])
     )
 }
 
@@ -82,6 +95,8 @@ struct CategoryCapsule: View {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "This is a really long category name and it is going to be really long and it will probably break the preview"
-        ), fromCategories: .constant([])
+        ),
+        mode: .view,
+        fromCategories: .constant([])
     )
 }
