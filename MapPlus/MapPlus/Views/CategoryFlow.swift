@@ -10,7 +10,7 @@ import Flow
 /// Displays a list of landmark categories in a horizontal flow layout
 struct CategoryFlow: View {
     
-    let categories: [LandmarkCategory]
+    @Binding var categories: [LandmarkCategory]
 
     var body: some View {
         if categories.isEmpty {
@@ -27,7 +27,7 @@ struct CategoryFlow: View {
 
 #Preview("Several") {
     CategoryFlow(
-        categories: [
+        categories: .constant([
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two"),
             LandmarkCategory(name: "three"),
@@ -36,38 +36,38 @@ struct CategoryFlow: View {
             LandmarkCategory(name: "six"),
             LandmarkCategory(name: "seven"),
             LandmarkCategory(name: "eight"),
-        ]
+        ])
     )
 }
 
 #Preview("One") {
     CategoryFlow(
-        categories: [
+        categories: .constant([
             LandmarkCategory(name: "one"),
-        ]
+        ])
     )
 }
 
 #Preview("Two - delete") {
     CategoryFlow(
-        categories: [
+        categories: .constant([
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two")
-        ]
+        ])
     )
 }
 
 #Preview("Three") {
     CategoryFlow(
-        categories: [
+        categories: .constant([
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two"),
             LandmarkCategory(name: "three")
-        ]
+        ])
     )
 }
 
 #Preview("None") {
-    CategoryFlow(categories: [])
+    CategoryFlow(categories: .constant([]))
 }
 
