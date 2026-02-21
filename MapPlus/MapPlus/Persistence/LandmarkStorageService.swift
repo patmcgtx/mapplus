@@ -35,7 +35,8 @@ struct LandmarkStorageService {
     func save(location: LocationInfo,
               name: String,
               notes: String,
-              iconName: String) throws {
+              iconName: String,
+              categories: [LandmarkCategory]) throws {
         
         let landmark = Landmark(
             name: name,

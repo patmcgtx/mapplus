@@ -15,7 +15,6 @@ struct LandmarkForm: View {
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
-        self.selectedCategories = viewModel.landmarkToEdit?.categories ?? []
     }
 
     // Environment
@@ -45,7 +44,8 @@ struct LandmarkForm: View {
     // Categories
     @Query(sort: \LandmarkCategory.name, order: .forward)
     private var allCategories: [LandmarkCategory]
-    @State private var selectedCategories: [LandmarkCategory]
+    
+    @State private var selectedCategories: [LandmarkCategory] = []
     
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
@@ -113,6 +113,7 @@ struct LandmarkForm: View {
                 // Populate inputs with existing landmark info
                 landmarkNameInput = landmark.name
                 landmarkIconNameSelected = landmark.systemImageName
+                selectedCategories = landmark.categories
                 landmarkNotesInput = landmark.notes
                 addressSearchState = .searchResolved(
                     LocationInfo(
@@ -137,14 +138,16 @@ struct LandmarkForm: View {
                 case .edit(let landmark):
                     CategoryFlow(categories: selectedCategories,
                                  landmark: landmark,
-                                 includeDeleteButtons: true)
+                                 // TODO patmcg use binding instead...
+                                 deleteCompletion: { category in
+                        print("+++ Removing category: \(category.name)")
+//                        selectedCategories.removeAll { $0.name == category.name }
+                    })
                 }
                 Menu {
                     ForEach(allCategories, id: \.self) { category in
                         Button(category.name) {
-                            withAnimation {
-                                selectedCategories.append(category)
-                            }
+                            selectedCategories.append(category)
                         }
                     }
                 } label: {
@@ -248,7 +251,8 @@ struct LandmarkForm: View {
                         location: addressInfo,
                         name: landmarkNameInput,
                         notes: landmarkNotesInput,
-                        iconName: landmarkIconNameSelected
+                        iconName: landmarkIconNameSelected,
+                        categories: selectedCategories
                     )
                     saveState = .saved
                 }

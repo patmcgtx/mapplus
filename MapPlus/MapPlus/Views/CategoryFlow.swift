@@ -6,15 +6,13 @@
 //
 import SwiftUI
 import Flow
-import SwiftData
 
 /// Displays a list of landmark categories in a horizontal flow layout
 struct CategoryFlow: View {
     
     let categories: [LandmarkCategory]
     let landmark: Landmark
-    let includeDeleteButtons: Bool
-    
+    let deleteCompletion: ((LandmarkCategory) -> Void)?
 
     var body: some View {
         if categories.isEmpty {
@@ -24,7 +22,7 @@ struct CategoryFlow: View {
                 ForEach(categories) { category in
                     CategoryCapsule(category: category,
                                     landmark: landmark,
-                                    includeDeleteButton: includeDeleteButtons)
+                                    deleteCompletion: deleteCompletion)
                 }
             }
         }
@@ -42,28 +40,33 @@ struct CategoryFlow: View {
             LandmarkCategory(name: "six"),
             LandmarkCategory(name: "seven"),
             LandmarkCategory(name: "eight"),
-        ], landmark: LandmarkSampleData().capital, includeDeleteButtons: false
+        ],
+        landmark: LandmarkSampleData().capital,
+        deleteCompletion: nil
     )
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("One") {
     CategoryFlow(
         categories: [
             LandmarkCategory(name: "one"),
-        ], landmark: LandmarkSampleData().capital, includeDeleteButtons: false
+        ],
+        landmark: LandmarkSampleData().capital,
+        deleteCompletion: nil
     )
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
-#Preview("Two") {
+#Preview("Two - delete") {
     CategoryFlow(
         categories: [
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two")
-        ], landmark: LandmarkSampleData().capital, includeDeleteButtons: false
+        ],
+        landmark: LandmarkSampleData().capital,
+        deleteCompletion: {category in
+            print("Deleted: \(category.name)")
+        }
     )
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("Three") {
@@ -72,15 +75,17 @@ struct CategoryFlow: View {
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two"),
             LandmarkCategory(name: "three")
-        ], landmark: LandmarkSampleData().capital, includeDeleteButtons: false
+        ],
+        landmark: LandmarkSampleData().capital,
+        deleteCompletion: nil
     )
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #Preview("None") {
     CategoryFlow(categories: [],
                  landmark: LandmarkSampleData().capital,
-                 includeDeleteButtons: false)
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
+                 deleteCompletion: { category in
+        print("Deleted: \(category.name)")
+    })
 }
 

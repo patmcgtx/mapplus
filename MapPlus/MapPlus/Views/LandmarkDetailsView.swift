@@ -56,7 +56,7 @@ struct LandmarkDetailsView: View {
                        
                     CategoryFlow(categories: landmark.categories,
                                  landmark: landmark,
-                                 includeDeleteButtons: false)
+                                 deleteCompletion: nil)
 
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
