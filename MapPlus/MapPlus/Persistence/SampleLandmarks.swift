@@ -9,8 +9,12 @@ import SwiftData
 import SwiftUI
 import MapKit
 
+
+
 /// Some sample landmarks for development and testing.
-struct LandmarkSampleData {
+struct SampleLandmarks {
+    
+    private var categories = SampleCategories()
     
     // MARK: - Around Austin
 
@@ -23,7 +27,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.27381,
                 longitude: -97.74063
-            )
+            ),
+            categories: [categories.fun]
         )
     }
 
@@ -36,7 +41,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.22744,
                 longitude: -97.76237
-            )
+            ),
+            categories: [categories.cafes, categories.fun]
         )
     }
     
@@ -49,7 +55,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.20632,
                 longitude: -97.77506
-            )
+            ),
+            categories: [categories.education]
         )
     }
     
@@ -62,7 +69,8 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 30.27267,
                 longitude: -97.74109
-            )
+            ),
+            categories: []
         )
     }
 
@@ -74,20 +82,21 @@ struct LandmarkSampleData {
 
     // MARK: - Global sites
     
-    var nyc: Landmark {
+    var brooklynBridge: Landmark {
         Landmark(
-            name: "By the Brooklyn Bridge",
+            name: "Brooklyn Bridge",
             notes: "Under the bridge, views of Manhattan",
             formattedAddress: "1 Water St\nBrooklyn, NY 11201",
             systemImageName: "theatermasks",
             location: CLLocationCoordinate2D(
-                latitude: 40.70352,
-                longitude: -73.99449
-            )
+                latitude: 40.70584,
+                longitude: -73.99642
+            ),
+            categories: [categories.historic, categories.fun]
         )
     }
     
-    var london: Landmark {
+    var charingCross: Landmark {
         Landmark(
             name: "Charing Cross, London",
             notes: "Where six routes meet.",
@@ -96,26 +105,28 @@ struct LandmarkSampleData {
             location: CLLocationCoordinate2D(
                 latitude: 51.5074,
                 longitude: -0.1278
-            )
+            ),
+            categories: [categories.historic, categories.fun]
         )
     }
     
-    var tokyo: Landmark {
+    var lostInTranslation: Landmark {
         Landmark(
             name: "Park Hyatt Tokyo",
-            notes: "Lost in translation.",
+            notes: "From _Lost in Translation_.",
             formattedAddress: "〒163-1055\n東京都新宿区\n西新宿3丁目7-1-2",
             systemImageName: "film",
             location: CLLocationCoordinate2D(
                 latitude: 35.68529,
                 longitude: 139.69072
-            )
+            ),
+            categories: [categories.hotels]
         )
     }
 
     /// A few landmarks around the world
     var globalPlaces: [Landmark] {
-        [nyc, london, tokyo]
+        [brooklynBridge, charingCross, lostInTranslation]
     }
 
 }

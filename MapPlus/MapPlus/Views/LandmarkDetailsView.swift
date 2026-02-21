@@ -161,12 +161,12 @@ struct LandmarkDetailsView: View {
 // MARK: - Previews
 
 #Preview("Real look-around") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().tokyo)
+    LandmarkDetailsView(landmark: SampleLandmarks().brooklynBridge)
         .environment(\.lookAroundService, MapKitLookAroundService())
 }
 
 #Preview("Mock - no look-around") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+    LandmarkDetailsView(landmark: SampleLandmarks().capital)
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: nil,
             sceneToReturn: nil,
@@ -175,7 +175,7 @@ struct LandmarkDetailsView: View {
 }
 
 #Preview("Mock - look-around error") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().london)
+    LandmarkDetailsView(landmark: SampleLandmarks().charingCross)
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: MapPlusError.noLookAround,
             sceneToReturn: nil,

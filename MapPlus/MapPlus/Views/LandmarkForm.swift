@@ -318,7 +318,7 @@ struct LandmarkForm: View {
 
 #Preview("Edit - real") {
     LandmarkForm(mode: .edit(
-        LandmarkSampleData().capital)
+        SampleLandmarks().capital)
     )
 }
 
