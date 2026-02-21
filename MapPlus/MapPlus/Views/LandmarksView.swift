@@ -22,10 +22,6 @@ struct LandmarksView : View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .forward) var landmarks: [Landmark]
     
-    private var storageService: LandmarkStorageService {
-        LandmarkStorageService(modelContext: self.modelContext)
-    }
-    
     var body: some View {
         NavigationStack {
             List {
@@ -70,10 +66,10 @@ struct LandmarksView : View {
     ///
     /// - Parameter offsets: The index set indicating which landmarks to delete from the list.
     private func deleteLandmarks(at offsets: IndexSet) {
-        let storage = self.storageService
         for index in offsets {
-            let landmark = landmarks[index]
-            try? storage.delete(landmark: landmark)
+            let landmarkToDelete = landmarks[index]
+            let store = LandmarkStore(landmark: landmarkToDelete, modelContext: self.modelContext)
+            try? store.deleteAndCommit()
         }
     }
 }

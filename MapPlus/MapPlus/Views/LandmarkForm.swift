@@ -22,14 +22,17 @@ struct LandmarkForm: View {
     
     // The view model owns the form mode and configuration
     private let viewModel: LandmarkFormViewModel
+    
+    // The landmark being edited: either a brand new one or one loaded in
+    @State private var landmarkInEdit = Landmark()
         
     // Environment
     @Environment(\.dismiss) private var dismiss
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
-    private var storageService: LandmarkStorageService {
-        LandmarkStorageService(modelContext: modelContext)
+    private var landmarkStore: LandmarkStore {
+        LandmarkStore(landmark: landmarkInEdit, modelContext: modelContext)
     }
     
     // Form input
@@ -100,12 +103,10 @@ struct LandmarkForm: View {
         .onAppear() {
             switch viewModel.mode {
             case .create:
+                // Already populated as new Landmark object by default
                 break
             case .edit(let landmark):
-                // Populate inputs with existing landmark info
-                landmarkNameInput = landmark.name
-                landmarkIconNameSelected = landmark.systemImageName
-                landmarkNotesInput = landmark.notes
+                self.landmarkInEdit = landmark
                 addressSearchState = .searchResolved(
                     LocationInfo(
                         formattedDescription: landmark.formattedAddress,
@@ -114,6 +115,11 @@ struct LandmarkForm: View {
                     )
                 )
             }
+            
+            // Pre-populate the form fields
+            landmarkNameInput = landmarkInEdit.name
+            landmarkIconNameSelected = landmarkInEdit.systemImageName
+            landmarkNotesInput = landmarkInEdit.notes
         }
     }
     
@@ -208,12 +214,13 @@ struct LandmarkForm: View {
                 switch addressSearchState {
                 case .searchInitial, .searching, .searchFailed:
                     break
-                case .searchResolved(let addressInfo):
-                    try storageService.save(
-                        location: addressInfo,
+                case .searchResolved(let resolvedLocation):
+                    try landmarkStore.upsertAndCommit(
                         name: landmarkNameInput,
                         notes: landmarkNotesInput,
-                        iconName: landmarkIconNameSelected
+                        formattedAddress: resolvedLocation.formattedDescription,
+                        systemImageName: landmarkIconNameSelected,
+                        location: resolvedLocation.coordinates
                     )
                     saveState = .saved
                 }
