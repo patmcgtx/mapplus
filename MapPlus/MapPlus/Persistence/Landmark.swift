@@ -26,19 +26,23 @@ class Landmark: Identifiable, Hashable {
     /// The full address description from MapKit
     var formattedAddress: String = ""
     
-    @Attribute private var latitude: CLLocationDegrees
-    @Attribute private var longitude: CLLocationDegrees
+    /// Coordinate longitude
+    var latitude: CLLocationDegrees
+
+    /// Coordinate latitude
+    var longitude: CLLocationDegrees
     
+    /// Convenience var for coordinates
     var location: CLLocationCoordinate2D {
         CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
     }
     
     init(
-        name: String,
-        notes: String,
-        formattedAddress: String,
-        systemImageName: String,
-        location: CLLocationCoordinate2D
+        name: String = "",
+        notes: String = "",
+        formattedAddress: String = "",
+        systemImageName: String = "mappin.circle",
+        location: CLLocationCoordinate2D = .init(latitude: 0.0, longitude: 0.0)
     ) {
         self.name = name
         self.notes = notes
