@@ -17,8 +17,6 @@ struct CategoryCapsule: View {
 
     // TODO patmcg doc
     let category: LandmarkCategory
-    let landmark: Landmark
-    let deleteCompletion: ((LandmarkCategory) -> Void)?
 
     var body: some View {
         HStack {
@@ -26,13 +24,13 @@ struct CategoryCapsule: View {
                 .fontWeight(.black)
                 .fontDesign(.rounded)
                 .shadow(radius: 1.0)
-            if let completion = deleteCompletion {
-                Button(action: {
-                    completion(category)
-                }, label: {
-                    Image(systemName: "x.circle")
-                })
-            }
+            
+            // TODO patmcg needed?
+            Button(action: {
+                // TODO patmcg needed?
+            }, label: {
+                Image(systemName: "x.circle")
+            })
         }
         .foregroundStyle(.primary)
         .colorInvert()
@@ -52,26 +50,18 @@ struct CategoryCapsule: View {
 }
 
 #Preview("Short") {
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
-                    landmark: LandmarkSampleData().capital,
-                    deleteCompletion: nil
-    )
+    CategoryCapsule(category: LandmarkCategory(name: "Cafes"))
 }
 
 #Preview("Short with delete") {
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
-                    landmark: LandmarkSampleData().capital,
-                    deleteCompletion: { _ in }
-    )
+    CategoryCapsule(category: LandmarkCategory(name: "Cafes"))
 }
 
 #Preview("Medium long name") {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "Pretty long category name"
-        ),
-        landmark: LandmarkSampleData().capital,
-        deleteCompletion: nil
+        )
     )
 }
 
@@ -79,8 +69,6 @@ struct CategoryCapsule: View {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "This is a really long category name and it is going to be really long and it will probably break the preview"
-        ),
-        landmark: LandmarkSampleData().capital,
-        deleteCompletion: { _ in }
+        )
     )
 }

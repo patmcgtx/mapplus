@@ -132,18 +132,7 @@ struct LandmarkForm: View {
     private var categoriesSection: some View {
         Section("Categories") {
             HStack {
-                switch viewModel.mode {
-                case .create:
-                    EmptyView()
-                case .edit(let landmark):
-                    CategoryFlow(categories: selectedCategories,
-                                 landmark: landmark,
-                                 // TODO patmcg use binding instead...
-                                 deleteCompletion: { category in
-                        print("+++ Removing category: \(category.name)")
-//                        selectedCategories.removeAll { $0.name == category.name }
-                    })
-                }
+                CategoryFlow(categories: selectedCategories)
                 Menu {
                     ForEach(allCategories, id: \.self) { category in
                         Button(category.name) {

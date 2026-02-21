@@ -11,8 +11,6 @@ import Flow
 struct CategoryFlow: View {
     
     let categories: [LandmarkCategory]
-    let landmark: Landmark
-    let deleteCompletion: ((LandmarkCategory) -> Void)?
 
     var body: some View {
         if categories.isEmpty {
@@ -20,9 +18,7 @@ struct CategoryFlow: View {
         } else {
             HFlow {
                 ForEach(categories) { category in
-                    CategoryCapsule(category: category,
-                                    landmark: landmark,
-                                    deleteCompletion: deleteCompletion)
+                    CategoryCapsule(category: category)
                 }
             }
         }
@@ -40,9 +36,7 @@ struct CategoryFlow: View {
             LandmarkCategory(name: "six"),
             LandmarkCategory(name: "seven"),
             LandmarkCategory(name: "eight"),
-        ],
-        landmark: LandmarkSampleData().capital,
-        deleteCompletion: nil
+        ]
     )
 }
 
@@ -50,9 +44,7 @@ struct CategoryFlow: View {
     CategoryFlow(
         categories: [
             LandmarkCategory(name: "one"),
-        ],
-        landmark: LandmarkSampleData().capital,
-        deleteCompletion: nil
+        ]
     )
 }
 
@@ -61,11 +53,7 @@ struct CategoryFlow: View {
         categories: [
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two")
-        ],
-        landmark: LandmarkSampleData().capital,
-        deleteCompletion: {category in
-            print("Deleted: \(category.name)")
-        }
+        ]
     )
 }
 
@@ -75,17 +63,11 @@ struct CategoryFlow: View {
             LandmarkCategory(name: "one"),
             LandmarkCategory(name: "two"),
             LandmarkCategory(name: "three")
-        ],
-        landmark: LandmarkSampleData().capital,
-        deleteCompletion: nil
+        ]
     )
 }
 
 #Preview("None") {
-    CategoryFlow(categories: [],
-                 landmark: LandmarkSampleData().capital,
-                 deleteCompletion: { category in
-        print("Deleted: \(category.name)")
-    })
+    CategoryFlow(categories: [])
 }
 
