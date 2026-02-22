@@ -125,22 +125,17 @@ struct LandmarkForm: View {
     private var categoriesSection: some View {
         Section("Categories") {
             HStack {
+                // A flow layout of categories in edit mode
                 CategoryFlow(categories: $landmarkInEdit.categories, mode: .edit)
+
                 Spacer()
+                
+                // A menu of possible categories to add to the landmark
                 Menu {
-                    // TODO patmcg some way to encapsulate all this complexity?
-                    let availableCategories = allCategories.filter { landmarkInEdit.categories.contains($0) == false }
-                    ForEach(availableCategories, id: \.id) { category in
+                    ForEach(unassignedCategories, id: \.id) { category in
                         Button(category.name) {
                             withAnimation {
-                                landmarkInEdit.categories.append(category)
-                                // TODO patmcg encapsulate this sorting, also update LandmarkDetailsView
-                                landmarkInEdit.categories = landmarkInEdit.categories.sorted(
-                                    by: { lhs, rhs in
-                                        lhs.name.localizedStandardCompare(
-                                            rhs.name
-                                        ) == .orderedAscending
-                                    })
+                                landmarkInEdit.categories = landmarkInEdit.addAndSort(category: category)
                             }
                         }
                     }
@@ -168,6 +163,8 @@ struct LandmarkForm: View {
                 TextField("name".localized, text: $landmarkInEdit.name,
                           onEditingChanged: { _ in
                 })
+                .textInputAutocapitalization(.words)
+                .autocorrectionDisabled(false)
                 
                 // Landmark name clear button
                 Button {
@@ -194,6 +191,8 @@ struct LandmarkForm: View {
                 MarkdownPreview(markdown: landmarkInEdit.notes)
             } else {
                 TextEditor(text: $landmarkInEdit.notes)
+                    .textInputAutocapitalization(.sentences)
+                    .autocorrectionDisabled(false)
             }
         }
     }    
@@ -222,6 +221,8 @@ struct LandmarkForm: View {
                     "addr-or-location-name".localized,
                     text: $locationSearchInput)
                 .submitLabel(.search)
+                .textInputAutocapitalization(.none)
+                .autocorrectionDisabled(false)
                 Button {
                     runLocationSearch(ofType: .currentLocation)
                 } label: {
@@ -293,7 +294,14 @@ struct LandmarkForm: View {
     
     
     // MARK: - Internal helpers
-    
+        
+    /// Which categories have not been assigned to the landmake in edit
+    private var unassignedCategories: [LandmarkCategory] {
+        allCategories.filter {
+            landmarkInEdit.categories.contains($0) == false
+        }
+    }
+
     private func runLocationSearch(ofType searchType: LocationSearchType) {
         Task {
             do {
