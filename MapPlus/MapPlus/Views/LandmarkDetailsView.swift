@@ -20,7 +20,7 @@ struct LandmarkDetailsView: View {
     
     // UI state
     @State private var isEditorShowing: Bool = false
-    
+
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {
         case details = "details"
@@ -53,6 +53,8 @@ struct LandmarkDetailsView: View {
                             .font(.title)
                     }
                     .padding()
+                    
+                    CategoryFlow(categories: .constant(landmark.categories), mode: .view)
                     
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
@@ -161,12 +163,12 @@ struct LandmarkDetailsView: View {
 // MARK: - Previews
 
 #Preview("Real look-around") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().tokyo)
+    LandmarkDetailsView(landmark: SampleLandmarks().brooklynBridge)
         .environment(\.lookAroundService, MapKitLookAroundService())
 }
 
 #Preview("Mock - no look-around") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().capital)
+    LandmarkDetailsView(landmark: SampleLandmarks().capital)
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: nil,
             sceneToReturn: nil,
@@ -175,7 +177,7 @@ struct LandmarkDetailsView: View {
 }
 
 #Preview("Mock - look-around error") {
-    LandmarkDetailsView(landmark: LandmarkSampleData().london)
+    LandmarkDetailsView(landmark: SampleLandmarks().charingCross)
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: MapPlusError.noLookAround,
             sceneToReturn: nil,

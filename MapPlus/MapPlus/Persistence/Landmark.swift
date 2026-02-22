@@ -8,16 +8,17 @@
 import SwiftData
 import MapKit
 
+/// Represents one point of interested on the map.
 @Model
 class Landmark: Identifiable, Hashable {
 
-    // Every exact point is unique
+    /// Every unique point is defined by its coordinates
     #Unique<Landmark>([\.latitude, \.longitude])
 
-    /// A short, descriptive name of this landmark
+    /// A short, descriptive name of this landmark, e.g. "Cosmic Coffee"
     var name: String
     
-    /// Descriptive notes for a landmark
+    /// Optional descriptive notes for a landmark
     var notes: String = ""
     
     /// The SF Symbols icon name for this landmark
@@ -37,12 +38,16 @@ class Landmark: Identifiable, Hashable {
         CLLocationCoordinate2D(latitude: self.latitude, longitude: self.longitude)
     }
     
+    /// Which categories this landmark is in
+    var categories: [LandmarkCategory]
+
     init(
         name: String = "",
         notes: String = "",
         formattedAddress: String = "",
         systemImageName: String = "mappin.circle",
-        location: CLLocationCoordinate2D = .init(latitude: 0.0, longitude: 0.0)
+        location: CLLocationCoordinate2D = .init(latitude: 0.0, longitude: 0.0),
+        categories: [LandmarkCategory] = []
     ) {
         self.name = name
         self.notes = notes
@@ -50,6 +55,7 @@ class Landmark: Identifiable, Hashable {
         self.systemImageName = systemImageName
         self.latitude = location.latitude
         self.longitude = location.longitude
+        self.categories = categories
     }
 
 }
