@@ -128,7 +128,7 @@ struct LandmarkForm: View {
                 CategoryFlow(categories: $landmarkInEdit.categories, mode: .edit)
                 Spacer()
                 Menu {
-                    // TODO patmcg hide categories - encapsulate this with an onChange: or something?
+                    // TODO patmcg some way to encapsulate all this complexity?
                     let availableCategories = allCategories.filter { landmarkInEdit.categories.contains($0) == false }
                     ForEach(availableCategories, id: \.id) { category in
                         Button(category.name) {
@@ -147,16 +147,7 @@ struct LandmarkForm: View {
                 } label: {
                     Image(systemName: "plus.circle")
                 }
-                .onTapGesture {
-                    print("+++ tap add btn")
-                }
             }
-            .onTapGesture {
-                print("+++ tap HStack")
-            }
-        }
-        .onTapGesture {
-            print("+++ tap Section")
         }
     }
     

@@ -35,15 +35,16 @@ struct CategoryCapsule: View {
             
             if .edit == mode {
                 Button(action: {
-//                    withAnimation {
-//                        self.fromCategories.removeAll { $0.name == category.name }
-//                    }
+                    // For whatever reason, doing the delete here causes bugs
+                    // and basically deletes *all* the categories.
+                    // We have to handle it with .onTapGesture below instead.
                 }, label: {
                     Image(systemName: "x.circle")
                 })
                 .onTapGesture {
-                    print("+++ tap delete btn")
                     withAnimation {
+                        // Delete the category from its parents
+                        // TODO patmcg some way to abstract this?  Like a method on Landmark?
                         self.fromCategories.removeAll { $0.name == category.name }
                     }
                 }
