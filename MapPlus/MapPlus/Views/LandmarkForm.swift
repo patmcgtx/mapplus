@@ -134,7 +134,7 @@ struct LandmarkForm: View {
                 Menu {
                     ForEach(unassignedCategories, id: \.id) { category in
                         Button(category.name) {
-                            withAnimation {
+                            withAnimation(.bouncy) {
                                 landmarkInEdit.categories = landmarkInEdit.addAndSort(category: category)
                             }
                         }
