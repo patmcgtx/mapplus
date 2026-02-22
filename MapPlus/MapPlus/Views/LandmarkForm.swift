@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SFSafeSymbols
+import SwiftData
 
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
@@ -34,14 +35,13 @@ struct LandmarkForm: View {
     private var landmarkStore: LandmarkStore {
         LandmarkStore(landmark: landmarkInEdit, modelContext: modelContext)
     }
-    
-    // Form input
-    @State private var landmarkNameInput: String = ""
-    @State private var landmarkIconNameSelected: String = "mappin.circle"
-    @State private var landmarkNotesInput: String = ""
 
     // Notes preview
     @State private var isNotesPreviewEnabled: Bool = false
+    
+    // Categories
+    @Query(sort: \LandmarkCategory.name, order: .forward)
+    private var allCategories: [LandmarkCategory]
 
     // Icon picker state
     @State private var isShowingIconPicker: Bool = false
@@ -78,6 +78,7 @@ struct LandmarkForm: View {
             saveError
             detailsSection
             notesSection
+            categoriesSection
             if case .create = viewModel.mode {
                 locationSearchSection
             }
@@ -96,7 +97,7 @@ struct LandmarkForm: View {
         .sheet(isPresented: $isShowingIconPicker) {
             IconPicker(
                 symbolOptions: viewModel.iconsToShow,
-                selectedSymbolName: $landmarkIconNameSelected
+                selectedSymbolName: $landmarkInEdit.systemImageName
             )
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
@@ -115,15 +116,39 @@ struct LandmarkForm: View {
                     )
                 )
             }
-            
-            // Pre-populate the form fields
-            landmarkNameInput = landmarkInEdit.name
-            landmarkIconNameSelected = landmarkInEdit.systemImageName
-            landmarkNotesInput = landmarkInEdit.notes
         }
     }
     
     // MARK: - Subviews
+    
+    @ViewBuilder
+    private var categoriesSection: some View {
+        Section("Categories") {
+            HStack {
+                CategoryFlow(categories: $landmarkInEdit.categories, mode: .edit)
+                Menu {
+                    // TODO patmcg hide categories - encapsulate this with an onChange: or something?
+                    let availableCategories = allCategories.filter { landmarkInEdit.categories.contains($0) == false }
+                    ForEach(availableCategories, id: \.id) { category in
+                        Button(category.name) {
+                            withAnimation {
+                                landmarkInEdit.categories.append(category)
+                                // TODO patmcg encapsulate this sorting, also update LandmarkDetailsView
+                                landmarkInEdit.categories = landmarkInEdit.categories.sorted(
+                                    by: { lhs, rhs in
+                                        lhs.name.localizedStandardCompare(
+                                            rhs.name
+                                        ) == .orderedAscending
+                                    })
+                            }
+                        }
+                    }
+                } label: {
+                    Image(systemName: "plus.circle")
+                }
+            }
+        }
+    }
     
     @ViewBuilder
     private var saveError: some View {
@@ -138,11 +163,14 @@ struct LandmarkForm: View {
     private var detailsSection: some View {
         Section("details".localized) {
             HStack {
-                TextField("name".localized, text: $landmarkNameInput,
+                // Landmark name inpout
+                TextField("name".localized, text: $landmarkInEdit.name,
                           onEditingChanged: { _ in
                 })
+                
+                // Landmark name clear button
                 Button {
-                    landmarkNameInput = ""
+                    landmarkInEdit.name = ""
                 } label: {
                     Image(systemName: "xmark.circle")
                 }
@@ -150,7 +178,7 @@ struct LandmarkForm: View {
             Button {
                 isShowingIconPicker = true
             } label: {
-                Label("icon".localized, systemImage: landmarkIconNameSelected)
+                Label("icon".localized, systemImage: landmarkInEdit.systemImageName)
             }
         }
     }
@@ -162,9 +190,9 @@ struct LandmarkForm: View {
             footer: markdownNote
         ) {
             if isNotesPreviewEnabled {
-                MarkdownPreview(markdown: landmarkNotesInput)
+                MarkdownPreview(markdown: landmarkInEdit.notes)
             } else {
-                TextEditor(text: $landmarkNotesInput)
+                TextEditor(text: $landmarkInEdit.notes)
             }
         }
     }    
@@ -204,6 +232,8 @@ struct LandmarkForm: View {
     
     private var cancelButton: some View {
         Button("cancel".localized, systemImage: "xmark") {
+            // TODO patmcg this rolls back the persistent state but not the in-memory Landmark
+            modelContext.rollback() // Rollback any unsaved changed to the landmark
             dismiss()
         }
     }
@@ -214,14 +244,8 @@ struct LandmarkForm: View {
                 switch addressSearchState {
                 case .searchInitial, .searching, .searchFailed:
                     break
-                case .searchResolved(let resolvedLocation):
-                    try landmarkStore.upsertAndCommit(
-                        name: landmarkNameInput,
-                        notes: landmarkNotesInput,
-                        formattedAddress: resolvedLocation.formattedDescription,
-                        systemImageName: landmarkIconNameSelected,
-                        location: resolvedLocation.coordinates
-                    )
+                case .searchResolved:
+                    try landmarkStore.upsertAndCommit()
                     saveState = .saved
                 }
                 dismiss()
@@ -241,9 +265,9 @@ struct LandmarkForm: View {
                     // Landmark icon
                     VStack {
                         Spacer()
-                        Image(systemName: landmarkIconNameSelected)
+                        Image(systemName: landmarkInEdit.systemImageName)
                         Spacer()
-                        Text(landmarkNameInput)
+                        Text(landmarkInEdit.name)
                         Spacer()
                     }
                     .multilineTextAlignment(.center)
@@ -298,7 +322,7 @@ struct LandmarkForm: View {
         case .searchInitial, .searching, .searchFailed:
             return false
         case .searchResolved:
-            return landmarkNameInput.isPopulated
+            return landmarkInEdit.name.isPopulated
         }
     }
     
