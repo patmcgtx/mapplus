@@ -42,7 +42,7 @@ struct CategoryCapsule: View {
                     Image(systemName: "x.circle")
                 })
                 .onTapGesture {
-                    withAnimation {
+                    withAnimation(.bouncy) {
                         // Delete the category from its parents
                         // TODO patmcg some way to abstract this?  Like a method on Landmark?
                         self.fromCategories.removeAll { $0.name == category.name }
@@ -54,10 +54,10 @@ struct CategoryCapsule: View {
         .colorInvert()
         .padding(
             EdgeInsets(
-                top: 5,
-                leading: 10,
-                bottom: 5,
-                trailing: 10
+                top: 2,
+                leading: 15,
+                bottom: 2,
+                trailing: 15
             )
         )
         .background {
