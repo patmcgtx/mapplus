@@ -35,12 +35,18 @@ struct CategoryCapsule: View {
             
             if .edit == mode {
                 Button(action: {
-                    withAnimation {
-                        self.fromCategories.removeAll { $0.name == category.name }
-                    }
+//                    withAnimation {
+//                        self.fromCategories.removeAll { $0.name == category.name }
+//                    }
                 }, label: {
                     Image(systemName: "x.circle")
                 })
+                .onTapGesture {
+                    print("+++ tap delete btn")
+                    withAnimation {
+                        self.fromCategories.removeAll { $0.name == category.name }
+                    }
+                }
             }
         }
         .foregroundStyle(.primary)

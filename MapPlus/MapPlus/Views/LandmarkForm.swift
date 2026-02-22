@@ -126,6 +126,7 @@ struct LandmarkForm: View {
         Section("Categories") {
             HStack {
                 CategoryFlow(categories: $landmarkInEdit.categories, mode: .edit)
+                Spacer()
                 Menu {
                     // TODO patmcg hide categories - encapsulate this with an onChange: or something?
                     let availableCategories = allCategories.filter { landmarkInEdit.categories.contains($0) == false }
@@ -146,7 +147,16 @@ struct LandmarkForm: View {
                 } label: {
                     Image(systemName: "plus.circle")
                 }
+                .onTapGesture {
+                    print("+++ tap add btn")
+                }
             }
+            .onTapGesture {
+                print("+++ tap HStack")
+            }
+        }
+        .onTapGesture {
+            print("+++ tap Section")
         }
     }
     

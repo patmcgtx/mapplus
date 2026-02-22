@@ -26,7 +26,13 @@ struct CategoryFlow: View {
                     CategoryCapsule(category: category,
                                     mode: mode,
                                     fromCategories: $categories)
+                    .onTapGesture {
+                        print("+++ tap CategoryCapsule")
+                    }
                 }
+            }
+            .onTapGesture {
+                print("+++ tap HFlow")
             }
         }
     }
