@@ -319,6 +319,7 @@ struct LandmarkForm: View {
                 }
                 await MainActor.run {
                     addressSearchState = .searchResolved(resolvedAddress)
+                    landmarkInEdit.formattedAddress = resolvedAddress.formattedDescription
                     landmarkInEdit.latitude = resolvedAddress.coordinates.latitude
                     landmarkInEdit.longitude = resolvedAddress.coordinates.longitude
                 }

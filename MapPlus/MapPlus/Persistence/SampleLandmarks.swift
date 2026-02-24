@@ -92,7 +92,7 @@ struct SampleLandmarks {
                 latitude: 40.70584,
                 longitude: -73.99642
             ),
-            categories: [categories.historic, categories.fun]
+            categories: [categories.fun]
         )
     }
     
@@ -106,7 +106,7 @@ struct SampleLandmarks {
                 latitude: 51.5074,
                 longitude: -0.1278
             ),
-            categories: [categories.historic, categories.fun]
+            categories: [categories.fun]
         )
     }
     
@@ -120,7 +120,7 @@ struct SampleLandmarks {
                 latitude: 35.68529,
                 longitude: 139.69072
             ),
-            categories: [categories.hotels]
+            categories: [categories.fun]
         )
     }
 

@@ -23,17 +23,21 @@ extension Landmark {
         mapItem.name = self.name
         mapItem.openInMaps(launchOptions: mapsOptions)
     }
-    
+
+    var categoriesSorted: [LandmarkCategory] {
+        self.categories.sorted(by: { lhs, rhs in
+            lhs.name.localizedStandardCompare(
+                rhs.name
+            ) == .orderedAscending
+        })
+    }
+
     /// Add a category and return the new's categories, sorted in their natural order.
     /// - Parameter category: The category to add
     /// - Returns: The new set of categories in re-sorted order
     func addAndSort(category: LandmarkCategory) -> [LandmarkCategory] {
         self.categories.append(category)
-        return self.categories.sorted(by: { lhs, rhs in
-            lhs.name.localizedStandardCompare(
-                rhs.name
-            ) == .orderedAscending
-        })
+        return self.categoriesSorted
     }
     
 }
