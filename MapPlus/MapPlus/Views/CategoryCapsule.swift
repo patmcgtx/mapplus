@@ -51,18 +51,17 @@ struct CategoryCapsule: View {
             }
         }
         .foregroundStyle(.primary)
-        .colorInvert()
         .padding(
             EdgeInsets(
-                top: 2,
+                top: 4,
                 leading: 15,
-                bottom: 2,
+                bottom: 4,
                 trailing: 15
             )
         )
         .background {
             Capsule(style: .circular)
-                .fill(.primary)
+                .strokeBorder(lineWidth: 2)
         }
     }
 }
@@ -74,6 +73,7 @@ struct CategoryCapsule: View {
     CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
                     mode: .view,
                     fromCategories: $categories)
+    .foregroundStyle(.green, .white)
 }
 
 #Preview("Short with delete") {

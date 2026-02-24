@@ -25,16 +25,14 @@ struct LandmarkStore {
         notes: String? = nil,
         formattedAddress: String? = nil,
         systemImageName: String? = nil,
-        location: CLLocationCoordinate2D? = nil
+        location: CLLocationCoordinate2D
     ) throws {
         if let newName = name { landmark.name = newName }
         if let newNotes = notes { landmark.notes = newNotes }
         if let newFormattedAddress = formattedAddress { landmark.formattedAddress = newFormattedAddress }
         if let newSystemImageName = systemImageName { landmark.systemImageName = newSystemImageName }
-        if let newLocation = location {
-            landmark.latitude = newLocation.latitude
-            landmark.longitude = newLocation.longitude
-        }
+        landmark.latitude = location.latitude
+        landmark.longitude = location.longitude
         
         modelContext.insert(landmark)
         try modelContext.save()

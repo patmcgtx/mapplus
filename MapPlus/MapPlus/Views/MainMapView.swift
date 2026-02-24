@@ -100,6 +100,7 @@ struct MainMapView: View {
             )
             .presentationDetents([.medium, .large])
         }
+//        .foregroundStyle(.green)
     }
     
     // MARK: - Subviews

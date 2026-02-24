@@ -212,17 +212,17 @@ struct LandmarkForm: View {
     private var locationSearchSection: some View {
         Section("location".localized) {
             HStack {
-                Button {
-                    runLocationSearch(ofType: .textSearch(locationSearchInput))
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
                 TextField(
                     "addr-or-location-name".localized,
                     text: $locationSearchInput)
                 .submitLabel(.search)
                 .textInputAutocapitalization(.none)
                 .autocorrectionDisabled(false)
+                Button {
+                    runLocationSearch(ofType: .textSearch(locationSearchInput))
+                } label: {
+                    Image(systemName: "magnifyingglass")
+                }
                 Button {
                     runLocationSearch(ofType: .currentLocation)
                 } label: {
@@ -247,7 +247,13 @@ struct LandmarkForm: View {
                 case .searchInitial, .searching, .searchFailed:
                     break
                 case .searchResolved:
-                    try landmarkStore.upsertAndCommit()
+                    try landmarkStore.upsertAndCommit(
+                        name: landmarkInEdit.name,
+                        notes: landmarkInEdit.notes,
+                        formattedAddress: landmarkInEdit.formattedAddress,
+                        systemImageName: landmarkInEdit.systemImageName,
+                        location: self.landmarkInEdit.location
+                    )
                     saveState = .saved
                 }
                 dismiss()
