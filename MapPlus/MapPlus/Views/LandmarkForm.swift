@@ -311,12 +311,16 @@ struct LandmarkForm: View {
                 let resolvedAddress: LocationInfo
                 switch searchType {
                 case .textSearch(let searchString):
+                    // TODO patmcg consider using a Binding
                     resolvedAddress = try await addressLookupService.lookup(address: searchString)
                 case .currentLocation:
+                    // TODO patmcg consider using a Binding
                     resolvedAddress = try await locationService.getCurrentLocation()
                 }
                 await MainActor.run {
                     addressSearchState = .searchResolved(resolvedAddress)
+                    landmarkInEdit.latitude = resolvedAddress.coordinates.latitude
+                    landmarkInEdit.longitude = resolvedAddress.coordinates.longitude
                 }
             } catch {
                 await MainActor.run {
