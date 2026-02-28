@@ -15,6 +15,7 @@ struct LandmarkForm: View {
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
         self.viewModel = LandmarkFormViewModel(mode: mode)
+        self.landmarkInEdit = viewModel.landmarkToEdit
     }
 
     // Environment
@@ -25,16 +26,11 @@ struct LandmarkForm: View {
     private let viewModel: LandmarkFormViewModel
     
     // The landmark being edited: either a brand new one or one loaded in
-    @State private var landmarkInEdit = Landmark()
+    @State private var landmarkInEdit: Landmark
         
     // Environment
     @Environment(\.dismiss) private var dismiss
-    
-    // Persistence
     @Environment(\.modelContext) private var modelContext
-    private var landmarkStore: LandmarkStore {
-        LandmarkStore(landmark: landmarkInEdit, modelContext: modelContext)
-    }
 
     // Notes preview
     @State private var isNotesPreviewEnabled: Bool = false
@@ -96,23 +92,20 @@ struct LandmarkForm: View {
         .navigationTitle(viewModel.formTitle)
         .sheet(isPresented: $isShowingIconPicker) {
             IconPicker(
-                symbolOptions: viewModel.iconsToShow,
                 selectedSymbolName: $landmarkInEdit.systemImageName
             )
         }
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
-        .onAppear() {
+        .task(priority: .userInitiated) {
             switch viewModel.mode {
             case .create:
-                // Already populated as new Landmark object by default
                 break
-            case .edit(let landmark):
-                self.landmarkInEdit = landmark
+            case .edit:
                 addressSearchState = .searchResolved(
                     LocationInfo(
-                        formattedDescription: landmark.formattedAddress,
-                        latitude: landmark.location.latitude,
-                        longitude: landmark.location.longitude
+                        formattedDescription: landmarkInEdit.formattedAddress,
+                        latitude: landmarkInEdit.location.latitude,
+                        longitude: landmarkInEdit.location.longitude
                     )
                 )
             }
@@ -247,13 +240,7 @@ struct LandmarkForm: View {
                 case .searchInitial, .searching, .searchFailed:
                     break
                 case .searchResolved:
-                    try landmarkStore.upsertAndCommit(
-                        name: landmarkInEdit.name,
-                        notes: landmarkInEdit.notes,
-                        formattedAddress: landmarkInEdit.formattedAddress,
-                        systemImageName: landmarkInEdit.systemImageName,
-                        location: self.landmarkInEdit.location
-                    )
+                    try viewModel.save(context: modelContext)
                     saveState = .saved
                 }
                 dismiss()

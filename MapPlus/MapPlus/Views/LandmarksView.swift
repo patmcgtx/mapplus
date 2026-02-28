@@ -68,8 +68,8 @@ struct LandmarksView : View {
     private func deleteLandmarks(at offsets: IndexSet) {
         for index in offsets {
             let landmarkToDelete = landmarks[index]
-            let store = LandmarkStore(landmark: landmarkToDelete, modelContext: self.modelContext)
-            try? store.deleteAndCommit()
+            let store = LandmarkStore(modelContext: self.modelContext)
+            try? store.delete(landmark: landmarkToDelete)
         }
     }
 }

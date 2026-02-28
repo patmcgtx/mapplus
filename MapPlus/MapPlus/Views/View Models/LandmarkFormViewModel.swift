@@ -4,10 +4,7 @@
 //
 //  Created by Patrick McGonigle on 1/31/26.
 //
-
-import SFSafeSymbols
-
-// TODO patmcg take a fresh look at this overall
+import SwiftData
 
 /// View model that provides display data for `LandmarkFormView`.
 ///
@@ -26,9 +23,39 @@ struct LandmarkFormViewModel {
         /// Edit an existing landmark.
         case edit(Landmark)
     }
-
+    
     /// The current mode for the form
     let mode: Mode
+    
+    /// A temporary *copy* of the landmark to edit
+    let landmarkToEdit: Landmark
+
+    init(mode: Mode) {
+        self.mode = mode
+        switch self.mode {
+        case .create:
+            landmarkToEdit = Landmark()
+        case .edit(let landmark):
+            landmarkToEdit = landmark
+        }
+    }
+    
+    /// Saves any changes made to `landmarkToEdit`
+    /// - Parameter context: The persistent context in which to save the landmark
+    func save(context: ModelContext) throws {
+        try LandmarkStore(modelContext: context)
+            .commit(landmark: landmarkToEdit)
+    }
+
+    /// The landmark being edited, if the form is in edit mode; otherwise `nil`.
+    private var sourceLandmark: Landmark? {
+        switch self.mode {
+        case .create:
+            return nil
+        case .edit(let landmark):
+            return landmark
+        }
+    }
 
     /// The title to display at the top of the form.
     ///
@@ -41,80 +68,15 @@ struct LandmarkFormViewModel {
             return landmark.name
         }
     }
-    
-    /// The landmark being edited, if the form is in edit mode; otherwise `nil`.
-    var landmarkToEdit: Landmark? {
-        switch self.mode {
-        case .create:
-            return nil
-        case .edit(let landmark):
-            return landmark
-        }
-    }
-    
+        
     /// The initial value for the name field, empty when creating.
     var landmarkName: String {
-        self.landmarkToEdit?.name ?? ""
+        self.sourceLandmark?.name ?? ""
     }
     
     /// The initial SF Symbol name for the icon field, defaults to `"mappin.circle"` when creating.
     var landmarkIconName: String {
-        self.landmarkToEdit?.systemImageName ?? "mappin.circle"
+        self.sourceLandmark?.systemImageName ?? "mappin.circle"
     }
-
-    /// Curated set of SF Symbols to present in the icon selector.
-    ///
-    /// The list is intentionally limited to map-appropriate and commonly recognizable
-    /// symbols to keep the picker focused and fast. The order controls presentation.
-    ///
-    /// - Important: Avoid duplicates; duplicates can cause UI selection issues.
-    /// - FIXME: Add unit tests to validate representative entries, total count, and uniqueness.
-    let iconsToShow: [SFSymbol] = [
-        .mappin,
-        .mappinAndEllipse,
-        .mapCircle,
-        .mappinSquare,
-        .house,
-        .musicNoteHouse,
-        .houseBadgeWifi,
-        .building,
-        .building2,
-        .building2CropCircle,
-        .dollarsignBankBuilding,
-        .forkKnife,
-        .forkKnifeCircle,
-        .cupAndSaucer,
-        .cupAndHeatWaves,
-        .mug,
-        .graduationcap,
-        .arcadeStick,
-        .arcadeStickConsole,
-        .bus,
-        .tram,
-        .ferry,
-        .cablecar,
-        .bicycle,
-        .car,
-        .fuelpump,
-        .person,
-        .person2,
-        .person3,
-        .figure,
-        .figureWalk,
-        .figureWave,
-        .figureStand,
-        .figureStandDress,
-        .figureAndChildHoldinghands,
-        .figure2AndChildHoldinghands,
-        .figurePlay,
-        .figureRun,
-        .figureRoll,
-        .figureYoga,
-        .figureDance,
-        .figureKickboxing,
-        .figureMindAndBody,
-        .figureSkateboarding,
-        .figureOpenWaterSwim,
-    ]
 
 }
