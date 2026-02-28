@@ -18,19 +18,24 @@ struct MainMapView: View {
     // UI state
     @State private var showingLandmarkList: Bool = false
     @State private var isShowingAddLandmarkSheet: Bool = false
+    @State private var isShowingCategoryFilter: Bool = false
     
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
     
+    // Filter state
+    @State private var selectedCategoryNames: Set<String> = []
+
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
+    @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
     var body: some View {
         
         ZStack {
             Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                ForEach(landmarks, id: \.self) { landmark in
+                ForEach(filteredLandmarks, id: \.self) { landmark in
                     Marker(
                         landmark.name,
                         systemImage: landmark.systemImageName,
@@ -67,6 +72,7 @@ struct MainMapView: View {
                     VStack(spacing: 16) {
                         addButton
                         locateButton
+                        filterButton
                         landmarksMenu
                     }
                     .padding(.trailing, 16)
@@ -87,6 +93,14 @@ struct MainMapView: View {
                 LandmarkForm(mode: .create)
             }
         }
+        .sheet(isPresented: $isShowingCategoryFilter) {
+            CategoryFilterView(
+                allCategories: allCategories,
+                selectedCategoryNames: $selectedCategoryNames
+            )
+            .presentationDetents([.medium, .large])
+        }
+//        .foregroundStyle(.green)
     }
     
     // MARK: - Subviews
@@ -101,6 +115,22 @@ struct MainMapView: View {
                 .foregroundStyle(.primary)
                 .padding(16)
         }
+        .glassEffect()
+    }
+    
+    var filterButton: some View {
+        Button(action: {
+            isShowingCategoryFilter = true
+        }) {
+            Image(systemName: selectedCategoryNames.isEmpty
+                  ? "line.3.horizontal.decrease.circle"
+                  : "line.3.horizontal.decrease.circle.fill")
+                .resizable()
+                .frame(width: 24, height: 24)
+                .foregroundStyle(.primary)
+                .padding(16)
+        }
+        .accessibilityLabel("filter-by-category".localized)
         .glassEffect()
     }
     
@@ -144,6 +174,17 @@ struct MainMapView: View {
     
     // MARK: - Helper Methods
     
+    /// Returns landmarks filtered by the selected category names.
+    /// If no categories are selected, all landmarks are returned.
+    private var filteredLandmarks: [Landmark] {
+        if selectedCategoryNames.isEmpty {
+            return landmarks
+        }
+        return landmarks.filter { landmark in
+            landmark.categories.contains { selectedCategoryNames.contains($0.name) }
+        }
+    }
+
     private func zoomTo(landmark: Landmark) {
         withAnimation {
             self.mapPosition = .camera(

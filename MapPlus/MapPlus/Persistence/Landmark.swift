@@ -58,4 +58,16 @@ class Landmark: Identifiable, Hashable {
         self.categories = categories
     }
 
+    /// Creates a copy of the given landmark
+    init(from source: Landmark)
+    {
+        self.name = source.name
+        self.notes = source.notes
+        self.formattedAddress = source.formattedAddress
+        self.systemImageName = source.systemImageName
+        self.latitude = source.location.latitude
+        self.longitude = source.location.longitude
+        self.categories = source.categories
+    }
+
 }

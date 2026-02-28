@@ -8,28 +8,29 @@
 
 /// Some sample categories for development and testing.
 struct SampleCategories {
-    
-    var cafes: LandmarkCategory {
-        LandmarkCategory(name: "Cafes")
-    }
-    
-    var fun: LandmarkCategory {
-        LandmarkCategory(name: "Fun")
+
+    var family: LandmarkCategory {
+        LandmarkCategory(name: "Family")
     }
 
     var education: LandmarkCategory {
         LandmarkCategory(name: "Education")
     }
-
-    var historic: LandmarkCategory {
-        LandmarkCategory(name: "Historic")
-    }
-
-    var hotels: LandmarkCategory {
-        LandmarkCategory(name: "Hotel")
+    
+    var fun: LandmarkCategory {
+        LandmarkCategory(name: "Fun")
     }
     
+    var work: LandmarkCategory {
+        LandmarkCategory(name: "Work")
+    }
+
+    var cafes: LandmarkCategory {
+        LandmarkCategory(name: "Cafes")
+    }
+
+    
     var all: [LandmarkCategory] {
-        [cafes, fun, education, historic, hotels]
+        [family, education, fun, work, cafes]
     }
 }

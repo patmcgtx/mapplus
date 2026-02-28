@@ -9,17 +9,15 @@ import SwiftUI
 import SFSafeSymbols
 import SFSymbolsPicker
 
-/// A view that lets the user pick an icon from a set of SF Symbols, as specified by `iconsToShow` or defaulting to all symbols,
+/// A view that lets the user pick an icon from a set of SF Symbols
 /// and then populating the provided binding.
 struct IconPicker: View {
     
-    /// Which SF Symbols for the user to pick from, or all SF Symbols if this is let empty.
-    let symbolOptions: [SFSymbol]
+    private let viewModel = IconPickerViewModel()
 
     // Environment
     @Environment(\.dismiss) private var dismiss
 
-    // TODO patmcg rename to something non-landmark-specific
     /// Binding to capture the user-selected SF symbol name
     @Binding var selectedSymbolName: String
 
@@ -29,7 +27,7 @@ struct IconPicker: View {
                 selection: $selectedSymbolName,
                 title: "pick-icon".localized,
                 autoDismiss: true,
-                symbols: self.symbolOptions,
+                symbols: viewModel.iconsToShow,
                 closeButton: {
                     // Provide empty view to hide the built-in close button
                     EmptyView()
@@ -50,31 +48,10 @@ struct IconPicker: View {
 
 private struct IconPickerPreview: View {
 
-    let iconsToShow: [SFSymbol]
-
     @State private var iconName: String = "mappin"
 
     var body: some View {
-        IconPicker(
-            symbolOptions: self.iconsToShow,
-            selectedSymbolName: $iconName
-        )
+        IconPicker(selectedSymbolName: $iconName)
     }
 }
 
-#Preview("All icons") {
-    IconPickerPreview(iconsToShow: [])
-}
-
-#Preview("Walking icons") {
-    IconPickerPreview(iconsToShow:
-    [
-        .figureWalk,
-        .figureWalkCircle,
-        .figureWalkCircleFill,
-        .figureWave,
-        .figureWaveCircle,
-        .figureWaveCircleFill,
-    ]
-    )
-}
