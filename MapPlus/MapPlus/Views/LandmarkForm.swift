@@ -99,8 +99,19 @@ struct LandmarkForm: View {
         .task(priority: .userInitiated) {
             switch viewModel.mode {
             case .create:
-                break
+                // If we're editing a new landmark, _try_ to pre-populate the current location
+                do {
+                    let resolvedAddress = try await locationService.getCurrentLocation()
+                    await MainActor.run {
+                        addressSearchState = .searchResolved(resolvedAddress)
+                    }
+                } catch {
+                    // Not a reportable error if this fails; just let them proceed as normal
+                    break
+                }
             case .edit:
+                // When editing an existing landmark, pre-resolve the address
+                // to the landmark's known location.
                 addressSearchState = .searchResolved(
                     LocationInfo(
                         formattedDescription: landmarkInEdit.formattedAddress,
@@ -312,6 +323,7 @@ struct LandmarkForm: View {
                 }
                 await MainActor.run {
                     addressSearchState = .searchResolved(resolvedAddress)
+                    locationSearchInput = resolvedAddress.formattedDescription
                     landmarkInEdit.formattedAddress = resolvedAddress.formattedDescription
                     landmarkInEdit.latitude = resolvedAddress.coordinates.latitude
                     landmarkInEdit.longitude = resolvedAddress.coordinates.longitude
