@@ -56,7 +56,6 @@ struct LandmarkForm: View {
         case textSearch(String)
         case currentLocation
     }
-    
     @State private var locationSearchInput: String = ""
 
     // Location search state
@@ -66,8 +65,14 @@ struct LandmarkForm: View {
         case searchResolved(LocationInfo)
         case searchFailed(Error)
     }
-    
     @State private var addressSearchState: AddressSearchState = .searchInitial
+    
+    // Field focus
+    private enum FocusField: Hashable {
+        case landmarkName
+        case address
+    }
+    @FocusState private var focusField: FocusField?
     
     var body: some View {
         Form {
@@ -121,6 +126,9 @@ struct LandmarkForm: View {
                 )
             }
         }
+        .onAppear {
+            focusField = .landmarkName
+        }
     }
     
     // MARK: - Subviews
@@ -169,10 +177,12 @@ struct LandmarkForm: View {
                 })
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled(false)
+                .focused($focusField, equals: .landmarkName)
                 
                 // Landmark name clear button
                 Button {
                     landmarkInEdit.name = ""
+                    focusField = .landmarkName
                 } label: {
                     Image(systemName: "xmark.circle")
                 }
