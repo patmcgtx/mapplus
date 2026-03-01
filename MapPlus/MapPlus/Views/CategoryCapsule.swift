@@ -26,11 +26,13 @@ struct CategoryCapsule: View {
     /// The categories to update on edit / delete
     @Binding var fromCategories: [LandmarkCategory]
 
+    @Environment(\.appTheme) private var appTheme
+
     var body: some View {
         HStack {
             Text(category.name.uppercased())
                 .fontWeight(.black)
-                .fontDesign(.rounded)
+                .fontDesign(appTheme == .eightBit ? .monospaced : .rounded)
                 .shadow(radius: 1.0)
             
             if .edit == mode {
@@ -60,8 +62,13 @@ struct CategoryCapsule: View {
             )
         )
         .background {
-            Capsule(style: .circular)
-                .strokeBorder(lineWidth: 2)
+            if appTheme == .eightBit {
+                Rectangle()
+                    .strokeBorder(lineWidth: 2)
+            } else {
+                Capsule(style: .circular)
+                    .strokeBorder(lineWidth: 2)
+            }
         }
     }
 }

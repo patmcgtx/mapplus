@@ -19,6 +19,10 @@ struct MainMapView: View {
     @State private var showingLandmarkList: Bool = false
     @State private var isShowingAddLandmarkSheet: Bool = false
     @State private var isShowingCategoryFilter: Bool = false
+
+    // Theme
+    @AppStorage("appTheme") private var appThemeRawValue: String = AppTheme.standard.rawValue
+    @Environment(\.appTheme) private var appTheme
     
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -154,6 +158,20 @@ struct MainMapView: View {
         Menu {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
+            }
+            Divider()
+            Menu("theme".localized, systemImage: "paintbrush") {
+                ForEach(AppTheme.allCases, id: \.rawValue) { theme in
+                    Button {
+                        appThemeRawValue = theme.rawValue
+                    } label: {
+                        if appTheme == theme {
+                            Label(theme.displayName, systemImage: "checkmark")
+                        } else {
+                            Text(theme.displayName)
+                        }
+                    }
+                }
             }
             Divider()
             ForEach(self.landmarks, id: \.self) { landmark in
