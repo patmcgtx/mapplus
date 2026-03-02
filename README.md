@@ -1,4 +1,4 @@
-# Map Plus: a lighter iOS maps app
+# Map Plus: iOS Maps With Less Noise
 
 [Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, responsive, and it does a lot of things.
 
