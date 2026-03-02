@@ -6,12 +6,10 @@
 //
 import SwiftData
 
-/// View model that provides display data for `LandmarkFormView`.
-///
-/// This type encapsulates the state needed to present and edit a landmark in the form,
-/// including the current mode (creating a new landmark or editing an existing one),
-/// derived titles, default values, and the curated list of SF Symbols that the
-/// icon picker should display.
+// TODO patmcg unit test this VM and make sure it makes sense.
+//      What is the SOLID-ness of this struct?
+
+/// View model that provides for `LandmarkFormView`.
 struct LandmarkFormViewModel {
 
     /// Indicates how the form is being used.

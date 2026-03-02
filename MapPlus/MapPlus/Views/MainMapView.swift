@@ -29,6 +29,8 @@ struct MainMapView: View {
 
     // Persistence
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
+    
+    // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
     var body: some View {
