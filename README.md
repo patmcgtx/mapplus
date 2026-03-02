@@ -1,10 +1,10 @@
 # Map Plus: a lighter iOS maps app
 
-These days, [Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, responsive, and it does a lot of things.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, responsive, and it does a lot of things.
 
-In fact, it may be doing _too_ much.
+But it may be doing _too_ much.
 
-Map Plus is built on Apple's maps stack but tries to do _less_ so that those things are _easier_ to do.
+Built on Apple's maps stack, Map Plus does _less_ so to make things are _easier_ for you. It also adds a bit of delight with themes.
 
 ## Map Plus allows you to basically do two things:
 
@@ -17,9 +17,9 @@ For each place, it adds some nice little features like a look-around preview and
 
 For example, you can add all your favorite coffee shops, friends' houses, beer gardens, or whatever you want.
 
-To keep things less cluttered, Map Plus also limits the noise of "other stuff" shown on the map.
+## Redicing the noise
 
-[] TODO add screenshot 
+KISS.  Besides focusing on just two things ^, Map Plus keeps your map less cluttered by limting what "else" is shown shown on the map.  Currently, it only shows seesiontial such as libraries, schools, fire stations, hospitals, pharmacies, and police stations.
 
 ## The code
 
