@@ -17,9 +17,9 @@ For each place, it adds some nice little features like a look-around preview and
 
 For example, you can add all your favorite coffee shops, friends' houses, beer gardens, or whatever you want.
 
-## Redicing the noise
+## KISS
 
-KISS.  Besides focusing on just two things ^, Map Plus keeps your map less cluttered by limting what "else" is shown shown on the map.  Currently, it only shows seesiontial such as libraries, schools, fire stations, hospitals, pharmacies, and police stations.
+Besides focusing on just two things ^, Map Plus keeps your map less cluttered by limting what "else" is shown shown on the map.  Currently, it only shows seesiontial such as libraries, schools, fire stations, hospitals, pharmacies, and police stations.
 
 ## The code
 
