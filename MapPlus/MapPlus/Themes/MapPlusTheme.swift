@@ -6,17 +6,19 @@
 //
 
 /// Themes for styling the app
-enum MapPlusTheme {
+enum MapPlusTheme: String, CaseIterable, Identifiable {
     
     /// The basic, default iOS theme
-    case basic
+    case basic = "basic"
     
     /// A fun, retro pixelated theme
-    case eightBit
+    case eightBit = "eightBit"
     
     /// An Austin-inspired theme
-    case kerby
-    
+    case kerby = "kerby"
+
+    var id: String { self.rawValue }
+
     // MARK: Methods
     
     var details: MapPlusThemeDetails {

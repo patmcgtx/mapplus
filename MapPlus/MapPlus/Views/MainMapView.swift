@@ -157,10 +157,18 @@ struct MainMapView: View {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
             }
-            Divider()
-            ForEach(self.landmarks, id: \.self) { landmark in
-                Button(landmark.name, systemImage: landmark.systemImageName) {
-                    self.zoomTo(landmark: landmark)
+            Section("Themes") {
+                ForEach(MapPlusTheme.allCases) { theme in
+                    Button(theme.details.name) {
+                        
+                    }
+                }
+            }
+            Section("Places") {
+                ForEach(self.landmarks, id: \.self) { landmark in
+                    Button(landmark.name, systemImage: landmark.systemImageName) {
+                        self.zoomTo(landmark: landmark)
+                    }
                 }
             }
         } label: {
