@@ -33,6 +33,9 @@ struct MainMapView: View {
     // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
+    // Themes
+    @State private var activeTheme: MapPlusTheme = .basic
+    
     var body: some View {
         
         ZStack {
@@ -102,7 +105,7 @@ struct MainMapView: View {
             )
             .presentationDetents([.medium, .large])
         }
-//        .foregroundStyle(.green)
+        .environment(\.theme, self.activeTheme)
     }
     
     // MARK: - Subviews
@@ -158,9 +161,16 @@ struct MainMapView: View {
                 self.showingLandmarkList = true
             }
             Section("Themes") {
-                ForEach(MapPlusTheme.allCases) { theme in
-                    Button(theme.details.name) {
-                        
+                ForEach(MapPlusTheme.allCases) { themeOption in
+                    Button {
+                        activeTheme = themeOption
+                    } label: {
+                        HStack {
+                            Text(themeOption.details.name)
+                            if themeOption == self.activeTheme {
+                                Image(systemName: "checkmark.square")
+                            }
+                        }
                     }
                 }
             }
