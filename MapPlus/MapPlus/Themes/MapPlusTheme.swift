@@ -10,13 +10,13 @@ import SwiftUI
 enum MapPlusTheme: String, CaseIterable, Identifiable {
     
     /// The basic, default iOS theme
-    case basic = "basic"
+    case standard
     
     /// A fun, retro pixelated theme
-    case eightBit = "eightBit"
+    case eightBit
     
     /// An Austin-inspired theme
-    case kerby = "kerby"
+    case kerby
 
     var id: String { self.rawValue }
 
@@ -24,7 +24,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     
     var details: MapPlusThemeDetails {
         switch self {
-        case .basic: return ThemeBasic()
+        case .standard: return ThemeStandard()
         case .eightBit: return ThemeEightBit()
         case .kerby: return ThemeKerby()
         }
@@ -37,8 +37,8 @@ extension View {
     /// Applies the styling for the given `MapPlusTheme` to this view.
     @ViewBuilder func mapPlusTheme(_ theme: MapPlusTheme) -> some View {
         switch theme {
-        case .basic:
-            self.modifier(ThemeBasic.BasicModifier())
+        case .standard:
+            self.modifier(ThemeStandard.BasicModifier())
         case .eightBit:
             self.modifier(ThemeEightBit.EightBitModifier())
         case .kerby:

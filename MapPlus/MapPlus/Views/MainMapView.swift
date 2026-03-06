@@ -34,7 +34,7 @@ struct MainMapView: View {
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
     // Themes
-    @State private var activeTheme: MapPlusTheme = .basic
+    @State private var activeTheme: MapPlusTheme = .standard
     
     var body: some View {
         
@@ -107,6 +107,7 @@ struct MainMapView: View {
         }
         .environment(\.theme, self.activeTheme)
         .mapPlusTheme(self.activeTheme)
+        .mapPlusTheme(activeTheme)
     }
     
     // MARK: - Subviews

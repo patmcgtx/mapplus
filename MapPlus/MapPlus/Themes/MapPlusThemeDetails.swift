@@ -16,6 +16,17 @@ protocol MapPlusThemeDetails {
 // TODO patmcg consider moving these to their own files
 // TODO patmcg localize the names, etc.
 
+struct ThemeStandard: MapPlusThemeDetails {
+
+    var name: String { "Cupertino" }
+    
+    struct BasicModifier: ViewModifier {
+        func body(content: Content) -> some View {
+            content
+        }
+    }
+}
+
 struct ThemeEightBit: MapPlusThemeDetails {
 
     var name: String { "8-bit" }
@@ -23,23 +34,8 @@ struct ThemeEightBit: MapPlusThemeDetails {
     struct EightBitModifier: ViewModifier {
         func body(content: Content) -> some View {
             content
-                .foregroundColor(.white)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
-        }
-    }
-}
-
-struct ThemeBasic: MapPlusThemeDetails {
-
-    var name: String { "Basic" }
-    
-    struct BasicModifier: ViewModifier {
-        func body(content: Content) -> some View {
-            content
-                .foregroundColor(.white)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
+                .foregroundColor(.green)
+                .fontDesign(.monospaced)
         }
     }
 }
@@ -51,9 +47,9 @@ struct ThemeKerby: MapPlusThemeDetails {
     struct KerbyViewModifier: ViewModifier {
         func body(content: Content) -> some View {
             content
-                .foregroundColor(.white)
-                .background(Color(.systemGray6))
-                .cornerRadius(8)
+                .fontDesign(.rounded)
+                .textCase(.uppercase)
+                .foregroundColor(.orange)
         }
     }
 }
