@@ -8,7 +8,9 @@ import SwiftUI
 
 /// Themes for styling the app
 enum MapPlusTheme: String, CaseIterable, Identifiable {
-    
+
+    var id: String { self.rawValue }
+
     /// The basic, default iOS theme
     case standard
     
@@ -17,8 +19,6 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     
     /// An Austin-inspired theme
     case kerby
-
-    var id: String { self.rawValue }
 
     // MARK: Methods
     
@@ -41,11 +41,11 @@ extension View {
     @ViewBuilder func apply(theme: MapPlusTheme) -> some View {
         switch theme {
         case .standard:
-            self.modifier(ThemeModifiers.Standard())
+            self.modifier(StandardViewModifier())
         case .eightBit:
-            self.modifier(ThemeModifiers.EightBit())
+            self.modifier(EightBitViewModifier())
         case .kerby:
-            self.modifier(ThemeModifiers.Kerby())
+            self.modifier(KerbyViewModifier())
         }
     }
 
