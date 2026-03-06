@@ -15,6 +15,23 @@ protocol MapPlusThemeDetails {
     var modifier: any ViewModifier { get }
 }
 
+/// Type-erased wrapper that allows an `any ViewModifier` existential to be used
+/// where a concrete `ViewModifier`-conforming type is required (e.g. `View.modifier(_:)`).
+struct AnyViewModifier: ViewModifier {
+    private let _apply: (AnyView) -> AnyView
+
+    init(_ wrapped: any ViewModifier) {
+        func makeApply<M: ViewModifier>(_ m: M) -> (AnyView) -> AnyView {
+            { AnyView($0.modifier(m)) }
+        }
+        self._apply = makeApply(wrapped)
+    }
+
+    func body(content: Content) -> some View {
+        _apply(AnyView(content))
+    }
+}
+
 // TODO patmcg consider moving these to their own files
 // TODO patmcg localize the names, etc.
 
