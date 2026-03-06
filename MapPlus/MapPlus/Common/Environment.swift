@@ -15,4 +15,5 @@ extension EnvironmentValues {
     @Entry var locationService: LocationService = MapKitLocationService()
     @Entry var addressLookupService: AddressLookupService = MapKitAddressLookupService()
     @Entry var lookAroundService: LookAroundService = MapKitLookAroundService()
+    @Entry var theme: MapPlusTheme = .standard
 }

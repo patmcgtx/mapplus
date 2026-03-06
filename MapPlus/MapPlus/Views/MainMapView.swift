@@ -33,6 +33,9 @@ struct MainMapView: View {
     // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
+    // Themes
+    @State private var activeTheme: MapPlusTheme = .standard
+    
     var body: some View {
         
         ZStack {
@@ -102,7 +105,8 @@ struct MainMapView: View {
             )
             .presentationDetents([.medium, .large])
         }
-//        .foregroundStyle(.green)
+        .environment(\.theme, self.activeTheme)
+        .apply(theme: activeTheme)
     }
     
     // MARK: - Subviews
@@ -157,10 +161,12 @@ struct MainMapView: View {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
             }
-            Divider()
-            ForEach(self.landmarks, id: \.self) { landmark in
-                Button(landmark.name, systemImage: landmark.systemImageName) {
-                    self.zoomTo(landmark: landmark)
+            themeMenu
+            Section {
+                ForEach(self.landmarks, id: \.self) { landmark in
+                    Button(landmark.name, systemImage: landmark.systemImageName) {
+                        self.zoomTo(landmark: landmark)
+                    }
                 }
             }
         } label: {
@@ -172,6 +178,24 @@ struct MainMapView: View {
         }
         .accessibilityLabel("my-places-menu".localized)
         .glassEffect()
+    }
+    
+    private var themeMenu: some View {
+        Menu("theme".localized, systemImage: "paintbrush") {
+            ForEach(MapPlusTheme.allCases) { themeOption in
+                Button {
+                    activeTheme = themeOption
+                } label: {
+                    HStack {
+                        if themeOption == self.activeTheme {
+                            Label(themeOption.localizedName, systemImage: "checkmark")
+                        } else {
+                            Text(themeOption.localizedName)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Helper Methods
