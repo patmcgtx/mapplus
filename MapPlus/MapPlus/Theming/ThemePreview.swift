@@ -6,7 +6,7 @@
 //
 import SwiftUI
 
-/// A view just for checking out themes
+/// A view for sampling a theme
 struct ThemePreview: View {
     
     /// The theme to show off

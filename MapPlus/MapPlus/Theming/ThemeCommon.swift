@@ -44,7 +44,7 @@ extension View {
     // Note: I wanted to somehow embed the `ViewModifier` in the `MapPlusTheme` itself.
     //       However, `ViewModifier` is a protocol, and SwiftUI wants a concrete type
     //       for any `ViewModifier`.  I couldn't find a good/simple way to let `MapPlusTheme`
-    //       return a protocol; it an associated type, type-erasing, or other such
+    //       return a protocol; it required an associated type, type-erasing, or other
     //       inefficiencies or complexities.  So I stopped fighting SwiftUI and did
     //       what it wants: just apply a simple, concrete `ViewModifier` directly.
 
