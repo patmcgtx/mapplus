@@ -10,7 +10,7 @@ import SwiftUI
 struct EightBitViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.green)
+            .foregroundStyle(.green)
             .fontDesign(.monospaced)
             .tint(.green)
     }
