@@ -1,22 +1,20 @@
 //
-//  EightBitViewModifier.swift
+//  StandardViewModifier.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 3/5/26.
 //
 import SwiftUI
 
-struct EightBitViewModifier: ViewModifier {
+/// Applies the "standard" style to a SwiftUI view hierarchy
+struct StandardViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .foregroundColor(.green)
-            .fontDesign(.monospaced)
-            .tint(.green)
     }
 }
 
 #Preview() {
-    let theme = MapPlusTheme.eightBit
+    let theme = MapPlusTheme.standard
     ThemePreview(theme: theme)
         .apply(theme: theme)
 }

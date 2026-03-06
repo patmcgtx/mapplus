@@ -22,7 +22,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     
     // MARK: Methods
     
-    // TODO patmcg actually localize
+    /// A localized user-facing name for the theme
     var localizedName: String {
         switch self {
         case .standard:
@@ -40,6 +40,13 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
 }
 
 extension View {
+
+    // Note: I wanted to somehow embed the `ViewModifier` in the `MapPlusTheme` itself.
+    //       However, `ViewModifier` is a protocol, and SwiftUI wants a concrete type
+    //       for any `ViewModifier`.  I couldn't find a good/simple way to let `MapPlusTheme`
+    //       return a protocol; it an associated type, type-erasing, or other such
+    //       inefficiencies or complexities.  So I stopped fighting SwiftUI and did
+    //       what it wants: just apply a simple, concrete `ViewModifier` directly.
 
     /// Applies the styling for the given `MapPlusTheme` to this view hierarchy.
     @ViewBuilder

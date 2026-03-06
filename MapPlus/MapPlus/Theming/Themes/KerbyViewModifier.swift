@@ -6,6 +6,7 @@
 //
 import SwiftUI
 
+/// Applies the "Kerby" style to a SwiftUI view hierarchy
 struct KerbyViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
