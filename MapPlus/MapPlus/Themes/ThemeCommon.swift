@@ -17,7 +17,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     /// A fun, retro pixelated theme
     case eightBit
     
-    /// An Austin-inspired theme
+    /// An Austin-inspired cafe theme
     case kerby
 
     // MARK: Methods
@@ -26,18 +26,21 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     var localizedName: String {
         switch self {
         case .standard:
-            return "Standard"
+            return "theme-standard"
+                .localized
         case .eightBit:
-            return "Eight Bit"
+            return "theme-eight-bit"
+                .localized
         case .kerby:
-            return "Kerby"
+            return "theme-kerby"
+                .localized
         }
     }
 }
 
 extension View {
 
-    /// Applies the styling for the given `MapPlusTheme` to this view.
+    /// Applies the styling for the given `MapPlusTheme` to this view heirarchy.
     @ViewBuilder func apply(theme: MapPlusTheme) -> some View {
         switch theme {
         case .standard:

@@ -161,7 +161,7 @@ struct MainMapView: View {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
             }
-            Section("Themes") {
+            Section("themes") {
                 ForEach(MapPlusTheme.allCases) { themeOption in
                     Button {
                         activeTheme = themeOption

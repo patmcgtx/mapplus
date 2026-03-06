@@ -14,3 +14,9 @@ struct KerbyViewModifier: ViewModifier {
             .foregroundColor(.orange)
     }
 }
+
+#Preview() {
+    let theme = MapPlusTheme.kerby
+    ThemePreview(theme: theme)
+        .apply(theme: theme)
+}

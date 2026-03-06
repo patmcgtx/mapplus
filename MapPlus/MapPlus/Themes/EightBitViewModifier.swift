@@ -13,3 +13,9 @@ struct EightBitViewModifier: ViewModifier {
             .fontDesign(.monospaced)
     }
 }
+
+#Preview() {
+    let theme = MapPlusTheme.eightBit
+    ThemePreview(theme: theme)
+        .apply(theme: theme)
+}

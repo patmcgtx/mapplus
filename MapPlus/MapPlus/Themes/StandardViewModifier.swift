@@ -11,3 +11,9 @@ struct StandardViewModifier: ViewModifier {
         content
     }
 }
+
+#Preview() {
+    let theme = MapPlusTheme.standard
+    ThemePreview(theme: theme)
+        .apply(theme: theme)
+}
