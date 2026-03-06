@@ -22,27 +22,30 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
 
     // MARK: Methods
     
-    var details: MapPlusThemeDetails {
+    // TODO patmcg actually localize
+    var localizedName: String {
         switch self {
-        case .standard: return ThemeStandard()
-        case .eightBit: return ThemeEightBit()
-        case .kerby: return ThemeKerby()
+        case .standard:
+            return "Standard"
+        case .eightBit:
+            return "Eight Bit"
+        case .kerby:
+            return "Kerby"
         }
     }
-    
 }
 
 extension View {
 
     /// Applies the styling for the given `MapPlusTheme` to this view.
-    @ViewBuilder func mapPlusTheme(_ theme: MapPlusTheme) -> some View {
+    @ViewBuilder func apply(theme: MapPlusTheme) -> some View {
         switch theme {
         case .standard:
-            self.modifier(ThemeStandard.BasicModifier())
+            self.modifier(ThemeModifiers.Standard())
         case .eightBit:
-            self.modifier(ThemeEightBit.EightBitModifier())
+            self.modifier(ThemeModifiers.EightBit())
         case .kerby:
-            self.modifier(ThemeKerby.KerbyViewModifier())
+            self.modifier(ThemeModifiers.Kerby())
         }
     }
 

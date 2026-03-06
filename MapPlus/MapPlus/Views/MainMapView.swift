@@ -106,8 +106,7 @@ struct MainMapView: View {
             .presentationDetents([.medium, .large])
         }
         .environment(\.theme, self.activeTheme)
-        .mapPlusTheme(self.activeTheme)
-        .mapPlusTheme(activeTheme)
+        .apply(theme: activeTheme)
     }
     
     // MARK: - Subviews
@@ -168,7 +167,7 @@ struct MainMapView: View {
                         activeTheme = themeOption
                     } label: {
                         HStack {
-                            Text(themeOption.details.name)
+                            Text(themeOption.localizedName)
                             if themeOption == self.activeTheme {
                                 Image(systemName: "checkmark.square")
                             }
