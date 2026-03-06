@@ -4,6 +4,7 @@
 //
 //  Created by Patrick McGonigle on 3/5/26.
 //
+import SwiftUI
 
 /// Themes for styling the app
 enum MapPlusTheme: String, CaseIterable, Identifiable {
@@ -28,4 +29,5 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         case .kerby: return ThemeKerby()
         }
     }
+    
 }
