@@ -31,3 +31,19 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     }
     
 }
+
+extension View {
+
+    /// Applies the styling for the given `MapPlusTheme` to this view.
+    @ViewBuilder func mapPlusTheme(_ theme: MapPlusTheme) -> some View {
+        switch theme {
+        case .basic:
+            self.modifier(ThemeBasic.BasicModifier())
+        case .eightBit:
+            self.modifier(ThemeEightBit.EightBitModifier())
+        case .kerby:
+            self.modifier(ThemeKerby.KerbyViewModifier())
+        }
+    }
+
+}

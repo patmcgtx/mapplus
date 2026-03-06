@@ -106,7 +106,7 @@ struct MainMapView: View {
             .presentationDetents([.medium, .large])
         }
         .environment(\.theme, self.activeTheme)
-        .modifier(self.activeTheme.details.modifier)
+        .mapPlusTheme(self.activeTheme)
     }
     
     // MARK: - Subviews
