@@ -161,22 +161,8 @@ struct MainMapView: View {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
             }
-            Menu("theme".localized, systemImage: "paintbrush") {
-                ForEach(MapPlusTheme.allCases) { themeOption in
-                    Button {
-                        activeTheme = themeOption
-                    } label: {
-                        HStack {
-                            if themeOption == self.activeTheme {
-                                Label(themeOption.localizedName, systemImage: "checkmark")
-                            } else {
-                                Text(themeOption.localizedName)
-                            }
-                        }
-                    }
-                }
-            }
-            Section("Places") {
+            themeMenu
+            Section {
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
                         self.zoomTo(landmark: landmark)
@@ -192,6 +178,24 @@ struct MainMapView: View {
         }
         .accessibilityLabel("my-places-menu".localized)
         .glassEffect()
+    }
+    
+    private var themeMenu: some View {
+        Menu("theme".localized, systemImage: "paintbrush") {
+            ForEach(MapPlusTheme.allCases) { themeOption in
+                Button {
+                    activeTheme = themeOption
+                } label: {
+                    HStack {
+                        if themeOption == self.activeTheme {
+                            Label(themeOption.localizedName, systemImage: "checkmark")
+                        } else {
+                            Text(themeOption.localizedName)
+                        }
+                    }
+                }
+            }
+        }
     }
     
     // MARK: - Helper Methods

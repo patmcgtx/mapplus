@@ -11,6 +11,7 @@ struct EightBitViewModifier: ViewModifier {
         content
             .foregroundColor(.green)
             .fontDesign(.monospaced)
+            .tint(.green)
     }
 }
 

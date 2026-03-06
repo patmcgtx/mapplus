@@ -12,6 +12,7 @@ struct KerbyViewModifier: ViewModifier {
             .fontDesign(.rounded)
             .textCase(.uppercase)
             .foregroundColor(.orange)
+            .tint(.orange)
     }
 }
 
