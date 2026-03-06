@@ -161,15 +161,16 @@ struct MainMapView: View {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
             }
-            Section("themes") {
+            Menu("theme".localized, systemImage: "paintbrush") {
                 ForEach(MapPlusTheme.allCases) { themeOption in
                     Button {
                         activeTheme = themeOption
                     } label: {
                         HStack {
-                            Text(themeOption.localizedName)
                             if themeOption == self.activeTheme {
-                                Image(systemName: "checkmark.square")
+                                Label(themeOption.localizedName, systemImage: "checkmark")
+                            } else {
+                                Text(themeOption.localizedName)
                             }
                         }
                     }
