@@ -19,6 +19,11 @@ struct MainMapView: View {
     @State private var showingLandmarkList: Bool = false
     @State private var isShowingAddLandmarkSheet: Bool = false
     @State private var isShowingCategoryFilter: Bool = false
+
+    // Add button drag state
+    @State private var isAddButtonDragging: Bool = false
+    @State private var addButtonOffset: CGSize = .zero
+    @State private var addButtonDragOrigin: CGSize = .zero
     
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -119,6 +124,7 @@ struct MainMapView: View {
     
     var addButton: some View {
         Button(action: {
+            guard !isAddButtonDragging else { return }
             isShowingAddLandmarkSheet = true
         }) {
             Image(systemName: "plus")
@@ -128,6 +134,35 @@ struct MainMapView: View {
                 .padding(16)
         }
         .glassEffect()
+        .scaleEffect(isAddButtonDragging ? 1.15 : 1.0)
+        .opacity(isAddButtonDragging ? 0.7 : 1.0)
+        .offset(addButtonOffset)
+        .zIndex(isAddButtonDragging ? 1 : 0)
+        .simultaneousGesture(
+            DragGesture()
+                .onChanged { value in
+                    if !isAddButtonDragging {
+                        withAnimation(.easeOut(duration: 0.15)) {
+                            isAddButtonDragging = true
+                        }
+                        addButtonDragOrigin = addButtonOffset
+                    }
+                    addButtonOffset = CGSize(
+                        width: addButtonDragOrigin.width + value.translation.width,
+                        height: addButtonDragOrigin.height + value.translation.height
+                    )
+                }
+                .onEnded { _ in
+                    // Defer the reset so the Button action (which fires on the same
+                    // touch-up event) still sees isAddButtonDragging == true and
+                    // skips opening the sheet.
+                    DispatchQueue.main.async {
+                        withAnimation(.easeOut(duration: 0.15)) {
+                            isAddButtonDragging = false
+                        }
+                    }
+                }
+        )
     }
     
     var filterButton: some View {
