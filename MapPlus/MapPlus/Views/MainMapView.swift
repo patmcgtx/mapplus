@@ -94,12 +94,21 @@ struct MainMapView: View {
             }
         }
         .onChange(of: selectedCategoryNames) {
+            // Animate the selected landmarks changing
+            // TODO patmcg encapsulate this as a "blink"
             Task {
-                // Animate the selected landmarks changing
                 do {
-                    await MainActor.run { showMarkers = false }
-                    try await Task.sleep(for: .seconds(0.5))
-                    await MainActor.run { showMarkers = true }
+                    await MainActor.run {
+                        withAnimation(.easeIn) {
+                            showMarkers = false
+                        }
+                    }
+                    try await Task.sleep(for: .seconds(0.25))
+                    await MainActor.run {
+                        withAnimation(.easeOut) {
+                            showMarkers = true
+                        }
+                    }
                 } catch {
                     await MainActor.run { showMarkers = true }
                 }
