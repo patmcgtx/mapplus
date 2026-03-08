@@ -21,7 +21,7 @@ struct MainMapView: View {
     @State private var isShowingCategoryFilter: Bool = false
 
     // Add button drag state
-    @State private var isAddButtonLongPressed: Bool = false
+    @State private var isAddButtonDragging: Bool = false
     @State private var addButtonOffset: CGSize = .zero
     @State private var addButtonDragOrigin: CGSize = .zero
     
@@ -123,32 +123,8 @@ struct MainMapView: View {
     // MARK: - Subviews
     
     var addButton: some View {
-        let gesture = LongPressGesture(minimumDuration: 0.5)
-            .sequenced(before: DragGesture(minimumDistance: 0))
-            .onChanged { value in
-                switch value {
-                case .first(true):
-                    withAnimation(.easeOut(duration: 0.15)) {
-                        isAddButtonLongPressed = true
-                    }
-                    addButtonDragOrigin = addButtonOffset
-                case .second(true, let drag?):
-                    addButtonOffset = CGSize(
-                        width: addButtonDragOrigin.width + drag.translation.width,
-                        height: addButtonDragOrigin.height + drag.translation.height
-                    )
-                default:
-                    break
-                }
-            }
-            .onEnded { _ in
-                withAnimation(.easeOut(duration: 0.15)) {
-                    isAddButtonLongPressed = false
-                }
-            }
-
-        return Button(action: {
-            guard !isAddButtonLongPressed else { return }
+        Button(action: {
+            guard !isAddButtonDragging else { return }
             isShowingAddLandmarkSheet = true
         }) {
             Image(systemName: "plus")
@@ -158,11 +134,30 @@ struct MainMapView: View {
                 .padding(16)
         }
         .glassEffect()
-        .scaleEffect(isAddButtonLongPressed ? 1.15 : 1.0)
-        .opacity(isAddButtonLongPressed ? 0.7 : 1.0)
+        .scaleEffect(isAddButtonDragging ? 1.15 : 1.0)
+        .opacity(isAddButtonDragging ? 0.7 : 1.0)
         .offset(addButtonOffset)
-        .zIndex(isAddButtonLongPressed ? 1 : 0)
-        .gesture(gesture)
+        .zIndex(isAddButtonDragging ? 1 : 0)
+        .simultaneousGesture(
+            DragGesture()
+                .onChanged { value in
+                    if !isAddButtonDragging {
+                        withAnimation(.easeOut(duration: 0.15)) {
+                            isAddButtonDragging = true
+                        }
+                        addButtonDragOrigin = addButtonOffset
+                    }
+                    addButtonOffset = CGSize(
+                        width: addButtonDragOrigin.width + value.translation.width,
+                        height: addButtonDragOrigin.height + value.translation.height
+                    )
+                }
+                .onEnded { _ in
+                    withAnimation(.easeOut(duration: 0.15)) {
+                        isAddButtonDragging = false
+                    }
+                }
+        )
     }
     
     var filterButton: some View {
