@@ -153,8 +153,13 @@ struct MainMapView: View {
                     )
                 }
                 .onEnded { _ in
-                    withAnimation(.easeOut(duration: 0.15)) {
-                        isAddButtonDragging = false
+                    // Defer the reset so the Button action (which fires on the same
+                    // touch-up event) still sees isAddButtonDragging == true and
+                    // skips opening the sheet.
+                    DispatchQueue.main.async {
+                        withAnimation(.easeOut(duration: 0.15)) {
+                            isAddButtonDragging = false
+                        }
                     }
                 }
         )
