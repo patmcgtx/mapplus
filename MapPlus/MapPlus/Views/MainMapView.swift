@@ -35,39 +35,57 @@ struct MainMapView: View {
 
     // Themes
     @State private var activeTheme: MapPlusTheme = .standard
-    
+
+    @State private var text = ""
+    @State private var bold = false
+    @State private var italic = false
+    @State private var fontSize = 12.0
+
     var body: some View {
         
         ZStack {
-            Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                ForEach(filteredLandmarks, id: \.self) { landmark in
-                    Marker(
-                        landmark.name,
-                        systemImage: landmark.systemImageName,
-                        coordinate: landmark.location
-                    )
-                    .tag(landmark)
+            NavigationStack {
+                Map(position: $mapPosition, selection: self.$selectedLandmark) {
+                    ForEach(filteredLandmarks, id: \.self) { landmark in
+                        Marker(
+                            landmark.name,
+                            systemImage: landmark.systemImageName,
+                            coordinate: landmark.location
+                        )
+                        .tag(landmark)
+                    }
+                    UserAnnotation()
                 }
-                UserAnnotation()
-            }
-            .sheet(item: self.$selectedLandmark) { landmark in
-                LandmarkDetailsView(landmark: landmark)
-                    .presentationDetents([.medium, .large])
-            }
-            .mapStyle(MapStyle.standard(elevation: .realistic,
-                                        emphasis: .muted,
-                                        pointsOfInterest: [
-                                            .library,
-                                            .school,
-                                            .fireStation,
-                                            .hospital,
-                                            .pharmacy,
-                                            .police
-                                        ],
-                                        showsTraffic: false))
-            .mapControls {
-                MapCompass()
-                MapScaleView()
+                .sheet(item: self.$selectedLandmark) { landmark in
+                    LandmarkDetailsView(landmark: landmark)
+                        .presentationDetents([.medium, .large])
+                }
+                .mapStyle(MapStyle.standard(elevation: .realistic,
+                                            emphasis: .muted,
+                                            pointsOfInterest: [
+                                                .library,
+                                                .school,
+                                                .fireStation,
+                                                .hospital,
+                                                .pharmacy,
+                                                .police
+                                            ],
+                                            showsTraffic: false))
+                .mapControls {
+                    MapCompass()
+                    MapScaleView()
+                        .toolbar {
+                            ToolbarItemGroup(placement: .principal) {
+                                addButton
+                                locateButton
+                            }
+                            ToolbarItemGroup(placement: .automatic) {
+                                filterButton
+                                landmarksMenu
+                            }
+                        }
+                        .searchable(text: .constant("search"))
+                }
             }
 
             VStack {
@@ -75,10 +93,10 @@ struct MainMapView: View {
                 HStack {
                     Spacer()
                     VStack(spacing: 16) {
-                        addButton
-                        locateButton
-                        filterButton
-                        landmarksMenu
+//                        addButton
+//                        locateButton
+//                        filterButton
+//                        landmarksMenu
                     }
                     .padding(.trailing, 16)
                     .padding(.bottom, 16)
@@ -105,6 +123,27 @@ struct MainMapView: View {
             )
             .presentationDetents([.medium, .large])
         }
+        .toolbar {
+            ToolbarItemGroup {
+                Slider(
+                    value: $fontSize,
+                    in: 8...120,
+                    minimumValueLabel:
+                        Text("A").font(.system(size: 8)),
+                    maximumValueLabel:
+                        Text("A").font(.system(size: 16))
+                ) {
+                    Text("Font Size (\(Int(fontSize)))")
+                }
+                .frame(width: 150)
+                Toggle(isOn: $bold) {
+                    Image(systemName: "bold")
+                }
+                Toggle(isOn: $italic) {
+                    Image(systemName: "italic")
+                }
+            }
+        }
         .environment(\.theme, self.activeTheme)
         .apply(theme: activeTheme)
     }
@@ -121,7 +160,6 @@ struct MainMapView: View {
                 .foregroundStyle(.primary)
                 .padding(16)
         }
-        .glassEffect()
     }
     
     var filterButton: some View {
@@ -137,7 +175,6 @@ struct MainMapView: View {
                 .padding(16)
         }
         .accessibilityLabel("filter-by-category".localized)
-        .glassEffect()
     }
     
     var locateButton: some View {
@@ -153,7 +190,6 @@ struct MainMapView: View {
                 .padding(16)
         }
         .accessibilityLabel("me".localized)
-        .glassEffect()
     }
     
     var landmarksMenu : some View {
@@ -177,7 +213,6 @@ struct MainMapView: View {
                 .padding(16)
         }
         .accessibilityLabel("my-places-menu".localized)
-        .glassEffect()
     }
     
     private var themeMenu: some View {
