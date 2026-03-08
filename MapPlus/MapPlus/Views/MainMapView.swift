@@ -23,6 +23,7 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
+    @State private var showMarkers: Bool = true
     
     // Filter state
     @State private var selectedCategoryNames: Set<String> = []
@@ -40,13 +41,15 @@ struct MainMapView: View {
         
         ZStack {
             Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                ForEach(filteredLandmarks, id: \.self) { landmark in
-                    Marker(
-                        landmark.name,
-                        systemImage: landmark.systemImageName,
-                        coordinate: landmark.location
-                    )
-                    .tag(landmark)
+                if showMarkers {
+                    ForEach(filteredLandmarks, id: \.self) { landmark in
+                        Marker(
+                            landmark.name,
+                            systemImage: landmark.systemImageName,
+                            coordinate: landmark.location
+                        )
+                        .tag(landmark)
+                    }
                 }
                 UserAnnotation()
             }
@@ -90,6 +93,11 @@ struct MainMapView: View {
                 // TODO patmcg handle issues on the location permissions request
             }
         }
+        .onChange(of: selectedCategoryNames) {
+            Task {
+                await blinkLandmarks()
+            }
+        }
         .sheet(isPresented: $showingLandmarkList) {
             LandmarksView()
         }
@@ -128,6 +136,8 @@ struct MainMapView: View {
         Button(action: {
             isShowingCategoryFilter = true
         }) {
+            // TODO patmcg there is a lot of biz logic around selectedCategoryNames
+            //      -> refactor to a view model
             Image(systemName: selectedCategoryNames.isEmpty
                   ? "line.3.horizontal.decrease.circle"
                   : "line.3.horizontal.decrease.circle.fill")
@@ -199,6 +209,26 @@ struct MainMapView: View {
     }
     
     // MARK: - Helper Methods
+    
+    /// Animate the selected landmarks changing
+    private func blinkLandmarks() async {
+        let animateSecs = 0.25
+        do {
+            await MainActor.run {
+                withAnimation(.easeOut(duration: animateSecs)) {
+                    showMarkers = false
+                }
+            }
+            try await Task.sleep(for: .seconds(animateSecs))
+            await MainActor.run {
+                withAnimation(.easeOut(duration: animateSecs)) {
+                    showMarkers = true
+                }
+            }
+        } catch {
+            await MainActor.run { showMarkers = true }
+        }
+    }
     
     /// Returns landmarks filtered by the selected category names.
     /// If no categories are selected, all landmarks are returned.
