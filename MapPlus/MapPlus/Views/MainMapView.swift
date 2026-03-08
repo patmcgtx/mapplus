@@ -93,10 +93,8 @@ struct MainMapView: View {
                 // TODO patmcg handle issues on the location permissions request
             }
         }
-        .onChange(of: selectedCategoryNames) {
-            Task {
-                await blinkLandmarks()
-            }
+        .task(id: selectedCategoryNames) {
+            await blinkLandmarks()
         }
         .sheet(isPresented: $showingLandmarkList) {
             LandmarksView()
