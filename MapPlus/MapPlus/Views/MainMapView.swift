@@ -94,24 +94,8 @@ struct MainMapView: View {
             }
         }
         .onChange(of: selectedCategoryNames) {
-            // Animate the selected landmarks changing
-            // TODO patmcg encapsulate this as a "blink"
             Task {
-                do {
-                    await MainActor.run {
-                        withAnimation(.easeIn) {
-                            showMarkers = false
-                        }
-                    }
-                    try await Task.sleep(for: .seconds(0.25))
-                    await MainActor.run {
-                        withAnimation(.easeOut) {
-                            showMarkers = true
-                        }
-                    }
-                } catch {
-                    await MainActor.run { showMarkers = true }
-                }
+                await blinkLandmarks()
             }
         }
         .sheet(isPresented: $showingLandmarkList) {
@@ -225,6 +209,26 @@ struct MainMapView: View {
     }
     
     // MARK: - Helper Methods
+    
+    /// Animate the selected landmarks changing
+    private func blinkLandmarks() async {
+        let animateSecs = 0.25
+        do {
+            await MainActor.run {
+                withAnimation(.easeOut(duration: animateSecs)) {
+                    showMarkers = false
+                }
+            }
+            try await Task.sleep(for: .seconds(animateSecs))
+            await MainActor.run {
+                withAnimation(.easeOut(duration: animateSecs)) {
+                    showMarkers = true
+                }
+            }
+        } catch {
+            await MainActor.run { showMarkers = true }
+        }
+    }
     
     /// Returns landmarks filtered by the selected category names.
     /// If no categories are selected, all landmarks are returned.
