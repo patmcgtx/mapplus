@@ -21,10 +21,10 @@ struct MainMapView: View {
     @State private var isShowingCategoryFilter: Bool = false
 
     // Add button drag state
-    @State private var isAddButtonDragging: Bool = false
-    @State private var addButtonOffset: CGSize = .zero
-    @State private var addButtonDragOrigin: CGSize = .zero
-    
+    @State private var isButtonDragging: Bool = false
+    @State private var buttonDragOrigin: CGSize = .zero
+    @State private var buttonDragOffset: CGSize = .zero
+
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
@@ -124,30 +124,29 @@ struct MainMapView: View {
     
     var addButton: some View {
         Button(action: {
-            guard !isAddButtonDragging else { return }
+            guard !isButtonDragging else { return }
             isShowingAddLandmarkSheet = true
         }) {
             Image(systemName: "plus")
                 .resizable()
                 .frame(width: 24, height: 24)
-                .foregroundStyle(.primary)
                 .padding(16)
         }
         .glassEffect()
-        .isBeingDragged(isAddButtonDragging)
-        .offset(addButtonOffset)
+        .isBeingDragged(isButtonDragging)
+        .offset(buttonDragOffset)
         .simultaneousGesture(
             DragGesture()
                 .onChanged { value in
-                    if !isAddButtonDragging {
+                    if !isButtonDragging {
                         withAnimation(.easeOut(duration: 0.15)) {
-                            isAddButtonDragging = true
+                            isButtonDragging = true
                         }
-                        addButtonDragOrigin = addButtonOffset
+                        buttonDragOrigin = buttonDragOffset
                     }
-                    addButtonOffset = CGSize(
-                        width: addButtonDragOrigin.width + value.translation.width,
-                        height: addButtonDragOrigin.height + value.translation.height
+                    buttonDragOffset = CGSize(
+                        width: buttonDragOrigin.width + value.translation.width,
+                        height: buttonDragOrigin.height + value.translation.height
                     )
                 }
                 .onEnded { _ in
@@ -156,7 +155,7 @@ struct MainMapView: View {
                     // skips opening the sheet.
                     DispatchQueue.main.async {
                         withAnimation(.easeOut(duration: 0.15)) {
-                            isAddButtonDragging = false
+                            isButtonDragging = false
                         }
                     }
                 }
