@@ -134,10 +134,8 @@ struct MainMapView: View {
                 .padding(16)
         }
         .glassEffect()
-        .scaleEffect(isAddButtonDragging ? 1.15 : 1.0)
-        .opacity(isAddButtonDragging ? 0.7 : 1.0)
+        .isBeingDragged(isAddButtonDragging)
         .offset(addButtonOffset)
-        .zIndex(isAddButtonDragging ? 1 : 0)
         .simultaneousGesture(
             DragGesture()
                 .onChanged { value in
