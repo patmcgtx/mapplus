@@ -21,9 +21,10 @@ struct MainMapView: View {
     @State private var isShowingCategoryFilter: Bool = false
 
     // Add button drag state
-    @State private var isButtonDragging: Bool = false
-    @State private var buttonDragOrigin: CGSize = .zero
-    @State private var buttonDragOffset: CGSize = .zero
+    @State private var addButtonOffset: CGSize = .zero
+    @State private var filterButtonOffset: CGSize = .zero
+    @State private var locateButtonOffset: CGSize = .zero
+    @State private var menuButtonOffset: CGSize = .zero
 
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -123,79 +124,52 @@ struct MainMapView: View {
     // MARK: - Subviews
     
     var addButton: some View {
-        Button(action: {
-            guard !isButtonDragging else { return }
-            isShowingAddLandmarkSheet = true
-        }) {
-            Image(systemName: "plus")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .padding(16)
-        }
-        .glassEffect()
-        .isBeingDragged(isButtonDragging)
-        .offset(buttonDragOffset)
-        .simultaneousGesture(
-            DragGesture()
-                .onChanged { value in
-                    if !isButtonDragging {
-                        withAnimation(.easeOut(duration: 0.15)) {
-                            isButtonDragging = true
-                        }
-                        buttonDragOrigin = buttonDragOffset
-                    }
-                    buttonDragOffset = CGSize(
-                        width: buttonDragOrigin.width + value.translation.width,
-                        height: buttonDragOrigin.height + value.translation.height
-                    )
-                }
-                .onEnded { _ in
-                    // Defer the reset so the Button action (which fires on the same
-                    // touch-up event) still sees isAddButtonDragging == true and
-                    // skips opening the sheet.
-                    DispatchQueue.main.async {
-                        withAnimation(.easeOut(duration: 0.15)) {
-                            isButtonDragging = false
-                        }
-                    }
-                }
+        DraggableControlButton(
+            draggedOffset: $addButtonOffset,
+            systemImageName: "plus",
+            action: {
+                isShowingAddLandmarkSheet = true
+            }
         )
     }
     
+    @ViewBuilder
     var filterButton: some View {
-        Button(action: {
-            isShowingCategoryFilter = true
-        }) {
-            // TODO patmcg there is a lot of biz logic around selectedCategoryNames
-            //      -> refactor to a view model
-            Image(systemName: selectedCategoryNames.isEmpty
-                  ? "line.3.horizontal.decrease.circle"
-                  : "line.3.horizontal.decrease.circle.fill")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(.primary)
-                .padding(16)
-        }
-        .accessibilityLabel("filter-by-category".localized)
-        .glassEffect()
+        let imageName = selectedCategoryNames.isEmpty
+        ? "line.3.horizontal.decrease.circle"
+        : "line.3.horizontal.decrease.circle.fill"
+        DraggableControlButton(
+            draggedOffset: $filterButtonOffset,
+            systemImageName: imageName,
+            action: {
+                isShowingCategoryFilter = true
+            }
+        )
     }
     
     var locateButton: some View {
-        Button(action: {
-            withAnimation {
-                self.mapPosition = .userLocation(fallback: .automatic)
+        DraggableControlButton(
+            draggedOffset: $locateButtonOffset,
+            systemImageName: "location",
+            action: {
+                withAnimation {
+                    self.mapPosition = .userLocation(fallback: .automatic)
+                }
             }
-        }) {
-            Image(systemName: "location")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(.primary)
-                .padding(16)
-        }
-        .accessibilityLabel("me".localized)
-        .glassEffect()
+        )
     }
     
+    var landmarksMenuDraggable : some View {
+        DraggableControlButton(
+            draggedOffset: $menuButtonOffset,
+            systemImageName: "list.bullet",
+            action: {
+                // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
+                self.showingLandmarkList = true
+            })
+    }
+
+    // TODO patmcg this offers an odd case - see landmarksMenuDraggable
     var landmarksMenu : some View {
         Menu {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
