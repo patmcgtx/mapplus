@@ -58,7 +58,7 @@ struct DraggableControlButton: View {
                 }
                 .onEnded { value in
                     // Defer the reset so the Button action (which fires on the same
-                    // touch-up event) still sees isAddButtonDragging == true and
+                    // touch-up event) still sees isDragging == true and
                     // skips opening the sheet.
                     DispatchQueue.main.async {
                         withAnimation(.easeOut(duration: 0.15)) {
