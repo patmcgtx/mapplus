@@ -226,6 +226,9 @@
         }
       }
     },
+    "Key" : {
+      "extractionState" : "manual"
+    },
     "location" : {
       "localizations" : {
         "en" : {

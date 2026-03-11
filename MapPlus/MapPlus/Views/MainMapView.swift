@@ -127,6 +127,7 @@ struct MainMapView: View {
                 // Persist button location here per ticket #179
             }
         )
+        .accessibilityLabel("add-place".localized)
     }
     
     @ViewBuilder
@@ -173,6 +174,7 @@ struct MainMapView: View {
                 // Persist button location here per ticket #179
             }
         )
+        .accessibilityLabel("my-places-menu".localized)
     }
 
     // TODO patmcg this is an odd case - see landmarksMenuDraggable
