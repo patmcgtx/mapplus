@@ -156,6 +156,7 @@
       }
     },
     "filter-by-category" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -225,6 +226,9 @@
         }
       }
     },
+    "Key" : {
+      "extractionState" : "manual"
+    },
     "location" : {
       "localizations" : {
         "en" : {
@@ -292,6 +296,7 @@
       }
     },
     "me" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

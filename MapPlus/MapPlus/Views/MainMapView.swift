@@ -19,7 +19,7 @@ struct MainMapView: View {
     @State private var showingLandmarkList: Bool = false
     @State private var isShowingAddLandmarkSheet: Bool = false
     @State private var isShowingCategoryFilter: Bool = false
-    
+
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
@@ -118,52 +118,66 @@ struct MainMapView: View {
     // MARK: - Subviews
     
     var addButton: some View {
-        Button(action: {
-            isShowingAddLandmarkSheet = true
-        }) {
-            Image(systemName: "plus")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(.primary)
-                .padding(16)
-        }
-        .glassEffect()
+        DraggableControlButton(
+            systemImageName: "plus",
+            onTap: {
+                isShowingAddLandmarkSheet = true
+            },
+            onMoved: { offset in
+                // Persist button location here per ticket #179
+            }
+        )
+        .accessibilityLabel("add-place".localized)
     }
     
+    @ViewBuilder
     var filterButton: some View {
-        Button(action: {
-            isShowingCategoryFilter = true
-        }) {
-            // TODO patmcg there is a lot of biz logic around selectedCategoryNames
-            //      -> refactor to a view model
-            Image(systemName: selectedCategoryNames.isEmpty
-                  ? "line.3.horizontal.decrease.circle"
-                  : "line.3.horizontal.decrease.circle.fill")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(.primary)
-                .padding(16)
-        }
+        let imageName = selectedCategoryNames.isEmpty
+        ? "line.3.horizontal.decrease.circle"
+        : "line.3.horizontal.decrease.circle.fill"
+        DraggableControlButton(
+            systemImageName: imageName,
+            onTap: {
+                isShowingCategoryFilter = true
+            },
+            onMoved: { offset in
+                // Persist button location here per ticket #179
+            }
+        )
         .accessibilityLabel("filter-by-category".localized)
-        .glassEffect()
     }
     
     var locateButton: some View {
-        Button(action: {
-            withAnimation {
-                self.mapPosition = .userLocation(fallback: .automatic)
+        DraggableControlButton(
+            systemImageName: "location",
+            onTap: {
+                withAnimation {
+                    self.mapPosition = .userLocation(fallback: .automatic)
+                }
+            },
+            onMoved: { offset in
+                // Persist button location here per ticket #179
+                print("Moved locate button by \(offset)")
             }
-        }) {
-            Image(systemName: "location")
-                .resizable()
-                .frame(width: 24, height: 24)
-                .foregroundStyle(.primary)
-                .padding(16)
-        }
+        )
         .accessibilityLabel("me".localized)
-        .glassEffect()
     }
     
+    var landmarksMenuDraggable : some View {
+        DraggableControlButton(
+            systemImageName: "list.bullet",
+            onTap: {
+                // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
+                self.showingLandmarkList = true
+            },
+            onMoved: { offset in
+                // Persist button location here per ticket #179
+            }
+        )
+        .accessibilityLabel("my-places-menu".localized)
+    }
+
+    // TODO patmcg this is an odd case - see landmarksMenuDraggable
     var landmarksMenu : some View {
         Menu {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
