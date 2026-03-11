@@ -8,24 +8,26 @@ import SwiftUI
 
 /// A movable/draggable button that performs the provided action when tapped.
 struct DraggableControlButton: View {
-    
-    /// The offset to keep the parent view updated of the button's location
-    @Binding var draggedOffset: CGSize
-    
+        
     /// The SF Symbols name for the buttons' icon
     let systemImageName: String
     
     /// The action to perform when the button is tapped
     let onTap: () -> Void
 
-    /// The action to perform when the button has been dropped in a new spot
-    let onMoved: () -> Void
+    /// The action to perform when the button has been dropped in a new spot,
+    /// including its new location.
+    let onMoved: (CGPoint) -> Void
 
     // MARK: Private state
     
+    @State private var draggedOffset: CGSize = .zero
     @State private var isDragging: Bool = false
     @State private var dragOrigin: CGSize = .zero
     
+    private let buttonSize: CGFloat = 24
+    private let buttonPadding: CGFloat = 16
+
     var body: some View {
         Button(action: {
             if !isDragging {
@@ -34,8 +36,8 @@ struct DraggableControlButton: View {
         }) {
             Image(systemName: systemImageName)
                 .resizable()
-                .frame(width: 24, height: 24)
-                .padding(16)
+                .frame(width: buttonSize, height: buttonSize)
+                .padding(buttonPadding)
         }
         .glassEffect()
         .isBeingDragged(isDragging)
@@ -63,7 +65,7 @@ struct DraggableControlButton: View {
                             isDragging = false
                         }
                     }
-                    onMoved()
+                    onMoved(value.location)
                 }
         )
     }
@@ -79,15 +81,13 @@ struct DraggableControlButton: View {
     @Previewable @State var locateButtonPressed: Bool = false
     @Previewable @State var locateButtonMoved: Bool = false
 
-    VStack {
-        
+    VStack {        
         DraggableControlButton(
-            draggedOffset: $addButtonOffset,
             systemImageName: "plus",
             onTap: {
                 addButtonPressed = true
             },
-            onMoved: {
+            onMoved: {_ in 
                 addButtonMoved = true
             }
         )
@@ -99,12 +99,11 @@ struct DraggableControlButton: View {
         })
 
         DraggableControlButton(
-            draggedOffset: $locateButtonOffset,
             systemImageName: "location",
             onTap: {
                 locateButtonPressed = true
             },
-            onMoved: {
+            onMoved: {_ in 
                 locateButtonMoved = true
             }
         )

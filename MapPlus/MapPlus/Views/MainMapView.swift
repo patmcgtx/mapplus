@@ -125,11 +125,13 @@ struct MainMapView: View {
     
     var addButton: some View {
         DraggableControlButton(
-            draggedOffset: $addButtonOffset,
             systemImageName: "plus",
             onTap: {
                 isShowingAddLandmarkSheet = true
-            }, onMoved: {}
+            },
+            onMoved: { location in
+                // Persist button location here per ticket #179
+            }
         )
     }
     
@@ -139,34 +141,40 @@ struct MainMapView: View {
         ? "line.3.horizontal.decrease.circle"
         : "line.3.horizontal.decrease.circle.fill"
         DraggableControlButton(
-            draggedOffset: $filterButtonOffset,
             systemImageName: imageName,
             onTap: {
                 isShowingCategoryFilter = true
-            }, onMoved: {}
+            },
+            onMoved: { location in
+                // Persist button location here per ticket #179
+            }
         )
     }
     
     var locateButton: some View {
         DraggableControlButton(
-            draggedOffset: $locateButtonOffset,
             systemImageName: "location",
             onTap: {
                 withAnimation {
                     self.mapPosition = .userLocation(fallback: .automatic)
                 }
-            }, onMoved: {}
+            },
+            onMoved: { location in
+                // Persist button location here per ticket #179
+            }
         )
     }
     
     var landmarksMenuDraggable : some View {
         DraggableControlButton(
-            draggedOffset: $menuButtonOffset,
             systemImageName: "list.bullet",
             onTap: {
                 // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
                 self.showingLandmarkList = true
-            }, onMoved: {}
+            },
+            onMoved: { location in
+                // Persist button location here per ticket #179
+            }
         )
     }
 
