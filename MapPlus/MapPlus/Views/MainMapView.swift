@@ -20,12 +20,6 @@ struct MainMapView: View {
     @State private var isShowingAddLandmarkSheet: Bool = false
     @State private var isShowingCategoryFilter: Bool = false
 
-    // Add button drag state
-    @State private var addButtonOffset: CGSize = .zero
-    @State private var filterButtonOffset: CGSize = .zero
-    @State private var locateButtonOffset: CGSize = .zero
-    @State private var menuButtonOffset: CGSize = .zero
-
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
