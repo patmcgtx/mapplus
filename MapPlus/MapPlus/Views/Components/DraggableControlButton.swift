@@ -73,11 +73,8 @@ struct DraggableControlButton: View {
 
 #Preview {
     
-    @Previewable @State var addButtonOffset: CGSize = .zero
     @Previewable @State var addButtonPressed: Bool = false
     @Previewable @State var addButtonMoved: Bool = false
-
-    @Previewable @State var locateButtonOffset: CGSize = .zero
     @Previewable @State var locateButtonPressed: Bool = false
     @Previewable @State var locateButtonMoved: Bool = false
 
