@@ -16,8 +16,8 @@ struct DraggableControlButton: View {
     let onTap: () -> Void
 
     /// The action to perform when the button has been dropped in a new spot,
-    /// including its new location.
-    let onMoved: (CGPoint) -> Void
+    /// with a parameter giving its new offset from the original location.
+    let onMoved: (CGSize) -> Void
 
     // MARK: Private state
     
@@ -65,7 +65,7 @@ struct DraggableControlButton: View {
                             isDragging = false
                         }
                     }
-                    onMoved(value.location)
+                    onMoved(draggedOffset)
                 }
         )
     }

@@ -123,7 +123,7 @@ struct MainMapView: View {
             onTap: {
                 isShowingAddLandmarkSheet = true
             },
-            onMoved: { location in
+            onMoved: { offset in
                 // Persist button location here per ticket #179
             }
         )
@@ -139,7 +139,7 @@ struct MainMapView: View {
             onTap: {
                 isShowingCategoryFilter = true
             },
-            onMoved: { location in
+            onMoved: { offset in
                 // Persist button location here per ticket #179
             }
         )
@@ -154,8 +154,9 @@ struct MainMapView: View {
                     self.mapPosition = .userLocation(fallback: .automatic)
                 }
             },
-            onMoved: { location in
+            onMoved: { offset in
                 // Persist button location here per ticket #179
+                print("Moved locate button by \(offset)")
             }
         )
         .accessibilityLabel("me".localized)
@@ -168,7 +169,7 @@ struct MainMapView: View {
                 // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
                 self.showingLandmarkList = true
             },
-            onMoved: { location in
+            onMoved: { offset in
                 // Persist button location here per ticket #179
             }
         )
