@@ -16,8 +16,11 @@ struct DraggableControlButton: View {
     let systemImageName: String
     
     /// The action to perform when the button is tapped
-    let action: () -> Void
-    
+    let onTap: () -> Void
+
+    /// The action to perform when the button has been dropped in a new spot
+    let onMoved: () -> Void
+
     // MARK: Private state
     
     @State private var isDragging: Bool = false
@@ -26,7 +29,7 @@ struct DraggableControlButton: View {
     var body: some View {
         Button(action: {
             if !isDragging {
-                action()
+                onTap()
             }
         }) {
             Image(systemName: systemImageName)
@@ -60,6 +63,7 @@ struct DraggableControlButton: View {
                             isDragging = false
                         }
                     }
+                    onMoved()
                 }
         )
     }
@@ -69,32 +73,46 @@ struct DraggableControlButton: View {
     
     @Previewable @State var addButtonOffset: CGSize = .zero
     @Previewable @State var addButtonPressed: Bool = false
-    
-    @Previewable @State var locateButtonPressed: Bool = false
+    @Previewable @State var addButtonMoved: Bool = false
+
     @Previewable @State var locateButtonOffset: CGSize = .zero
-    
+    @Previewable @State var locateButtonPressed: Bool = false
+    @Previewable @State var locateButtonMoved: Bool = false
+
     VStack {
         
         DraggableControlButton(
             draggedOffset: $addButtonOffset,
             systemImageName: "plus",
-            action: {
+            onTap: {
                 addButtonPressed = true
+            },
+            onMoved: {
+                addButtonMoved = true
             }
         )
-        .alert("Hey!", isPresented: $addButtonPressed, actions: {}, message: {
-            Text("You tapped the add button. ➕")
+        .alert("Hey! 👇", isPresented: $addButtonPressed, actions: {}, message: {
+            Text("Add button tapped ➕")
         })
-        
+        .alert("Huh?", isPresented: $addButtonMoved, actions: {}, message: {
+            Text("Add button moved 👀")
+        })
+
         DraggableControlButton(
             draggedOffset: $locateButtonOffset,
             systemImageName: "location",
-            action: {
+            onTap: {
                 locateButtonPressed = true
+            },
+            onMoved: {
+                locateButtonMoved = true
             }
         )
-        .alert("Hey!", isPresented: $locateButtonPressed, actions: {}, message: {
-            Text("You tapped the locate button. 📍")
+        .alert("Hey! 👇", isPresented: $locateButtonPressed, actions: {}, message: {
+            Text("Locate button tapped 📍")
+        })
+        .alert("Huh?", isPresented: $locateButtonMoved, actions: {}, message: {
+            Text("TLocate button moved 👀")
         })
     }
 }

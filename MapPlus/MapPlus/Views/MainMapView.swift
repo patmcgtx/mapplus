@@ -127,9 +127,9 @@ struct MainMapView: View {
         DraggableControlButton(
             draggedOffset: $addButtonOffset,
             systemImageName: "plus",
-            action: {
+            onTap: {
                 isShowingAddLandmarkSheet = true
-            }
+            }, onMoved: {}
         )
     }
     
@@ -141,9 +141,9 @@ struct MainMapView: View {
         DraggableControlButton(
             draggedOffset: $filterButtonOffset,
             systemImageName: imageName,
-            action: {
+            onTap: {
                 isShowingCategoryFilter = true
-            }
+            }, onMoved: {}
         )
     }
     
@@ -151,11 +151,11 @@ struct MainMapView: View {
         DraggableControlButton(
             draggedOffset: $locateButtonOffset,
             systemImageName: "location",
-            action: {
+            onTap: {
                 withAnimation {
                     self.mapPosition = .userLocation(fallback: .automatic)
                 }
-            }
+            }, onMoved: {}
         )
     }
     
@@ -163,13 +163,14 @@ struct MainMapView: View {
         DraggableControlButton(
             draggedOffset: $menuButtonOffset,
             systemImageName: "list.bullet",
-            action: {
+            onTap: {
                 // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
                 self.showingLandmarkList = true
-            })
+            }, onMoved: {}
+        )
     }
 
-    // TODO patmcg this offers an odd case - see landmarksMenuDraggable
+    // TODO patmcg this is an odd case - see landmarksMenuDraggable
     var landmarksMenu : some View {
         Menu {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
