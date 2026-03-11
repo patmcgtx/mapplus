@@ -158,6 +158,7 @@ struct MainMapView: View {
                 // Persist button location here per ticket #179
             }
         )
+        .accessibilityLabel("me".localized)
     }
     
     var landmarksMenuDraggable : some View {
