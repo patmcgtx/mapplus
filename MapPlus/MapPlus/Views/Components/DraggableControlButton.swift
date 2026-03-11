@@ -111,7 +111,7 @@ struct DraggableControlButton: View {
             Text("Locate button tapped 📍")
         })
         .alert("Huh?", isPresented: $locateButtonMoved, actions: {}, message: {
-            Text("TLocate button moved 👀")
+            Text("Locate button moved 👀")
         })
     }
 }
