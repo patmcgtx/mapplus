@@ -149,6 +149,7 @@ struct MainMapView: View {
                 // Persist button location here per ticket #179
             }
         )
+        .accessibilityLabel("filter-by-category".localized)
     }
     
     var locateButton: some View {
