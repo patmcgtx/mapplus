@@ -39,80 +39,95 @@ struct MainMapView: View {
     
     var body: some View {
         
-        ZStack {
-            Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                if showMarkers {
-                    ForEach(filteredLandmarks, id: \.self) { landmark in
-                        Marker(
-                            landmark.name,
-                            systemImage: landmark.systemImageName,
-                            coordinate: landmark.location
-                        )
-                        .tag(landmark)
+        NavigationStack {
+            ZStack {
+                Map(position: $mapPosition, selection: self.$selectedLandmark) {
+                    if showMarkers {
+                        ForEach(filteredLandmarks, id: \.self) { landmark in
+                            Marker(
+                                landmark.name,
+                                systemImage: landmark.systemImageName,
+                                coordinate: landmark.location
+                            )
+                            .tag(landmark)
+                        }
+                    }
+                    UserAnnotation()
+                }
+                .toolbar {
+                    ToolbarItem() {
+                        themeMenu
+                    }
+                    ToolbarItem() {
+                        Button("points-of-interest".localized, systemImage: "square.3.layers.3d") {}
+                        // TODO patmcg add points of interest selector
+                    }
+                    ToolbarItem() {
+                        Button("settings".localized, systemImage: "gearshape") {}
+                        // TODO patmcg add settings form
                     }
                 }
-                UserAnnotation()
-            }
-            .sheet(item: self.$selectedLandmark) { landmark in
-                LandmarkDetailsView(landmark: landmark)
-                    .presentationDetents([.medium, .large])
-            }
-            .mapStyle(MapStyle.standard(elevation: .realistic,
-                                        emphasis: .muted,
-                                        pointsOfInterest: [
-                                            .library,
-                                            .school,
-                                            .fireStation,
-                                            .hospital,
-                                            .pharmacy,
-                                            .police
-                                        ],
-                                        showsTraffic: false))
-            .mapControls {
-                MapCompass()
-                MapScaleView()
-            }
-
-            VStack {
-                Spacer()
-                HStack {
+                .sheet(item: self.$selectedLandmark) { landmark in
+                    LandmarkDetailsView(landmark: landmark)
+                        .presentationDetents([.medium, .large])
+                }
+                .mapStyle(MapStyle.standard(elevation: .realistic,
+                                            emphasis: .muted,
+                                            pointsOfInterest: [
+                                                .library,
+                                                .school,
+                                                .fireStation,
+                                                .hospital,
+                                                .pharmacy,
+                                                .police
+                                            ],
+                                            showsTraffic: false))
+                .mapControls {
+                    MapCompass()
+                    MapScaleView()
+                }
+                
+                VStack {
                     Spacer()
-                    VStack(spacing: 16) {
-                        addButton
-                        locateButton
-                        filterButton
-                        landmarksMenu
+                    HStack {
+                        Spacer()
+                        VStack(spacing: 16) {
+                            addButton
+                            locateButton
+                            filterButton
+                            landmarksMenu
+                        }
+                        .padding(.trailing, 16)
+                        .padding(.bottom, 16)
                     }
-                    .padding(.trailing, 16)
-                    .padding(.bottom, 16)
                 }
             }
-        }
-        .onAppear(){
-            self.locationPermissionsService.requestPermissions() { _ in
-                // TODO patmcg handle issues on the location permissions request
+            .onAppear(){
+                self.locationPermissionsService.requestPermissions() { _ in
+                    // TODO patmcg handle issues on the location permissions request
+                }
             }
-        }
-        .task(id: selectedCategoryNames) {
-            await blinkLandmarks()
-        }
-        .sheet(isPresented: $showingLandmarkList) {
-            LandmarksView()
-        }
-        .sheet(isPresented: $isShowingAddLandmarkSheet) {
-            NavigationStack {
-                LandmarkForm(mode: .create)
+            .task(id: selectedCategoryNames) {
+                await blinkLandmarks()
             }
+            .sheet(isPresented: $showingLandmarkList) {
+                LandmarksView()
+            }
+            .sheet(isPresented: $isShowingAddLandmarkSheet) {
+                NavigationStack {
+                    LandmarkForm(mode: .create)
+                }
+            }
+            .sheet(isPresented: $isShowingCategoryFilter) {
+                CategoryFilterView(
+                    allCategories: allCategories,
+                    selectedCategoryNames: $selectedCategoryNames
+                )
+                .presentationDetents([.medium, .large])
+            }
+            .environment(\.theme, self.activeTheme)
+            .apply(theme: activeTheme)
         }
-        .sheet(isPresented: $isShowingCategoryFilter) {
-            CategoryFilterView(
-                allCategories: allCategories,
-                selectedCategoryNames: $selectedCategoryNames
-            )
-            .presentationDetents([.medium, .large])
-        }
-        .environment(\.theme, self.activeTheme)
-        .apply(theme: activeTheme)
     }
     
     // MARK: - Subviews
@@ -183,7 +198,6 @@ struct MainMapView: View {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
                 self.showingLandmarkList = true
             }
-            themeMenu
             Section {
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(landmark.name, systemImage: landmark.systemImageName) {
@@ -203,7 +217,7 @@ struct MainMapView: View {
     }
     
     private var themeMenu: some View {
-        Menu("theme".localized, systemImage: "paintbrush") {
+        Menu("theme".localized, systemImage: "paintpalette") {
             ForEach(MapPlusTheme.allCases) { themeOption in
                 Button {
                     activeTheme = themeOption
