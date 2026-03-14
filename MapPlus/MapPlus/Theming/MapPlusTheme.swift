@@ -26,17 +26,23 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     var localizedName: String {
         switch self {
         case .standard:
-            return "theme-standard"
-                .localized
+            return "theme-standard".localized
         case .eightBit:
-            return "theme-eight-bit"
-                .localized
+            return "theme-eight-bit".localized
         case .kerby:
-            return "theme-kerby"
-                .localized
+            return "theme-kerby".localized
         }
     }
-    
+
+    /// Which icon should show for the overall themes menu
+    var menuIconName: String {
+        switch self {
+        case .standard:
+            return "paintbrush"
+        case .eightBit, .kerby: return "paintbrush.fill"
+        }
+    }
+
 }
 
 extension View {

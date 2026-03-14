@@ -34,8 +34,9 @@ struct MainMapView: View {
     // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
-    // Themes
+    // Preferences
     @State private var activeTheme: MapPlusTheme = .standard
+    @State private var activePOILevel: PointsOfInterestLevel = .none
     
     var body: some View {
         
@@ -59,8 +60,7 @@ struct MainMapView: View {
                         themeMenu
                     }
                     ToolbarItem() {
-                        Button("points-of-interest".localized, systemImage: "square.3.layers.3d") {}
-                        // TODO patmcg add points of interest selector
+                        poiMenu
                     }
                     ToolbarItem() {
                         Button("settings".localized, systemImage: "gearshape") {}
@@ -73,14 +73,7 @@ struct MainMapView: View {
                 }
                 .mapStyle(MapStyle.standard(elevation: .realistic,
                                             emphasis: .muted,
-                                            pointsOfInterest: [
-                                                .library,
-                                                .school,
-                                                .fireStation,
-                                                .hospital,
-                                                .pharmacy,
-                                                .police
-                                            ],
+                                            pointsOfInterest: activePOILevel.categories,
                                             showsTraffic: false))
                 .mapControls {
                     MapCompass()
@@ -217,7 +210,8 @@ struct MainMapView: View {
     }
     
     private var themeMenu: some View {
-        Menu("theme".localized, systemImage: "paintpalette") {
+        Menu("theme".localized, systemImage: activeTheme.menuIconName) {
+            Text("theme".localized)
             ForEach(MapPlusTheme.allCases) { themeOption in
                 Button {
                     activeTheme = themeOption
@@ -227,6 +221,26 @@ struct MainMapView: View {
                             Label(themeOption.localizedName, systemImage: "checkmark")
                         } else {
                             Text(themeOption.localizedName)
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var poiMenu: some View {
+        Menu("points-of-interest".localized, systemImage: activePOILevel.menuIconName) {
+            Text("points-of-interest".localized)
+            ForEach(PointsOfInterestLevel.allCases) { level in
+                Button {
+                    activePOILevel = level
+                } label: {
+                    HStack {
+                        if level == activePOILevel {
+                            Label(level.localizedName, systemImage: "checkmark")
+                        } else {
+                            Text(level.localizedName)
                         }
                     }
                 }
