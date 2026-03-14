@@ -36,7 +36,7 @@ struct MainMapView: View {
 
     // Preferences
     @State private var activeTheme: MapPlusTheme = .standard
-    @State private var activePOILevel: PointsOfInterestLevel = .limited
+    @State private var activePOILevel: PointsOfInterestLevel = .none
     
     var body: some View {
         
@@ -61,8 +61,6 @@ struct MainMapView: View {
                     }
                     ToolbarItem() {
                         poiMenu
-//                        Button("points-of-interest".localized, systemImage: "square.3.layers.3d") {}
-                        // TODO patmcg add points of interest selector
                     }
                     ToolbarItem() {
                         Button("settings".localized, systemImage: "gearshape") {}
@@ -75,7 +73,7 @@ struct MainMapView: View {
                 }
                 .mapStyle(MapStyle.standard(elevation: .realistic,
                                             emphasis: .muted,
-                                            pointsOfInterest: PointsOfInterestLevel.limited.categories,
+                                            pointsOfInterest: activePOILevel.categories,
                                             showsTraffic: false))
                 .mapControls {
                     MapCompass()
@@ -212,7 +210,7 @@ struct MainMapView: View {
     }
     
     private var themeMenu: some View {
-        Menu("theme".localized, systemImage: "paintpalette") {
+        Menu("theme".localized, systemImage: activeTheme.menuIconName) {
             Text("theme".localized)
             ForEach(MapPlusTheme.allCases) { themeOption in
                 Button {
@@ -232,7 +230,7 @@ struct MainMapView: View {
     
     @ViewBuilder
     private var poiMenu: some View {
-        Menu("points-of-interest".localized, systemImage: "square.3.layers.3d") {
+        Menu("points-of-interest".localized, systemImage: activePOILevel.menuIconName) {
             Text("points-of-interest".localized)
             ForEach(PointsOfInterestLevel.allCases) { level in
                 Button {

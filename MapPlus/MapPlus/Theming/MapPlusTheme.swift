@@ -33,7 +33,16 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
             return "theme-kerby".localized
         }
     }
-    
+
+    /// Which icon should show for the overall PoI menu
+    var menuIconName: String {
+        switch self {
+        case .standard:
+            return "paintbrush"
+        case .eightBit, .kerby: return "paintbrush.fill"
+        }
+    }
+
 }
 
 extension View {

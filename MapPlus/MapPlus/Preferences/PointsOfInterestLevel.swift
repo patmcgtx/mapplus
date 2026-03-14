@@ -49,5 +49,17 @@ enum PointsOfInterestLevel: String, CaseIterable, Identifiable {
             return "poi-all".localized
         }
     }
+    
+    /// Which icon should show for the overall PoI menu
+    var menuIconName: String {
+        switch self {
+        case .none:
+            return "square.2.layers.3d"
+        case .limited:
+            return "square.2.layers.3d.bottom.filled"
+        case .all:
+            return "square.2.layers.3d.fill"
+        }
+    }
 
 }
