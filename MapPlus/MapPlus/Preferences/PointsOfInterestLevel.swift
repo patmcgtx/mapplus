@@ -9,7 +9,9 @@ import MapKit
 
 /// Levels for which points of interest the user see on the map.
 /// Points of interest are background items of interest on the map.
-enum PointsOfInterestLevel: String, CaseIterable {
+enum PointsOfInterestLevel: String, CaseIterable, Identifiable {
+
+    var id: String { self.rawValue }
     
     /// No background points of interest.
     case none
@@ -35,4 +37,17 @@ enum PointsOfInterestLevel: String, CaseIterable {
         case .all: return .all
         }
     }
+    
+    /// A localized user-facing name for the theme
+    var localizedName: String {
+        switch self {
+        case .none:
+            return "poi-none".localized
+        case .limited:
+            return "poi-limited".localized
+        case .all:
+            return "poi-all".localized
+        }
+    }
+
 }

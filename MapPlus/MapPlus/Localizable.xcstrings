@@ -295,23 +295,6 @@
         }
       }
     },
-    "me" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Me"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Yo"
-          }
-        }
-      }
-    },
     "my-places" : {
       "localizations" : {
         "en" : {
@@ -456,6 +439,50 @@
         }
       }
     },
+    "poi-all" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All"
+          }
+        }
+      }
+    },
+    "poi-limited" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Limited"
+          }
+        }
+      }
+    },
+    "poi-none" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "None"
+          }
+        }
+      }
+    },
+    "points-of-interest" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Points of Interest"
+          }
+        }
+      }
+    },
     "preview" : {
       "localizations" : {
         "en" : {
@@ -566,7 +593,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Theme..."
+            "value" : "Theme"
           }
         }
       }
