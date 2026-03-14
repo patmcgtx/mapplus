@@ -7,7 +7,7 @@
 import SwiftUI
 import MapKit
 
-/// Levels for which points of interest the user see on the map.
+/// Levels for which points of interest the user sees on the map.
 /// Points of interest are background items of interest on the map.
 enum PointsOfInterestLevel: String, CaseIterable, Identifiable {
 

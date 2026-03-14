@@ -34,7 +34,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         }
     }
 
-    /// Which icon should show for the overall PoI menu
+    /// Which icon should show for the overall themes menu
     var menuIconName: String {
         switch self {
         case .standard:
