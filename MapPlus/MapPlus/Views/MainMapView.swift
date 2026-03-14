@@ -73,14 +73,7 @@ struct MainMapView: View {
                 }
                 .mapStyle(MapStyle.standard(elevation: .realistic,
                                             emphasis: .muted,
-                                            pointsOfInterest: [
-                                                .library,
-                                                .school,
-                                                .fireStation,
-                                                .hospital,
-                                                .pharmacy,
-                                                .police
-                                            ],
+                                            pointsOfInterest: PointsOfInterestLevel.limited.categories,
                                             showsTraffic: false))
                 .mapControls {
                     MapCompass()
