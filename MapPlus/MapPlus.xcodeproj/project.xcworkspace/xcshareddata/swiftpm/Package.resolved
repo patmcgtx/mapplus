@@ -1,6 +1,15 @@
 {
-  "originHash" : "dd07e829ee34a4d08d234770cf26b94fb91a511b15f4c413ebfce51ff584df3e",
+  "originHash" : "3d994c94b04b81cf8377a5d07a40b47b9023f42108d47ad7a5ebcea0b3d81bd9",
   "pins" : [
+    {
+      "identity" : "emojipalette",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Kyome22/EmojiPalette.git",
+      "state" : {
+        "revision" : "f6444756f0759e3ffd351c25554d96f62827990c",
+        "version" : "1.0.1"
+      }
+    },
     {
       "identity" : "sfsafesymbols",
       "kind" : "remoteSourceControl",
