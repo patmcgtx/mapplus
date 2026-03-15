@@ -14,13 +14,11 @@ struct LandmarkMapAnnotation: View {
     /// The landmark to display
     let landmark: Landmark
  
-    // TODO get emoji from the landmark landmark itself
-    private var randomEmoji: String {
-        ["🤦🏻‍♂️", "👍", "➕", "🐢", "💰"].randomElement() ?? "🤦🏻‍♂️"
-    }
+    // TODO get the emoji from the landmark itself
+    let usFlag: Character = "\u{1F1FA}\u{1F1F8}"
 
     var body: some View {
-            Text(randomEmoji)
+            Text(String(usFlag))
                 .font(.headline)
                 .padding(10)
                 .background(
