@@ -37,11 +37,7 @@ struct MainMapView: View {
     // Preferences
     @State private var activeTheme: MapPlusTheme = .standard
     @State private var activePOILevel: PointsOfInterestLevel = .none
-    
-    private var randomEmoji: String {
-        ["🤦🏻‍♂️", "👍", "➕", "🐢", "💰"].randomElement() ?? "🤦🏻‍♂️"
-    }
-    
+        
     var body: some View {
         
         NavigationStack {
@@ -50,15 +46,7 @@ struct MainMapView: View {
                     if showMarkers {
                         ForEach(filteredLandmarks, id: \.self) { landmark in
                             Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
-                                Text(randomEmoji)
-                                    .font(.headline)
-                                    .padding(10)
-                                    .background(
-                                        Circle()
-                                            .fill(Color.white)
-                                            .strokeBorder(.primary, lineWidth: 2)
-                                            .opacity(0.80)
-                                    )
+                                LandmarkMapAnnotation(landmark: landmark)
                             }
                             .tag(landmark)
                         }
