@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		691C8AD22F66EDCC00638AD8 /* EmojiPalette in Frameworks */ = {isa = PBXBuildFile; productRef = 691C8AD12F66EDCC00638AD8 /* EmojiPalette */; };
+		691C8AD52F66F5ED00638AD8 /* MCEmojiPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 691C8AD42F66F5ED00638AD8 /* MCEmojiPicker */; };
+		691C8AD72F66F5ED00638AD8 /* MCEmojiPickerJSON in Frameworks */ = {isa = PBXBuildFile; productRef = 691C8AD62F66F5ED00638AD8 /* MCEmojiPickerJSON */; };
 		695028B62F4A605300D6C55F /* Flow in Frameworks */ = {isa = PBXBuildFile; productRef = 695028B52F4A605300D6C55F /* Flow */; };
 		69DB796D2F2AD79700F9C3EA /* SFSymbolsPicker in Frameworks */ = {isa = PBXBuildFile; productRef = 69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */; };
 /* End PBXBuildFile section */
@@ -73,7 +75,9 @@
 			files = (
 				695028B62F4A605300D6C55F /* Flow in Frameworks */,
 				69DB796D2F2AD79700F9C3EA /* SFSymbolsPicker in Frameworks */,
+				691C8AD72F66F5ED00638AD8 /* MCEmojiPickerJSON in Frameworks */,
 				691C8AD22F66EDCC00638AD8 /* EmojiPalette in Frameworks */,
+				691C8AD52F66F5ED00638AD8 /* MCEmojiPicker in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -137,6 +141,8 @@
 				69DB796C2F2AD79700F9C3EA /* SFSymbolsPicker */,
 				695028B52F4A605300D6C55F /* Flow */,
 				691C8AD12F66EDCC00638AD8 /* EmojiPalette */,
+				691C8AD42F66F5ED00638AD8 /* MCEmojiPicker */,
+				691C8AD62F66F5ED00638AD8 /* MCEmojiPickerJSON */,
 			);
 			productName = MapPlus;
 			productReference = 69A020452E6CE46700871D38 /* MapPlus.app */;
@@ -225,6 +231,7 @@
 				69DB796B2F2AD79700F9C3EA /* XCRemoteSwiftPackageReference "SFSymbolsPickerForSwiftUI" */,
 				695028B42F4A605300D6C55F /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */,
 				691C8AD02F66EDCC00638AD8 /* XCRemoteSwiftPackageReference "EmojiPalette" */,
+				691C8AD32F66F5ED00638AD8 /* XCRemoteSwiftPackageReference "MCEmojiPicker" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 69A020462E6CE46700871D38 /* Products */;
@@ -660,6 +667,14 @@
 				minimumVersion = 1.0.1;
 			};
 		};
+		691C8AD32F66F5ED00638AD8 /* XCRemoteSwiftPackageReference "MCEmojiPicker" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/izyumkin/MCEmojiPicker";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.2.5;
+			};
+		};
 		695028B42F4A605300D6C55F /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/tevelee/SwiftUI-Flow";
@@ -683,6 +698,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 691C8AD02F66EDCC00638AD8 /* XCRemoteSwiftPackageReference "EmojiPalette" */;
 			productName = EmojiPalette;
+		};
+		691C8AD42F66F5ED00638AD8 /* MCEmojiPicker */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 691C8AD32F66F5ED00638AD8 /* XCRemoteSwiftPackageReference "MCEmojiPicker" */;
+			productName = MCEmojiPicker;
+		};
+		691C8AD62F66F5ED00638AD8 /* MCEmojiPickerJSON */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 691C8AD32F66F5ED00638AD8 /* XCRemoteSwiftPackageReference "MCEmojiPicker" */;
+			productName = MCEmojiPickerJSON;
 		};
 		695028B52F4A605300D6C55F /* Flow */ = {
 			isa = XCSwiftPackageProductDependency;

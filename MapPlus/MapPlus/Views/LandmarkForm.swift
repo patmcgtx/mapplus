@@ -8,7 +8,8 @@
 import SwiftUI
 import SFSafeSymbols
 import SwiftData
-import EmojiPalette
+//import EmojiPalette
+import MCEmojiPicker
 
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
@@ -97,12 +98,6 @@ struct LandmarkForm: View {
         }
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(viewModel.formTitle)
-        .emojiPalette(
-            selectedEmoji: $selectedEmoji,
-            isPresented: $isShowingEmojiPicker,
-            attachmentAnchor: .point(.bottomLeading),
-            arrowEdge: .bottom
-        )
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .task(priority: .userInitiated) {
             switch viewModel.mode {
@@ -173,21 +168,7 @@ struct LandmarkForm: View {
     
     private var detailsSection: some View {
         Section("details".localized) {
-            HStack {
-                // Emoji selector
-                Button {
-                    isShowingEmojiPicker = true
-                } label: {
-                    Text(selectedEmoji)
-                }
-                .padding(8)
-                .background {
-                    LandmarkMapAnnotation(emoji: Character("👍"))
-                }
-                .onChange(of: selectedEmoji, initial: false) {
-                    isShowingEmojiPicker = false
-                }
-                
+            HStack(alignment: .lastTextBaseline) {
                 // Landmark name input
                 TextField("name".localized, text: $landmarkInEdit.name,
                           onEditingChanged: { _ in
@@ -203,6 +184,20 @@ struct LandmarkForm: View {
                 } label: {
                     Image(systemName: "xmark.circle")
                 }
+            }
+            // Emoji selector
+            Button {
+                isShowingEmojiPicker = true
+            } label: {
+                HStack {
+                    Text(selectedEmoji)
+                    Text("Emoji...")
+                }
+            }
+            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
+            .padding(8)
+            .onChange(of: selectedEmoji, initial: false) {
+                isShowingEmojiPicker = false
             }
         }
     }
