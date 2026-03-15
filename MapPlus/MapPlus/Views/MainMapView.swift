@@ -38,6 +38,10 @@ struct MainMapView: View {
     @State private var activeTheme: MapPlusTheme = .standard
     @State private var activePOILevel: PointsOfInterestLevel = .none
     
+    private var randomEmoji: String {
+        ["🤦🏻‍♂️", "👍", "➕", "🐢", "💰"].randomElement() ?? "🤦🏻‍♂️"
+    }
+    
     var body: some View {
         
         NavigationStack {
@@ -45,11 +49,17 @@ struct MainMapView: View {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
                     if showMarkers {
                         ForEach(filteredLandmarks, id: \.self) { landmark in
-                            Marker(
-                                landmark.name,
-                                systemImage: landmark.systemImageName,
-                                coordinate: landmark.location
-                            )
+                            Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
+                                Text(randomEmoji)
+                                    .font(.headline)
+                                    .padding(10)
+                                    .background(
+                                        Circle()
+                                            .fill(Color.white)
+                                            .strokeBorder(.primary, lineWidth: 2)
+                                            .opacity(0.80)
+                                    )
+                            }
                             .tag(landmark)
                         }
                     }
@@ -175,7 +185,7 @@ struct MainMapView: View {
         DraggableControlButton(
             systemImageName: "list.bullet",
             onTap: {
-                // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
+                // TODO patmcg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
                 self.showingLandmarkList = true
             },
             onMoved: { offset in
