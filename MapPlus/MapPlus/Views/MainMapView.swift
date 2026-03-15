@@ -46,7 +46,7 @@ struct MainMapView: View {
                     if showMarkers {
                         ForEach(filteredLandmarks, id: \.self) { landmark in
                             Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
-                                LandmarkMapAnnotation(landmark: landmark)
+                                LandmarkMapAnnotation(emoji: Character("👋"))
                             }
                             .tag(landmark)
                         }

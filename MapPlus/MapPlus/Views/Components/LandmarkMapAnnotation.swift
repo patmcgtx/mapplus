@@ -11,14 +11,11 @@ import MapKit
 /// The map itself will display the landmark name; this is just the visual to go with it.
 struct LandmarkMapAnnotation: View {
  
-    /// The landmark to display
-    let landmark: Landmark
+    /// The landmark's emoji to display
+    let emoji: Character
  
-    // TODO get the emoji from the landmark itself
-    let usFlag: Character = "\u{1F1FA}\u{1F1F8}"
-
     var body: some View {
-            Text(String(usFlag))
+            Text(String(emoji))
                 .font(.headline)
                 .padding(10)
                 .background(
@@ -32,9 +29,9 @@ struct LandmarkMapAnnotation: View {
 
 #Preview {
     VStack {
-        LandmarkMapAnnotation(landmark: SampleLandmarks().brooklynBridge)
-        LandmarkMapAnnotation(landmark: SampleLandmarks().capital)
-        LandmarkMapAnnotation(landmark: SampleLandmarks().charingCross)
+        LandmarkMapAnnotation(emoji: Character("📍"))
+        LandmarkMapAnnotation(emoji: Character("🇺🇸"))
+        LandmarkMapAnnotation(emoji: Character("🐢"))
     }
     .padding(40)
     .background(.green).cornerRadius(10)

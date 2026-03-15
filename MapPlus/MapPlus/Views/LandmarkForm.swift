@@ -8,6 +8,7 @@
 import SwiftUI
 import SFSafeSymbols
 import SwiftData
+import EmojiPalette
 
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
@@ -40,7 +41,8 @@ struct LandmarkForm: View {
     private var allCategories: [LandmarkCategory]
 
     // Icon picker state
-    @State private var isShowingIconPicker: Bool = false
+    @State private var selectedEmoji = "📍"
+    @State private var isShowingEmojiPicker = false
     
     // Save state
     private enum SaveState {
@@ -95,11 +97,12 @@ struct LandmarkForm: View {
         }
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(viewModel.formTitle)
-        .sheet(isPresented: $isShowingIconPicker) {
-            IconPicker(
-                selectedSymbolName: $landmarkInEdit.systemImageName
-            )
-        }
+        .emojiPalette(
+            selectedEmoji: $selectedEmoji,
+            isPresented: $isShowingEmojiPicker,
+            attachmentAnchor: .point(.bottomLeading),
+            arrowEdge: .bottom
+        )
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .task(priority: .userInitiated) {
             switch viewModel.mode {
@@ -171,7 +174,21 @@ struct LandmarkForm: View {
     private var detailsSection: some View {
         Section("details".localized) {
             HStack {
-                // Landmark name inpout
+                // Emoji selector
+                Button {
+                    isShowingEmojiPicker = true
+                } label: {
+                    Text(selectedEmoji)
+                }
+                .padding(8)
+                .background {
+                    LandmarkMapAnnotation(emoji: Character("👍"))
+                }
+                .onChange(of: selectedEmoji, initial: false) {
+                    isShowingEmojiPicker = false
+                }
+                
+                // Landmark name input
                 TextField("name".localized, text: $landmarkInEdit.name,
                           onEditingChanged: { _ in
                 })
@@ -186,11 +203,6 @@ struct LandmarkForm: View {
                 } label: {
                     Image(systemName: "xmark.circle")
                 }
-            }
-            Button {
-                isShowingIconPicker = true
-            } label: {
-                Label("icon".localized, systemImage: landmarkInEdit.systemImageName)
             }
         }
     }
