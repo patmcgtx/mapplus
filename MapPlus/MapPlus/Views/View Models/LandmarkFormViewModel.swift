@@ -72,9 +72,9 @@ struct LandmarkFormViewModel {
         self.sourceLandmark?.name ?? ""
     }
     
-    /// The initial SF Symbol name for the icon field, defaults to `"mappin.circle"` when creating.
-    var landmarkIconName: String {
-        self.sourceLandmark?.systemImageName ?? "mappin.circle"
+    /// The initial emoji from the landmark or default
+    var emoji: String {
+        self.sourceLandmark?.emoji ?? "📍"
     }
 
 }

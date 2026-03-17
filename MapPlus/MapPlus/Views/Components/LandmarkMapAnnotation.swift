@@ -12,7 +12,7 @@ import MapKit
 struct LandmarkMapAnnotation: View {
  
     /// The landmark's emoji to display
-    let emoji: Character
+    let emoji: String
  
     var body: some View {
             Text(String(emoji))
@@ -29,9 +29,9 @@ struct LandmarkMapAnnotation: View {
 
 #Preview {
     VStack {
-        LandmarkMapAnnotation(emoji: Character("📍"))
-        LandmarkMapAnnotation(emoji: Character("🇺🇸"))
-        LandmarkMapAnnotation(emoji: Character("🐢"))
+        LandmarkMapAnnotation(emoji: "📍")
+        LandmarkMapAnnotation(emoji: "🇺🇸")
+        LandmarkMapAnnotation(emoji: "🐢")
     }
     .padding(40)
     .background(.green).cornerRadius(10)

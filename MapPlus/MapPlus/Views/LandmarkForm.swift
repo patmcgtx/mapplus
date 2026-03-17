@@ -289,7 +289,7 @@ struct LandmarkForm: View {
                     // Landmark icon
                     VStack {
                         Spacer()
-                        Image(systemName: landmarkInEdit.systemImageName)
+                        Text(landmarkInEdit.emoji)
                         Spacer()
                         Text(landmarkInEdit.name)
                         Spacer()

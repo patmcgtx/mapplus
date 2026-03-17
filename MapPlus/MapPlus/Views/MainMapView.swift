@@ -46,7 +46,7 @@ struct MainMapView: View {
                     if showMarkers {
                         ForEach(filteredLandmarks, id: \.self) { landmark in
                             Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
-                                LandmarkMapAnnotation(emoji: Character("👋"))
+                                LandmarkMapAnnotation(emoji: landmark.emoji)
                             }
                             .tag(landmark)
                         }
@@ -191,7 +191,7 @@ struct MainMapView: View {
             }
             Section {
                 ForEach(self.landmarks, id: \.self) { landmark in
-                    Button(landmark.name, systemImage: landmark.systemImageName) {
+                    Button(landmark.name) { // TODO patmcg add emoji
                         self.zoomTo(landmark: landmark)
                     }
                 }

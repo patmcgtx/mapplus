@@ -48,10 +48,10 @@ struct LandmarkDetailsView: View {
             HStack {
                 VStack(alignment: .leading) {
                     HStack {
-                        Image(systemName: landmark.systemImageName)
+                        Text(landmark.emoji)
                         Text(landmark.name)
-                            .font(.title)
                     }
+                    .font(.title)
                     .padding()
                     
                     CategoryFlow(categories: .constant(landmark.categoriesSorted), mode: .view)
