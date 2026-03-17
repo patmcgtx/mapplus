@@ -41,7 +41,7 @@ struct LandmarkForm: View {
 
     // Icon picker state
     @State private var isShowingEmojiPicker = false
-    @State private var selectedEmoji = "📍"
+//    @State private var selectedEmoji = "📍"
     
     // Save state
     private enum SaveState {
@@ -191,13 +191,13 @@ struct LandmarkForm: View {
                 isShowingEmojiPicker = true
             } label: {
                 HStack {
-                    Text(selectedEmoji)
+                    Text(landmarkInEdit.emoji)
                     Text("emoji-selector".localized)
                 }
             }
-            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
+            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $landmarkInEdit.emoji)
             .padding(8)
-            .onChange(of: selectedEmoji, initial: false) {
+            .onChange(of: landmarkInEdit.emoji, initial: false) {
                 isShowingEmojiPicker = false
             }
         }
