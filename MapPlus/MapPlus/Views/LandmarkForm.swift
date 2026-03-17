@@ -6,9 +6,7 @@
 //
 
 import SwiftUI
-import SFSafeSymbols
 import SwiftData
-//import EmojiPalette
 import MCEmojiPicker
 
 /// A  view for creating or editing landmarks.
@@ -42,8 +40,8 @@ struct LandmarkForm: View {
     private var allCategories: [LandmarkCategory]
 
     // Icon picker state
-    @State private var selectedEmoji = "📍"
     @State private var isShowingEmojiPicker = false
+    @State private var selectedEmoji = "📍"
     
     // Save state
     private enum SaveState {
@@ -169,6 +167,7 @@ struct LandmarkForm: View {
     private var detailsSection: some View {
         Section("details".localized) {
             HStack(alignment: .lastTextBaseline) {
+                
                 // Landmark name input
                 TextField("name".localized, text: $landmarkInEdit.name,
                           onEditingChanged: { _ in
@@ -185,6 +184,7 @@ struct LandmarkForm: View {
                     Image(systemName: "xmark.circle")
                 }
             }
+            
             // Emoji selector
             Button {
                 hideKeyboard()
@@ -192,7 +192,7 @@ struct LandmarkForm: View {
             } label: {
                 HStack {
                     Text(selectedEmoji)
-                    Text("Emoji...")
+                    Text("emoji-selector".localized)
                 }
             }
             .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $selectedEmoji)
