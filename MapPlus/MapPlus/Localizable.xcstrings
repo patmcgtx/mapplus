@@ -401,22 +401,6 @@
         }
       }
     },
-    "pick-icon" : {
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Pick icon"
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Elegir icono"
-          }
-        }
-      }
-    },
     "poi-all" : {
       "extractionState" : "manual",
       "localizations" : {
