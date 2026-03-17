@@ -74,7 +74,7 @@ struct LandmarkFormViewModel {
     
     /// The initial emoji from the landmark or default
     var emoji: String {
-        self.sourceLandmark?.emoji ?? "📍"
+        self.sourceLandmark?.emoji ?? ""
     }
 
 }

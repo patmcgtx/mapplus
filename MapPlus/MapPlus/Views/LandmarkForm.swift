@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftData
-import MCEmojiPicker
 
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
@@ -38,10 +37,6 @@ struct LandmarkForm: View {
     // Categories
     @Query(sort: \LandmarkCategory.name, order: .forward)
     private var allCategories: [LandmarkCategory]
-
-    // Icon picker state
-    @State private var isShowingEmojiPicker = false
-//    @State private var selectedEmoji = "📍"
     
     // Save state
     private enum SaveState {
@@ -72,6 +67,7 @@ struct LandmarkForm: View {
     private enum FocusField: Hashable {
         case landmarkName
         case address
+        case emoji
     }
     @FocusState private var focusField: FocusField?
     
@@ -185,20 +181,19 @@ struct LandmarkForm: View {
                 }
             }
             
-            // Emoji selector
-            Button {
-                hideKeyboard()
-                isShowingEmojiPicker = true
-            } label: {
-                HStack {
-                    Text(landmarkInEdit.emoji)
-                    Text("emoji-selector".localized)
+            HStack {
+                // Emoji selector
+                TextField("emoji-placeholder", text: $landmarkInEdit.emoji)
+                    .keyboardType(.emoji ?? .default)
+                    .focused($focusField, equals: .emoji)
+
+                // Emoji clear button
+                Button {
+                    landmarkInEdit.emoji = ""
+                    focusField = .emoji
+                } label: {
+                    Image(systemName: "xmark.circle")
                 }
-            }
-            .emojiPicker(isPresented: $isShowingEmojiPicker, selectedEmoji: $landmarkInEdit.emoji)
-            .padding(8)
-            .onChange(of: landmarkInEdit.emoji, initial: false) {
-                isShowingEmojiPicker = false
             }
         }
     }
@@ -383,4 +378,3 @@ struct LandmarkForm: View {
         SampleLandmarks().capital)
     )
 }
-

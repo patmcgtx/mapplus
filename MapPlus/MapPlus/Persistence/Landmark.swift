@@ -45,8 +45,7 @@ class Landmark: Identifiable, Hashable {
         name: String = "",
         notes: String = "",
         formattedAddress: String = "",
-        emoji: String = "📍",
-        systemImageName: String = "mappin.circle",
+        emoji: String = "",
         location: CLLocationCoordinate2D = .init(latitude: 0.0, longitude: 0.0),
         categories: [LandmarkCategory] = []
     ) {
