@@ -31,7 +31,7 @@ struct LandmarkMapAnnotation: View {
     VStack {
         LandmarkMapAnnotation(emoji: "📍")
         LandmarkMapAnnotation(emoji: "🇺🇸")
-        LandmarkMapAnnotation(emoji: "🐢")
+        LandmarkMapAnnotation(emoji: "🐢☀️")
     }
     .padding(40)
     .background(.green).cornerRadius(10)
