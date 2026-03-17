@@ -59,8 +59,7 @@ class Landmark: Identifiable, Hashable {
     }
 
     /// Creates a copy of the given landmark
-    init(from source: Landmark)
-    {
+    init(from source: Landmark) {
         self.name = source.name
         self.notes = source.notes
         self.formattedAddress = source.formattedAddress

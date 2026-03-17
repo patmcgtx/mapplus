@@ -191,9 +191,14 @@ struct MainMapView: View {
             }
             Section {
                 ForEach(self.landmarks, id: \.self) { landmark in
-                    Button(landmark.name) { // TODO patmcg add emoji
-                        self.zoomTo(landmark: landmark)
-                    }
+                    Button(action: {
+                        zoomTo(landmark: landmark)
+                    }, label: {
+                        HStack {
+//                            Text(landmark.emoji) // TODO patmcg some bug here...
+                            Text(landmark.name)
+                        }
+                    })
                 }
             }
         } label: {
