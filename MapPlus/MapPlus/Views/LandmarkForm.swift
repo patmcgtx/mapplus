@@ -187,6 +187,7 @@ struct LandmarkForm: View {
             }
             // Emoji selector
             Button {
+                hideKeyboard()
                 isShowingEmojiPicker = true
             } label: {
                 HStack {
@@ -363,6 +364,7 @@ struct LandmarkForm: View {
     }
     
 }
+
 
 // MARK: - Previews
 
