@@ -29,7 +29,10 @@ struct LandmarksView : View {
                     Button {
                         self.landmarkToEdit = landmark
                     } label: {
-                        Label(landmark.name, systemImage: landmark.systemImageName)
+                        HStack {
+                            Text(landmark.emoji)
+                            Text(landmark.name)
+                        }
                     }
                 }
                 .onDelete(perform: deleteLandmarks)

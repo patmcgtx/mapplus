@@ -20,9 +20,9 @@ class Landmark: Identifiable, Hashable {
     
     /// Optional descriptive notes for a landmark
     var notes: String = ""
-    
-    /// The SF Symbols icon name for this landmark
-    var systemImageName: String = "mappin.circle"
+
+    /// An emoji representing the landmark
+    var emoji: String
     
     /// The full address description from MapKit
     var formattedAddress: String = ""
@@ -45,26 +45,25 @@ class Landmark: Identifiable, Hashable {
         name: String = "",
         notes: String = "",
         formattedAddress: String = "",
-        systemImageName: String = "mappin.circle",
+        emoji: String = "",
         location: CLLocationCoordinate2D = .init(latitude: 0.0, longitude: 0.0),
         categories: [LandmarkCategory] = []
     ) {
         self.name = name
         self.notes = notes
         self.formattedAddress = formattedAddress
-        self.systemImageName = systemImageName
+        self.emoji = emoji
         self.latitude = location.latitude
         self.longitude = location.longitude
         self.categories = categories
     }
 
     /// Creates a copy of the given landmark
-    init(from source: Landmark)
-    {
+    init(from source: Landmark) {
         self.name = source.name
         self.notes = source.notes
         self.formattedAddress = source.formattedAddress
-        self.systemImageName = source.systemImageName
+        self.emoji = source.emoji
         self.latitude = source.location.latitude
         self.longitude = source.location.longitude
         self.categories = source.categories

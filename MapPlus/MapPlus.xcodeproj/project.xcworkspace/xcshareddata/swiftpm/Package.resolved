@@ -1,24 +1,6 @@
 {
-  "originHash" : "dd07e829ee34a4d08d234770cf26b94fb91a511b15f4c413ebfce51ff584df3e",
+  "originHash" : "00398ece5b8c1a1be5b1a79c6b5417558509a282b2721d1d128d58d127516896",
   "pins" : [
-    {
-      "identity" : "sfsafesymbols",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/SFSafeSymbols/SFSafeSymbols.git",
-      "state" : {
-        "revision" : "e01b3d4f861412f8dcee8d93c417d2c2b0cdfd77",
-        "version" : "7.0.0"
-      }
-    },
-    {
-      "identity" : "sfsymbolspickerforswiftui",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/alessiorubicini/SFSymbolsPickerForSwiftUI",
-      "state" : {
-        "revision" : "d3a6936db5fedbb48a037b556d52a215071af48e",
-        "version" : "1.0.9"
-      }
-    },
     {
       "identity" : "swiftui-flow",
       "kind" : "remoteSourceControl",

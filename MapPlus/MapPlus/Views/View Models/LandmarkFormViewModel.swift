@@ -25,8 +25,8 @@ struct LandmarkFormViewModel {
     /// The current mode for the form
     let mode: Mode
     
-    /// A temporary *copy* of the landmark to edit
-    let landmarkToEdit: Landmark
+    /// The landmark to edit in this form
+    var landmarkToEdit: Landmark
 
     init(mode: Mode) {
         self.mode = mode
@@ -72,9 +72,9 @@ struct LandmarkFormViewModel {
         self.sourceLandmark?.name ?? ""
     }
     
-    /// The initial SF Symbol name for the icon field, defaults to `"mappin.circle"` when creating.
-    var landmarkIconName: String {
-        self.sourceLandmark?.systemImageName ?? "mappin.circle"
+    /// The initial emoji from the landmark or default
+    var emoji: String {
+        self.sourceLandmark?.emoji ?? ""
     }
 
 }

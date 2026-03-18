@@ -37,7 +37,7 @@ struct MainMapView: View {
     // Preferences
     @State private var activeTheme: MapPlusTheme = .standard
     @State private var activePOILevel: PointsOfInterestLevel = .none
-    
+        
     var body: some View {
         
         NavigationStack {
@@ -45,11 +45,9 @@ struct MainMapView: View {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
                     if showMarkers {
                         ForEach(filteredLandmarks, id: \.self) { landmark in
-                            Marker(
-                                landmark.name,
-                                systemImage: landmark.systemImageName,
-                                coordinate: landmark.location
-                            )
+                            Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
+                                LandmarkMapAnnotation(emoji: landmark.emoji)
+                            }
                             .tag(landmark)
                         }
                     }
@@ -175,7 +173,7 @@ struct MainMapView: View {
         DraggableControlButton(
             systemImageName: "list.bullet",
             onTap: {
-                // TODO patmg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
+                // TODO patmcg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
                 self.showingLandmarkList = true
             },
             onMoved: { offset in
@@ -193,9 +191,14 @@ struct MainMapView: View {
             }
             Section {
                 ForEach(self.landmarks, id: \.self) { landmark in
-                    Button(landmark.name, systemImage: landmark.systemImageName) {
-                        self.zoomTo(landmark: landmark)
-                    }
+                    Button(action: {
+                        zoomTo(landmark: landmark)
+                    }, label: {
+                        HStack {
+//                            Text(landmark.emoji) // TODO patmcg some bug here...
+                            Text(landmark.name)
+                        }
+                    })
                 }
             }
         } label: {
