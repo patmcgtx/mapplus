@@ -21,7 +21,7 @@ class Landmark: Identifiable, Hashable {
     /// Optional descriptive notes for a landmark
     var notes: String = ""
 
-    /// And emoji representing the landamrk
+    /// An emoji representing the landmark
     var emoji: String
     
     /// The full address description from MapKit

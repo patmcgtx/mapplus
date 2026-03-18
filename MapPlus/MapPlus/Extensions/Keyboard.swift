@@ -6,6 +6,8 @@
 //
 import SwiftUI
 
+#if canImport(UIKit)
+
 extension View {
     
     /// Hides the active keyboard.
@@ -24,3 +26,5 @@ extension UIKeyboardType {
     /// Secret key to the built-in emoji keyboard.
     static let emoji = UIKeyboardType(rawValue: 124)
 }
+
+#endif // canImport(UIKit)

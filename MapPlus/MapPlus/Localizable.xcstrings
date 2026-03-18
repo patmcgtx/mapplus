@@ -147,6 +147,12 @@
             "state" : "translated",
             "value" : "Emoji…"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Emoji…"
+          }
         }
       }
     },
@@ -162,6 +168,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Error al guardar"
+          }
+        }
+      }
+    },
+    "filter-by-category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter by category"
           }
         }
       }

@@ -25,8 +25,8 @@ struct LandmarkFormViewModel {
     /// The current mode for the form
     let mode: Mode
     
-    /// A temporary *copy* of the landmark to edit
-    let landmarkToEdit: Landmark
+    /// The landmark to edit in this form
+    var landmarkToEdit: Landmark
 
     init(mode: Mode) {
         self.mode = mode
