@@ -15,7 +15,6 @@ struct LandmarkMapAnnotation: View {
     let emoji: String
 
     @Environment(\.theme) private var theme
-    @Environment(\.colorScheme) private var colorScheme
 
     private let annotationPadding: CGFloat = 10
 
@@ -41,17 +40,11 @@ struct LandmarkMapAnnotation: View {
     }
 
     private var standardRadialGradient: RadialGradient {
-        let centerColor: Color
-        let edgeColor: Color
-        if colorScheme == .dark {
-            centerColor = Color(white: 0.45)
-            edgeColor = Color(white: 0.18)
-        } else {
-            centerColor = Color(white: 0.98)
-            edgeColor = Color(white: 0.72)
-        }
-        return RadialGradient(
-            colors: [centerColor, edgeColor],
+        RadialGradient(
+            colors: [
+                Color.primary.opacity(0.08),
+                Color.primary.opacity(0.45)
+            ],
             center: .center,
             startRadius: 2,
             endRadius: annotationPadding + 8
@@ -59,7 +52,7 @@ struct LandmarkMapAnnotation: View {
     }
 
     private var standardBorderColor: Color {
-        colorScheme == .dark ? Color(white: 0.30) : Color(white: 0.55)
+        Color.primary.opacity(0.5)
     }
 }
 
