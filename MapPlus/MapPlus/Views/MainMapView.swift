@@ -35,7 +35,7 @@ struct MainMapView: View {
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
     // Preferences
-    @State private var activeTheme: MapPlusTheme = .standard
+    @State private var activeTheme: MapPlusTheme = .cupertino
     @State private var activePOILevel: PointsOfInterestLevel = .none
         
     var body: some View {

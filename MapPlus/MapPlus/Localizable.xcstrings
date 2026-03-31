@@ -588,6 +588,17 @@
         }
       }
     },
+    "theme-flamingo" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Flamingo"
+          }
+        }
+      }
+    },
     "theme-kerby" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -605,7 +616,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Standard"
+            "value" : "Cupertino"
           }
         }
       }

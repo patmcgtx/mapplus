@@ -6,15 +6,15 @@
 //
 import SwiftUI
 
-/// Applies the "standard" style to a SwiftUI view hierarchy
-struct StandardViewModifier: ViewModifier {
+/// Applies the standard "Cupertino"  style to a SwiftUI view hierarchy
+struct CupertinoViewModifier: ViewModifier {
     func body(content: Content) -> some View {
-        content
+        content // Change nothing! haha
     }
 }
 
 #Preview() {
-    let theme = MapPlusTheme.standard
+    let theme = MapPlusTheme.cupertino
     ThemePreview(theme: theme)
         .apply(theme: theme)
 }

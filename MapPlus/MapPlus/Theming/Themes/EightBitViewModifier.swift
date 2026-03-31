@@ -11,8 +11,8 @@ struct EightBitViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .foregroundStyle(.green)
-            .fontDesign(.monospaced)
             .tint(.green)
+            .fontDesign(.monospaced)
     }
 }
 
