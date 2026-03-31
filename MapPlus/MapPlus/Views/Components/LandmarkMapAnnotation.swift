@@ -13,19 +13,38 @@ struct LandmarkMapAnnotation: View {
  
     /// The landmark's emoji to display
     let emoji: String
- 
+
+    @Environment(\.theme) private var theme
+
+    private let annotationPadding: CGFloat = 10
+
     var body: some View {
             Text(String(emoji))
                 .font(.headline)
                 .foregroundStyle(.primary)
-                .padding(10)
-                .background(
-                    Circle()
-//                        .fill(Color.secondary)
-                        .fill(Color.accentColor)
-                        .strokeBorder(.primary, lineWidth: 2)
-                )
+                .padding(annotationPadding)
+                .background(annotationBackground)
     }
+
+    @ViewBuilder
+    private var annotationBackground: some View {
+            Circle()
+                .fill(standardRadialGradient)
+                .strokeBorder(Color.accentColor, lineWidth: 2.0)
+    }
+
+    private var standardRadialGradient: RadialGradient {
+        RadialGradient(
+            colors: [
+                Color.accentColor.opacity(0.33),
+                Color.accentColor.opacity(0.67)
+            ],
+            center: .center,
+            startRadius: 2,
+            endRadius: annotationPadding + 8
+        )
+    }
+
 }
 
 // MARK: - Previews
@@ -45,27 +64,39 @@ private struct AnnotationPreview: View {
     }
 }
 
+#Preview("Cart") {
+    AnnotationPreview(landmarkEmoji: "🛒")
+}
+
 #Preview("Coffee") {
     AnnotationPreview(landmarkEmoji: "☕️")
 }
 
-#Preview("Many") {
-    AnnotationPreview(landmarkEmoji: "🐢🦞📚")
+#Preview("Stars") {
+    AnnotationPreview(landmarkEmoji: "✨")
 }
 
-#Preview("Initials") {
-    AnnotationPreview(landmarkEmoji: "PM")
+#Preview("Check") {
+    AnnotationPreview(landmarkEmoji: "✔️")
+}
+
+#Preview("Sword") {
+    AnnotationPreview(landmarkEmoji: "⚔️")
+}
+
+#Preview("Initial") {
+    AnnotationPreview(landmarkEmoji: "P")
 }
 
 #Preview("Blue") {
-    AnnotationPreview(landmarkEmoji: "PM")
+    AnnotationPreview(landmarkEmoji: "P")
             .padding(40)
             .background(.blue)
             .cornerRadius(10)
 }
 
 #Preview("Green") {
-    AnnotationPreview(landmarkEmoji: "PM")
+    AnnotationPreview(landmarkEmoji: "P")
             .padding(40)
             .background(.green)
             .cornerRadius(10)
