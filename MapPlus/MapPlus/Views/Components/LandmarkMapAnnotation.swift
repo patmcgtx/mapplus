@@ -28,22 +28,16 @@ struct LandmarkMapAnnotation: View {
 
     @ViewBuilder
     private var annotationBackground: some View {
-        if theme == .standard {
             Circle()
                 .fill(standardRadialGradient)
-                .strokeBorder(standardBorderColor, lineWidth: 1.5)
-        } else {
-            Circle()
-                .fill(Color.accentColor)
-                .strokeBorder(.primary, lineWidth: 2)
-        }
+                .strokeBorder(Color.accentColor, lineWidth: 2.0)
     }
 
     private var standardRadialGradient: RadialGradient {
         RadialGradient(
             colors: [
-                Color.primary.opacity(0.08),
-                Color.primary.opacity(0.45)
+                Color.accentColor.opacity(0.33),
+                Color.accentColor.opacity(0.67)
             ],
             center: .center,
             startRadius: 2,
@@ -51,9 +45,6 @@ struct LandmarkMapAnnotation: View {
         )
     }
 
-    private var standardBorderColor: Color {
-        Color.primary.opacity(0.5)
-    }
 }
 
 // MARK: - Previews
@@ -73,7 +64,7 @@ private struct AnnotationPreview: View {
     }
 }
 
-#Preview("Shopping Cart") {
+#Preview("Cart") {
     AnnotationPreview(landmarkEmoji: "🛒")
 }
 
@@ -81,23 +72,31 @@ private struct AnnotationPreview: View {
     AnnotationPreview(landmarkEmoji: "☕️")
 }
 
-#Preview("Many") {
-    AnnotationPreview(landmarkEmoji: "🐢🦞📚")
+#Preview("Stars") {
+    AnnotationPreview(landmarkEmoji: "✨")
 }
 
-#Preview("Initials") {
-    AnnotationPreview(landmarkEmoji: "PM")
+#Preview("Check") {
+    AnnotationPreview(landmarkEmoji: "✔️")
+}
+
+#Preview("Sword") {
+    AnnotationPreview(landmarkEmoji: "⚔️")
+}
+
+#Preview("Initial") {
+    AnnotationPreview(landmarkEmoji: "P")
 }
 
 #Preview("Blue") {
-    AnnotationPreview(landmarkEmoji: "PM")
+    AnnotationPreview(landmarkEmoji: "P")
             .padding(40)
             .background(.blue)
             .cornerRadius(10)
 }
 
 #Preview("Green") {
-    AnnotationPreview(landmarkEmoji: "PM")
+    AnnotationPreview(landmarkEmoji: "P")
             .padding(40)
             .background(.green)
             .cornerRadius(10)
