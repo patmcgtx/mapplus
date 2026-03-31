@@ -52,26 +52,68 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
 
 extension View {
 
-    // Note: I wanted to somehow embed the `ViewModifier` in the `MapPlusTheme` itself.
-    //       However, `ViewModifier` is a protocol, and SwiftUI wants a concrete type
-    //       for any `ViewModifier`.  I couldn't find a good/simple way to let `MapPlusTheme`
-    //       return a protocol; it required an associated type, type-erasing, or other
-    //       inefficiencies or complexities.  So I stopped fighting SwiftUI and did
-    //       what it wants: just apply a simple, concrete `ViewModifier` directly.
-
     /// Applies the styling for the given `MapPlusTheme` to this view hierarchy.
-    @ViewBuilder
+    ///
+    /// Uses a single concrete `ThemeViewModifier` so the view hierarchy type never changes
+    /// when the theme switches, preserving view identity and associated state (e.g. map camera position).
     func apply(theme: MapPlusTheme) -> some View {
+        self.modifier(ThemeViewModifier(theme: theme))
+    }
+
+}
+
+/// A single `ViewModifier` that applies theme-specific styling based on the given `MapPlusTheme`.
+///
+/// Consolidating all theme variants into one modifier ensures the structural type of the
+/// modified view never changes when the theme changes, so SwiftUI preserves view identity
+/// and does not reset state such as the map camera position.
+private struct ThemeViewModifier: ViewModifier {
+
+    let theme: MapPlusTheme
+
+    private static let flamingoPink = Color(red: 252/255, green: 142/255, blue: 172/255)
+
+    func body(content: Content) -> some View {
+        content
+            .tint(tintColor)
+            .foregroundStyle(foregroundColor)
+            .fontDesign(fontDesign)
+            .fontWeight(fontWeight)
+            .textCase(textCase)
+    }
+
+    private var tintColor: Color? {
         switch theme {
-        case .cupertino:
-            self.modifier(CupertinoViewModifier())
-        case .eightBit:
-            self.modifier(EightBitViewModifier())
-        case .kerby:
-            self.modifier(KerbyViewModifier())
-        case .flamingo:
-            self.modifier(FlamingoViewModifier())
+        case .cupertino: return nil
+        case .eightBit: return .green
+        case .kerby: return .orange
+        case .flamingo: return Self.flamingoPink
         }
+    }
+
+    private var foregroundColor: Color {
+        switch theme {
+        case .cupertino: return .primary
+        case .eightBit: return .green
+        case .kerby: return .orange
+        case .flamingo: return Self.flamingoPink
+        }
+    }
+
+    private var fontDesign: Font.Design {
+        switch theme {
+        case .eightBit: return .monospaced
+        case .kerby: return .rounded
+        default: return .default
+        }
+    }
+
+    private var fontWeight: Font.Weight? {
+        theme == .kerby ? .bold : nil
+    }
+
+    private var textCase: Text.Case? {
+        theme == .kerby ? .uppercase : nil
     }
 
 }
