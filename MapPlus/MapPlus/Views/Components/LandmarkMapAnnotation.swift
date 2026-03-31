@@ -14,34 +14,42 @@ struct LandmarkMapAnnotation: View {
     /// The landmark's emoji to display
     let emoji: String
 
+    // Environment
     @Environment(\.theme) private var theme
 
+    // Constants
     private let annotationPadding: CGFloat = 10
+    private let minBackgroundOpacity = 0.33
+    private let maxBackgroundOpacity: CGFloat = 0.67
+    private let startGradientRadius = 2.0
+    private let endGradientRadius: CGFloat = 8.0
 
     var body: some View {
             Text(String(emoji))
                 .font(.headline)
                 .foregroundStyle(.primary)
                 .padding(annotationPadding)
-                .background(annotationBackground)
+                .background(fillBackground)
     }
 
+    // View helpers
+    
     @ViewBuilder
-    private var annotationBackground: some View {
-            Circle()
-                .fill(standardRadialGradient)
-                .strokeBorder(Color.accentColor, lineWidth: 2.0)
+    private var fillBackground: some View {
+        Circle()
+            .fill(fillGradient)
+            .strokeBorder(Color.accentColor, lineWidth: 2.0)
     }
 
-    private var standardRadialGradient: RadialGradient {
+    private var fillGradient: RadialGradient {
         RadialGradient(
             colors: [
-                Color.accentColor.opacity(0.33),
-                Color.accentColor.opacity(0.67)
+                Color.accentColor.opacity(minBackgroundOpacity),
+                Color.accentColor.opacity(maxBackgroundOpacity)
             ],
             center: .center,
-            startRadius: 2,
-            endRadius: annotationPadding + 8
+            startRadius: startGradientRadius,
+            endRadius: annotationPadding + endGradientRadius
         )
     }
 
@@ -84,22 +92,8 @@ private struct AnnotationPreview: View {
     AnnotationPreview(landmarkEmoji: "⚔️")
 }
 
-#Preview("Initial") {
+#Preview("Letter") {
     AnnotationPreview(landmarkEmoji: "P")
-}
-
-#Preview("Blue") {
-    AnnotationPreview(landmarkEmoji: "P")
-            .padding(40)
-            .background(.blue)
-            .cornerRadius(10)
-}
-
-#Preview("Green") {
-    AnnotationPreview(landmarkEmoji: "P")
-            .padding(40)
-            .background(.green)
-            .cornerRadius(10)
 }
 
 #Preview("Overlap") {
