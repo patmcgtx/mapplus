@@ -10,28 +10,28 @@ import MapKit
 /// A view of an individual landmark placed on the map.
 /// The map itself will display the landmark name; this is just the visual to go with it.
 struct LandmarkMapAnnotation: View {
- 
+    
     /// The landmark's emoji to display
     let emoji: String
-
+    
     // Environment
     @Environment(\.theme) private var theme
-
+    
     // Constants
     private let annotationPadding: CGFloat = 10
     private let minBackgroundOpacity = 0.33
     private let maxBackgroundOpacity: CGFloat = 0.67
     private let startGradientRadius = 2.0
     private let endGradientRadius: CGFloat = 8.0
-
+    
     var body: some View {
-            Text(String(emoji))
-                .font(.headline)
-                .foregroundStyle(.primary)
-                .padding(annotationPadding)
-                .background(fillBackground)
+        Text(String(emoji))
+            .font(.headline)
+            .foregroundStyle(.primary)
+            .padding(annotationPadding)
+            .background(fillBackground)
     }
-
+    
     // View helpers
     
     @ViewBuilder
@@ -40,7 +40,7 @@ struct LandmarkMapAnnotation: View {
             .fill(fillGradient)
             .strokeBorder(Color.accentColor, lineWidth: 2.0)
     }
-
+    
     private var fillGradient: RadialGradient {
         RadialGradient(
             colors: [
@@ -52,7 +52,7 @@ struct LandmarkMapAnnotation: View {
             endRadius: annotationPadding + endGradientRadius
         )
     }
-
+    
 }
 
 // MARK: - Previews
