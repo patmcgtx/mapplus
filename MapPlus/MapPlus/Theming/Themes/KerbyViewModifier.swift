@@ -10,7 +10,7 @@ import SwiftUI
 struct KerbyViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
-            .fontDesign(.rounded)
+            .fontDesign(.rounded).bold()
             .textCase(.uppercase)
             .foregroundStyle(.orange)
             .tint(.orange)
