@@ -17,12 +17,13 @@ struct LandmarkMapAnnotation: View {
     var body: some View {
             Text(String(emoji))
                 .font(.headline)
+                .foregroundStyle(.primary)
                 .padding(10)
                 .background(
                     Circle()
-                        .fill(Color.white)
+//                        .fill(Color.secondary)
+                        .fill(Color.accentColor)
                         .strokeBorder(.primary, lineWidth: 2)
-                        .opacity(0.67)
                 )
     }
 }
@@ -68,4 +69,17 @@ private struct AnnotationPreview: View {
             .padding(40)
             .background(.green)
             .cornerRadius(10)
+}
+
+#Preview("Overlap") {
+    ZStack {
+        LandmarkMapAnnotation(emoji: "📍")
+        LandmarkMapAnnotation(emoji: "📍")
+            .offset(CGSize(width: 20, height: 20))
+        LandmarkMapAnnotation(emoji: "📍")
+            .offset(CGSize(width: 40, height: 40))
+    }
+    .padding(40)
+    .background(.green)
+    .cornerRadius(10)
 }
