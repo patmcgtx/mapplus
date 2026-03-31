@@ -13,10 +13,7 @@ struct LandmarkMapAnnotation: View {
     
     /// The landmark's emoji to display
     let emoji: String
-    
-    // Environment
-    @Environment(\.theme) private var theme
-    
+        
     // Constants
     private let annotationPadding: CGFloat = 10
     private let minBackgroundOpacity = 0.33
@@ -66,8 +63,8 @@ private struct AnnotationPreview: View {
             HStack{
                 Text(theme.localizedName)
                 LandmarkMapAnnotation(emoji: landmarkEmoji)
-                    .apply(theme: theme)
             }
+            .apply(theme: theme)
         }
     }
 }
