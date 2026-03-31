@@ -97,6 +97,9 @@ struct LandmarkForm: View {
                     let resolvedAddress = try await locationService.getCurrentLocation()
                     await MainActor.run {
                         addressSearchState = .searchResolved(resolvedAddress)
+                        viewModel.landmarkToEdit.formattedAddress = resolvedAddress.formattedDescription
+                        viewModel.landmarkToEdit.latitude = resolvedAddress.coordinates.latitude
+                        viewModel.landmarkToEdit.longitude = resolvedAddress.coordinates.longitude
                     }
                 } catch {
                     // Not a reportable error if this fails; just let them proceed as normal
