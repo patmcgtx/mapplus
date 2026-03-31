@@ -35,6 +35,7 @@ struct ThemePreview: View {
                     mode: .edit,
                     fromCategories: .constant([])
                 )
+                LandmarkMapAnnotation(emoji: "P")
             }
             .padding()
             .border(.primary, width: 1)
