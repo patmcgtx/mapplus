@@ -69,27 +69,29 @@ extension View {
 /// and does not reset state such as the map camera position.
 private struct ThemeViewModifier: ViewModifier {
 
+    /// The theme to apply
     let theme: MapPlusTheme
 
     @Environment(\.colorScheme) private var colorScheme
 
-    /// A soft flamingo pink for dark backgrounds
-    private static let flamingoPinkDark = Color(red: 252/255, green: 142/255, blue: 172/255)
-
-    /// A deeper flamingo pink with better contrast on light/white backgrounds
-    private static let flamingoPinkLight = Color(red: 216/255, green: 44/255, blue: 104/255)
-
     func body(content: Content) -> some View {
-        let flamingoPink = colorScheme == .dark ? Self.flamingoPinkDark : Self.flamingoPinkLight
         content
-            .tint(tintColor(flamingoPink: flamingoPink))
-            .foregroundStyle(foregroundColor(flamingoPink: flamingoPink))
+            .tint(tintColor)
+            .foregroundStyle(foregroundColor)
             .fontDesign(fontDesign)
             .fontWeight(fontWeight)
             .textCase(textCase)
     }
 
-    private func tintColor(flamingoPink: Color) -> Color? {
+    /// Returns a variation of pink specialized for light or dark mode
+    private var flamingoPink : Color {
+        switch colorScheme {
+        case .dark: return Color(red: 252/255, green: 142/255, blue: 172/255)
+        default: return Color(red: 216/255, green: 44/255, blue: 104/255)
+        }
+    }
+
+    private var tintColor: Color? {
         switch theme {
         case .cupertino: return nil
         case .eightBit: return .green
@@ -98,7 +100,7 @@ private struct ThemeViewModifier: ViewModifier {
         }
     }
 
-    private func foregroundColor(flamingoPink: Color) -> Color {
+    private var foregroundColor: Color {
         switch theme {
         case .cupertino: return .primary
         case .eightBit: return .green
