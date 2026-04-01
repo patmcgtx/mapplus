@@ -6,11 +6,9 @@
 //
 import SwiftData
 
-// TODO patmcg unit test this VM and make sure it makes sense.
-//      What is the SOLID-ness of this struct?
-
-/// View model that provides for `LandmarkFormView`.
-struct LandmarkFormViewModel {
+/// View model that provides state and logic for `LandmarkForm`.
+@Observable @MainActor
+final class LandmarkFormViewModel {
 
     /// Indicates how the form is being used.
     /// - Note: In `create` mode, there is no backing landmark yet; in `edit` mode,
@@ -21,38 +19,42 @@ struct LandmarkFormViewModel {
         /// Edit an existing landmark.
         case edit(Landmark)
     }
-    
+
+    /// Represents the current state of the location/address search.
+    enum AddressSearchState {
+        case searchInitial
+        case searching
+        case searchResolved(LocationInfo)
+        case searchFailed(Error)
+    }
+
     /// The current mode for the form
     let mode: Mode
-    
+
     /// The landmark to edit in this form
     var landmarkToEdit: Landmark
 
+    /// The current state of the address/location search
+    var addressSearchState: AddressSearchState = .searchInitial
+
+    /// The text entered in the location search field
+    var locationSearchInput: String = ""
+
     init(mode: Mode) {
         self.mode = mode
-        switch self.mode {
+        switch mode {
         case .create:
             landmarkToEdit = Landmark()
         case .edit(let landmark):
             landmarkToEdit = landmark
         }
     }
-    
+
     /// Saves any changes made to `landmarkToEdit`
     /// - Parameter context: The persistent context in which to save the landmark
     func save(context: ModelContext) throws {
         try LandmarkStore(modelContext: context)
             .commit(landmark: landmarkToEdit)
-    }
-
-    /// The landmark being edited, if the form is in edit mode; otherwise `nil`.
-    private var sourceLandmark: Landmark? {
-        switch self.mode {
-        case .create:
-            return nil
-        case .edit(let landmark):
-            return landmark
-        }
     }
 
     /// The title to display at the top of the form.
@@ -66,15 +68,81 @@ struct LandmarkFormViewModel {
             return landmark.name
         }
     }
-        
-    /// The initial value for the name field, empty when creating.
-    var landmarkName: String {
-        self.sourceLandmark?.name ?? ""
+
+    /// Whether the Save button should be enabled.
+    var isSaveEnabled: Bool {
+        switch addressSearchState {
+        case .searchInitial, .searching, .searchFailed:
+            return false
+        case .searchResolved:
+            return landmarkToEdit.name.isPopulated
+        }
     }
-    
-    /// The initial emoji from the landmark or default
-    var emoji: String {
-        self.sourceLandmark?.emoji ?? ""
+
+    /// Initializes the location state based on the current form mode.
+    ///
+    /// In create mode, attempts to pre-populate the current device location.
+    /// In edit mode, resolves the landmark's existing address.
+    ///
+    /// - Parameter locationService: The service used to fetch the current device location.
+    func initializeLocation(using locationService: any LocationService) async {
+        switch mode {
+        case .create:
+            do {
+                let resolvedAddress = try await locationService.getCurrentLocation()
+                applyResolvedAddress(resolvedAddress, updateSearchInput: false)
+            } catch {
+                // Not a reportable error if this fails; just let them proceed as normal
+            }
+        case .edit:
+            addressSearchState = .searchResolved(
+                LocationInfo(
+                    formattedDescription: landmarkToEdit.formattedAddress,
+                    latitude: landmarkToEdit.location.latitude,
+                    longitude: landmarkToEdit.location.longitude
+                )
+            )
+        }
+    }
+
+    /// Looks up the address entered in `locationSearchInput` and updates location state.
+    /// - Parameter addressLookupService: The service used to perform the address lookup.
+    func searchByText(using addressLookupService: any AddressLookupService) async {
+        addressSearchState = .searching
+        do {
+            let resolvedAddress = try await addressLookupService.lookup(address: locationSearchInput)
+            applyResolvedAddress(resolvedAddress, updateSearchInput: true)
+        } catch {
+            addressSearchState = .searchFailed(error)
+        }
+    }
+
+    /// Fetches the current device location and updates location state.
+    /// - Parameter locationService: The service used to get the current location.
+    func searchByCurrentLocation(using locationService: any LocationService) async {
+        addressSearchState = .searching
+        do {
+            let resolvedAddress = try await locationService.getCurrentLocation()
+            applyResolvedAddress(resolvedAddress, updateSearchInput: true)
+        } catch {
+            addressSearchState = .searchFailed(error)
+        }
+    }
+
+    // MARK: - Private helpers
+
+    /// Applies a resolved address to the landmark and updates the search state.
+    /// - Parameters:
+    ///   - address: The resolved location to apply.
+    ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
+    private func applyResolvedAddress(_ address: LocationInfo, updateSearchInput: Bool) {
+        addressSearchState = .searchResolved(address)
+        if updateSearchInput {
+            locationSearchInput = address.formattedDescription
+        }
+        landmarkToEdit.formattedAddress = address.formattedDescription
+        landmarkToEdit.latitude = address.coordinates.latitude
+        landmarkToEdit.longitude = address.coordinates.longitude
     }
 
 }
