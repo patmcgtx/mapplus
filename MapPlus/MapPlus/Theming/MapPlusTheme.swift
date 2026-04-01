@@ -69,9 +69,10 @@ extension View {
 /// and does not reset state such as the map camera position.
 private struct ThemeViewModifier: ViewModifier {
 
+    /// The theme to apply
     let theme: MapPlusTheme
 
-    private static let flamingoPink = Color(red: 252/255, green: 142/255, blue: 172/255)
+    @Environment(\.colorScheme) private var colorScheme
 
     func body(content: Content) -> some View {
         content
@@ -82,21 +83,45 @@ private struct ThemeViewModifier: ViewModifier {
             .textCase(textCase)
     }
 
+    /// Returns a variation of green specialized for light or dark mode
+    private var eightBitGreen: Color {
+        switch colorScheme {
+        case .dark: return .green
+        default: return Color(red: 0/255, green: 130/255, blue: 40/255)
+        }
+    }
+
+    /// Returns a variation of orange specialized for light or dark mode
+    private var kerbyOrange: Color {
+        switch colorScheme {
+        case .dark: return .orange
+        default: return Color(red: 175/255, green: 82/255, blue: 0/255)
+        }
+    }
+
+    /// Returns a variation of pink specialized for light or dark mode
+    private var flamingoPink: Color {
+        switch colorScheme {
+        case .dark: return Color(red: 252/255, green: 142/255, blue: 172/255)
+        default: return Color(red: 216/255, green: 44/255, blue: 104/255)
+        }
+    }
+
     private var tintColor: Color? {
         switch theme {
         case .cupertino: return nil
-        case .eightBit: return .green
-        case .kerby: return .orange
-        case .flamingo: return Self.flamingoPink
+        case .eightBit: return eightBitGreen
+        case .kerby: return kerbyOrange
+        case .flamingo: return flamingoPink
         }
     }
 
     private var foregroundColor: Color {
         switch theme {
         case .cupertino: return .primary
-        case .eightBit: return .green
-        case .kerby: return .orange
-        case .flamingo: return Self.flamingoPink
+        case .eightBit: return eightBitGreen
+        case .kerby: return kerbyOrange
+        case .flamingo: return flamingoPink
         }
     }
 
