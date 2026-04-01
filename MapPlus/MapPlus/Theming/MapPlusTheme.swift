@@ -71,32 +71,39 @@ private struct ThemeViewModifier: ViewModifier {
 
     let theme: MapPlusTheme
 
-    private static let flamingoPink = Color(red: 252/255, green: 142/255, blue: 172/255)
+    @Environment(\.colorScheme) private var colorScheme
+
+    /// A soft flamingo pink for dark backgrounds
+    private static let flamingoPinkDark = Color(red: 252/255, green: 142/255, blue: 172/255)
+
+    /// A deeper flamingo pink with better contrast on light/white backgrounds
+    private static let flamingoPinkLight = Color(red: 216/255, green: 44/255, blue: 104/255)
 
     func body(content: Content) -> some View {
+        let flamingoPink = colorScheme == .dark ? Self.flamingoPinkDark : Self.flamingoPinkLight
         content
-            .tint(tintColor)
-            .foregroundStyle(foregroundColor)
+            .tint(tintColor(flamingoPink: flamingoPink))
+            .foregroundStyle(foregroundColor(flamingoPink: flamingoPink))
             .fontDesign(fontDesign)
             .fontWeight(fontWeight)
             .textCase(textCase)
     }
 
-    private var tintColor: Color? {
+    private func tintColor(flamingoPink: Color) -> Color? {
         switch theme {
         case .cupertino: return nil
         case .eightBit: return .green
         case .kerby: return .orange
-        case .flamingo: return Self.flamingoPink
+        case .flamingo: return flamingoPink
         }
     }
 
-    private var foregroundColor: Color {
+    private func foregroundColor(flamingoPink: Color) -> Color {
         switch theme {
         case .cupertino: return .primary
         case .eightBit: return .green
         case .kerby: return .orange
-        case .flamingo: return Self.flamingoPink
+        case .flamingo: return flamingoPink
         }
     }
 
