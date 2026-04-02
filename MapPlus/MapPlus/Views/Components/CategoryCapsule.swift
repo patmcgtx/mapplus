@@ -61,7 +61,7 @@ struct CategoryCapsule: View {
         )
         .background {
             Capsule(style: .circular)
-                .strokeBorder(lineWidth: 2)
+                .strokeBorder(.secondary, lineWidth: 2)
         }
     }
 }

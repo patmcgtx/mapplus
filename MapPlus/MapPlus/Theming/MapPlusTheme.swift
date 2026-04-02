@@ -77,7 +77,7 @@ private struct ThemeViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .tint(tintColor)
-            .foregroundStyle(foregroundColor)
+            .foregroundStyle(foregroundColor, nonTextForegroundColor)
             .fontDesign(fontDesign)
             .fontWeight(fontWeight)
             .textCase(textCase)
@@ -122,6 +122,15 @@ private struct ThemeViewModifier: ViewModifier {
         case .eightBit: return eightBitGreen
         case .kerby: return kerbyOrange
         case .flamingo: return flamingoPink
+        }
+    }
+
+    /// A lighter foreground color for non-text views in themes that use it.
+    private var nonTextForegroundColor: Color {
+        switch theme {
+        case .flamingo: return flamingoPink.opacity(0.5)
+        case .eightBit: return eightBitGreen.opacity(0.5)
+        default: return foregroundColor
         }
     }
 
