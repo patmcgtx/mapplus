@@ -96,7 +96,10 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     
     /// A high-contrast variation of 8-bit green specialized for text in dark or light mode
     private func highContrastGreen(for colorScheme: ColorScheme) -> Color {
-        Color(red: 0/255, green: 130/255, blue: 40/255)
+        switch colorScheme {
+        case .dark: return .green
+        default: return Color(red: 0/255, green: 130/255, blue: 40/255)
+        }
     }
 
     /// Returns a variation of orange specialized for light or dark mode
