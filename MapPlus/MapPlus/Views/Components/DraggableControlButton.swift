@@ -8,6 +8,9 @@ import SwiftUI
 
 /// A movable/draggable button that performs the provided action when tapped.
 struct DraggableControlButton: View {
+    
+    @Environment(\.theme) var theme: MapPlusTheme
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
         
     /// The SF Symbols name for the buttons' icon
     let systemImageName: String
@@ -39,6 +42,7 @@ struct DraggableControlButton: View {
                 .frame(width: buttonSize, height: buttonSize)
                 .padding(buttonPadding)
         }
+        .foregroundStyle(theme.tintColor(for: colorScheme) ?? .primary)
         .glassEffect()
         .isBeingDragged(isDragging)
         .offset(draggedOffset)
