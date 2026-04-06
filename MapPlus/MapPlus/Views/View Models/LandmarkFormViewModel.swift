@@ -28,6 +28,24 @@ final class LandmarkFormViewModel {
         case searchFailed(Error)
     }
 
+    /// Represents the current state of saving the landmark.
+    enum SaveState: Equatable {
+        case saveInitial
+        case saved
+        case saveFailed(Error)
+
+        static func == (lhs: SaveState, rhs: SaveState) -> Bool {
+            switch (lhs, rhs) {
+            case (.saveInitial, .saveInitial), (.saved, .saved):
+                return true
+            case (.saveFailed, .saveFailed):
+                return true
+            default:
+                return false
+            }
+        }
+    }
+
     /// The current mode for the form
     let mode: Mode
 
@@ -36,6 +54,9 @@ final class LandmarkFormViewModel {
 
     /// The current state of the address/location search
     var addressSearchState: AddressSearchState = .searchInitial
+
+    /// The current state of the save operation
+    var saveState: SaveState = .saveInitial
 
     /// The text entered in the location search field
     var locationSearchInput: String = ""
@@ -50,11 +71,16 @@ final class LandmarkFormViewModel {
         }
     }
 
-    /// Saves any changes made to `landmarkToEdit`
+    /// Saves any changes made to `landmarkToEdit` and updates `saveState`.
     /// - Parameter context: The persistent context in which to save the landmark
-    func save(context: ModelContext) throws {
-        try LandmarkStore(modelContext: context)
-            .commit(landmark: landmarkToEdit)
+    func save(context: ModelContext) {
+        do {
+            try LandmarkStore(modelContext: context)
+                .commit(landmark: landmarkToEdit)
+            saveState = .saved
+        } catch {
+            saveState = .saveFailed(error)
+        }
     }
 
     /// The title to display at the top of the form.
