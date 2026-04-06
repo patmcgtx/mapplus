@@ -39,7 +39,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         }
     }
     
-    /// Which font design ti show text in
+    /// Which font design to use for the app's text
     var fontDesign: Font.Design {
         switch self {
         case .eightBit: return .monospaced
@@ -88,7 +88,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         case .cupertino: return nil
         case .eightBit: return .green
         case .kerby: return .orange
-        case .flamingo: return softFlamingoPink(for: colorScheme)
+        case .flamingo: return softFlamingoPink
         }
     }
 
@@ -111,7 +111,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     }
 
     /// A softer variation of pink for accents and backgrounds
-    private func softFlamingoPink(for colorScheme: ColorScheme) -> Color {
+    private var softFlamingoPink: Color {
         Color(red: 252/255, green: 142/255, blue: 172/255)
     }
 }
