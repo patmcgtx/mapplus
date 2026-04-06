@@ -18,9 +18,14 @@ struct DraggableControlButton: View {
     /// The action to perform when the button has been dropped in a new spot,
     /// with a parameter giving its new offset from the original location.
     let onMoved: (CGSize) -> Void
+    
+    // MARK: Environment
+    
+    @Environment(\.theme) private var theme: MapPlusTheme
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
 
     // MARK: Private state
-    
+
     @State private var draggedOffset: CGSize = .zero
     @State private var isDragging: Bool = false
     @State private var dragOrigin: CGSize = .zero
@@ -39,6 +44,7 @@ struct DraggableControlButton: View {
                 .frame(width: buttonSize, height: buttonSize)
                 .padding(buttonPadding)
         }
+        .foregroundStyle(theme.tintColor(for: colorScheme) ?? .primary)
         .glassEffect()
         .isBeingDragged(isDragging)
         .offset(draggedOffset)

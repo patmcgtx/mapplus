@@ -38,107 +38,80 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
             return "theme-flamingo".localized
         }
     }
+    
+    /// Which font design to use for the app's text
+    var fontDesign: Font.Design {
+        switch self {
+        case .eightBit: return .monospaced
+        case .kerby: return .rounded
+        default: return .default
+        }
+    }
+    
+    /// Which special font weight to show text in, if any
+    var fontWeight: Font.Weight? {
+        switch self {
+        case .kerby: return .bold
+        default: return nil
+        }
+    }
+    
+    /// Which special case to show text in, if any
+    var textCase: Text.Case? {
+        switch self {
+        case .kerby: return .uppercase
+        default : return nil
+        }
+    }
 
     /// Which icon should show for the overall themes menu
     var menuIconName: String {
         switch self {
-        case .cupertino:
-            return "paintbrush"
+        case .cupertino: return "paintbrush"
         default: return "paintbrush.fill"
         }
     }
 
-}
-
-extension View {
-
-    /// Applies the styling for the given `MapPlusTheme` to this view hierarchy.
-    ///
-    /// Uses a single concrete `ThemeViewModifier` so the view hierarchy type never changes
-    /// when the theme switches, preserving view identity and associated state (e.g. map camera position).
-    func apply(theme: MapPlusTheme) -> some View {
-        self.modifier(ThemeViewModifier(theme: theme))
+    /// The primary color used for text;  must have a high contrast.
+    func foregroundColor(for colorScheme: ColorScheme) -> Color {
+        switch self {
+        case .cupertino: return .primary
+        case .eightBit: return highContrastGreen(for: colorScheme)
+        case .kerby: return highContrastOrange(for: colorScheme)
+        case .flamingo: return .pink
+        }
     }
 
-}
-
-/// A single `ViewModifier` that applies theme-specific styling based on the given `MapPlusTheme`.
-///
-/// Consolidating all theme variants into one modifier ensures the structural type of the
-/// modified view never changes when the theme changes, so SwiftUI preserves view identity
-/// and does not reset state such as the map camera position.
-private struct ThemeViewModifier: ViewModifier {
-
-    /// The theme to apply
-    let theme: MapPlusTheme
-
-    @Environment(\.colorScheme) private var colorScheme
-
-    func body(content: Content) -> some View {
-        content
-            .tint(tintColor)
-            .foregroundStyle(foregroundColor)
-            .fontDesign(fontDesign)
-            .fontWeight(fontWeight)
-            .textCase(textCase)
+    /// A secondary color for some icons, backgrounds, etc.
+    func tintColor(for colorScheme: ColorScheme) -> Color? {
+        switch self {
+        case .cupertino: return nil
+        case .eightBit: return .green
+        case .kerby: return .orange
+        case .flamingo: return softFlamingoPink
+        }
     }
 
-    /// Returns a variation of green specialized for light or dark mode
-    private var eightBitGreen: Color {
+    // MARK: Private helpers
+    
+    /// A high-contrast variation of 8-bit green specialized for text in dark or light mode
+    private func highContrastGreen(for colorScheme: ColorScheme) -> Color {
         switch colorScheme {
         case .dark: return .green
         default: return Color(red: 0/255, green: 130/255, blue: 40/255)
         }
     }
 
-    /// Returns a variation of orange specialized for light or dark mode
-    private var kerbyOrange: Color {
+    /// Returns a variation of orange specialized for text in light or dark mode
+    private func highContrastOrange(for colorScheme: ColorScheme) -> Color {
         switch colorScheme {
         case .dark: return .orange
         default: return Color(red: 175/255, green: 82/255, blue: 0/255)
         }
     }
 
-    /// Returns a variation of pink specialized for light or dark mode
-    private var flamingoPink: Color {
-        switch colorScheme {
-        case .dark: return Color(red: 252/255, green: 142/255, blue: 172/255)
-        default: return Color(red: 216/255, green: 44/255, blue: 104/255)
-        }
+    /// A softer variation of pink for accents and backgrounds
+    private var softFlamingoPink: Color {
+        Color(red: 252/255, green: 142/255, blue: 172/255)
     }
-
-    private var tintColor: Color? {
-        switch theme {
-        case .cupertino: return nil
-        case .eightBit: return eightBitGreen
-        case .kerby: return kerbyOrange
-        case .flamingo: return flamingoPink
-        }
-    }
-
-    private var foregroundColor: Color {
-        switch theme {
-        case .cupertino: return .primary
-        case .eightBit: return eightBitGreen
-        case .kerby: return kerbyOrange
-        case .flamingo: return flamingoPink
-        }
-    }
-
-    private var fontDesign: Font.Design {
-        switch theme {
-        case .eightBit: return .monospaced
-        case .kerby: return .rounded
-        default: return .default
-        }
-    }
-
-    private var fontWeight: Font.Weight? {
-        theme == .kerby ? .bold : nil
-    }
-
-    private var textCase: Text.Case? {
-        theme == .kerby ? .uppercase : nil
-    }
-
 }
