@@ -12,7 +12,7 @@ struct LandmarkTests {
         let name: String
         let notes: String
         let formattedAddress: String
-        let systemImageName: String
+        let emoji: String
         let latitude: CLLocationDegrees
         let longitude: CLLocationDegrees
         let description: String
@@ -23,7 +23,7 @@ struct LandmarkTests {
             name: "Golden Gate Bridge",
             notes: "bridge",
             formattedAddress: "San Francisco, CA",
-            systemImageName: "bridge",
+            emoji: "🌉",
             latitude: 37.81985,
             longitude: -122.47852,
             description: "Golden Gate Bridge"
@@ -32,7 +32,7 @@ struct LandmarkTests {
             name: "Sunny Beach Pocket Park",
             notes: "Nice small beach with amenities",
             formattedAddress: "123 Beach Rd, Sunnyville",
-            systemImageName: "beach.umbrella",
+            emoji: "🏖️",
             latitude: 29.23755,
             longitude: -94.87794,
             description: "Beach park"
@@ -41,7 +41,7 @@ struct LandmarkTests {
             name: "Smithville",
             notes: "",
             formattedAddress: "Smithville, TX",
-            systemImageName: "mappin.circle",
+            emoji: "📍",
             latitude: 30.00458,
             longitude: -97.14810,
             description: "Smithville"
@@ -50,7 +50,7 @@ struct LandmarkTests {
             name: "Central Park",
             notes: "Large urban park",
             formattedAddress: "New York, NY",
-            systemImageName: "tree",
+            emoji: "🌳",
             latitude: 40.785091,
             longitude: -73.968285,
             description: "Central Park"
@@ -59,7 +59,7 @@ struct LandmarkTests {
             name: "Empty Notes Location",
             notes: "",
             formattedAddress: "Test Address",
-            systemImageName: "mappin",
+            emoji: "📌",
             latitude: 0.0,
             longitude: 0.0,
             description: "Location with empty notes"
@@ -74,7 +74,7 @@ struct LandmarkTests {
             name: testCase.name,
             notes: testCase.notes,
             formattedAddress: testCase.formattedAddress,
-            systemImageName: testCase.systemImageName,
+            emoji: testCase.emoji,
             location: coordinate
         )
         
@@ -84,8 +84,8 @@ struct LandmarkTests {
                 "Expected notes '\(testCase.notes)' for \(testCase.description)")
         #expect(landmark.formattedAddress == testCase.formattedAddress,
                 "Expected address '\(testCase.formattedAddress)' for \(testCase.description)")
-        #expect(landmark.systemImageName == testCase.systemImageName,
-                "Expected image name '\(testCase.systemImageName)' for \(testCase.description)")
+        #expect(landmark.emoji == testCase.emoji,
+                "Expected emoji '\(testCase.emoji)' for \(testCase.description)")
         #expect(landmark.location.latitude == coordinate.latitude,
                 "Expected latitude \(coordinate.latitude) for \(testCase.description)")
         #expect(landmark.location.longitude == coordinate.longitude,
@@ -131,7 +131,7 @@ struct LandmarkTests {
             name: "Test Location",
             notes: "Test",
             formattedAddress: "Test Address",
-            systemImageName: "mappin",
+            emoji: "📌",
             location: .init(
                 latitude: testCase.latitude,
                 longitude: testCase.longitude
@@ -154,14 +154,14 @@ struct LandmarkTests {
             name: "Smithville",
             notes: "",
             formattedAddress: "Smithville, TX",
-            systemImageName: "mappin.circle",
+            emoji: "📍",
             location: coordinate
         )
         let smithville4thStreet = Landmark(
             name: "4th Street",
             notes: "",
             formattedAddress: "4th St, Smithville, TX",
-            systemImageName: "mappin",
+            emoji: "📌",
             location: coordinate
         )
         
@@ -201,7 +201,7 @@ struct LandmarkTests {
             name: "Smithville",
             notes: "County seat",
             formattedAddress: "Smithville, TX",
-            systemImageName: "mappin.circle",
+            emoji: "📍",
             location: coordinate
         )
 

@@ -20,8 +20,8 @@ struct LandmarkForm: View {
     @Environment(\.locationService) private var locationService
     @Environment(\.addressLookupService) private var addressLookupService
     
-    // The view model owns the form mode and configuration
-    @State private var viewModel: LandmarkFormViewModel    
+    // The view model owns the form mode, configuration, and location state
+    @State private var viewModel: LandmarkFormViewModel
         
     // Environment
     @Environment(\.dismiss) private var dismiss
@@ -33,31 +33,6 @@ struct LandmarkForm: View {
     // Categories
     @Query(sort: \LandmarkCategory.name, order: .forward)
     private var allCategories: [LandmarkCategory]
-    
-    // Save state
-    private enum SaveState {
-        case saveInitial
-        case saved
-        case saveFailed(Error)
-    }
-    
-    @State private var saveState: SaveState = .saveInitial
-    
-    // Location search
-    private enum LocationSearchType {
-        case textSearch(String)
-        case currentLocation
-    }
-    @State private var locationSearchInput: String = ""
-
-    // Location search state
-    private enum AddressSearchState {
-        case searchInitial
-        case searching
-        case searchResolved(LocationInfo)
-        case searchFailed(Error)
-    }
-    @State private var addressSearchState: AddressSearchState = .searchInitial
     
     // Field focus
     private enum FocusField: Hashable {
@@ -90,35 +65,15 @@ struct LandmarkForm: View {
         .navigationTitle(viewModel.formTitle)
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .task(priority: .userInitiated) {
-            switch viewModel.mode {
-            case .create:
-                // If we're editing a new landmark, _try_ to pre-populate the current location
-                do {
-                    let resolvedAddress = try await locationService.getCurrentLocation()
-                    await MainActor.run {
-                        addressSearchState = .searchResolved(resolvedAddress)
-                        viewModel.landmarkToEdit.formattedAddress = resolvedAddress.formattedDescription
-                        viewModel.landmarkToEdit.latitude = resolvedAddress.coordinates.latitude
-                        viewModel.landmarkToEdit.longitude = resolvedAddress.coordinates.longitude
-                    }
-                } catch {
-                    // Not a reportable error if this fails; just let them proceed as normal
-                    break
-                }
-            case .edit:
-                // When editing an existing landmark, pre-resolve the address
-                // to the landmark's known location.
-                addressSearchState = .searchResolved(
-                    LocationInfo(
-                        formattedDescription: viewModel.landmarkToEdit.formattedAddress,
-                        latitude: viewModel.landmarkToEdit.location.latitude,
-                        longitude: viewModel.landmarkToEdit.location.longitude
-                    )
-                )
-            }
+            await viewModel.initializeLocation(using: locationService)
         }
         .onAppear {
             focusField = .landmarkName
+        }
+        .onChange(of: viewModel.saveState) { _, newState in
+            if case .saved = newState {
+                dismiss()
+            }
         }
     }
     
@@ -151,7 +106,7 @@ struct LandmarkForm: View {
     
     @ViewBuilder
     private var saveError: some View {
-        switch saveState {
+        switch viewModel.saveState {
         case .saveInitial, .saved:
             EmptyView()
         case .saveFailed(let error):
@@ -230,17 +185,21 @@ struct LandmarkForm: View {
             HStack {
                 TextField(
                     "addr-or-location-name".localized,
-                    text: $locationSearchInput)
+                    text: $viewModel.locationSearchInput)
                 .submitLabel(.search)
                 .textInputAutocapitalization(.none)
                 .autocorrectionDisabled(false)
                 Button {
-                    runLocationSearch(ofType: .textSearch(locationSearchInput))
+                    Task {
+                        await viewModel.searchByText(using: addressLookupService)
+                    }
                 } label: {
                     Image(systemName: "magnifyingglass")
                 }
                 Button {
-                    runLocationSearch(ofType: .currentLocation)
+                    Task {
+                        await viewModel.searchByCurrentLocation(using: locationService)
+                    }
                 } label: {
                     Image(systemName: "location")
                 }
@@ -258,20 +217,9 @@ struct LandmarkForm: View {
     
     private var saveButton: some View {
         Button("save".localized) {
-            do {
-                switch addressSearchState {
-                case .searchInitial, .searching, .searchFailed:
-                    break
-                case .searchResolved:
-                    try viewModel.save(context: modelContext)
-                    saveState = .saved
-                }
-                dismiss()
-            } catch {
-                saveState = .saveFailed(error)
-            }
+            viewModel.save(context: modelContext)
         }
-        .disabled(!isSaveEnabled)
+        .disabled(!viewModel.isSaveEnabled)
     }
     
     @ViewBuilder
@@ -293,7 +241,7 @@ struct LandmarkForm: View {
                     Spacer()
                     
                     // Landmark description
-                    switch addressSearchState {
+                    switch viewModel.addressSearchState {
                     case .searchInitial:
                         EmptyView()
                     case .searching:
@@ -318,45 +266,6 @@ struct LandmarkForm: View {
         }
     }
 
-    private func runLocationSearch(ofType searchType: LocationSearchType) {
-        Task {
-            do {
-                await MainActor.run {
-                    addressSearchState = .searching
-                }
-                let resolvedAddress: LocationInfo
-                switch searchType {
-                case .textSearch(let searchString):
-                    // TODO patmcg consider using a Binding
-                    resolvedAddress = try await addressLookupService.lookup(address: searchString)
-                case .currentLocation:
-                    // TODO patmcg consider using a Binding
-                    resolvedAddress = try await locationService.getCurrentLocation()
-                }
-                await MainActor.run {
-                    addressSearchState = .searchResolved(resolvedAddress)
-                    locationSearchInput = resolvedAddress.formattedDescription
-                    viewModel.landmarkToEdit.formattedAddress = resolvedAddress.formattedDescription
-                    viewModel.landmarkToEdit.latitude = resolvedAddress.coordinates.latitude
-                    viewModel.landmarkToEdit.longitude = resolvedAddress.coordinates.longitude
-                }
-            } catch {
-                await MainActor.run {
-                    addressSearchState = .searchFailed(error)
-                }
-            }
-        }
-    }
-    
-    private var isSaveEnabled: Bool {
-        switch addressSearchState {
-        case .searchInitial, .searching, .searchFailed:
-            return false
-        case .searchResolved:
-            return viewModel.landmarkToEdit.name.isPopulated
-        }
-    }
-    
 }
 
 
