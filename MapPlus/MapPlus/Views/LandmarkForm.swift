@@ -34,15 +34,6 @@ struct LandmarkForm: View {
     @Query(sort: \LandmarkCategory.name, order: .forward)
     private var allCategories: [LandmarkCategory]
     
-    // Save state
-    private enum SaveState {
-        case saveInitial
-        case saved
-        case saveFailed(Error)
-    }
-    
-    @State private var saveState: SaveState = .saveInitial
-    
     // Field focus
     private enum FocusField: Hashable {
         case landmarkName
@@ -79,6 +70,11 @@ struct LandmarkForm: View {
         .onAppear {
             focusField = .landmarkName
         }
+        .onChange(of: viewModel.saveState) { _, newState in
+            if case .saved = newState {
+                dismiss()
+            }
+        }
     }
     
     // MARK: - Subviews
@@ -110,7 +106,7 @@ struct LandmarkForm: View {
     
     @ViewBuilder
     private var saveError: some View {
-        switch saveState {
+        switch viewModel.saveState {
         case .saveInitial, .saved:
             EmptyView()
         case .saveFailed(let error):
@@ -221,13 +217,7 @@ struct LandmarkForm: View {
     
     private var saveButton: some View {
         Button("save".localized) {
-            do {
-                try viewModel.save(context: modelContext)
-                saveState = .saved
-                dismiss()
-            } catch {
-                saveState = .saveFailed(error)
-            }
+            viewModel.save(context: modelContext)
         }
         .disabled(!viewModel.isSaveEnabled)
     }
