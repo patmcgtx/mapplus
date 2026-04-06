@@ -78,7 +78,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         case .cupertino: return .primary
         case .eightBit: return highContrastGreen(for: colorScheme)
         case .kerby: return highContrastOrange(for: colorScheme)
-        case .flamingo: return .pink
+        case .flamingo: return highContrastPink(for: colorScheme)
         }
     }
 
@@ -94,6 +94,10 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
 
     // MARK: Private helpers
     
+    /// The deep crimson-pink used for Flamingo theme in light mode.
+    /// Yields ≥4.5:1 contrast ratio on a white background (WCAG AA).
+    private let flamingoPinkLightMode = Color(red: 190/255, green: 0/255, blue: 80/255)
+
     /// A high-contrast variation of 8-bit green specialized for text in dark or light mode
     private func highContrastGreen(for colorScheme: ColorScheme) -> Color {
         switch colorScheme {
@@ -112,6 +116,17 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
 
     /// A softer variation of pink for accents and backgrounds
     private func softFlamingoPink(for colorScheme: ColorScheme) -> Color {
-        Color(red: 252/255, green: 142/255, blue: 172/255)
+        switch colorScheme {
+        case .dark: return Color(red: 252/255, green: 142/255, blue: 172/255)
+        default: return flamingoPinkLightMode
+        }
+    }
+
+    /// A high-contrast variation of pink specialized for text in dark or light mode
+    private func highContrastPink(for colorScheme: ColorScheme) -> Color {
+        switch colorScheme {
+        case .dark: return .pink
+        default: return flamingoPinkLightMode
+        }
     }
 }

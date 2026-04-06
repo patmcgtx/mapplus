@@ -16,6 +16,8 @@ struct ErrorView: View {
     /// The root error, which may be displayed for debugging purposes
     let error: Error
     
+    @Environment(\.colorScheme) private var colorScheme
+
     var body: some View {
         VStack(alignment: .leading) {
             HStack {
@@ -28,10 +30,15 @@ struct ErrorView: View {
                 .font(.footnote)
         }
         .fontDesign(.monospaced)
-        .foregroundStyle(Color.red)
+        .foregroundStyle(errorColor)
         .padding()
-        .border(Color.red)
+        .border(errorColor)
         .cornerRadius(15.0)
+    }
+
+    /// A red that meets WCAG AA contrast (≥4.5:1) against the default background in both light and dark mode.
+    private var errorColor: Color {
+        colorScheme == .dark ? .red : Color(red: 179/255, green: 0, blue: 0)
     }
 }
 
