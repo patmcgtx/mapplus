@@ -244,12 +244,17 @@ struct LandmarkFormViewModelTests {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let landmark = Landmark(name: "Old Name", location: .init(latitude: 51.50, longitude: -0.12))
+        container.mainContext.insert(landmark)
+        try container.mainContext.save()
+
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         viewModel.landmarkToEdit.name = "New Name"
 
         viewModel.save(context: container.mainContext)
 
         #expect(viewModel.saveState == .saved)
+        let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
+        #expect(stored.first?.name == "New Name")
     }
 
 }
