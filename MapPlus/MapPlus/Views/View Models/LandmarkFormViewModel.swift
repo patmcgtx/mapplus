@@ -74,9 +74,14 @@ final class LandmarkFormViewModel {
     /// Saves any changes made to `landmarkToEdit` and updates `saveState`.
     /// - Parameter context: The persistent context in which to save the landmark
     func save(context: ModelContext) {
+        save(using: LandmarkStore(modelContext: context))
+    }
+
+    /// Saves any changes made to `landmarkToEdit` using the given store and updates `saveState`.
+    /// - Parameter store: The store used to commit the landmark.
+    func save(using store: any LandmarkStoring) {
         do {
-            try LandmarkStore(modelContext: context)
-                .commit(landmark: landmarkToEdit)
+            try store.commit(landmark: landmarkToEdit)
             saveState = .saved
         } catch {
             saveState = .saveFailed(error)

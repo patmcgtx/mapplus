@@ -304,4 +304,22 @@ struct LandmarkFormViewModelTests {
         #expect(stored.first?.name == "New Name")
     }
 
+    @Test func testSaveFailureSetsStateToSaveFailed() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.save(using: FailingLandmarkStore())
+        if case .saveFailed = viewModel.saveState {
+            // Expected
+        } else {
+            Issue.record("Expected .saveFailed, got \(viewModel.saveState)")
+        }
+    }
+
+}
+
+// MARK: - Test helpers
+
+private struct FailingLandmarkStore: LandmarkStoring {
+    func commit(landmark: Landmark) throws {
+        throw MapPlusError.noAddressFound
+    }
 }
