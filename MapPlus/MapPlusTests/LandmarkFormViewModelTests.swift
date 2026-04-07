@@ -90,6 +90,13 @@ struct LandmarkFormViewModelTests {
         #expect(!viewModel.isSaveEnabled)
     }
 
+    @Test func testIsSaveEnabledAfterResolvedWithWhitespaceOnlyName() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.landmarkToEdit.name = "   "
+        viewModel.addressSearchState = .searchResolved(LocationInfo())
+        #expect(!viewModel.isSaveEnabled)
+    }
+
     // MARK: - initializeLocation
 
     @Test func testInitializeLocationCreateSuccess() async {
@@ -104,6 +111,25 @@ struct LandmarkFormViewModelTests {
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
+    }
+
+    @Test func testInitializeLocationCreateSuccessDoesNotUpdateLocationSearchInput() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+
+        await viewModel.initializeLocation(using: mockService)
+
+        #expect(viewModel.locationSearchInput == "")
+    }
+
+    @Test func testInitializeLocationCreateSuccessUpdatesCoordinates() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+
+        await viewModel.initializeLocation(using: mockService)
+
+        #expect(viewModel.landmarkToEdit.latitude == 37.7749)
+        #expect(viewModel.landmarkToEdit.longitude == -122.4194)
     }
 
     @Test func testInitializeLocationCreateFailureStaysAtInitial() async {
@@ -159,6 +185,17 @@ struct LandmarkFormViewModelTests {
         }
     }
 
+    @Test func testSearchByTextSuccessUpdatesCoordinates() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.locationSearchInput = "San Francisco"
+        let mockService = MockAddressLookupService()
+
+        await viewModel.searchByText(using: mockService)
+
+        #expect(viewModel.landmarkToEdit.latitude == 37.7749)
+        #expect(viewModel.landmarkToEdit.longitude == -122.4194)
+    }
+
     @Test func testSearchByTextFailure() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "Nowhere"
@@ -188,6 +225,16 @@ struct LandmarkFormViewModelTests {
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
+    }
+
+    @Test func testSearchByCurrentLocationSuccessUpdatesCoordinates() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+
+        await viewModel.searchByCurrentLocation(using: mockService)
+
+        #expect(viewModel.landmarkToEdit.latitude == 37.7749)
+        #expect(viewModel.landmarkToEdit.longitude == -122.4194)
     }
 
     @Test func testSearchByCurrentLocationFailure() async {
