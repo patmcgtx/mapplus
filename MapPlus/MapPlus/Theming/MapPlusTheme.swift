@@ -83,7 +83,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     }
 
     /// A secondary color for some icons, backgrounds, etc.
-    func tintColor(for colorScheme: ColorScheme) -> Color? {
+    var tintColor: Color? {
         switch self {
         case .cupertino: return nil
         case .eightBit: return .green

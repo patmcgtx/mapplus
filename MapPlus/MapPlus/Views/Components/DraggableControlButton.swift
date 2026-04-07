@@ -44,7 +44,7 @@ struct DraggableControlButton: View {
                 .frame(width: buttonSize, height: buttonSize)
                 .padding(buttonPadding)
         }
-        .foregroundStyle(theme.tintColor(for: colorScheme) ?? .primary)
+        .foregroundStyle(theme.tintColor ?? .primary)
         .glassEffect()
         .isBeingDragged(isDragging)
         .offset(draggedOffset)
