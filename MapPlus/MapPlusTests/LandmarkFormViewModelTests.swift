@@ -5,10 +5,44 @@
 
 import Testing
 import MapKit
+import SwiftData
 @testable import MapPlus
 
 @MainActor
 struct LandmarkFormViewModelTests {
+
+    // MARK: - Initial state
+
+    @Test func testInitialAddressSearchState() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        if case .searchInitial = viewModel.addressSearchState {
+            // Expected
+        } else {
+            Issue.record("Expected .searchInitial, got \(viewModel.addressSearchState)")
+        }
+    }
+
+    @Test func testInitialSaveState() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        #expect(viewModel.saveState == .saveInitial)
+    }
+
+    @Test func testInitialLocationSearchInput() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        #expect(viewModel.locationSearchInput == "")
+    }
+
+    @Test func testInitialLandmarkToEditIsEmptyForCreate() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        #expect(viewModel.landmarkToEdit.name == "")
+        #expect(viewModel.landmarkToEdit.formattedAddress == "")
+    }
+
+    @Test func testInitialLandmarkToEditIsProvidedLandmarkForEdit() {
+        let landmark = Landmark(name: "Statue of Liberty", formattedAddress: "New York, NY")
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        #expect(viewModel.landmarkToEdit === landmark)
+    }
 
     // MARK: - formTitle
 
@@ -168,6 +202,54 @@ struct LandmarkFormViewModelTests {
         } else {
             Issue.record("Expected .searchFailed, got \(viewModel.addressSearchState)")
         }
+    }
+
+    // MARK: - save
+
+    @Test func testSaveSuccessSetsSaveStateToSaved() throws {
+        let container = try ModelContainer(
+            for: Landmark.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.landmarkToEdit.name = "New Place"
+        viewModel.landmarkToEdit.latitude = 37.77
+        viewModel.landmarkToEdit.longitude = -122.41
+
+        viewModel.save(context: container.mainContext)
+
+        #expect(viewModel.saveState == .saved)
+    }
+
+    @Test func testSaveSuccessInsertsLandmarkInContext() throws {
+        let container = try ModelContainer(
+            for: Landmark.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.landmarkToEdit.name = "Persisted Place"
+        viewModel.landmarkToEdit.latitude = 40.71
+        viewModel.landmarkToEdit.longitude = -74.00
+
+        viewModel.save(context: container.mainContext)
+
+        let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
+        #expect(stored.count == 1)
+        #expect(stored.first?.name == "Persisted Place")
+    }
+
+    @Test func testSaveInEditModeUpdatesSaveState() throws {
+        let container = try ModelContainer(
+            for: Landmark.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let landmark = Landmark(name: "Old Name", location: .init(latitude: 51.50, longitude: -0.12))
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        viewModel.landmarkToEdit.name = "New Name"
+
+        viewModel.save(context: container.mainContext)
+
+        #expect(viewModel.saveState == .saved)
     }
 
 }
