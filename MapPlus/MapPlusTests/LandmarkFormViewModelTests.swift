@@ -319,7 +319,8 @@ struct LandmarkFormViewModelTests {
 // MARK: - Test helpers
 
 private struct FailingLandmarkStore: LandmarkStoring {
+    struct SaveError: Error {}
     func commit(landmark: Landmark) throws {
-        throw MapPlusError.noAddressFound
+        throw SaveError()
     }
 }
