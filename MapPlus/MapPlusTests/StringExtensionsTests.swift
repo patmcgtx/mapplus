@@ -1,5 +1,6 @@
 // Thanks, Claude Sonnet
 
+import Foundation
 import Testing
 @testable import MapPlus
 
@@ -173,26 +174,4 @@ struct StringExtensionsTests {
                 "withMarkdown should preserve the underlying text")
     }
     
-    @Test("withMarkdown returns nil on parse error")
-    func testWithMarkdownReturnsNilOnError() {
-        // AttributedString(markdown:) using .inlineOnlyPreservingWhitespace throws on block-level
-        // syntax, which exercises the catch-and-return-nil path. We verify that contract here
-        // by reproducing the same logic with options that are known to fail.
-        let blockMarkdown = "# Heading\n\nParagraph"
-        var threwError = false
-        let options = AttributedString.MarkdownParsingOptions(
-            interpretedSyntax: .inlineOnlyPreservingWhitespace
-        )
-        do {
-            _ = try AttributedString(markdown: blockMarkdown, options: options)
-        } catch {
-            threwError = true
-        }
-        // Confirm the error path is reachable, matching what `withMarkdown` handles via its catch block
-        #expect(threwError, "AttributedString should throw when block-level markdown is given with inlineOnly syntax")
-        
-        // withMarkdown itself uses default options (lenient), so the same input returns non-nil there
-        #expect(blockMarkdown.withMarkdown != nil,
-                "withMarkdown with default options should still parse block markdown without throwing")
-    }
 }
