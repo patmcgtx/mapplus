@@ -66,6 +66,8 @@ struct CategoryCapsule: View {
     }
 }
 
+#if DEBUG
+
 #Preview("Short") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "Cafes")
@@ -116,3 +118,5 @@ struct CategoryCapsule: View {
         fromCategories: .constant([])
     )
 }
+
+#endif // DEBUG

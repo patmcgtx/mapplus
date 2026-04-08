@@ -77,6 +77,8 @@ struct DraggableControlButton: View {
     }
 }
 
+#if DEBUG
+
 #Preview {
     
     @Previewable @State var addButtonPressed: Bool = false
@@ -118,3 +120,5 @@ struct DraggableControlButton: View {
         })
     }
 }
+
+#endif // DEBUG

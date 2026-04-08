@@ -77,9 +77,13 @@ struct LandmarksView : View {
     }
 }
 
+#if DEBUG
+
 // MARK: - Previews
 
 #Preview {
     LandmarksView()
         .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
+
+#endif // DEBUG

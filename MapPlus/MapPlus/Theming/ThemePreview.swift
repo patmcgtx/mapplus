@@ -44,9 +44,13 @@ struct ThemePreview: View {
     }
 }
 
+#if DEBUG
+
 #Preview() {
     ForEach(MapPlusTheme.allCases) { theme in
         ThemePreview(theme: theme)
             .apply(theme: theme)
     }
 }
+
+#endif // DEBUG
