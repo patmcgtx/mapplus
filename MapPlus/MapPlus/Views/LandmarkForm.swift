@@ -269,6 +269,8 @@ struct LandmarkForm: View {
 }
 
 
+#if DEBUG
+
 // MARK: - Previews
 
 #Preview("Create - mock services") {
@@ -286,3 +288,5 @@ struct LandmarkForm: View {
         SampleLandmarks().capital)
     )
 }
+
+#endif // DEBUG
