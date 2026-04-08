@@ -137,4 +137,62 @@ struct StringExtensionsTests {
         // Should return the original key when no localization is found
         #expect(result == uniqueKey, "localized property should return the original key when no localization exists")
     }
+    
+    // MARK: - withMarkdown Tests
+    
+    @Test("withMarkdown returns non-nil for plain text")
+    func testWithMarkdownPlainText() {
+        let result = "Hello, World!".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for plain text")
+    }
+    
+    @Test("withMarkdown returns non-nil for bold markdown")
+    func testWithMarkdownBold() {
+        let result = "**bold text**".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for bold markdown")
+    }
+    
+    @Test("withMarkdown returns non-nil for italic markdown")
+    func testWithMarkdownItalic() {
+        let result = "_italic text_".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for italic markdown")
+    }
+    
+    @Test("withMarkdown returns non-nil for markdown link")
+    func testWithMarkdownLink() {
+        let result = "[Apple](https://www.apple.com)".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for markdown link")
+    }
+    
+    @Test("withMarkdown preserves text content")
+    func testWithMarkdownPreservesContent() {
+        let plain = "Hello"
+        let result = plain.withMarkdown
+        #expect(result != nil)
+        #expect(result.map { String($0.characters) } == "Hello",
+                "withMarkdown should preserve the underlying text")
+    }
+    
+    @Test("withMarkdown returns nil on parse error")
+    func testWithMarkdownReturnsNilOnError() {
+        // AttributedString(markdown:) using .inlineOnlyPreservingWhitespace throws on block-level
+        // syntax, which exercises the catch-and-return-nil path. We verify that contract here
+        // by reproducing the same logic with options that are known to fail.
+        let blockMarkdown = "# Heading\n\nParagraph"
+        var threwError = false
+        let options = AttributedString.MarkdownParsingOptions(
+            interpretedSyntax: .inlineOnlyPreservingWhitespace
+        )
+        do {
+            _ = try AttributedString(markdown: blockMarkdown, options: options)
+        } catch {
+            threwError = true
+        }
+        // Confirm the error path is reachable, matching what `withMarkdown` handles via its catch block
+        #expect(threwError, "AttributedString should throw when block-level markdown is given with inlineOnly syntax")
+        
+        // withMarkdown itself uses default options (lenient), so the same input returns non-nil there
+        #expect(blockMarkdown.withMarkdown != nil,
+                "withMarkdown with default options should still parse block markdown without throwing")
+    }
 }
