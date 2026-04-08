@@ -297,7 +297,11 @@ struct MainMapView: View {
 
 }
 
+#if DEBUG
+
 #Preview {
     MainMapView()
         .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
+
+#endif // DEBUG

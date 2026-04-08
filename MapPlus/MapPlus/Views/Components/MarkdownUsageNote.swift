@@ -17,6 +17,10 @@ struct MarkdownUsageNote: View {
     }
 }
 
+#if DEBUG
+
 #Preview {
     MarkdownUsageNote()
 }
+
+#endif // DEBUG

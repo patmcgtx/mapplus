@@ -69,6 +69,8 @@ private struct AnnotationPreview: View {
     }
 }
 
+#if DEBUG
+
 #Preview("Cart") {
     AnnotationPreview(landmarkEmoji: "🛒")
 }
@@ -105,3 +107,5 @@ private struct AnnotationPreview: View {
     .background(.green)
     .cornerRadius(10)
 }
+
+#endif // DEBUG
