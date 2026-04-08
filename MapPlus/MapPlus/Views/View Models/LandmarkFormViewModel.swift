@@ -38,8 +38,8 @@ final class LandmarkFormViewModel {
             switch (lhs, rhs) {
             case (.saveInitial, .saveInitial), (.saved, .saved):
                 return true
-            case (.saveFailed, .saveFailed):
-                return true
+            case (.saveFailed(let error1), .saveFailed(let error2)):
+                return type(of: error1) == type(of: error2)
             default:
                 return false
             }
