@@ -174,6 +174,61 @@ struct LandmarkTests {
         )
     }
     
+    // MARK: - init(from:) Tests
+    
+    @Test func testInitFromCopiesAllProperties() {
+        let source = Landmark(
+            name: "Golden Gate Bridge",
+            notes: "Iconic suspension bridge",
+            formattedAddress: "San Francisco, CA",
+            emoji: "🌉",
+            location: CLLocationCoordinate2D(latitude: 37.81985, longitude: -122.47852)
+        )
+        
+        let copy = Landmark(from: source)
+        
+        #expect(copy.name == source.name)
+        #expect(copy.notes == source.notes)
+        #expect(copy.formattedAddress == source.formattedAddress)
+        #expect(copy.emoji == source.emoji)
+        #expect(copy.location.latitude == source.location.latitude)
+        #expect(copy.location.longitude == source.location.longitude)
+    }
+    
+    @Test func testInitFromProducesSeparateInstance() {
+        let source = Landmark(name: "Eiffel Tower", notes: "Paris landmark", emoji: "🗼",
+                              location: .init(latitude: 48.8584, longitude: 2.2945))
+        let copy = Landmark(from: source)
+        
+        // They are separate objects
+        #expect(copy !== source)
+    }
+    
+    @Test func testInitFromMutationsDoNotAffectSource() {
+        let source = Landmark(name: "Original Name", notes: "Original notes", emoji: "📍",
+                              location: .init(latitude: 10.0, longitude: 20.0))
+        let copy = Landmark(from: source)
+        
+        copy.name = "Modified Name"
+        copy.notes = "Modified notes"
+        
+        #expect(source.name == "Original Name", "Mutating copy should not affect source name")
+        #expect(source.notes == "Original notes", "Mutating copy should not affect source notes")
+    }
+    
+    @Test func testInitFromWithEmptyFields() {
+        let source = Landmark(name: "", notes: "", formattedAddress: "", emoji: "",
+                              location: .init(latitude: 0.0, longitude: 0.0))
+        let copy = Landmark(from: source)
+        
+        #expect(copy.name == "")
+        #expect(copy.notes == "")
+        #expect(copy.formattedAddress == "")
+        #expect(copy.emoji == "")
+        #expect(copy.location.latitude == 0.0)
+        #expect(copy.location.longitude == 0.0)
+    }
+    
     @MainActor @Test func testUniqueUpsert() throws {
         
         // Set up in-memory persistence container

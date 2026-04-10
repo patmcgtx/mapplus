@@ -35,6 +35,8 @@ struct ErrorView: View {
     }
 }
 
+#if DEBUG
+
 // MARK: - Previews
 
 #Preview {
@@ -43,3 +45,5 @@ struct ErrorView: View {
         error: MapPlusError.noAddressFound
     )
 }
+
+#endif // DEBUG

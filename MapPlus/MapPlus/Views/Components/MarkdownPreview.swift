@@ -24,6 +24,8 @@ struct MarkdownPreview: View {
     }
 }
 
+#if DEBUG
+
 #Preview("Markdown") {
     MarkdownPreview(markdown: "Hi! I'm _markdown_!  So **bold** of me.")
 }
@@ -31,3 +33,5 @@ struct MarkdownPreview: View {
 #Preview("Plain text") {
     MarkdownPreview(markdown: "Hi! I'm plain text!")
 }
+
+#endif // DEBUG

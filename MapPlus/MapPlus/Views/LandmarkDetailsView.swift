@@ -160,6 +160,8 @@ struct LandmarkDetailsView: View {
     
 }
 
+#if DEBUG
+
 // MARK: - Previews
 
 #Preview("Real look-around") {
@@ -184,3 +186,5 @@ struct LandmarkDetailsView: View {
             networkDelaySeconds: 8.0
         ))
 }
+
+#endif // DEBUG
