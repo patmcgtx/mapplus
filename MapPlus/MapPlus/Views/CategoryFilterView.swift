@@ -59,6 +59,8 @@ struct CategoryFilterView: View {
     }
 }
 
+#if DEBUG
+
 // MARK: - Previews
 
 #Preview("No selection") {
@@ -76,3 +78,5 @@ struct CategoryFilterView: View {
         selectedCategoryNames: $selected
     )
 }
+
+#endif // DEBUG

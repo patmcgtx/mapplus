@@ -6,6 +6,8 @@
 //
 import SwiftUI
 
+#if DEBUG
+
 /// A view for sampling a theme
 struct ThemePreview: View {
     
@@ -50,3 +52,5 @@ struct ThemePreview: View {
             .apply(theme: theme)
     }
 }
+
+#endif // DEBUG

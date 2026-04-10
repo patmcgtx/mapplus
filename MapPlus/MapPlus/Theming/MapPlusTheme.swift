@@ -78,12 +78,12 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         case .cupertino: return .primary
         case .eightBit: return highContrastGreen(for: colorScheme)
         case .kerby: return highContrastOrange(for: colorScheme)
-        case .flamingo: return .pink
+        case .flamingo: return highContrastPink(for: colorScheme)
         }
     }
 
     /// A secondary color for some icons, backgrounds, etc.
-    func tintColor(for colorScheme: ColorScheme) -> Color? {
+    var tintColor: Color? {
         switch self {
         case .cupertino: return nil
         case .eightBit: return .green
@@ -107,6 +107,13 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         switch colorScheme {
         case .dark: return .orange
         default: return Color(red: 175/255, green: 82/255, blue: 0/255)
+        }
+    }
+
+    private func highContrastPink(for colorScheme: ColorScheme) -> Color {
+        switch colorScheme {
+        case .dark: return softFlamingoPink
+        default: return .pink
         }
     }
 

@@ -32,6 +32,8 @@ struct CategoryFlow: View {
     }
 }
 
+#if DEBUG
+
 #Preview("Several") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "one"),
@@ -94,4 +96,6 @@ struct CategoryFlow: View {
     @Previewable @State var categories: [LandmarkCategory] = []
     CategoryFlow(categories: $categories, mode: .view)
 }
+
+#endif // DEBUG
 

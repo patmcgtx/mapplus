@@ -1,5 +1,6 @@
 // Thanks, Claude Sonnet
 
+import Foundation
 import Testing
 @testable import MapPlus
 
@@ -137,4 +138,40 @@ struct StringExtensionsTests {
         // Should return the original key when no localization is found
         #expect(result == uniqueKey, "localized property should return the original key when no localization exists")
     }
+    
+    // MARK: - withMarkdown Tests
+    
+    @Test("withMarkdown returns non-nil for plain text")
+    func testWithMarkdownPlainText() {
+        let result = "Hello, World!".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for plain text")
+    }
+    
+    @Test("withMarkdown returns non-nil for bold markdown")
+    func testWithMarkdownBold() {
+        let result = "**bold text**".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for bold markdown")
+    }
+    
+    @Test("withMarkdown returns non-nil for italic markdown")
+    func testWithMarkdownItalic() {
+        let result = "_italic text_".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for italic markdown")
+    }
+    
+    @Test("withMarkdown returns non-nil for markdown link")
+    func testWithMarkdownLink() {
+        let result = "[Apple](https://www.apple.com)".withMarkdown
+        #expect(result != nil, "withMarkdown should return non-nil for markdown link")
+    }
+    
+    @Test("withMarkdown preserves text content")
+    func testWithMarkdownPreservesContent() {
+        let plain = "Hello"
+        let result = plain.withMarkdown
+        #expect(result != nil)
+        #expect(result.map { String($0.characters) } == "Hello",
+                "withMarkdown should preserve the underlying text")
+    }
+    
 }

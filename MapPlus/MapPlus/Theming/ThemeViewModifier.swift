@@ -20,7 +20,7 @@ struct ThemeViewModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .tint(theme.tintColor(for: colorScheme))
+            .tint(theme.tintColor ?? .primary)
             .foregroundStyle(theme.foregroundColor(for: colorScheme))
             .fontDesign(theme.fontDesign)
             .fontWeight(theme.fontWeight)
