@@ -68,7 +68,7 @@ final class LandmarkFormViewModel {
     var name: String = ""
     
     /// The landmark's emoji icon
-    var emoji: String = ""
+    var emoji: String = "📍"
     
     /// The landmark's notes
     var notes: String = ""

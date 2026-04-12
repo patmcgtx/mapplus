@@ -75,7 +75,10 @@ struct LandmarkForm: View {
     
     @ViewBuilder
     private var categoriesSection: some View {
-        Section("Categories") {
+        Section(
+            header: Text("Categories"),
+            footer: Text("Categorize this landmarks for map filtering.")
+        ) {
             HStack {
                 // A flow layout of categories in edit mode
                 CategoryFlow(categories: $viewModel.categories, mode: .edit)
@@ -109,7 +112,10 @@ struct LandmarkForm: View {
     }
     
     private var detailsSection: some View {
-        Section("details".localized) {
+        Section(
+            header: Text("details".localized),
+            footer: Text("Pick a name and an emoji to appear on the map.")
+        ) {
             HStack(alignment: .lastTextBaseline) {
                 
                 // Landmark name input
@@ -136,11 +142,18 @@ struct LandmarkForm: View {
                     .focused($focusField, equals: .emoji)
 
                 // Emoji clear button
+//                Button {
+//                    viewModel.emoji = ""
+//                    focusField = .emoji
+//                } label: {
+//                    Image(systemName: "xmark.circle")
+//                }
+                // Emoji clear button
                 Button {
                     viewModel.emoji = ""
                     focusField = .emoji
                 } label: {
-                    Image(systemName: "xmark.circle")
+                    Image(systemName: "plus.magnifyingglass")
                 }
             }
         }
@@ -192,7 +205,7 @@ struct LandmarkForm: View {
                             await viewModel.searchByText(using: addressLookupService)
                         }
                     } label: {
-                        Image(systemName: "magnifyingglass")
+                        Image(systemName: "location.magnifyingglass")
                     }
 //                    Button {
 //                        Task {
