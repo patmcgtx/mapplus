@@ -70,12 +70,8 @@ struct LandmarkForm: View {
             }
         }
         .onChange(of: viewModel.addressSearchState) { _, newState in
-            switch newState {
-            case .searchResolved(let locationInfo):
-                if self.viewModel.name.isEmpty {
-                    self.viewModel.name = locationInfo.formattedDescription
-                }
-            default: break
+            if case .searchResolved(let locationInfo) = newState {
+                self.viewModel.name = locationInfo.briefDescription
             }
         }
     }
@@ -262,7 +258,7 @@ struct LandmarkForm: View {
         case .searching:
             ProgressView()
         case .searchResolved(let addressInfo):
-            Text(addressInfo.formattedDescription)
+            Text(addressInfo.fullDescription)
         case .searchFailed(let error):
             ErrorView(shortMessage: "location-search-failed".localized, error: error)
         }

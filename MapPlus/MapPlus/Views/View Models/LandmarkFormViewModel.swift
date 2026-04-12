@@ -33,7 +33,7 @@ final class LandmarkFormViewModel {
             case (.searchInitial, .searchInitial), (.searching, .searching):
                 return true
             case (.searchResolved(let a), .searchResolved(let b)):
-                return a.formattedDescription == b.formattedDescription &&
+                return a.fullDescription == b.fullDescription &&
                        a.coordinates.latitude == b.coordinates.latitude &&
                        a.coordinates.longitude == b.coordinates.longitude
             case (.searchFailed(let e1), .searchFailed(let e2)):
@@ -196,7 +196,8 @@ final class LandmarkFormViewModel {
         case .edit:
             addressSearchState = .searchResolved(
                 LocationInfo(
-                    formattedDescription: landmarkToEdit.formattedAddress,
+                    briefDescription: landmarkToEdit.name,
+                    fullDescription: landmarkToEdit.formattedAddress,
                     latitude: landmarkToEdit.location.latitude,
                     longitude: landmarkToEdit.location.longitude
                 )
@@ -237,9 +238,9 @@ final class LandmarkFormViewModel {
     private func applyResolvedAddress(_ address: LocationInfo, updateSearchInput: Bool) {
         addressSearchState = .searchResolved(address)
         if updateSearchInput {
-            locationSearchInput = address.formattedDescription
+            locationSearchInput = address.fullDescription
         }
-        landmarkToEdit.formattedAddress = address.formattedDescription
+        landmarkToEdit.formattedAddress = address.fullDescription
         landmarkToEdit.latitude = address.coordinates.latitude
         landmarkToEdit.longitude = address.coordinates.longitude
     }

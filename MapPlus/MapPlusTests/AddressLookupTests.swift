@@ -72,7 +72,7 @@ struct AddressLookupTests {
         
         let result = try await service.lookup(address: testCase.query)
         
-        #expect(result.formattedDescription == testCase.expectedDescription,
+        #expect(result.fullDescription == testCase.expectedDescription,
                 "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
         #expect(result.coordinates.latitude == testCase.expectedLatitude,
                 "Expected latitude \(testCase.expectedLatitude) for \(testCase.description)")
@@ -90,7 +90,8 @@ struct AddressLookupTests {
     @Test("Mock address lookup with custom address", arguments: [
         CustomAddressTestCase(
             customAddress: LocationInfo(
-                formattedDescription: "Custom Location",
+                briefDescription: "Custom",
+                fullDescription: "Custom Location",
                 latitude: 12.34,
                 longitude: 56.78
             ),
@@ -99,7 +100,8 @@ struct AddressLookupTests {
         ),
         CustomAddressTestCase(
             customAddress: LocationInfo(
-                formattedDescription: "Test Headquarters",
+                briefDescription: "HQ",
+                fullDescription: "Test Headquarters",
                 latitude: 40.7589,
                 longitude: -73.9851
             ),
@@ -108,7 +110,8 @@ struct AddressLookupTests {
         ),
         CustomAddressTestCase(
             customAddress: LocationInfo(
-                formattedDescription: "Special Test Location",
+                briefDescription: "Special",
+                fullDescription: "Special Test Location",
                 latitude: -33.8688,
                 longitude: 151.2093
             ),
@@ -121,8 +124,8 @@ struct AddressLookupTests {
         
         let result = try await service.lookup(address: testCase.queryAddress)
         
-        #expect(result.formattedDescription == testCase.customAddress.formattedDescription,
-                "Expected '\(testCase.customAddress.formattedDescription)' for \(testCase.description)")
+        #expect(result.fullDescription == testCase.customAddress.fullDescription,
+                "Expected '\(testCase.customAddress.fullDescription)' for \(testCase.description)")
         #expect(result.coordinates.latitude == testCase.customAddress.coordinates.latitude,
                 "Expected latitude \(testCase.customAddress.coordinates.latitude) for \(testCase.description)")
         #expect(result.coordinates.longitude == testCase.customAddress.coordinates.longitude,
@@ -163,7 +166,7 @@ struct AddressLookupTests {
         
         let result = try await service.lookup(address: testCase.query)
         
-        #expect(result.formattedDescription == testCase.expectedDescription,
+        #expect(result.fullDescription == testCase.expectedDescription,
                 "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
         #expect(result.coordinates.latitude == 37.7749,
                 "Expected default latitude for \(testCase.description)")
@@ -261,7 +264,7 @@ struct AddressLookupTests {
         // This test verifies we can use MockAddressLookupService through the protocol interface
         let result = try await service.lookup(address: testCase.queryAddress)
         
-        #expect(result.formattedDescription == testCase.expectedDescription,
+        #expect(result.fullDescription == testCase.expectedDescription,
                 "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
         #expect(result.coordinates.latitude == testCase.expectedLatitude,
                 "Expected latitude \(testCase.expectedLatitude) for \(testCase.description)")

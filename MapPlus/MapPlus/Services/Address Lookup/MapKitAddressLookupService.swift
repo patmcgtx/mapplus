@@ -30,9 +30,11 @@ struct MapKitAddressLookupService: AddressLookupService {
             throw MapPlusError.noAddressFound
         }
         return LocationInfo(
-            formattedDescription: item.fullDescription,
+            briefDescription: item.name ?? item.fullDescription.components(separatedBy: "\n").first ?? address,
+            fullDescription: item.fullDescription,
             latitude: coordinate.latitude,
             longitude: coordinate.longitude
         )
     }
 }
+
