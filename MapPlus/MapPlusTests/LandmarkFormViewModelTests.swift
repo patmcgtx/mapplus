@@ -32,16 +32,29 @@ struct LandmarkFormViewModelTests {
         #expect(viewModel.locationSearchInput == "")
     }
 
-    @Test func testInitialLandmarkToEditIsEmptyForCreate() {
+    @Test func testInitialFormFieldsAreEmptyForCreate() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        #expect(viewModel.landmarkToEdit.name == "")
-        #expect(viewModel.landmarkToEdit.formattedAddress == "")
+        #expect(viewModel.name == "")
+        #expect(viewModel.emoji == "")
+        #expect(viewModel.notes == "")
+        #expect(viewModel.categories.isEmpty)
     }
 
-    @Test func testInitialLandmarkToEditIsProvidedLandmarkForEdit() {
-        let landmark = Landmark(name: "Statue of Liberty", formattedAddress: "New York, NY")
+    @Test func testInitialFormFieldsArePopulatedForEdit() {
+        let category = LandmarkCategory(name: "Museums")
+        let landmark = Landmark(
+            name: "Statue of Liberty",
+            notes: "A gift from France",
+            formattedAddress: "New York, NY",
+            emoji: "🗽",
+            categories: [category]
+        )
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
-        #expect(viewModel.landmarkToEdit === landmark)
+        #expect(viewModel.name == "Statue of Liberty")
+        #expect(viewModel.emoji == "🗽")
+        #expect(viewModel.notes == "A gift from France")
+        #expect(viewModel.categories.count == 1)
+        #expect(viewModel.categories.first?.name == "Museums")
     }
 
     // MARK: - formTitle
@@ -78,21 +91,21 @@ struct LandmarkFormViewModelTests {
 
     @Test func testIsSaveEnabledAfterResolvedWithPopulatedName() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.landmarkToEdit.name = "My Place"
+        viewModel.name = "My Place"
         viewModel.addressSearchState = .searchResolved(LocationInfo())
         #expect(viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithEmptyName() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.landmarkToEdit.name = ""
+        viewModel.name = ""
         viewModel.addressSearchState = .searchResolved(LocationInfo())
         #expect(!viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithWhitespaceOnlyName() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.landmarkToEdit.name = "   "
+        viewModel.name = "   "
         viewModel.addressSearchState = .searchResolved(LocationInfo())
         #expect(!viewModel.isSaveEnabled)
     }
@@ -107,7 +120,6 @@ struct LandmarkFormViewModelTests {
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.formattedDescription == "Current Location: San Francisco, CA, United States")
-            #expect(viewModel.landmarkToEdit.formattedAddress == info.formattedDescription)
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
@@ -128,8 +140,13 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.initializeLocation(using: mockService)
 
-        #expect(viewModel.landmarkToEdit.latitude == 37.7749)
-        #expect(viewModel.landmarkToEdit.longitude == -122.4194)
+        // Coordinates are stored internally, but we can verify via the resolved state
+        if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.coordinates.latitude == 37.7749)
+            #expect(info.coordinates.longitude == -122.4194)
+        } else {
+            Issue.record("Expected .searchResolved")
+        }
     }
 
     @Test func testInitializeLocationCreateFailureStaysAtInitial() async {
@@ -179,7 +196,6 @@ struct LandmarkFormViewModelTests {
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.formattedDescription == "San Francisco, CA, United States")
             #expect(viewModel.locationSearchInput == "San Francisco, CA, United States")
-            #expect(viewModel.landmarkToEdit.formattedAddress == "San Francisco, CA, United States")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
@@ -192,8 +208,12 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.searchByText(using: mockService)
 
-        #expect(viewModel.landmarkToEdit.latitude == 37.7749)
-        #expect(viewModel.landmarkToEdit.longitude == -122.4194)
+        if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.coordinates.latitude == 37.7749)
+            #expect(info.coordinates.longitude == -122.4194)
+        } else {
+            Issue.record("Expected .searchResolved")
+        }
     }
 
     @Test func testSearchByTextFailure() async {
@@ -221,7 +241,6 @@ struct LandmarkFormViewModelTests {
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.formattedDescription == "Current Location: San Francisco, CA, United States")
             #expect(viewModel.locationSearchInput == "Current Location: San Francisco, CA, United States")
-            #expect(viewModel.landmarkToEdit.formattedAddress == info.formattedDescription)
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
@@ -233,8 +252,12 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.searchByCurrentLocation(using: mockService)
 
-        #expect(viewModel.landmarkToEdit.latitude == 37.7749)
-        #expect(viewModel.landmarkToEdit.longitude == -122.4194)
+        if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.coordinates.latitude == 37.7749)
+            #expect(info.coordinates.longitude == -122.4194)
+        } else {
+            Issue.record("Expected .searchResolved")
+        }
     }
 
     @Test func testSearchByCurrentLocationFailure() async {
@@ -255,39 +278,49 @@ struct LandmarkFormViewModelTests {
 
     @Test func testSaveSuccessSetsSaveStateToSaved() throws {
         let container = try ModelContainer(
-            for: Landmark.self,
+            for: Landmark.self, LandmarkCategory.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.landmarkToEdit.name = "New Place"
-        viewModel.landmarkToEdit.latitude = 37.77
-        viewModel.landmarkToEdit.longitude = -122.41
+        viewModel.name = "New Place"
+        viewModel.emoji = "📍"
+        viewModel.notes = "A great spot"
 
-        viewModel.save(context: container.mainContext)
+        viewModel.save(using: LandmarkStore(modelContext: container.mainContext))
 
         #expect(viewModel.saveState == .saved)
     }
 
     @Test func testSaveSuccessInsertsLandmarkInContext() throws {
         let container = try ModelContainer(
-            for: Landmark.self,
+            for: Landmark.self, LandmarkCategory.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.landmarkToEdit.name = "Persisted Place"
-        viewModel.landmarkToEdit.latitude = 40.71
-        viewModel.landmarkToEdit.longitude = -74.00
+        viewModel.name = "Persisted Place"
+        viewModel.emoji = "🏛️"
+        viewModel.notes = "Historical site"
+        // Simulate location being resolved
+        viewModel.addressSearchState = .searchResolved(
+            LocationInfo(
+                formattedDescription: "New York, NY",
+                latitude: 40.71,
+                longitude: -74.00
+            )
+        )
 
-        viewModel.save(context: container.mainContext)
+        viewModel.save(using: LandmarkStore(modelContext: container.mainContext))
 
         let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
         #expect(stored.count == 1)
         #expect(stored.first?.name == "Persisted Place")
+        #expect(stored.first?.emoji == "🏛️")
+        #expect(stored.first?.notes == "Historical site")
     }
 
     @Test func testSaveInEditModeUpdatesSaveState() throws {
         let container = try ModelContainer(
-            for: Landmark.self,
+            for: Landmark.self, LandmarkCategory.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         let landmark = Landmark(name: "Old Name", location: .init(latitude: 51.50, longitude: -0.12))
@@ -295,23 +328,159 @@ struct LandmarkFormViewModelTests {
         try container.mainContext.save()
 
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
-        viewModel.landmarkToEdit.name = "New Name"
+        viewModel.name = "New Name"
+        viewModel.emoji = "🏰"
 
-        viewModel.save(context: container.mainContext)
+        viewModel.save(using: LandmarkStore(modelContext: container.mainContext))
 
         #expect(viewModel.saveState == .saved)
         let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
         #expect(stored.first?.name == "New Name")
+        #expect(stored.first?.emoji == "🏰")
     }
 
     @Test func testSaveFailureSetsStateToSaveFailed() {
         let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.name = "Test"
         viewModel.save(using: FailingLandmarkStore())
         if case .saveFailed = viewModel.saveState {
             // Expected
         } else {
             Issue.record("Expected .saveFailed, got \(viewModel.saveState)")
         }
+    }
+    
+    @Test func testSaveAppliesFormFieldsToModel() throws {
+        let container = try ModelContainer(
+            for: Landmark.self, LandmarkCategory.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let category1 = LandmarkCategory(name: "Parks")
+        let category2 = LandmarkCategory(name: "Museums")
+        container.mainContext.insert(category1)
+        container.mainContext.insert(category2)
+        
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.name = "Central Park"
+        viewModel.emoji = "🌳"
+        viewModel.notes = "Beautiful green space"
+        viewModel.categories = [category1, category2]
+        viewModel.addressSearchState = .searchResolved(
+            LocationInfo(
+                formattedDescription: "New York, NY",
+                latitude: 40.78,
+                longitude: -73.96
+            )
+        )
+
+        viewModel.save(using: LandmarkStore(modelContext: container.mainContext))
+
+        let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
+        #expect(stored.count == 1)
+        let savedLandmark = try #require(stored.first)
+        #expect(savedLandmark.name == "Central Park")
+        #expect(savedLandmark.emoji == "🌳")
+        #expect(savedLandmark.notes == "Beautiful green space")
+        #expect(savedLandmark.categories.count == 2)
+    }
+
+    // MARK: - loadCategories
+    
+    @Test func testLoadCategoriesPopulatesAllCategories() throws {
+        let container = try ModelContainer(
+            for: Landmark.self, LandmarkCategory.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        let category1 = LandmarkCategory(name: "Restaurants")
+        let category2 = LandmarkCategory(name: "Museums")
+        let category3 = LandmarkCategory(name: "Parks")
+        container.mainContext.insert(category1)
+        container.mainContext.insert(category2)
+        container.mainContext.insert(category3)
+        try container.mainContext.save()
+        
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.loadCategories(from: container.mainContext)
+        
+        #expect(viewModel.allCategories.count == 3)
+        #expect(viewModel.allCategories.map { $0.name }.sorted() == ["Museums", "Parks", "Restaurants"])
+    }
+    
+    @Test func testLoadCategoriesHandlesEmptyDatabase() throws {
+        let container = try ModelContainer(
+            for: Landmark.self, LandmarkCategory.self,
+            configurations: ModelConfiguration(isStoredInMemoryOnly: true)
+        )
+        
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.loadCategories(from: container.mainContext)
+        
+        #expect(viewModel.allCategories.isEmpty)
+    }
+    
+    // MARK: - addCategory / removeCategory
+    
+    @Test func testAddCategoryAddsToCategories() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let category = LandmarkCategory(name: "Favorites")
+        
+        viewModel.addCategory(category)
+        
+        #expect(viewModel.categories.count == 1)
+        #expect(viewModel.categories.first?.name == "Favorites")
+    }
+    
+    @Test func testRemoveCategoryRemovesFromCategories() {
+        let category1 = LandmarkCategory(name: "Favorites")
+        let category2 = LandmarkCategory(name: "Visited")
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.categories = [category1, category2]
+        
+        viewModel.removeCategory(category1)
+        
+        #expect(viewModel.categories.count == 1)
+        #expect(viewModel.categories.first?.name == "Visited")
+    }
+    
+    // MARK: - unassignedCategories
+    
+    @Test func testUnassignedCategoriesReturnsOnlyUnassigned() {
+        let category1 = LandmarkCategory(name: "Restaurants")
+        let category2 = LandmarkCategory(name: "Museums")
+        let category3 = LandmarkCategory(name: "Parks")
+        
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.allCategories = [category1, category2, category3]
+        viewModel.categories = [category1]
+        
+        let unassigned = viewModel.unassignedCategories
+        
+        #expect(unassigned.count == 2)
+        #expect(unassigned.contains(category2))
+        #expect(unassigned.contains(category3))
+        #expect(!unassigned.contains(category1))
+    }
+    
+    @Test func testUnassignedCategoriesWhenAllAssigned() {
+        let category1 = LandmarkCategory(name: "Restaurants")
+        let category2 = LandmarkCategory(name: "Museums")
+        
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.allCategories = [category1, category2]
+        viewModel.categories = [category1, category2]
+        
+        #expect(viewModel.unassignedCategories.isEmpty)
+    }
+    
+    @Test func testUnassignedCategoriesWhenNoneAssigned() {
+        let category1 = LandmarkCategory(name: "Restaurants")
+        let category2 = LandmarkCategory(name: "Museums")
+        
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.allCategories = [category1, category2]
+        viewModel.categories = []
+        
+        #expect(viewModel.unassignedCategories.count == 2)
     }
 
 }

@@ -30,10 +30,6 @@ struct LandmarkForm: View {
     // Notes preview
     @State private var isNotesPreviewEnabled: Bool = false
     
-    // Categories
-    @Query(sort: \LandmarkCategory.name, order: .forward)
-    private var allCategories: [LandmarkCategory]
-    
     // Field focus
     private enum FocusField: Hashable {
         case landmarkName
@@ -66,6 +62,7 @@ struct LandmarkForm: View {
         .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(using: locationService)
+            viewModel.loadCategories(from: modelContext)
         }
         .onAppear {
             focusField = .landmarkName
@@ -84,16 +81,16 @@ struct LandmarkForm: View {
         Section("Categories") {
             HStack {
                 // A flow layout of categories in edit mode
-                CategoryFlow(categories: $viewModel.landmarkToEdit.categories, mode: .edit)
+                CategoryFlow(categories: $viewModel.categories, mode: .edit)
 
                 Spacer()
                 
                 // A menu of possible categories to add to the landmark
                 Menu {
-                    ForEach(unassignedCategories, id: \.id) { category in
+                    ForEach(viewModel.unassignedCategories, id: \.id) { category in
                         Button(category.name) {
                             withAnimation(.bouncy) {
-                                viewModel.landmarkToEdit.categories = viewModel.landmarkToEdit.addAndSort(category: category)
+                                viewModel.addCategory(category)
                             }
                         }
                     }
@@ -119,7 +116,7 @@ struct LandmarkForm: View {
             HStack(alignment: .lastTextBaseline) {
                 
                 // Landmark name input
-                TextField("name".localized, text: $viewModel.landmarkToEdit.name,
+                TextField("name".localized, text: $viewModel.name,
                           onEditingChanged: { _ in
                 })
                 .textInputAutocapitalization(.words)
@@ -128,7 +125,7 @@ struct LandmarkForm: View {
                 
                 // Landmark name clear button
                 Button {
-                    viewModel.landmarkToEdit.name = ""
+                    viewModel.name = ""
                     focusField = .landmarkName
                 } label: {
                     Image(systemName: "xmark.circle")
@@ -137,13 +134,13 @@ struct LandmarkForm: View {
             
             HStack {
                 // Emoji selector
-                TextField("emoji-placeholder", text: $viewModel.landmarkToEdit.emoji)
+                TextField("emoji-placeholder", text: $viewModel.emoji)
                     .keyboardType(.emoji ?? .default)
                     .focused($focusField, equals: .emoji)
 
                 // Emoji clear button
                 Button {
-                    viewModel.landmarkToEdit.emoji = ""
+                    viewModel.emoji = ""
                     focusField = .emoji
                 } label: {
                     Image(systemName: "xmark.circle")
@@ -159,9 +156,9 @@ struct LandmarkForm: View {
             footer: markdownNote
         ) {
             if isNotesPreviewEnabled {
-                MarkdownPreview(markdown: viewModel.landmarkToEdit.notes)
+                MarkdownPreview(markdown: viewModel.notes)
             } else {
-                TextEditor(text: $viewModel.landmarkToEdit.notes)
+                TextEditor(text: $viewModel.notes)
                     .textInputAutocapitalization(.sentences)
                     .autocorrectionDisabled(false)
             }
@@ -209,15 +206,13 @@ struct LandmarkForm: View {
     
     private var cancelButton: some View {
         Button("cancel".localized, systemImage: "xmark") {
-            // TODO patmcg this rolls back the persistent state but not the in-memory Landmark
-            modelContext.rollback() // Rollback any unsaved changed to the landmark
             dismiss()
         }
     }
     
     private var saveButton: some View {
         Button("save".localized) {
-            viewModel.save(context: modelContext)
+            viewModel.save(using: LandmarkStore(modelContext: modelContext))
         }
         .disabled(!viewModel.isSaveEnabled)
     }
@@ -231,9 +226,9 @@ struct LandmarkForm: View {
                     // Landmark icon
                     VStack {
                         Spacer()
-                        Text(viewModel.landmarkToEdit.emoji)
+                        Text(viewModel.emoji)
                         Spacer()
-                        Text(viewModel.landmarkToEdit.name)
+                        Text(viewModel.name)
                         Spacer()
                     }
                     .multilineTextAlignment(.center)
@@ -256,15 +251,8 @@ struct LandmarkForm: View {
         }
     }
     
-    
-    // MARK: - Internal helpers
-        
-    /// Which categories have not been assigned to the landmake in edit
-    private var unassignedCategories: [LandmarkCategory] {
-        allCategories.filter {
-            viewModel.landmarkToEdit.categories.contains($0) == false
-        }
-    }
+
+    // MARK: - Internal helpers - REMOVED, moved to ViewModel
 
 }
 
