@@ -83,7 +83,7 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
     }
 
     /// A secondary color for some icons, backgrounds, etc.
-    var tintColor: Color? {
+    var tintColor: Color {
         switch self {
         case .cupertino: return .accentColor
         case .eightBit: return .green
