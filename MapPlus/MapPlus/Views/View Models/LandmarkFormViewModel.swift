@@ -5,6 +5,7 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 import SwiftData
+import CoreData
 
 /// View model that provides state and logic for `LandmarkForm`.
 @Observable @MainActor
@@ -49,8 +50,8 @@ final class LandmarkFormViewModel {
     /// The current mode for the form
     let mode: Mode
 
-    /// The landmark to edit in this form
-    var landmarkToEdit: Landmark
+    /// The landmark being edited (private - not exposed to view)
+    private var landmarkToEdit: Landmark
 
     /// The current state of the address/location search
     var addressSearchState: AddressSearchState = .searchInitial
@@ -61,6 +62,23 @@ final class LandmarkFormViewModel {
     /// The text entered in the location search field
     var locationSearchInput: String = ""
 
+    // MARK: - Form Fields (exposed to view via bindings)
+    
+    /// The landmark's name
+    var name: String = ""
+    
+    /// The landmark's emoji icon
+    var emoji: String = ""
+    
+    /// The landmark's notes
+    var notes: String = ""
+    
+    /// The landmark's categories
+    var categories: [LandmarkCategory] = []
+    
+    /// All available categories (loaded from persistence)
+    var allCategories: [LandmarkCategory] = []
+
     init(mode: Mode) {
         self.mode = mode
         switch mode {
@@ -68,24 +86,50 @@ final class LandmarkFormViewModel {
             landmarkToEdit = Landmark()
         case .edit(let landmark):
             landmarkToEdit = landmark
+            // Populate form fields from existing landmark
+            name = landmark.name
+            emoji = landmark.emoji
+            notes = landmark.notes
+            categories = landmark.categories
         }
     }
 
-    /// Saves any changes made to `landmarkToEdit` and updates `saveState`.
-    /// - Parameter context: The persistent context in which to save the landmark
-    func save(context: ModelContext) {
-        save(using: LandmarkStore(modelContext: context))
+    /// Loads available categories from persistence
+    /// - Parameter context: The context to fetch categories from
+    func loadCategories(from context: ModelContext) {
+        let descriptor = FetchDescriptor<LandmarkCategory>(
+            sortBy: [SortDescriptor(\.name, order: .forward)]
+        )
+        allCategories = (try? context.fetch(descriptor)) ?? []
     }
 
-    /// Saves any changes made to `landmarkToEdit` using the given store and updates `saveState`.
+    /// Saves any changes made to the form fields and updates `saveState`.
     /// - Parameter store: The store used to commit the landmark.
     func save(using store: any LandmarkStoring) {
+        // Apply form fields to the model
+        landmarkToEdit.name = name
+        landmarkToEdit.emoji = emoji
+        landmarkToEdit.notes = notes
+        landmarkToEdit.categories = categories
+        
         do {
             try store.commit(landmark: landmarkToEdit)
             saveState = .saved
         } catch {
             saveState = .saveFailed(error)
         }
+    }
+    
+    /// Adds a category to the landmark
+    /// - Parameter category: The category to add
+    func addCategory(_ category: LandmarkCategory) {
+        categories = landmarkToEdit.addAndSort(category: category)
+    }
+    
+    /// Removes a category from the landmark
+    /// - Parameter category: The category to remove
+    func removeCategory(_ category: LandmarkCategory) {
+        categories.removeAll { $0.id == category.id }
     }
 
     /// The title to display at the top of the form.
@@ -102,12 +146,19 @@ final class LandmarkFormViewModel {
 
     /// Whether the Save button should be enabled.
     var isSaveEnabled: Bool {
+        guard name.isPopulated else { return false }
+        
         switch addressSearchState {
         case .searchInitial, .searching, .searchFailed:
             return false
         case .searchResolved:
-            return landmarkToEdit.name.isPopulated
+            return true
         }
+    }
+    
+    /// Categories not yet assigned to this landmark
+    var unassignedCategories: [LandmarkCategory] {
+        allCategories.filter { !categories.contains($0) }
     }
 
     /// Initializes the location state based on the current form mode.
