@@ -28,12 +28,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Address or location name"
+            "value" : "Search by address or name"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Dirección o nombre del lugar"
           }
         }
@@ -554,12 +554,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show me"
+            "value" : "Preview"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "muéstrame"
           }
         }

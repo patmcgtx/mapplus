@@ -41,13 +41,10 @@ struct LandmarkForm: View {
     var body: some View {
         Form {
             saveError
+            locationSearchSection
             detailsSection
-            notesSection
             categoriesSection
-            if case .create = viewModel.mode {
-                locationSearchSection
-            }
-            previewSection
+            notesSection
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -176,8 +173,40 @@ struct LandmarkForm: View {
                 .font(.footnote)
         }
     }
-    
+
     private var locationSearchSection: some View {
+        Section(
+            header: Text("location".localized),
+            footer: landmarkDescription
+        ) {
+            if case .create = viewModel.mode {
+                HStack {
+                    TextField(
+                        "addr-or-location-name".localized,
+                        text: $viewModel.locationSearchInput)
+                    .submitLabel(.search)
+                    .textInputAutocapitalization(.none)
+                    .autocorrectionDisabled(false)
+                    Button {
+                        Task {
+                            await viewModel.searchByText(using: addressLookupService)
+                        }
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
+//                    Button {
+//                        Task {
+//                            await viewModel.searchByCurrentLocation(using: locationService)
+//                        }
+//                    } label: {
+//                        Image(systemName: "location")
+//                    }
+                }
+            }
+        }
+    }
+
+    private var locationSearchSectionOld: some View {
         Section("location".localized) {
             HStack {
                 TextField(
@@ -218,42 +247,19 @@ struct LandmarkForm: View {
     }
     
     @ViewBuilder
-    private var previewSection: some View {
-        Section("preview".localized) {
-            HStack {
-                HStack {
-                    
-                    // Landmark icon
-                    VStack {
-                        Spacer()
-                        Text(viewModel.emoji)
-                        Spacer()
-                        Text(viewModel.name)
-                        Spacer()
-                    }
-                    .multilineTextAlignment(.center)
-                    .padding()
-                    Spacer()
-                    
-                    // Landmark description
-                    switch viewModel.addressSearchState {
-                    case .searchInitial:
-                        EmptyView()
-                    case .searching:
-                        ProgressView()
-                    case .searchResolved(let addressInfo):
-                        Text(addressInfo.formattedDescription)
-                    case .searchFailed(let error):
-                        ErrorView(shortMessage: "location-search-failed".localized, error: error)
-                    }
-                }
-            }
+    private var landmarkDescription: some View {
+        switch viewModel.addressSearchState {
+        case .searchInitial:
+            EmptyView()
+        case .searching:
+            ProgressView()
+        case .searchResolved(let addressInfo):
+            Text(addressInfo.formattedDescription)
+        case .searchFailed(let error):
+            ErrorView(shortMessage: "location-search-failed".localized, error: error)
         }
     }
     
-
-    // MARK: - Internal helpers - REMOVED, moved to ViewModel
-
 }
 
 
