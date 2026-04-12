@@ -40,6 +40,7 @@ struct LandmarkForm: View {
     
     var body: some View {
         Form {
+            previewSection
             saveError
             locationSearchSection
             detailsSection
@@ -70,6 +71,7 @@ struct LandmarkForm: View {
             }
         }
         .onChange(of: viewModel.addressSearchState) { _, newState in
+            // TODO patmcg only overwrite if they have not actually edited the field (manually changed $viewModel.name)
             if case .searchResolved(let locationInfo) = newState {
                 self.viewModel.name = locationInfo.briefDescription
             }
@@ -142,8 +144,9 @@ struct LandmarkForm: View {
             
             HStack {
                 // Emoji selector
+                // TODO patmcg this is really a "symbol" selector, not just emojis any more
                 TextField("emoji-placeholder", text: $viewModel.emoji)
-                    .keyboardType(.emoji ?? .default)
+                    .keyboardType(.default)
                     .focused($focusField, equals: .emoji)
                 LandmarkMapAnnotation(emoji: self.viewModel.emoji)
             }
@@ -193,18 +196,18 @@ struct LandmarkForm: View {
                     .autocorrectionDisabled(false)
                     Button {
                         Task {
+                            await viewModel.searchByCurrentLocation(using: locationService)
+                        }
+                    } label: {
+                        Image(systemName: "location")
+                    }
+                    Button {
+                        Task {
                             await viewModel.searchByText(using: addressLookupService)
                         }
                     } label: {
-                        Image(systemName: "location.magnifyingglass")
+                        Image(systemName: "magnifyingglass")
                     }
-//                    Button {
-//                        Task {
-//                            await viewModel.searchByCurrentLocation(using: locationService)
-//                        }
-//                    } label: {
-//                        Image(systemName: "location")
-//                    }
                 }
             }
         }
@@ -263,6 +266,41 @@ struct LandmarkForm: View {
             ErrorView(shortMessage: "location-search-failed".localized, error: error)
         }
     }
+    
+    @ViewBuilder
+    private var previewSection: some View {
+        Section("preview".localized) {
+            HStack {
+                HStack {
+                    
+                    // Landmark icon
+                    VStack {
+                        Spacer()
+                        LandmarkMapAnnotation(emoji: viewModel.emoji)
+                        Spacer()
+                        Text(viewModel.name).bold()
+                        Spacer()
+                    }
+                    .multilineTextAlignment(.center)
+                    .padding()
+                    Spacer()
+                    
+                    // Landmark description
+                    switch viewModel.addressSearchState {
+                    case .searchInitial:
+                        EmptyView()
+                    case .searching:
+                        ProgressView()
+                    case .searchResolved(let addressInfo):
+                        Text(addressInfo.fullDescription)
+                    case .searchFailed(let error):
+                        ErrorView(shortMessage: "location-search-failed".localized, error: error)
+                    }
+                }
+            }
+        }
+    }
+
     
 }
 
