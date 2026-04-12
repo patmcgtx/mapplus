@@ -194,6 +194,11 @@ struct LandmarkForm: View {
                     .submitLabel(.search)
                     .textInputAutocapitalization(.none)
                     .autocorrectionDisabled(false)
+                    .onSubmit {
+                        Task {
+                            await viewModel.searchByText(using: addressLookupService)
+                        }
+                    }
                     Button {
                         Task {
                             await viewModel.searchByCurrentLocation(using: locationService)
