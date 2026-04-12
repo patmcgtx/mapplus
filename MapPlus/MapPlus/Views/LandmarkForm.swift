@@ -139,7 +139,7 @@ struct LandmarkForm: View {
                 // Emoji selector
                 TextField("emoji-placeholder", text: $viewModel.emoji)
                     .keyboardType(.emoji ?? .default)
-                    .focused($focusField, equals: .emoji)                
+                    .focused($focusField, equals: .emoji)
                 LandmarkMapAnnotation(emoji: self.viewModel.emoji)
             }
         }

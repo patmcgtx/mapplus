@@ -282,7 +282,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Add more details with [Markdown](https://commonmark.org/help/) text."
+            "value" : "Works with [Markdown](https://commonmark.org/help/) text for styling, links, etc."
           }
         },
         "es" : {
