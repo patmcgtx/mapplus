@@ -69,6 +69,15 @@ struct LandmarkForm: View {
                 dismiss()
             }
         }
+        .onChange(of: viewModel.addressSearchState) { _, newState in
+            switch newState {
+            case .searchResolved(let locationInfo):
+                if self.viewModel.name.isEmpty {
+                    self.viewModel.name = locationInfo.formattedDescription
+                }
+            default: break
+            }
+        }
     }
     
     // MARK: - Subviews
@@ -283,3 +292,4 @@ struct LandmarkForm: View {
 }
 
 #endif // DEBUG
+

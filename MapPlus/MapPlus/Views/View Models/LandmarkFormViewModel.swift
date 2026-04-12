@@ -22,11 +22,26 @@ final class LandmarkFormViewModel {
     }
 
     /// Represents the current state of the location/address search.
-    enum AddressSearchState {
+    enum AddressSearchState: Equatable {
         case searchInitial
         case searching
         case searchResolved(LocationInfo)
         case searchFailed(Error)
+
+        static func == (lhs: AddressSearchState, rhs: AddressSearchState) -> Bool {
+            switch (lhs, rhs) {
+            case (.searchInitial, .searchInitial), (.searching, .searching):
+                return true
+            case (.searchResolved(let a), .searchResolved(let b)):
+                return a.formattedDescription == b.formattedDescription &&
+                       a.coordinates.latitude == b.coordinates.latitude &&
+                       a.coordinates.longitude == b.coordinates.longitude
+            case (.searchFailed(let e1), .searchFailed(let e2)):
+                return type(of: e1) == type(of: e2)
+            default:
+                return false
+            }
+        }
     }
 
     /// Represents the current state of saving the landmark.
