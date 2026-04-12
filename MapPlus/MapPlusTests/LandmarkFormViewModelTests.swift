@@ -119,6 +119,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.initializeLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Mock SF")
             #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
@@ -142,6 +143,7 @@ struct LandmarkFormViewModelTests {
 
         // Coordinates are stored internally, but we can verify via the resolved state
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Mock SF")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
         } else {
@@ -194,6 +196,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByText(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "San Fransisco")
             #expect(info.fullDescription == "San Francisco, CA, United States")
             #expect(viewModel.locationSearchInput == "San Francisco, CA, United States")
         } else {
@@ -209,6 +212,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByText(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "San Fransisco")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
         } else {
@@ -239,6 +243,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByCurrentLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Mock SF")
             #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
             #expect(viewModel.locationSearchInput == "(Mock) San Francisco, CA, United States")
         } else {
@@ -253,6 +258,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByCurrentLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Mock SF")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
         } else {
