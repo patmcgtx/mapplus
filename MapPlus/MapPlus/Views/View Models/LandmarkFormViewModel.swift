@@ -123,7 +123,9 @@ final class LandmarkFormViewModel {
     /// Adds a category to the landmark
     /// - Parameter category: The category to add
     func addCategory(_ category: LandmarkCategory) {
-        categories = landmarkToEdit.addAndSort(category: category)
+        guard !categories.contains(where: { $0.id == category.id }) else { return }
+        categories.append(category)
+        categories.sort { $0.name.localizedCaseInsensitiveCompare($1.name) == .orderedAscending }
     }
     
     /// Removes a category from the landmark
