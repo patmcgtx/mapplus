@@ -139,22 +139,8 @@ struct LandmarkForm: View {
                 // Emoji selector
                 TextField("emoji-placeholder", text: $viewModel.emoji)
                     .keyboardType(.emoji ?? .default)
-                    .focused($focusField, equals: .emoji)
-
-                // Emoji clear button
-//                Button {
-//                    viewModel.emoji = ""
-//                    focusField = .emoji
-//                } label: {
-//                    Image(systemName: "xmark.circle")
-//                }
-                // Emoji clear button
-                Button {
-                    viewModel.emoji = ""
-                    focusField = .emoji
-                } label: {
-                    Image(systemName: "plus.magnifyingglass")
-                }
+                    .focused($focusField, equals: .emoji)                
+                LandmarkMapAnnotation(emoji: self.viewModel.emoji)
             }
         }
     }
