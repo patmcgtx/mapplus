@@ -69,7 +69,6 @@ struct LandmarkForm: View {
             }
         }
         .onChange(of: viewModel.addressSearchState) { _, newState in
-            print("+++ Name check: isNameEdited: \(isNameEdited)")
             if !isNameEdited, case .searchResolved(let locationInfo) = newState {
                 self.viewModel.name = locationInfo.briefDescription
             }
@@ -127,7 +126,6 @@ struct LandmarkForm: View {
                 TextField("name".localized, text: $viewModel.name,
                           onEditingChanged: { _ in
                     isNameEdited = true
-                    print("+++ Name field: isNameEdited: \(isNameEdited)")
                 })
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled(false)
@@ -218,33 +216,6 @@ struct LandmarkForm: View {
         }
     }
 
-    private var locationSearchSectionOld: some View {
-        Section("location".localized) {
-            HStack {
-                TextField(
-                    "addr-or-location-name".localized,
-                    text: $viewModel.locationSearchInput)
-                .submitLabel(.search)
-                .textInputAutocapitalization(.none)
-                .autocorrectionDisabled(false)
-                Button {
-                    Task {
-                        await viewModel.searchByText(using: addressLookupService)
-                    }
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
-                Button {
-                    Task {
-                        await viewModel.searchByCurrentLocation(using: locationService)
-                    }
-                } label: {
-                    Image(systemName: "location")
-                }
-            }
-        }
-    }
-    
     private var cancelButton: some View {
         Button("cancel".localized, systemImage: "xmark") {
             dismiss()
