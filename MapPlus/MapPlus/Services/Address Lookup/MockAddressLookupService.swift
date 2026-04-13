@@ -24,7 +24,7 @@ struct MockAddressLookupService: AddressLookupService {
     /// A collection of predefined mock addresses for common test scenarios.
     static let mockAddresses: [String: LocationInfo] = [
         "San Francisco": LocationInfo(
-            briefDescription: "San Fransisco",
+            briefDescription: "San Francisco",
             fullDescription: "San Francisco, CA, United States",
             latitude: 37.7749,
             longitude: -122.4194

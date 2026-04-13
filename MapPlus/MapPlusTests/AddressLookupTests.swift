@@ -20,7 +20,7 @@ struct AddressLookupTests {
     @Test("Mock address lookup success cases", arguments: [
         AddressLookupTestCase(
             query: "San Francisco",
-            expectedBriefDescription: "San Fransisco",
+            expectedBriefDescription: "San Francisco",
             expectedDescription: "San Francisco, CA, United States",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
@@ -28,7 +28,7 @@ struct AddressLookupTests {
         ),
         AddressLookupTestCase(
             query: "san francisco",
-            expectedBriefDescription: "San Fransisco",
+            expectedBriefDescription: "San Francisco",
             expectedDescription: "San Francisco, CA, United States",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
@@ -36,7 +36,7 @@ struct AddressLookupTests {
         ),
         AddressLookupTestCase(
             query: "Francisco",
-            expectedBriefDescription: "San Fransisco",
+            expectedBriefDescription: "San Francisco",
             expectedDescription: "San Francisco, CA, United States",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
@@ -258,7 +258,7 @@ struct AddressLookupTests {
     @Test("Protocol interface with MockService", arguments: [
         ProtocolInterfaceTestCase(
             queryAddress: "San Francisco",
-            expectedBriefDescription: "San Fransisco",
+            expectedBriefDescription: "San Francisco",
             expectedDescription: "San Francisco, CA, United States",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,

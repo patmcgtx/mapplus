@@ -84,7 +84,7 @@ struct LandmarkForm: View {
     private var categoriesSection: some View {
         Section(
             header: Text("Categories"),
-            footer: Text("Categorize this landmarks for map filtering.")
+            footer: Text("landmark-form-categories-instructions".localized)
         ) {
             HStack {
                 // A flow layout of categories in edit mode
@@ -121,7 +121,7 @@ struct LandmarkForm: View {
     private var detailsSection: some View {
         Section(
             header: Text("details".localized),
-            footer: Text("Pick a name and an emoji to appear on the map.")
+            footer: Text("landmark-form-details-instructions".localized)
         ) {
             HStack(alignment: .lastTextBaseline) {
                 
