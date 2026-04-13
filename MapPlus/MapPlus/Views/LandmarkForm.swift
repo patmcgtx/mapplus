@@ -27,9 +27,10 @@ struct LandmarkForm: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
-    // Notes preview
+    // UI state
     @State private var isNotesPreviewEnabled: Bool = false
-    
+    @State private var isNameEdited: Bool = false
+
     // Field focus
     private enum FocusField: Hashable {
         case landmarkName
@@ -62,17 +63,14 @@ struct LandmarkForm: View {
             await viewModel.initializeLocation(using: locationService)
             viewModel.loadCategories(from: modelContext)
         }
-        .onAppear {
-            focusField = .landmarkName
-        }
         .onChange(of: viewModel.saveState) { _, newState in
             if case .saved = newState {
                 dismiss()
             }
         }
         .onChange(of: viewModel.addressSearchState) { _, newState in
-            // TODO patmcg only overwrite if they have not actually edited the field (manually changed $viewModel.name)
-            if case .searchResolved(let locationInfo) = newState {
+            print("+++ Name check: isNameEdited: \(isNameEdited)")
+            if !isNameEdited, case .searchResolved(let locationInfo) = newState {
                 self.viewModel.name = locationInfo.briefDescription
             }
         }
@@ -128,6 +126,8 @@ struct LandmarkForm: View {
                 // Landmark name input
                 TextField("name".localized, text: $viewModel.name,
                           onEditingChanged: { _ in
+                    isNameEdited = true
+                    print("+++ Name field: isNameEdited: \(isNameEdited)")
                 })
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled(false)
