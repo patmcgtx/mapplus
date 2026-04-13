@@ -238,9 +238,6 @@ final class LandmarkFormViewModel {
     ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
     private func applyResolvedAddress(_ address: LocationInfo, updateSearchInput: Bool) {
         addressSearchState = .searchResolved(address)
-        if updateSearchInput {
-            locationSearchInput = address.fullDescription
-        }
         landmarkToEdit.formattedAddress = address.fullDescription
         landmarkToEdit.latitude = address.coordinates.latitude
         landmarkToEdit.longitude = address.coordinates.longitude
