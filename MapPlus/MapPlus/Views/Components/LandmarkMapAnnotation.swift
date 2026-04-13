@@ -33,7 +33,7 @@ struct LandmarkMapAnnotation: View {
     
     @ViewBuilder
     private var fillBackground: some View {
-        Circle()
+        Capsule()
             .fill(fillGradient)
             .strokeBorder(Color.accentColor, lineWidth: 2.0)
     }
@@ -79,20 +79,20 @@ private struct AnnotationPreview: View {
     AnnotationPreview(landmarkEmoji: "☕️")
 }
 
-#Preview("Stars") {
-    AnnotationPreview(landmarkEmoji: "✨")
-}
-
-#Preview("Check") {
-    AnnotationPreview(landmarkEmoji: "✔️")
-}
-
-#Preview("Sword") {
-    AnnotationPreview(landmarkEmoji: "⚔️")
-}
-
 #Preview("Letter") {
     AnnotationPreview(landmarkEmoji: "P")
+}
+
+#Preview("Letters") {
+    AnnotationPreview(landmarkEmoji: "PM")
+}
+
+#Preview("Double") {
+    AnnotationPreview(landmarkEmoji: "☕️🔥")
+}
+
+#Preview("Triple") {
+    AnnotationPreview(landmarkEmoji: "☕️🔥☺️")
 }
 
 #Preview("Overlap") {

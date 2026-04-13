@@ -22,11 +22,27 @@ final class LandmarkFormViewModel {
     }
 
     /// Represents the current state of the location/address search.
-    enum AddressSearchState {
+    enum AddressSearchState: Equatable {
         case searchInitial
         case searching
         case searchResolved(LocationInfo)
         case searchFailed(Error)
+
+        static func == (lhs: AddressSearchState, rhs: AddressSearchState) -> Bool {
+            switch (lhs, rhs) {
+            case (.searchInitial, .searchInitial), (.searching, .searching):
+                return true
+            case (.searchResolved(let a), .searchResolved(let b)):
+                return a.briefDescription == b.briefDescription &&
+                       a.fullDescription == b.fullDescription &&
+                       a.coordinates.latitude == b.coordinates.latitude &&
+                       a.coordinates.longitude == b.coordinates.longitude
+            case (.searchFailed(let e1), .searchFailed(let e2)):
+                return type(of: e1) == type(of: e2)
+            default:
+                return false
+            }
+        }
     }
 
     /// Represents the current state of saving the landmark.
@@ -68,7 +84,7 @@ final class LandmarkFormViewModel {
     var name: String = ""
     
     /// The landmark's emoji icon
-    var emoji: String = ""
+    var emoji: String = "📍"
     
     /// The landmark's notes
     var notes: String = ""
@@ -181,7 +197,8 @@ final class LandmarkFormViewModel {
         case .edit:
             addressSearchState = .searchResolved(
                 LocationInfo(
-                    formattedDescription: landmarkToEdit.formattedAddress,
+                    briefDescription: landmarkToEdit.name,
+                    fullDescription: landmarkToEdit.formattedAddress,
                     latitude: landmarkToEdit.location.latitude,
                     longitude: landmarkToEdit.location.longitude
                 )
@@ -221,10 +238,7 @@ final class LandmarkFormViewModel {
     ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
     private func applyResolvedAddress(_ address: LocationInfo, updateSearchInput: Bool) {
         addressSearchState = .searchResolved(address)
-        if updateSearchInput {
-            locationSearchInput = address.formattedDescription
-        }
-        landmarkToEdit.formattedAddress = address.formattedDescription
+        landmarkToEdit.formattedAddress = address.fullDescription
         landmarkToEdit.latitude = address.coordinates.latitude
         landmarkToEdit.longitude = address.coordinates.longitude
     }

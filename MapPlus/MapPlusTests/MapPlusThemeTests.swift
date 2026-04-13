@@ -147,7 +147,7 @@ struct MapPlusThemeTests {
         let theme: MapPlusTheme
         let expectedDarkModeForegroundColor: Color
         let expectedLightModeForegroundColor: Color
-        let expectedTintColor: Color?
+        let expectedTintColor: Color
     }
     
     @Test(
@@ -157,7 +157,7 @@ struct MapPlusThemeTests {
                 theme: .cupertino,
                 expectedDarkModeForegroundColor: .primary,
                 expectedLightModeForegroundColor: .primary,
-                expectedTintColor: nil
+                expectedTintColor: .accentColor
             ),
             ColorTestCase(
                 theme: .eightBit,

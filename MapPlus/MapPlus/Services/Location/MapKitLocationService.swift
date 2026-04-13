@@ -44,7 +44,8 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         let formattedAddress = formatPlacemark(placemark)
         
         return LocationInfo(
-            formattedDescription: formattedAddress,
+            briefDescription: placemark.name ?? "",
+            fullDescription: formattedAddress,
             latitude: location.coordinate.latitude,
             longitude: location.coordinate.longitude
         )

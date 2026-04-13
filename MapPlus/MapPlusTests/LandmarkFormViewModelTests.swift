@@ -35,7 +35,7 @@ struct LandmarkFormViewModelTests {
     @Test func testInitialFormFieldsAreEmptyForCreate() {
         let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(viewModel.name == "")
-        #expect(viewModel.emoji == "")
+        #expect(viewModel.emoji == "📍")
         #expect(viewModel.notes == "")
         #expect(viewModel.categories.isEmpty)
     }
@@ -92,21 +92,21 @@ struct LandmarkFormViewModelTests {
     @Test func testIsSaveEnabledAfterResolvedWithPopulatedName() {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "My Place"
-        viewModel.addressSearchState = .searchResolved(LocationInfo())
+        viewModel.addressSearchState = .searchResolved(LocationInfo(briefDescription: "", fullDescription: "", latitude: 0.0, longitude: 0.0))
         #expect(viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithEmptyName() {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = ""
-        viewModel.addressSearchState = .searchResolved(LocationInfo())
+        viewModel.addressSearchState = .searchResolved(LocationInfo(briefDescription: "", fullDescription: "", latitude: 0.0, longitude: 0.0))
         #expect(!viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithWhitespaceOnlyName() {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "   "
-        viewModel.addressSearchState = .searchResolved(LocationInfo())
+        viewModel.addressSearchState = .searchResolved(LocationInfo(briefDescription: "", fullDescription: "", latitude: 0.0, longitude: 0.0))
         #expect(!viewModel.isSaveEnabled)
     }
 
@@ -119,7 +119,8 @@ struct LandmarkFormViewModelTests {
         await viewModel.initializeLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.formattedDescription == "Current Location: San Francisco, CA, United States")
+            #expect(info.briefDescription == "Mock SF")
+            #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
@@ -142,6 +143,7 @@ struct LandmarkFormViewModelTests {
 
         // Coordinates are stored internally, but we can verify via the resolved state
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Mock SF")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
         } else {
@@ -176,7 +178,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.initializeLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.formattedDescription == "123 Main St")
+            #expect(info.fullDescription == "123 Main St")
             #expect(info.coordinates.latitude == 37.77)
             #expect(info.coordinates.longitude == -122.41)
         } else {
@@ -194,7 +196,8 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByText(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.formattedDescription == "San Francisco, CA, United States")
+            #expect(info.briefDescription == "San Francisco")
+            #expect(info.fullDescription == "San Francisco, CA, United States")
             #expect(viewModel.locationSearchInput == "San Francisco, CA, United States")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
@@ -209,6 +212,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByText(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "San Francisco")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
         } else {
@@ -239,8 +243,9 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByCurrentLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.formattedDescription == "Current Location: San Francisco, CA, United States")
-            #expect(viewModel.locationSearchInput == "Current Location: San Francisco, CA, United States")
+            #expect(info.briefDescription == "Mock SF")
+            #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
+            #expect(viewModel.locationSearchInput == "(Mock) San Francisco, CA, United States")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
@@ -253,6 +258,7 @@ struct LandmarkFormViewModelTests {
         await viewModel.searchByCurrentLocation(using: mockService)
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Mock SF")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
         } else {
@@ -303,7 +309,8 @@ struct LandmarkFormViewModelTests {
         // Simulate location being resolved
         viewModel.addressSearchState = .searchResolved(
             LocationInfo(
-                formattedDescription: "New York, NY",
+                briefDescription: "",
+                fullDescription: "New York, NY",
                 latitude: 40.71,
                 longitude: -74.00
             )
@@ -367,7 +374,8 @@ struct LandmarkFormViewModelTests {
         viewModel.categories = [category1, category2]
         viewModel.addressSearchState = .searchResolved(
             LocationInfo(
-                formattedDescription: "New York, NY",
+                briefDescription: "",
+                fullDescription: "New York, NY",
                 latitude: 40.78,
                 longitude: -73.96
             )
@@ -493,3 +501,4 @@ private struct FailingLandmarkStore: LandmarkStoring {
         throw SaveError()
     }
 }
+

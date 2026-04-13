@@ -24,27 +24,32 @@ struct MockAddressLookupService: AddressLookupService {
     /// A collection of predefined mock addresses for common test scenarios.
     static let mockAddresses: [String: LocationInfo] = [
         "San Francisco": LocationInfo(
-            formattedDescription: "San Francisco, CA, United States",
+            briefDescription: "San Francisco",
+            fullDescription: "San Francisco, CA, United States",
             latitude: 37.7749,
             longitude: -122.4194
         ),
         "New York": LocationInfo(
-            formattedDescription: "New York, NY, United States",
+            briefDescription: "NYC",
+            fullDescription: "New York, NY, United States",
             latitude: 40.7128,
             longitude: -74.0060
         ),
         "London": LocationInfo(
-            formattedDescription: "London, United Kingdom",
+            briefDescription: "London",
+            fullDescription: "London, United Kingdom",
             latitude: 51.5074,
             longitude: -0.1278
         ),
         "Tokyo": LocationInfo(
-            formattedDescription: "Tokyo, Japan",
+            briefDescription: "Tokyo",
+            fullDescription: "Tokyo, Japan",
             latitude: 35.6762,
             longitude: 139.6503
         ),
         "1 Infinite Loop": LocationInfo(
-            formattedDescription: "1 Infinite Loop, Cupertino, CA 95014, United States",
+            briefDescription: "Apple HQ",
+            fullDescription: "1 Infinite Loop, Cupertino, CA 95014, United States",
             latitude: 37.3349,
             longitude: -122.0090
         )
@@ -80,7 +85,8 @@ struct MockAddressLookupService: AddressLookupService {
         
         // Return a generic address for any other query
         return LocationInfo(
-            formattedDescription: "\(address) (Mock Result)",
+            briefDescription: "Mock address",
+            fullDescription: "\(address) (Mock Result)",
             latitude: 37.7749,
             longitude: -122.4194
         )

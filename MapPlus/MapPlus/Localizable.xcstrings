@@ -28,12 +28,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Address or location name"
+            "value" : "Search by address or name"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Dirección o nombre del lugar"
           }
         }
@@ -224,6 +224,28 @@
     "Key" : {
       "extractionState" : "manual"
     },
+    "landmark-form-categories-instructions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categorize this landmark for map filtering."
+          }
+        }
+      }
+    },
+    "landmark-form-details-instructions" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Pick a name and an emoji to appear on the map."
+          }
+        }
+      }
+    },
     "location" : {
       "localizations" : {
         "en" : {
@@ -279,12 +301,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Works with [Markdown](https://commonmark.org/help/)"
+            "value" : "Works with [Markdown](https://commonmark.org/help/) text for styling, links, etc."
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Funciona con [Markdown](https://commonmark.org/help/)"
           }
         }
@@ -327,12 +349,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Name"
+            "value" : "Landmark name"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "Nombre"
           }
         }
@@ -554,12 +576,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Show me"
+            "value" : "Preview"
           }
         },
         "es" : {
           "stringUnit" : {
-            "state" : "translated",
+            "state" : "needs_review",
             "value" : "muéstrame"
           }
         }

@@ -27,9 +27,10 @@ struct LandmarkForm: View {
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
 
-    // Notes preview
+    // UI state
     @State private var isNotesPreviewEnabled: Bool = false
-    
+    @State private var isNameEdited: Bool = false
+
     // Field focus
     private enum FocusField: Hashable {
         case landmarkName
@@ -40,14 +41,12 @@ struct LandmarkForm: View {
     
     var body: some View {
         Form {
-            saveError
-            detailsSection
-            notesSection
-            categoriesSection
-            if case .create = viewModel.mode {
-                locationSearchSection
-            }
             previewSection
+            saveError
+            locationSearchSection
+            detailsSection
+            categoriesSection
+            notesSection
         }
         .toolbar {
             ToolbarItem(placement: .cancellationAction) {
@@ -64,12 +63,14 @@ struct LandmarkForm: View {
             await viewModel.initializeLocation(using: locationService)
             viewModel.loadCategories(from: modelContext)
         }
-        .onAppear {
-            focusField = .landmarkName
-        }
         .onChange(of: viewModel.saveState) { _, newState in
             if case .saved = newState {
                 dismiss()
+            }
+        }
+        .onChange(of: viewModel.addressSearchState) { _, newState in
+            if !isNameEdited, case .searchResolved(let locationInfo) = newState {
+                self.viewModel.name = locationInfo.briefDescription
             }
         }
     }
@@ -78,7 +79,10 @@ struct LandmarkForm: View {
     
     @ViewBuilder
     private var categoriesSection: some View {
-        Section("Categories") {
+        Section(
+            header: Text("Categories"),
+            footer: Text("landmark-form-categories-instructions".localized)
+        ) {
             HStack {
                 // A flow layout of categories in edit mode
                 CategoryFlow(categories: $viewModel.categories, mode: .edit)
@@ -112,12 +116,16 @@ struct LandmarkForm: View {
     }
     
     private var detailsSection: some View {
-        Section("details".localized) {
+        Section(
+            header: Text("details".localized),
+            footer: Text("landmark-form-details-instructions".localized)
+        ) {
             HStack(alignment: .lastTextBaseline) {
                 
                 // Landmark name input
                 TextField("name".localized, text: $viewModel.name,
                           onEditingChanged: { _ in
+                    isNameEdited = true
                 })
                 .textInputAutocapitalization(.words)
                 .autocorrectionDisabled(false)
@@ -134,17 +142,11 @@ struct LandmarkForm: View {
             
             HStack {
                 // Emoji selector
+                // TODO patmcg this is really a "symbol" selector, not just emojis any more
                 TextField("emoji-placeholder", text: $viewModel.emoji)
-                    .keyboardType(.emoji ?? .default)
+                    .keyboardType(.default)
                     .focused($focusField, equals: .emoji)
-
-                // Emoji clear button
-                Button {
-                    viewModel.emoji = ""
-                    focusField = .emoji
-                } label: {
-                    Image(systemName: "xmark.circle")
-                }
+                LandmarkMapAnnotation(emoji: self.viewModel.emoji)
             }
         }
     }
@@ -176,34 +178,44 @@ struct LandmarkForm: View {
                 .font(.footnote)
         }
     }
-    
+
     private var locationSearchSection: some View {
-        Section("location".localized) {
-            HStack {
-                TextField(
-                    "addr-or-location-name".localized,
-                    text: $viewModel.locationSearchInput)
-                .submitLabel(.search)
-                .textInputAutocapitalization(.none)
-                .autocorrectionDisabled(false)
-                Button {
-                    Task {
-                        await viewModel.searchByText(using: addressLookupService)
+        Section(
+            header: Text("location".localized),
+            footer: landmarkDescription
+        ) {
+            if case .create = viewModel.mode {
+                HStack {
+                    TextField(
+                        "addr-or-location-name".localized,
+                        text: $viewModel.locationSearchInput)
+                    .submitLabel(.search)
+                    .textInputAutocapitalization(.none)
+                    .autocorrectionDisabled(false)
+                    .onSubmit {
+                        Task {
+                            await viewModel.searchByText(using: addressLookupService)
+                        }
                     }
-                } label: {
-                    Image(systemName: "magnifyingglass")
-                }
-                Button {
-                    Task {
-                        await viewModel.searchByCurrentLocation(using: locationService)
+                    Button {
+                        Task {
+                            await viewModel.searchByCurrentLocation(using: locationService)
+                        }
+                    } label: {
+                        Image(systemName: "location")
                     }
-                } label: {
-                    Image(systemName: "location")
+                    Button {
+                        Task {
+                            await viewModel.searchByText(using: addressLookupService)
+                        }
+                    } label: {
+                        Image(systemName: "magnifyingglass")
+                    }
                 }
             }
         }
     }
-    
+
     private var cancelButton: some View {
         Button("cancel".localized, systemImage: "xmark") {
             dismiss()
@@ -218,6 +230,20 @@ struct LandmarkForm: View {
     }
     
     @ViewBuilder
+    private var landmarkDescription: some View {
+        switch viewModel.addressSearchState {
+        case .searchInitial:
+            EmptyView()
+        case .searching:
+            ProgressView()
+        case .searchResolved(let addressInfo):
+            Text(addressInfo.fullDescription)
+        case .searchFailed(let error):
+            ErrorView(shortMessage: "location-search-failed".localized, error: error)
+        }
+    }
+    
+    @ViewBuilder
     private var previewSection: some View {
         Section("preview".localized) {
             HStack {
@@ -226,9 +252,9 @@ struct LandmarkForm: View {
                     // Landmark icon
                     VStack {
                         Spacer()
-                        Text(viewModel.emoji)
+                        LandmarkMapAnnotation(emoji: viewModel.emoji)
                         Spacer()
-                        Text(viewModel.name)
+                        Text(viewModel.name).bold()
                         Spacer()
                     }
                     .multilineTextAlignment(.center)
@@ -242,7 +268,7 @@ struct LandmarkForm: View {
                     case .searching:
                         ProgressView()
                     case .searchResolved(let addressInfo):
-                        Text(addressInfo.formattedDescription)
+                        Text(addressInfo.fullDescription)
                     case .searchFailed(let error):
                         ErrorView(shortMessage: "location-search-failed".localized, error: error)
                     }
@@ -250,10 +276,8 @@ struct LandmarkForm: View {
             }
         }
     }
+
     
-
-    // MARK: - Internal helpers - REMOVED, moved to ViewModel
-
 }
 
 
@@ -278,3 +302,4 @@ struct LandmarkForm: View {
 }
 
 #endif // DEBUG
+
