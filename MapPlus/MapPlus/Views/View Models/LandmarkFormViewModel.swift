@@ -33,7 +33,8 @@ final class LandmarkFormViewModel {
             case (.searchInitial, .searchInitial), (.searching, .searching):
                 return true
             case (.searchResolved(let a), .searchResolved(let b)):
-                return a.fullDescription == b.fullDescription &&
+                return a.briefDescription == b.briefDescription &&
+                       a.fullDescription == b.fullDescription &&
                        a.coordinates.latitude == b.coordinates.latitude &&
                        a.coordinates.longitude == b.coordinates.longitude
             case (.searchFailed(let e1), .searchFailed(let e2)):
