@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+// TODO patmcg remove this
+
 /// A view for filtering which landmarks appear on the map by category.
 struct CategoryFilterView: View {
 

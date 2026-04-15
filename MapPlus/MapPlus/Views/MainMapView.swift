@@ -32,6 +32,7 @@ struct MainMapView: View {
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
     
     // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
+    // TODO patmcg didn't this get moved to the view model?
     @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
 
     // Preferences
@@ -54,6 +55,10 @@ struct MainMapView: View {
                     UserAnnotation()
                 }
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("settings".localized, systemImage: "gearshape") {}
+                        // TODO patmcg add settings form
+                    }
                     ToolbarItem() {
                         themeMenu
                     }
@@ -61,8 +66,7 @@ struct MainMapView: View {
                         poiMenu
                     }
                     ToolbarItem() {
-                        Button("settings".localized, systemImage: "gearshape") {}
-                        // TODO patmcg add settings form
+                        categoriesMenu
                     }
                 }
                 .sheet(item: self.$selectedLandmark) { landmark in
@@ -85,7 +89,6 @@ struct MainMapView: View {
                         VStack(spacing: 16) {
                             addButton
                             locateButton
-                            filterButton
                             landmarksMenu
                         }
                         .padding(.trailing, 16)
@@ -136,8 +139,9 @@ struct MainMapView: View {
         .accessibilityLabel("add-place".localized)
     }
     
+    // TODO patmcg remove this
     @ViewBuilder
-    var filterButton: some View {
+    var filterButtonOld: some View {
         let imageName = selectedCategoryNames.isEmpty
         ? "line.3.horizontal.decrease.circle"
         : "line.3.horizontal.decrease.circle.fill"
@@ -243,10 +247,54 @@ struct MainMapView: View {
                         if level == activePOILevel {
                             Label(level.localizedName, systemImage: "checkmark")
                         } else {
-                            Text(level.localizedName)
+                            Spacer()
                         }
+                        Text(level.localizedName)
                     }
                 }
+            }
+        }
+    }
+    
+    @ViewBuilder
+    private var categoriesMenu: some View {
+        Menu("Categories".localized, systemImage: "camera.filters") {
+            Text("Categories")
+            Button {
+                selectedCategoryNames = []
+            } label: {
+                HStack {
+                    if selectedCategoryNames.isEmpty {
+                        Label("All", systemImage: "checkmark")
+                    } else {
+                        Spacer()
+                    }
+                    Text("All")
+                }
+            }
+            Divider()
+            ForEach(allCategories, id: \.id) { category in
+                Button {
+                    if selectedCategoryNames.contains(category.name) {
+                        selectedCategoryNames.remove(category.name)
+                    } else {
+                        selectedCategoryNames.insert(category.name)
+                    }
+                } label: {
+                    HStack {
+                        Spacer()
+                        if selectedCategoryNames.contains(category.name) {
+                            Label(category.name, systemImage: "checkmark")
+                        }
+                        Text(category.name)
+                    }
+                }
+            }
+            Divider()
+            Button {
+                // TODO patmcg add category edit screen
+            } label: {
+                Text("Edit...")
             }
         }
     }
