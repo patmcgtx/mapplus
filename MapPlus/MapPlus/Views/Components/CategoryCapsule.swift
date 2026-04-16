@@ -11,10 +11,15 @@ struct CategoryCapsule: View {
     
     /// Options for viewing or editing the category
     enum Mode {
-        /// View the capsule read-only
+        
+        /// View the category read-only
         case view
+        
         /// View the capsule in edit mode (with a delete button)
         case edit
+        
+        /// Select or unselect a category
+        case select
     }
     
     /// Which category to represent
@@ -28,16 +33,19 @@ struct CategoryCapsule: View {
 
     var body: some View {
         HStack {
+            let fontWeight: Font.Weight = category.isSelected ? .black : .bold
             Text(category.name.uppercased())
-                .fontWeight(.black)
+                .fontWeight(fontWeight)
                 .fontDesign(.rounded)
                 .shadow(radius: 1.0)
             
-            if .edit == mode {
+            switch mode {
+
+            case .edit:
                 Button(action: {
-                    // For whatever reason, doing the delete here causes bugs
-                    // and basically deletes *all* the categories.
-                    // We have to handle it with .onTapGesture below instead.
+                    // I tried to handle the delete here, but it caused
+                    // bugs, deleting *all* the categories.
+                    // Handle it with .onTapGesture below instead.
                 }, label: {
                     Image(systemName: "x.circle")
                 })
@@ -48,6 +56,19 @@ struct CategoryCapsule: View {
                         self.fromCategories.removeAll { $0.name == category.name }
                     }
                 }
+                
+            case .select:
+                Button(action: {
+                }, label: {
+                    Image(systemName: "plus")
+                })
+                .onTapGesture {
+                    withAnimation(.bouncy) {
+                        // TODO patmcg "select" or "unselect" here
+                    }
+                }
+
+            default: EmptyView()
             }
         }
         .foregroundStyle(.primary)
@@ -69,27 +90,24 @@ struct CategoryCapsule: View {
 #if DEBUG
 
 #Preview("Short") {
-    @Previewable @State var categories: [LandmarkCategory] = [
-        LandmarkCategory(name: "Cafes")
-    ]
     CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
                     mode: .view,
-                    fromCategories: $categories)
-    .foregroundStyle(.green, .white)
+                    fromCategories: .constant([]))
 }
 
-#Preview("Short with delete") {
-    @Previewable @State var categories: [LandmarkCategory] = [
-        LandmarkCategory(name: "Cafes"),
-        LandmarkCategory(name: "Restaurants"),
-        LandmarkCategory(name: "Hotels")
-    ]
+#Preview("Short - edit") {
     CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
                     mode: .edit,
-                    fromCategories: $categories)
+                    fromCategories: .constant([]))
 }
 
-#Preview("Medium long name") {
+#Preview("Short - select") {
+    CategoryCapsule(category: LandmarkCategory(name: "Arcades"),
+                    mode: .select,
+                    fromCategories: .constant([]))
+}
+
+#Preview("Long name") {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "Pretty long category name"
@@ -99,7 +117,7 @@ struct CategoryCapsule: View {
     )
 }
 
-#Preview("Medium long name - delete") {
+#Preview("Long name - delete") {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "Pretty long category name"
@@ -109,12 +127,12 @@ struct CategoryCapsule: View {
     )
 }
 
-#Preview("Pretty long with delete") {
+#Preview("Crazy long name with edit") {
     CategoryCapsule(
         category: LandmarkCategory(
             name: "This is a really long category name and it is going to be really long and it will probably break the preview"
         ),
-        mode: .view,
+        mode: .edit,
         fromCategories: .constant([])
     )
 }

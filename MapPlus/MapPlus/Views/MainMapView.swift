@@ -72,13 +72,9 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoryFlow(categories: .constant(allCategories), mode: .edit)
-//                                CategoryFilterView(
-//                                    allCategories: allCategories,
-//                                    selectedCategoryNames: $selectedCategoryNames
-//                                )
+                                CategoryFlow(categories: .constant(allCategories), mode: .select)
                                 .padding()
-                                .frame(width: UIScreen.main.bounds.width * 0.85)
+                                .frame(width: UIScreen.main.bounds.width * 0.85) // TODO patmcg adjust, using modern method
                                 .presentationCompactAdaptation(.none)
                             }
                     }

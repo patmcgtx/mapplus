@@ -18,6 +18,9 @@ class LandmarkCategory {
     /// The name of the category, e.g. "Cafes"
     var name: String
     
+    /// Whether this landmark is currently selected in app
+    var isSelected: Bool = false
+    
     /// Which landmarks are tagged with this category
     @Relationship(inverse: \Landmark.categories)
     var landmarks: [Landmark] = []
