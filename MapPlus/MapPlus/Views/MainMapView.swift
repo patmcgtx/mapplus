@@ -66,7 +66,21 @@ struct MainMapView: View {
                         poiMenu
                     }
                     ToolbarItem() {
-                        categoriesMenu
+                        categoriesButton
+                            .popover(
+                                isPresented: $isShowingCategoryFilter,
+                                attachmentAnchor: .point(.topTrailing),
+                                arrowEdge: .top
+                            ) {
+                                CategoryFlow(categories: .constant(allCategories), mode: .edit)
+//                                CategoryFilterView(
+//                                    allCategories: allCategories,
+//                                    selectedCategoryNames: $selectedCategoryNames
+//                                )
+                                .padding()
+                                .frame(width: UIScreen.main.bounds.width * 0.85)
+                                .presentationCompactAdaptation(.none)
+                            }
                     }
                 }
                 .sheet(item: self.$selectedLandmark) { landmark in
@@ -112,13 +126,13 @@ struct MainMapView: View {
                     LandmarkForm(mode: .create)
                 }
             }
-            .sheet(isPresented: $isShowingCategoryFilter) {
-                CategoryFilterView(
-                    allCategories: allCategories,
-                    selectedCategoryNames: $selectedCategoryNames
-                )
-                .presentationDetents([.medium, .large])
-            }
+//            .sheet(isPresented: $isShowingCategoryFilter) {
+//                CategoryFilterView(
+//                    allCategories: allCategories,
+//                    selectedCategoryNames: $selectedCategoryNames
+//                )
+//                .presentationDetents([.medium, .large])
+//            }
             .environment(\.theme, self.activeTheme)
             .apply(theme: activeTheme)
         }
@@ -256,8 +270,16 @@ struct MainMapView: View {
         }
     }
     
+    @ViewBuilder var categoriesButton: some View {
+        // theatermasks, map, circle.grid.3x3, mappin.and.ellipse.circle.fill, square.stack.3d.down.right.fill, circle.grid.2x2.topleft.checkmark.filled
+        let iconName = allCategories.isEmpty ? "circle.grid.3x3.fill" : "map"
+        Button("Categories", systemImage: iconName) {
+            isShowingCategoryFilter = true
+        }
+    }
+    
     @ViewBuilder
-    private var categoriesMenu: some View {
+    private var categoriesMenuOld: some View {
         Menu("Categories".localized, systemImage: "camera.filters") {
             Text("Categories")
             Button {
