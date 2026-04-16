@@ -28,7 +28,7 @@ class MockLocationService: LocationService {
     /// - Throws: MapPlusError.noAddressFound if shouldSucceed is false.
     func getCurrentLocation() async throws -> LocationInfo {
         // Simulate network/location delay
-        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        try await Task.sleep(for: .seconds(5))
         
         if !shouldSucceed {
             throw MapPlusError.noAddressFound

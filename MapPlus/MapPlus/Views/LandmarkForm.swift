@@ -116,10 +116,7 @@ struct LandmarkForm: View {
     }
     
     private var detailsSection: some View {
-        Section(
-            header: Text("details".localized),
-            footer: Text("landmark-form-details-instructions".localized)
-        ) {
+        Section("details".localized) {
             HStack(alignment: .lastTextBaseline) {
                 
                 // Landmark name input
@@ -141,12 +138,16 @@ struct LandmarkForm: View {
             }
             
             HStack {
-                // Emoji selector
-                // TODO patmcg this is really a "symbol" selector, not just emojis any more
+                // TODO patmcg allow full keyboard in settings
                 TextField("emoji-placeholder", text: $viewModel.emoji)
-                    .keyboardType(.default)
+                    .keyboardType(.emoji ?? .default)
                     .focused($focusField, equals: .emoji)
-                LandmarkMapAnnotation(emoji: self.viewModel.emoji)
+                Button {
+                    viewModel.emoji = ""
+                    focusField = .emoji
+                } label: {
+                    Image(systemName: "xmark.circle")
+                }
             }
         }
     }
@@ -180,10 +181,7 @@ struct LandmarkForm: View {
     }
 
     private var locationSearchSection: some View {
-        Section(
-            header: Text("location".localized),
-            footer: landmarkDescription
-        ) {
+        Section("location".localized) {
             if case .create = viewModel.mode {
                 HStack {
                     TextField(
@@ -196,13 +194,6 @@ struct LandmarkForm: View {
                         Task {
                             await viewModel.searchByText(using: addressLookupService)
                         }
-                    }
-                    Button {
-                        Task {
-                            await viewModel.searchByCurrentLocation(using: locationService)
-                        }
-                    } label: {
-                        Image(systemName: "location")
                     }
                     Button {
                         Task {
@@ -263,12 +254,14 @@ struct LandmarkForm: View {
                     
                     // Landmark description
                     switch viewModel.addressSearchState {
-                    case .searchInitial:
-                        EmptyView()
-                    case .searching:
+                    case .searchInitial, .searching:
+                        Spacer()
                         ProgressView()
+                        Spacer()
                     case .searchResolved(let addressInfo):
+                        Spacer()
                         Text(addressInfo.fullDescription)
+                        Spacer()
                     case .searchFailed(let error):
                         ErrorView(shortMessage: "location-search-failed".localized, error: error)
                     }

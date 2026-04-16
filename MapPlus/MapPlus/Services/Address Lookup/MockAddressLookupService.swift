@@ -61,7 +61,7 @@ struct MockAddressLookupService: AddressLookupService {
     /// - Throws: MapPlusError.noAddressFound if shouldSucceed is false or address is not in mock data.
     func lookup(address: String) async throws -> LocationInfo {
         // Simulate network delay
-        try await Task.sleep(nanoseconds: 100_000_000) // 0.1 seconds
+        try await Task.sleep(for: .seconds(2))
         
         if !shouldSucceed {
             throw MapPlusError.noAddressFound
