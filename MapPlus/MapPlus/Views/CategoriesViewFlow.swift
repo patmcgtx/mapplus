@@ -7,7 +7,7 @@
 import SwiftUI
 import Flow
 
-/// Displays a list of landmark categories in a horizontal flow layout
+/// Displays a read-only collection of landmark categories in a horizontal flow layout
 struct CategoriesViewFlow: View {
     
     /// The categories to update on edit / delete
