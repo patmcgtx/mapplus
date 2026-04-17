@@ -54,7 +54,7 @@ struct LandmarkDetailsView: View {
                     .font(.title)
                     .padding()
                     
-                    CategoryFlow(categories: .constant(landmark.categoriesSorted), mode: .view)
+                    ViewCategoriesFlow(categories: landmark.categoriesSorted)
                     
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
