@@ -60,11 +60,11 @@ struct CategoryCapsule: View {
             case .select:
                 Button(action: {
                 }, label: {
-                    Image(systemName: "plus")
+                    Image(systemName: category.isSelected ? "checkmark.circle.fill" : "circle")
                 })
                 .onTapGesture {
                     withAnimation(.bouncy) {
-                        // TODO patmcg "select" or "unselect" here
+                        category.isSelected.toggle()
                     }
                 }
 
