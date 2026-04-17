@@ -8,14 +8,11 @@ import SwiftUI
 import Flow
 
 /// Displays a list of landmark categories in a horizontal flow layout
-struct CategoryFlow: View {
+struct CategoriesViewFlow: View {
     
     /// The categories to update on edit / delete
     @Binding var categories: [LandmarkCategory]
     
-    /// Read-only or edit?
-    let mode: CategoryCapsule.Mode
-
     var body: some View {
         if categories.isEmpty {
             EmptyView()
@@ -24,7 +21,7 @@ struct CategoryFlow: View {
                 // TODO patmcg encapsulate this sorting here???
                 ForEach(categories, id: \.id) { category in
                     CategoryCapsule(category: category,
-                                    mode: mode,
+                                    mode: .view,
                                     fromCategories: $categories)
                 }
             }
@@ -45,7 +42,7 @@ struct CategoryFlow: View {
         LandmarkCategory(name: "seven"),
         LandmarkCategory(name: "eight"),
     ]
-    CategoryFlow(categories: $categories, mode: .view)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #Preview("Several - edit") {
@@ -59,21 +56,21 @@ struct CategoryFlow: View {
         LandmarkCategory(name: "seven"),
         LandmarkCategory(name: "eight"),
     ]
-    CategoryFlow(categories: $categories, mode: .edit)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #Preview("One") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "one")
     ]
-    CategoryFlow(categories: $categories, mode: .view)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #Preview("One - edit") {
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "one")
     ]
-    CategoryFlow(categories: $categories, mode: .edit)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #Preview("Two") {
@@ -81,7 +78,7 @@ struct CategoryFlow: View {
         LandmarkCategory(name: "one"),
         LandmarkCategory(name: "two")
     ]
-    CategoryFlow(categories: $categories, mode: .view)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #Preview("Two - edit") {
@@ -89,12 +86,12 @@ struct CategoryFlow: View {
         LandmarkCategory(name: "one"),
         LandmarkCategory(name: "two")
     ]
-    CategoryFlow(categories: $categories, mode: .edit)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #Preview("None") {
     @Previewable @State var categories: [LandmarkCategory] = []
-    CategoryFlow(categories: $categories, mode: .view)
+    CategoriesViewFlow(categories: $categories)
 }
 
 #endif // DEBUG

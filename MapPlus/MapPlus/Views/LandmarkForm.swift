@@ -85,7 +85,7 @@ struct LandmarkForm: View {
         ) {
             HStack {
                 // A flow layout of categories in edit mode
-                CategoryFlow(categories: $viewModel.categories, mode: .edit)
+                CategoriesEditFlow(categories: $viewModel.categories)
 
                 Spacer()
                 

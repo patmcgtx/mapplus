@@ -72,7 +72,7 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoryFlow(categories: .constant(allCategories), mode: .select)
+                                CategoriesViewFlow(categories: .constant(allCategories))
                                 .padding()
                                 .frame(width: UIScreen.main.bounds.width * 0.85) // TODO patmcg adjust, using modern method
                                 .presentationCompactAdaptation(.none)
