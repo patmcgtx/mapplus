@@ -20,9 +20,11 @@ struct CategoriesViewFlow: View {
             HFlow {
                 // TODO patmcg encapsulate this sorting here???
                 ForEach(categories, id: \.id) { category in
-                    CategoryCapsule(category: category,
-                                    mode: .view,
-                                    fromCategories: $categories)
+                    CategoryCapsuleNew(
+                        category: category,
+                        canToggle: false,
+                        action: nil
+                    )
                 }
             }
         }
