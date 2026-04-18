@@ -127,13 +127,6 @@ struct MainMapView: View {
                     LandmarkForm(mode: .create)
                 }
             }
-//            .sheet(isPresented: $isShowingCategoryFilter) {
-//                CategoryFilterView(
-//                    allCategories: allCategories,
-//                    selectedCategoryNames: $selectedCategoryNames
-//                )
-//                .presentationDetents([.medium, .large])
-//            }
             .environment(\.theme, self.activeTheme)
             .apply(theme: activeTheme)
         }
@@ -271,9 +264,11 @@ struct MainMapView: View {
         }
     }
     
-    @ViewBuilder var categoriesButton: some View {
+    @ViewBuilder
+    var categoriesButton: some View {
+        // TODO patmcg move view logic ^ in here if you can
         // theatermasks, map, circle.grid.3x3, mappin.and.ellipse.circle.fill, square.stack.3d.down.right.fill, circle.grid.2x2.topleft.checkmark.filled
-        let iconName = allCategories.isEmpty ? "circle.grid.3x3.fill" : "map"
+        let iconName = selectedCategoryNames.isEmpty ? "map" : "map.fill"
         Button("Categories", systemImage: iconName) {
             isShowingCategoryFilter = true
         }

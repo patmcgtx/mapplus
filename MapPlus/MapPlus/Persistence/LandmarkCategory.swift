@@ -18,6 +18,7 @@ class LandmarkCategory {
     /// The name of the category, e.g. "Cafes"
     var name: String
     
+    // TODO patmcg use this or lose it; currently select in-memory based on name 🤷🏻‍♂️
     /// Whether this landmark is currently selected in app
     var isSelected: Bool = false
     
