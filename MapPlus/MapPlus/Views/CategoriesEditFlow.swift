@@ -7,10 +7,10 @@
 import SwiftUI
 import Flow
 
-/// Displays landmark categories, allowing individual categories to be added or deleted
+/// Displays landmark categories, allowing individual categories to be added or deleted.
 struct CategoriesEditFlow: View {
     
-    /// The categories to update on edit / delete
+    /// The categories list to edit.
     @Binding var categories: [LandmarkCategory]
     
     var body: some View {
@@ -18,13 +18,36 @@ struct CategoriesEditFlow: View {
             EmptyView()
         } else {
             HFlow {
-                // TODO patmcg encapsulate this sorting here???
-                ForEach(categories, id: \.id) { category in
-                    CategoryCapsule(category: category,
-                                    mode: .edit,
-                                    fromCategories: $categories)
+                ForEach(categories) { category in
+                    CategoryCapsuleNew(
+                        category: category,
+                        canToggle: false,
+                        action: CategoryCapsuleNew
+                            .Action(
+                                systemImage: "x.circle",
+                                onTap: { tappedCategory in
+                                    withAnimation(.bouncy) {
+                                        categories.removeAll { $0 == tappedCategory }
+                                    }
+                                }
+                            )
+                    )
                 }
             }
         }
     }
 }
+
+#if DEBUG
+
+#Preview {
+    @Previewable @State var categories: [LandmarkCategory] = [
+        LandmarkCategory(name: "One"),
+        LandmarkCategory(name: "Two"),
+        LandmarkCategory(name: "Three"),
+    ]
+    CategoriesEditFlow(categories: $categories)
+    
+}
+
+#endif // DEBUG

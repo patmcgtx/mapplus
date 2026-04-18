@@ -44,10 +44,12 @@ struct CategoryCapsuleNew: View {
             
             if let categoryAction = action {
                 Button(action: {
-                    categoryAction.onTap(category)
                 }, label: {
                     Image(systemName: categoryAction.systemImage)
                 })
+                .onTapGesture {
+                    categoryAction.onTap(category)
+                }
             }
         }
         .onTapGesture {
@@ -87,26 +89,14 @@ struct CategoryCapsuleNew: View {
 
 #Preview("Delete") {
     
-    @Previewable @State var isDeleted = false
-    
-    if isDeleted {
-        Image(systemName: "trash")
-            .resizable()
-            .frame(width: 60, height: 60)
-    } else {
-        CategoryCapsuleNew(
-            category: LandmarkCategory(name: "Golf"),
-            canToggle: false,
-            action: CategoryCapsuleNew.Action(
-                systemImage: "x.circle",
-                onTap: { category in
-                    withAnimation {
-                        isDeleted = true
-                    }
-                }
-            )
+    CategoryCapsuleNew(
+        category: LandmarkCategory(name: "Golf"),
+        canToggle: false,
+        action: CategoryCapsuleNew.Action(
+            systemImage: "x.circle",
+            onTap: { category in }
         )
-    }
+    )
 }
 
 #Preview("Toggle") {

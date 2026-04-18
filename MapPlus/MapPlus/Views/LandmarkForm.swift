@@ -91,7 +91,7 @@ struct LandmarkForm: View {
                 
                 // A menu of possible categories to add to the landmark
                 Menu {
-                    ForEach(viewModel.unassignedCategories, id: \.id) { category in
+                    ForEach(viewModel.unassignedCategories) { category in
                         Button(category.name) {
                             withAnimation(.bouncy) {
                                 viewModel.addCategory(category)

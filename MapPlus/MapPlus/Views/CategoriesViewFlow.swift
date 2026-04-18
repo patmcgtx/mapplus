@@ -18,7 +18,7 @@ struct CategoriesViewFlow: View {
             EmptyView()
         } else {
             HFlow {
-                ForEach(categories, id: \.id) { category in
+                ForEach(categories) { category in
                     CategoryCapsuleNew(
                         category: category,
                         canToggle: false,

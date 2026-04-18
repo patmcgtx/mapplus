@@ -19,8 +19,7 @@ struct CategoriesSelectFlow: View {
             EmptyView()
         } else {
             HFlow {
-                // TODO patmcg encapsulate this sorting here???
-                ForEach(categories, id: \.id) { category in
+                ForEach(categories) { category in
                     CategoryCapsule(category: category,
                                     mode: .select,
                                     fromCategories: $categories)

@@ -291,7 +291,7 @@ struct MainMapView: View {
                 }
             }
             Divider()
-            ForEach(allCategories, id: \.id) { category in
+            ForEach(allCategories) { category in
                 Button {
                     if selectedCategoryNames.contains(category.name) {
                         selectedCategoryNames.remove(category.name)
