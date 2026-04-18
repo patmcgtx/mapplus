@@ -10,37 +10,44 @@ import SwiftUI
 struct CategoryCapsuleNew: View {
 
     /// Describes an action for the category
-    struct CategoryAction {
+    struct Action {
+        
         /// System image for an action on the category buttons
         let systemImage: String
+        
         /// An action to take when the category button is tapped
-        let action: (LandmarkCategory) -> Void
+        let onTap: (LandmarkCategory) -> Void
     }
 
     /// Which category to represent
     let category: LandmarkCategory
     
+    /// Does this category capsule allow toggling?
+    let canToggle: Bool
+    
     /// An optional action to add to the category
-    let categoryAction: CategoryAction?
+    let action: Action?
+    
+    // MARK: State
+    
+    @State private var isSelected: Bool = false
+    
+    // MARK: View
 
     var body: some View {
         HStack {
-            let fontWeight: Font.Weight = category.isSelected ? .black : .bold
+            let fontWeight: Font.Weight = isSelected ? .black : .bold
             Text(category.name.uppercased())
                 .fontWeight(fontWeight)
                 .fontDesign(.rounded)
                 .shadow(radius: 1.0)
             
-            if let categoryAction = categoryAction {
+            if let categoryAction = action {
                 Button(action: {
+                    categoryAction.onTap(category)
                 }, label: {
                     Image(systemName: categoryAction.systemImage)
                 })
-                .onTapGesture {
-                    withAnimation(.bouncy) {
-                        categoryAction.action(category)
-                    }
-                }
             }
         }
         .foregroundStyle(.primary)
@@ -58,3 +65,31 @@ struct CategoryCapsuleNew: View {
         }
     }
 }
+
+#if DEBUG
+
+#Preview("Basic") {
+    CategoryCapsuleNew(
+        category: LandmarkCategory(name: "Beer Gardens"),
+        canToggle: false,
+        action: nil
+    )
+}
+
+#Preview("Delete") {
+    
+    @Previewable @State var status: String = "Init"
+    
+    CategoryCapsuleNew(
+        category: LandmarkCategory(name: "Golf"),
+        canToggle: false,
+        action: CategoryCapsuleNew.Action(
+            systemImage: "x.circle",
+            onTap: { category in
+                status = "deleted"
+            }
+        )
+    )
+    Text(status)
+}
+#endif // DEBUG
