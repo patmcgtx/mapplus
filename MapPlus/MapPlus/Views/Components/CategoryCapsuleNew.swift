@@ -50,6 +50,15 @@ struct CategoryCapsuleNew: View {
                 })
             }
         }
+        .onTapGesture {
+            if canToggle {
+                withAnimation() {
+                    isSelected.toggle()
+                    category.isSelected = isSelected
+                }
+            }
+        }
+
         .foregroundStyle(.primary)
         .padding(
             EdgeInsets(
@@ -61,7 +70,7 @@ struct CategoryCapsuleNew: View {
         )
         .background {
             Capsule(style: .circular)
-                .strokeBorder(lineWidth: 2)
+                .strokeBorder(lineWidth: isSelected ? 2.0 : 1.0)
         }
     }
 }
@@ -86,10 +95,25 @@ struct CategoryCapsuleNew: View {
         action: CategoryCapsuleNew.Action(
             systemImage: "x.circle",
             onTap: { category in
-                status = "deleted"
+                status = "Deleted"
             }
         )
     )
     Text(status)
 }
+
+#Preview("Toggle") {
+    
+    @Previewable @State var category = LandmarkCategory(name: "Groceries")
+    
+    CategoryCapsuleNew(
+        category: category,
+        canToggle: true,
+        action: nil
+    )
+    
+    Text(category.isSelected ? "Selected" : "Not selected")
+    
+}
+
 #endif // DEBUG
