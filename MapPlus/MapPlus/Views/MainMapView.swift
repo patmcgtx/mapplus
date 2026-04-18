@@ -11,6 +11,8 @@ import MapKit
 
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
+    
+    // TODO patmcg rework this view with a proper view model
 
     // Location
     private var locationPermissionsService = LocationPermissionsService()
@@ -72,7 +74,10 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoriesSelectFlow(categories: .constant(allCategories))
+                                CategoriesSelectFlow(
+                                    allCategories: allCategories,
+                                    selectedCategoryNames: $selectedCategoryNames
+                                )
                                 .padding()
                                 .frame(width: UIScreen.main.bounds.width * 0.85) // TODO patmcg adjust, using modern method
                                 .presentationCompactAdaptation(.none)

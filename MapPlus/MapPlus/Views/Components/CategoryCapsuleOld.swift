@@ -7,7 +7,7 @@
 import SwiftUI
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
-struct CategoryCapsule: View {
+struct CategoryCapsuleOld: View {
     
     /// Options for viewing or editing the category
     enum Mode {
@@ -90,25 +90,25 @@ struct CategoryCapsule: View {
 #if DEBUG
 
 #Preview("Short") {
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
+    CategoryCapsuleOld(category: LandmarkCategory(name: "Cafes"),
                     mode: .view,
                     fromCategories: .constant([]))
 }
 
 #Preview("Short - edit") {
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
+    CategoryCapsuleOld(category: LandmarkCategory(name: "Cafes"),
                     mode: .edit,
                     fromCategories: .constant([]))
 }
 
 #Preview("Short - select") {
-    CategoryCapsule(category: LandmarkCategory(name: "Arcades"),
+    CategoryCapsuleOld(category: LandmarkCategory(name: "Arcades"),
                     mode: .select,
                     fromCategories: .constant([]))
 }
 
 #Preview("Long name") {
-    CategoryCapsule(
+    CategoryCapsuleOld(
         category: LandmarkCategory(
             name: "Pretty long category name"
         ),
@@ -118,7 +118,7 @@ struct CategoryCapsule: View {
 }
 
 #Preview("Long name - delete") {
-    CategoryCapsule(
+    CategoryCapsuleOld(
         category: LandmarkCategory(
             name: "Pretty long category name"
         ),
@@ -128,7 +128,7 @@ struct CategoryCapsule: View {
 }
 
 #Preview("Crazy long name with edit") {
-    CategoryCapsule(
+    CategoryCapsuleOld(
         category: LandmarkCategory(
             name: "This is a really long category name and it is going to be really long and it will probably break the preview"
         ),

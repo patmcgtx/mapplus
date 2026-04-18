@@ -22,8 +22,8 @@ struct CategoryCapsuleNew: View {
     /// Which category to represent - TODO patmcg does this need a BInding?!
     let category: LandmarkCategory
     
-    /// Does this category capsule allow toggling?
-    let canToggle: Bool
+    /// Callback when a category is toggles.  A nil value means no toggling.
+    let onToggle: ((LandmarkCategory) -> Void)?
     
     /// An optional action to add to the category
     let action: Action?
@@ -53,10 +53,10 @@ struct CategoryCapsuleNew: View {
             }
         }
         .onTapGesture {
-            if canToggle {
+            if let onToggle = onToggle {
                 withAnimation() {
                     isSelected.toggle()
-                    category.isSelected = isSelected
+                    onToggle(category)
                 }
             }
         }
@@ -82,7 +82,7 @@ struct CategoryCapsuleNew: View {
 #Preview("Basic") {
     CategoryCapsuleNew(
         category: LandmarkCategory(name: "Beer Gardens"),
-        canToggle: false,
+        onToggle: nil,
         action: nil
     )
 }
@@ -91,7 +91,7 @@ struct CategoryCapsuleNew: View {
     
     CategoryCapsuleNew(
         category: LandmarkCategory(name: "Golf"),
-        canToggle: false,
+        onToggle: nil,
         action: CategoryCapsuleNew.Action(
             systemImage: "x.circle",
             onTap: { category in }
@@ -105,7 +105,7 @@ struct CategoryCapsuleNew: View {
     
     CategoryCapsuleNew(
         category: category,
-        canToggle: true,
+        onToggle: { _ in },
         action: nil
     )
     

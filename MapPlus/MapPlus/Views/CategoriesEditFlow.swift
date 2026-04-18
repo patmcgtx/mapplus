@@ -21,7 +21,7 @@ struct CategoriesEditFlow: View {
                 ForEach(categories) { category in
                     CategoryCapsuleNew(
                         category: category,
-                        canToggle: false,
+                        onToggle: nil,
                         action: CategoryCapsuleNew
                             .Action(
                                 systemImage: "x.circle",
