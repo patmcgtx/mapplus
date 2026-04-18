@@ -28,7 +28,7 @@ struct SampleLandmarks {
                 latitude: 30.27381,
                 longitude: -97.74063
             ),
-            categories: [categories.fun]
+            categories: [categories.fun, categories.family]
         )
     }
 
@@ -92,7 +92,7 @@ struct SampleLandmarks {
                 latitude: 40.70584,
                 longitude: -73.99642
             ),
-            categories: [categories.fun]
+            categories: [categories.fun, categories.family]
         )
     }
     
@@ -106,7 +106,7 @@ struct SampleLandmarks {
                 latitude: 51.5074,
                 longitude: -0.1278
             ),
-            categories: [categories.fun]
+            categories: [categories.fun, categories.education]
         )
     }
     
@@ -120,7 +120,7 @@ struct SampleLandmarks {
                 latitude: 35.68529,
                 longitude: 139.69072
             ),
-            categories: [categories.fun]
+            categories: [categories.fun, categories.work]
         )
     }
 
