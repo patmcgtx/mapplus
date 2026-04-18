@@ -19,7 +19,7 @@ struct CategoryCapsuleNew: View {
         let onTap: (LandmarkCategory) -> Void
     }
 
-    /// Which category to represent
+    /// Which category to represent - TODO patmcg does this need a BInding?!
     let category: LandmarkCategory
     
     /// Does this category capsule allow toggling?
@@ -87,19 +87,26 @@ struct CategoryCapsuleNew: View {
 
 #Preview("Delete") {
     
-    @Previewable @State var status: String = "Init"
+    @Previewable @State var isDeleted = false
     
-    CategoryCapsuleNew(
-        category: LandmarkCategory(name: "Golf"),
-        canToggle: false,
-        action: CategoryCapsuleNew.Action(
-            systemImage: "x.circle",
-            onTap: { category in
-                status = "Deleted"
-            }
+    if isDeleted {
+        Image(systemName: "trash")
+            .resizable()
+            .frame(width: 60, height: 60)
+    } else {
+        CategoryCapsuleNew(
+            category: LandmarkCategory(name: "Golf"),
+            canToggle: false,
+            action: CategoryCapsuleNew.Action(
+                systemImage: "x.circle",
+                onTap: { category in
+                    withAnimation {
+                        isDeleted = true
+                    }
+                }
+            )
         )
-    )
-    Text(status)
+    }
 }
 
 #Preview("Toggle") {
