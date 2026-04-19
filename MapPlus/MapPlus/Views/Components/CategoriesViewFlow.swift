@@ -19,7 +19,7 @@ struct CategoriesViewFlow: View {
         } else {
             HFlow {
                 ForEach(categories) { category in
-                    CategoryCapsuleNew(
+                    CategoryCapsule(
                         category: .constant(category),
                         onToggle: nil,
                         action: nil

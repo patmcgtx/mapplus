@@ -19,11 +19,10 @@ struct CategoriesEditFlow: View {
         } else {
             HFlow {
                 ForEach($categories) { category in
-                    CategoryCapsuleNew(
+                    CategoryCapsule(
                         category: category,
                         onToggle: nil,
-                        action: CategoryCapsuleNew
-                            .Action(
+                        action: CategoryCapsule.Action(
                                 systemImage: "x.circle",
                                 onTap: { tappedCategory in
                                     withAnimation(.bouncy) {

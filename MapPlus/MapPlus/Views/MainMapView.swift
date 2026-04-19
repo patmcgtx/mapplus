@@ -27,19 +27,11 @@ struct MainMapView: View {
     @State private var selectedLandmark: Landmark?
     @State private var showMarkers: Bool = true
     
-    // Filter state
-//    @State private var selectedCategories: Set<LandmarkCategory> = []
-    private var selectedCategories: Set<LandmarkCategory> {
-        Set(allCategories.filter({ $0.isSelected }))
-    }
-
     // Persistence
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
 
-    // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
-    // TODO patmcg didn't this get moved to the view model?
-//    @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
+    // Categories
     @State private var allCategories: [LandmarkCategory] = []
 
     // Preferences
@@ -151,25 +143,7 @@ struct MainMapView: View {
         )
         .accessibilityLabel("add-place".localized)
     }
-    
-    // TODO patmcg remove this
-//    @ViewBuilder
-//    var filterButtonOld: some View {
-//        let imageName = selectedCategoryNames.isEmpty
-//        ? "line.3.horizontal.decrease.circle"
-//        : "line.3.horizontal.decrease.circle.fill"
-//        DraggableControlButton(
-//            systemImageName: imageName,
-//            onTap: {
-//                isShowingCategoryFilter = true
-//            },
-//            onMoved: { offset in
-//                // Persist button location here per ticket #179
-//            }
-//        )
-//        .accessibilityLabel("filter-by-category".localized)
-//    }
-    
+        
     var locateButton: some View {
         DraggableControlButton(
             systemImageName: "location",
@@ -287,6 +261,10 @@ struct MainMapView: View {
         allCategories = (try? context.fetch(descriptor)) ?? []
     }
     
+    private var selectedCategories: Set<LandmarkCategory> {
+        Set(allCategories.filter({ $0.isSelected }))
+    }
+
     /// Animate the selected landmarks changing
     private func blinkLandmarks() async {
         let animateSecs = 0.25

@@ -7,7 +7,7 @@
 import SwiftUI
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
-struct CategoryCapsuleNew: View {
+struct CategoryCapsule: View {
 
     /// Describes an action for the category
     struct Action {
@@ -27,11 +27,7 @@ struct CategoryCapsuleNew: View {
     
     /// An optional action to add to the category
     let action: Action?
-    
-    // MARK: State
-    
-//    @State private var isSelected: Bool = false
-    
+        
     // MARK: View
 
     var body: some View {
@@ -80,7 +76,7 @@ struct CategoryCapsuleNew: View {
 #if DEBUG
 
 #Preview("Basic") {
-    CategoryCapsuleNew(
+    CategoryCapsule(
         category: .constant(LandmarkCategory(name: "Beer Gardens")),
         onToggle: nil,
         action: nil
@@ -89,10 +85,10 @@ struct CategoryCapsuleNew: View {
 
 #Preview("Delete") {
     
-    CategoryCapsuleNew(
+    CategoryCapsule(
         category: .constant(LandmarkCategory(name: "Golf")),
         onToggle: nil,
-        action: CategoryCapsuleNew.Action(
+        action: CategoryCapsule.Action(
             systemImage: "x.circle",
             onTap: { category in }
         )
@@ -103,7 +99,7 @@ struct CategoryCapsuleNew: View {
     
     @Previewable @State var category = LandmarkCategory(name: "Groceries")
     
-    CategoryCapsuleNew(
+    CategoryCapsule(
         category: $category,
         onToggle: { _ in },
         action: nil

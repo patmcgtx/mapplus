@@ -14,21 +14,12 @@ struct CategoriesSelectFlow: View {
     /// All available categories to filter by
     @Binding var allCategories: [LandmarkCategory]
 
-//    /// The names of the currently-selected (active) filter categories
-//    @Binding var selectedCategoryNames: Set<String>
-
     var body: some View {
         HFlow {
             ForEach($allCategories) { category in
-                CategoryCapsuleNew(
+                CategoryCapsule(
                     category: category,
-                    onToggle: { category in
-//                        if selectedCategoryNames.contains(category.name) {
-//                            selectedCategoryNames.remove(category.name)
-//                        } else {
-//                            selectedCategoryNames.insert(category.name)
-//                        }
-                    },
+                    onToggle: { category in },
                     action: nil
                 )
             }
@@ -45,10 +36,7 @@ struct CategoriesSelectFlow: View {
         .init(name: "Two"),
         .init(name: "Three")
     ]
-    CategoriesSelectFlow(
-        allCategories: $categories
-//        selectedCategoryNames: $selectedCategoryNames
-    )
+    CategoriesSelectFlow(allCategories: $categories)
     Text(selectedCategoryNames.joined(separator: ", "))
 }
 
