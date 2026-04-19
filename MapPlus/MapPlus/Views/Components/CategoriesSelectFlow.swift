@@ -13,16 +13,40 @@ struct CategoriesSelectFlow: View {
         
     /// All available categories to filter by
     @Binding var allCategories: [LandmarkCategory]
-
+    
     var body: some View {
-        HFlow {
-            ForEach($allCategories) { category in
-                CategoryCapsule(
-                    category: category,
-                    canToggle: true,
-                    action: nil
-                )
+        VStack(alignment: .leading, spacing: 16) {
+            HStack {
+                Text("Categories")
+                    .font(.headline)
+                Spacer()
+                if hasSelectedCategories {
+                    Button("Clear") {
+                        clearAllSelections()
+                    }
+                    .buttonStyle(.borderless)
+                }
             }
+            
+            HFlow {
+                ForEach($allCategories) { category in
+                    CategoryCapsule(
+                        category: category,
+                        canToggle: true,
+                        action: nil
+                    )
+                }
+            }
+        }
+    }
+    
+    private var hasSelectedCategories: Bool {
+        allCategories.contains { $0.isSelected }
+    }
+
+    private func clearAllSelections() {
+        for index in allCategories.indices {
+            allCategories[index].isSelected = false
         }
     }
 }
