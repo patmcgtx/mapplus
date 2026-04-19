@@ -73,8 +73,9 @@ struct MainMapView: View {
                             ) {
                                 CategoriesSelectFlow(allCategories: $allCategories)
                                     .padding()
-                                    .frame(idealWidth: 400, maxWidth: 500)
+                                    .frame(minWidth: 300, idealWidth: 400, maxWidth: .infinity)
                                     .presentationCompactAdaptation(.none)
+                                    .presentationSizing(.fitted)
                             }
                     }
                 }
