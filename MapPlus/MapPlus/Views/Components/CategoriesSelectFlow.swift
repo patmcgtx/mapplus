@@ -61,7 +61,7 @@ struct CategoriesSelectFlow: View {
         .init(name: "Three")
     ]
     CategoriesSelectFlow(allCategories: $categories)
-    let selected = categories.filter(\.self.isSelected)
+    let selected = categories.filter(\.isSelected)
     Text(selected.map(\.name).joined(separator: ", "))
 }
 

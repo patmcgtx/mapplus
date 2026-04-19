@@ -29,7 +29,7 @@ extension ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        container.mainContext.autosaveEnabled = false
+//        container.mainContext.autosaveEnabled = false
 
         for landmark in SampleLandmarks().austinPlaces {
             container.mainContext.insert(landmark)

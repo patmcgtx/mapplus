@@ -9,7 +9,7 @@ import SwiftUI
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
 
-    /// Describes an action for the category
+    /// Describes an optional action for the category
     struct Action {
         
         /// System image for an action on the category buttons
@@ -25,7 +25,7 @@ struct CategoryCapsule: View {
     /// Which category to represent - TODO patmcg does this need a BInding?!
     @Binding var category: LandmarkCategory
 
-    /// Callback when a category is toggles.  A nil value means no toggling.
+    /// Whether this category can be selected and de-selected
     let canToggle: Bool
     
     /// An optional action to add to the category
@@ -73,8 +73,7 @@ struct CategoryCapsule: View {
         .background {
             let borderColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
             Capsule(style: .circular)
-                .strokeBorder(lineWidth: category.isSelected ? 2.0 : 1.0)
-                .stroke(borderColor)
+                .strokeBorder(borderColor, lineWidth: category.isSelected ? 2.0 : 1.0)
         }
     }
 }
