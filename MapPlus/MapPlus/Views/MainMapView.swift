@@ -251,7 +251,7 @@ struct MainMapView: View {
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
         let iconName = selectedCategories.isEmpty ? "map" : "map.fill"
-        Button("Categories", systemImage: iconName) {
+        Button("categories".localized, systemImage: iconName) {
             isShowingCategoryFilter = true
         }
     }
