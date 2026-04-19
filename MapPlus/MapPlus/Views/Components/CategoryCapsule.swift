@@ -1,55 +1,66 @@
 //
-//  CategoryCapsule.swift
+//  CategoryCapsuleNew.swift
 //  MapPlus
 //
-//  Created by Patrick McGonigle on 2/20/26.
+//  Created by Patrick McGonigle on 4/16/26.
 //
 import SwiftUI
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
-    
-    /// Options for viewing or editing the category
-    enum Mode {
-        /// View the capsule read-only
-        case view
-        /// View the capsule in edit mode (with a delete button)
-        case edit
+
+    /// Describes an optional action for the category
+    struct Action {
+        
+        /// System image for an action on the category buttons
+        let systemImage: String
+        
+        /// An action to take when the category button is tapped
+        let onTap: (LandmarkCategory) -> Void
     }
     
-    /// Which category to represent
-    let category: LandmarkCategory
-    
-    /// Read-only or edit?
-    let mode: Mode
+    @Environment(\.theme) var theme: MapPlusTheme
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
 
-    /// The categories to update on edit / delete
-    @Binding var fromCategories: [LandmarkCategory]
+    /// Which category to represent - TODO patmcg does this need a BInding?!
+    @Binding var category: LandmarkCategory
+
+    /// Whether this category can be selected and de-selected
+    let canToggle: Bool
+    
+    /// An optional action to add to the category
+    let action: Action?
+        
+    // MARK: View
 
     var body: some View {
         HStack {
+            let fontWeight: Font.Weight = canToggle && !category.isSelected ? .regular : .heavy
+            let fontColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
             Text(category.name.uppercased())
-                .fontWeight(.black)
+                .fontWeight(fontWeight)
                 .fontDesign(.rounded)
+                .foregroundStyle(fontColor)
                 .shadow(radius: 1.0)
             
-            if .edit == mode {
+            if let categoryAction = action {
                 Button(action: {
-                    // For whatever reason, doing the delete here causes bugs
-                    // and basically deletes *all* the categories.
-                    // We have to handle it with .onTapGesture below instead.
                 }, label: {
-                    Image(systemName: "x.circle")
+                    Image(systemName: categoryAction.systemImage)
                 })
                 .onTapGesture {
-                    withAnimation(.bouncy) {
-                        // Delete the category from its parents
-                        // TODO patmcg some way to abstract this?  Like a method on Landmark?
-                        self.fromCategories.removeAll { $0.name == category.name }
-                    }
+                    categoryAction.onTap(category)
                 }
             }
         }
+        .onTapGesture {
+            if canToggle {
+                withAnimation() {
+                    category.isSelected.toggle()
+                }
+            }
+        }
+
         .foregroundStyle(.primary)
         .padding(
             EdgeInsets(
@@ -60,63 +71,47 @@ struct CategoryCapsule: View {
             )
         )
         .background {
+            let borderColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
             Capsule(style: .circular)
-                .strokeBorder(lineWidth: 2)
+                .strokeBorder(borderColor, lineWidth: category.isSelected ? 2.0 : 1.0)
         }
     }
 }
 
 #if DEBUG
 
-#Preview("Short") {
-    @Previewable @State var categories: [LandmarkCategory] = [
-        LandmarkCategory(name: "Cafes")
-    ]
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
-                    mode: .view,
-                    fromCategories: $categories)
-    .foregroundStyle(.green, .white)
-}
-
-#Preview("Short with delete") {
-    @Previewable @State var categories: [LandmarkCategory] = [
-        LandmarkCategory(name: "Cafes"),
-        LandmarkCategory(name: "Restaurants"),
-        LandmarkCategory(name: "Hotels")
-    ]
-    CategoryCapsule(category: LandmarkCategory(name: "Cafes"),
-                    mode: .edit,
-                    fromCategories: $categories)
-}
-
-#Preview("Medium long name") {
+#Preview("Basic") {
     CategoryCapsule(
-        category: LandmarkCategory(
-            name: "Pretty long category name"
-        ),
-        mode: .view,
-        fromCategories: .constant([])
+        category: .constant(LandmarkCategory(name: "Beer Gardens")),
+        canToggle: false,
+        action: nil
     )
 }
 
-#Preview("Medium long name - delete") {
+#Preview("Delete") {
+    
     CategoryCapsule(
-        category: LandmarkCategory(
-            name: "Pretty long category name"
-        ),
-        mode: .edit,
-        fromCategories: .constant([])
+        category: .constant(LandmarkCategory(name: "Golf")),
+        canToggle: false,
+        action: CategoryCapsule.Action(
+            systemImage: "x.circle",
+            onTap: { category in }
+        )
     )
 }
 
-#Preview("Pretty long with delete") {
+#Preview("Toggle") {
+    
+    @Previewable @State var category = LandmarkCategory(name: "Groceries")
+    
     CategoryCapsule(
-        category: LandmarkCategory(
-            name: "This is a really long category name and it is going to be really long and it will probably break the preview"
-        ),
-        mode: .view,
-        fromCategories: .constant([])
+        category: $category,
+        canToggle: true,
+        action: nil
     )
+    
+    Text(category.isSelected ? "Selected" : "Not selected")
+    
 }
 
 #endif // DEBUG

@@ -85,13 +85,13 @@ struct LandmarkForm: View {
         ) {
             HStack {
                 // A flow layout of categories in edit mode
-                CategoryFlow(categories: $viewModel.categories, mode: .edit)
+                CategoriesEditFlow(categories: $viewModel.categories)
 
                 Spacer()
                 
                 // A menu of possible categories to add to the landmark
                 Menu {
-                    ForEach(viewModel.unassignedCategories, id: \.id) { category in
+                    ForEach(viewModel.unassignedCategories) { category in
                         Button(category.name) {
                             withAnimation(.bouncy) {
                                 viewModel.addCategory(category)

@@ -11,6 +11,8 @@ import MapKit
 
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
+    
+    // TODO patmcg rework this view with a proper view model
 
     // Location
     private var locationPermissionsService = LocationPermissionsService()
@@ -23,16 +25,15 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
-    @State private var showMarkers: Bool = true
+    @State private var displayedLandmarks: [Landmark] = []
+    @State private var animationOpacity: Double = 1.0
     
-    // Filter state
-    @State private var selectedCategoryNames: Set<String> = []
-
     // Persistence
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
-    
-    // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
-    @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
+
+    // Categories
+    @State private var allCategories: [LandmarkCategory] = []
 
     // Preferences
     @State private var activeTheme: MapPlusTheme = .cupertino
@@ -43,17 +44,21 @@ struct MainMapView: View {
         NavigationStack {
             ZStack {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                    if showMarkers {
-                        ForEach(filteredLandmarks, id: \.self) { landmark in
-                            Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
-                                LandmarkMapAnnotation(emoji: landmark.emoji)
-                            }
-                            .tag(landmark)
+                    ForEach(displayedLandmarks, id: \.self) { landmark in
+                        Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
+                            LandmarkMapAnnotation(emoji: landmark.emoji)
+                                .opacity(animationOpacity)
+                                .animation(.easeInOut(duration: 0.35), value: animationOpacity)
                         }
+                        .tag(landmark)
                     }
                     UserAnnotation()
                 }
                 .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button("settings".localized, systemImage: "gearshape") {}
+                        // TODO patmcg add settings form
+                    }
                     ToolbarItem() {
                         themeMenu
                     }
@@ -61,8 +66,18 @@ struct MainMapView: View {
                         poiMenu
                     }
                     ToolbarItem() {
-                        Button("settings".localized, systemImage: "gearshape") {}
-                        // TODO patmcg add settings form
+                        categoriesButton
+                            .popover(
+                                isPresented: $isShowingCategoryFilter,
+                                attachmentAnchor: .point(.topTrailing),
+                                arrowEdge: .top
+                            ) {
+                                CategoriesSelectFlow(allCategories: $allCategories)
+                                    .padding()
+                                    .frame(minWidth: 300, idealWidth: 400, maxWidth: .infinity)
+                                    .presentationCompactAdaptation(.none)
+                                    .presentationSizing(.fitted)
+                            }
                     }
                 }
                 .sheet(item: self.$selectedLandmark) { landmark in
@@ -85,7 +100,6 @@ struct MainMapView: View {
                         VStack(spacing: 16) {
                             addButton
                             locateButton
-                            filterButton
                             landmarksMenu
                         }
                         .padding(.trailing, 16)
@@ -98,8 +112,14 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
             }
-            .task(id: selectedCategoryNames) {
-                await blinkLandmarks()
+            .task {
+                loadCategories(from: modelContext)
+                displayedLandmarks = filteredLandmarks
+            }
+            .onChange(of: selectedCategories) { _, _ in
+                Task { @MainActor in
+                    await animateLandmarkChange()
+                }
             }
             .sheet(isPresented: $showingLandmarkList) {
                 LandmarksView()
@@ -108,13 +128,6 @@ struct MainMapView: View {
                 NavigationStack {
                     LandmarkForm(mode: .create)
                 }
-            }
-            .sheet(isPresented: $isShowingCategoryFilter) {
-                CategoryFilterView(
-                    allCategories: allCategories,
-                    selectedCategoryNames: $selectedCategoryNames
-                )
-                .presentationDetents([.medium, .large])
             }
             .environment(\.theme, self.activeTheme)
             .apply(theme: activeTheme)
@@ -135,24 +148,7 @@ struct MainMapView: View {
         )
         .accessibilityLabel("add-place".localized)
     }
-    
-    @ViewBuilder
-    var filterButton: some View {
-        let imageName = selectedCategoryNames.isEmpty
-        ? "line.3.horizontal.decrease.circle"
-        : "line.3.horizontal.decrease.circle.fill"
-        DraggableControlButton(
-            systemImageName: imageName,
-            onTap: {
-                isShowingCategoryFilter = true
-            },
-            onMoved: { offset in
-                // Persist button location here per ticket #179
-            }
-        )
-        .accessibilityLabel("filter-by-category".localized)
-    }
-    
+        
     var locateButton: some View {
         DraggableControlButton(
             systemImageName: "location",
@@ -195,7 +191,6 @@ struct MainMapView: View {
                         zoomTo(landmark: landmark)
                     }, label: {
                         HStack {
-//                            Text(landmark.emoji) // TODO patmcg some bug here...
                             Text(landmark.name)
                         }
                     })
@@ -243,44 +238,63 @@ struct MainMapView: View {
                         if level == activePOILevel {
                             Label(level.localizedName, systemImage: "checkmark")
                         } else {
-                            Text(level.localizedName)
+                            Spacer()
                         }
+                        Text(level.localizedName)
                     }
                 }
             }
         }
     }
     
+    @ViewBuilder
+    var categoriesButton: some View {
+        // TODO patmcg move view logic ^ in here if you can
+        let iconName = selectedCategories.isEmpty ? "map" : "map.fill"
+        Button("categories".localized, systemImage: iconName) {
+            isShowingCategoryFilter = true
+        }
+    }
+    
     // MARK: - Helper Methods
     
+    private func loadCategories(from context: ModelContext) {
+        let descriptor = FetchDescriptor<LandmarkCategory>(
+            sortBy: [SortDescriptor(\.name, order: .forward)]
+        )
+        allCategories = (try? context.fetch(descriptor)) ?? []
+    }
+    
+    private var selectedCategories: Set<LandmarkCategory> {
+        Set(allCategories.filter({ $0.isSelected }))
+    }
+
     /// Animate the selected landmarks changing
-    private func blinkLandmarks() async {
-        let animateSecs = 0.25
-        do {
-            await MainActor.run {
-                withAnimation(.easeOut(duration: animateSecs)) {
-                    showMarkers = false
-                }
-            }
-            try await Task.sleep(for: .seconds(animateSecs))
-            await MainActor.run {
-                withAnimation(.easeOut(duration: animateSecs)) {
-                    showMarkers = true
-                }
-            }
-        } catch {
-            await MainActor.run { showMarkers = true }
-        }
+    private func animateLandmarkChange() async {
+        // Fade out current landmarks
+        animationOpacity = 0.0
+        
+        // Wait for fade out to complete
+        try? await Task.sleep(for: .seconds(0.35))
+        
+        // Update the landmarks while invisible
+        displayedLandmarks = filteredLandmarks
+        
+        // Small delay to ensure the update completes
+        try? await Task.sleep(for: .seconds(0.05))
+        
+        // Fade in new landmarks
+        animationOpacity = 1.0
     }
     
     /// Returns landmarks filtered by the selected category names.
     /// If no categories are selected, all landmarks are returned.
     private var filteredLandmarks: [Landmark] {
-        if selectedCategoryNames.isEmpty {
+        if selectedCategories.isEmpty {
             return landmarks
         }
         return landmarks.filter { landmark in
-            landmark.categories.contains { selectedCategoryNames.contains($0.name) }
+            landmark.categories.contains { $0.isSelected }
         }
     }
 

@@ -28,14 +28,21 @@ struct ThemePreview: View {
                 }
                 Button("(Im)press me!") {}
                 CategoryCapsule(
-                    category: LandmarkCategory(name: "View"),
-                    mode: .view,
-                    fromCategories: .constant([])
+                    category: .constant(LandmarkCategory(name: "View")),
+                    canToggle: false,
+                    action: nil
                 )
                 CategoryCapsule(
-                    category: LandmarkCategory(name: "Edit"),
-                    mode: .edit,
-                    fromCategories: .constant([])
+                    category: .constant(LandmarkCategory(name: "Select")),
+                    canToggle: true,
+                    action: nil
+                )
+                CategoryCapsule(
+                    category: .constant(LandmarkCategory(name: "Edit")),
+                    canToggle: false,
+                    action: CategoryCapsule
+                        .Action(systemImage: "x.circle", onTap: { _ in }
+                    )
                 )
                 LandmarkMapAnnotation(emoji: "P")
             }

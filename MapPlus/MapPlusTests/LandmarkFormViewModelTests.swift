@@ -198,7 +198,7 @@ struct LandmarkFormViewModelTests {
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "San Francisco")
             #expect(info.fullDescription == "San Francisco, CA, United States")
-            #expect(viewModel.locationSearchInput == "San Francisco, CA, United States")
+            #expect(viewModel.locationSearchInput == "San Francisco")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
@@ -245,7 +245,7 @@ struct LandmarkFormViewModelTests {
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "Mock SF")
             #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
-            #expect(viewModel.locationSearchInput == "(Mock) San Francisco, CA, United States")
+            #expect(viewModel.locationSearchInput == "")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }

@@ -25,7 +25,7 @@ struct LandmarksView : View {
     var body: some View {
         NavigationStack {
             List {
-                ForEach(landmarks, id: \.id) { landmark in
+                ForEach(landmarks) { landmark in
                     Button {
                         self.landmarkToEdit = landmark
                     } label: {
