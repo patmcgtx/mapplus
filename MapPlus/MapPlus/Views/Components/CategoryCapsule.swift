@@ -18,6 +18,9 @@ struct CategoryCapsule: View {
         /// An action to take when the category button is tapped
         let onTap: (LandmarkCategory) -> Void
     }
+    
+    @Environment(\.theme) var theme: MapPlusTheme
+    @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     /// Which category to represent - TODO patmcg does this need a BInding?!
     @Binding var category: LandmarkCategory
@@ -32,10 +35,12 @@ struct CategoryCapsule: View {
 
     var body: some View {
         HStack {
-            let fontWeight: Font.Weight = category.isSelected ? .black : .bold
+            let fontWeight: Font.Weight = canToggle && !category.isSelected ? .regular : .heavy
+            let fontColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
             Text(category.name.uppercased())
                 .fontWeight(fontWeight)
                 .fontDesign(.rounded)
+                .foregroundStyle(fontColor)
                 .shadow(radius: 1.0)
             
             if let categoryAction = action {
@@ -66,8 +71,10 @@ struct CategoryCapsule: View {
             )
         )
         .background {
+            let borderColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
             Capsule(style: .circular)
                 .strokeBorder(lineWidth: category.isSelected ? 2.0 : 1.0)
+                .stroke(borderColor)
         }
     }
 }
