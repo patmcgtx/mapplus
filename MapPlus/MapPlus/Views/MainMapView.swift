@@ -72,9 +72,9 @@ struct MainMapView: View {
                                 arrowEdge: .top
                             ) {
                                 CategoriesSelectFlow(allCategories: $allCategories)
-                                .padding()
-                                .frame(width: UIScreen.main.bounds.width * 0.85) // TODO patmcg adjust, using modern method
-                                .presentationCompactAdaptation(.none)
+                                    .padding()
+                                    .frame(idealWidth: 400, maxWidth: 500)
+                                    .presentationCompactAdaptation(.none)
                             }
                     }
                 }
