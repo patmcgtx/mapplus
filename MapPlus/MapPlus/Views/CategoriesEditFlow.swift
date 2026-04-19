@@ -18,7 +18,7 @@ struct CategoriesEditFlow: View {
             EmptyView()
         } else {
             HFlow {
-                ForEach(categories) { category in
+                ForEach($categories) { category in
                     CategoryCapsuleNew(
                         category: category,
                         onToggle: nil,

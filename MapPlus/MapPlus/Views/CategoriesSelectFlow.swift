@@ -12,22 +12,22 @@ import Flow
 struct CategoriesSelectFlow: View {
         
     /// All available categories to filter by
-    let allCategories: [LandmarkCategory]
+    @Binding var allCategories: [LandmarkCategory]
 
-    /// The names of the currently-selected (active) filter categories
-    @Binding var selectedCategoryNames: Set<String>
+//    /// The names of the currently-selected (active) filter categories
+//    @Binding var selectedCategoryNames: Set<String>
 
     var body: some View {
         HFlow {
-            ForEach(allCategories) { category in
+            ForEach($allCategories) { category in
                 CategoryCapsuleNew(
                     category: category,
                     onToggle: { category in
-                        if selectedCategoryNames.contains(category.name) {
-                            selectedCategoryNames.remove(category.name)
-                        } else {
-                            selectedCategoryNames.insert(category.name)
-                        }
+//                        if selectedCategoryNames.contains(category.name) {
+//                            selectedCategoryNames.remove(category.name)
+//                        } else {
+//                            selectedCategoryNames.insert(category.name)
+//                        }
                     },
                     action: nil
                 )
@@ -46,8 +46,8 @@ struct CategoriesSelectFlow: View {
         .init(name: "Three")
     ]
     CategoriesSelectFlow(
-        allCategories: categories,
-        selectedCategoryNames: $selectedCategoryNames
+        allCategories: $categories
+//        selectedCategoryNames: $selectedCategoryNames
     )
     Text(selectedCategoryNames.joined(separator: ", "))
 }

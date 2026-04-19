@@ -20,8 +20,8 @@ struct CategoryCapsuleNew: View {
     }
 
     /// Which category to represent - TODO patmcg does this need a BInding?!
-    let category: LandmarkCategory
-    
+    @Binding var category: LandmarkCategory
+
     /// Callback when a category is toggles.  A nil value means no toggling.
     let onToggle: ((LandmarkCategory) -> Void)?
     
@@ -30,13 +30,13 @@ struct CategoryCapsuleNew: View {
     
     // MARK: State
     
-    @State private var isSelected: Bool = false
+//    @State private var isSelected: Bool = false
     
     // MARK: View
 
     var body: some View {
         HStack {
-            let fontWeight: Font.Weight = isSelected ? .black : .bold
+            let fontWeight: Font.Weight = category.isSelected ? .black : .bold
             Text(category.name.uppercased())
                 .fontWeight(fontWeight)
                 .fontDesign(.rounded)
@@ -55,7 +55,7 @@ struct CategoryCapsuleNew: View {
         .onTapGesture {
             if let onToggle = onToggle {
                 withAnimation() {
-                    isSelected.toggle()
+                    category.isSelected.toggle()
                     onToggle(category)
                 }
             }
@@ -72,7 +72,7 @@ struct CategoryCapsuleNew: View {
         )
         .background {
             Capsule(style: .circular)
-                .strokeBorder(lineWidth: isSelected ? 2.0 : 1.0)
+                .strokeBorder(lineWidth: category.isSelected ? 2.0 : 1.0)
         }
     }
 }
@@ -81,7 +81,7 @@ struct CategoryCapsuleNew: View {
 
 #Preview("Basic") {
     CategoryCapsuleNew(
-        category: LandmarkCategory(name: "Beer Gardens"),
+        category: .constant(LandmarkCategory(name: "Beer Gardens")),
         onToggle: nil,
         action: nil
     )
@@ -90,7 +90,7 @@ struct CategoryCapsuleNew: View {
 #Preview("Delete") {
     
     CategoryCapsuleNew(
-        category: LandmarkCategory(name: "Golf"),
+        category: .constant(LandmarkCategory(name: "Golf")),
         onToggle: nil,
         action: CategoryCapsuleNew.Action(
             systemImage: "x.circle",
@@ -104,7 +104,7 @@ struct CategoryCapsuleNew: View {
     @Previewable @State var category = LandmarkCategory(name: "Groceries")
     
     CategoryCapsuleNew(
-        category: category,
+        category: $category,
         onToggle: { _ in },
         action: nil
     )

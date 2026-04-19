@@ -28,14 +28,19 @@ struct MainMapView: View {
     @State private var showMarkers: Bool = true
     
     // Filter state
-    @State private var selectedCategoryNames: Set<String> = []
+//    @State private var selectedCategories: Set<LandmarkCategory> = []
+    private var selectedCategories: Set<LandmarkCategory> {
+        Set(allCategories.filter({ $0.isSelected }))
+    }
 
     // Persistence
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
-    
+
     // TODO patmcg good grief, why is this here, AI?  Should be in a model or view model, right?
     // TODO patmcg didn't this get moved to the view model?
-    @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
+//    @Query(sort: \LandmarkCategory.name, order: .forward) var allCategories: [LandmarkCategory]
+    @State private var allCategories: [LandmarkCategory] = []
 
     // Preferences
     @State private var activeTheme: MapPlusTheme = .cupertino
@@ -74,10 +79,7 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoriesSelectFlow(
-                                    allCategories: allCategories,
-                                    selectedCategoryNames: $selectedCategoryNames
-                                )
+                                CategoriesSelectFlow(allCategories: $allCategories)
                                 .padding()
                                 .frame(width: UIScreen.main.bounds.width * 0.85) // TODO patmcg adjust, using modern method
                                 .presentationCompactAdaptation(.none)
@@ -116,7 +118,10 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
             }
-            .task(id: selectedCategoryNames) {
+            .task {
+                loadCategories(from: modelContext)
+            }
+            .task(id: selectedCategories) {
                 await blinkLandmarks()
             }
             .sheet(isPresented: $showingLandmarkList) {
@@ -148,22 +153,22 @@ struct MainMapView: View {
     }
     
     // TODO patmcg remove this
-    @ViewBuilder
-    var filterButtonOld: some View {
-        let imageName = selectedCategoryNames.isEmpty
-        ? "line.3.horizontal.decrease.circle"
-        : "line.3.horizontal.decrease.circle.fill"
-        DraggableControlButton(
-            systemImageName: imageName,
-            onTap: {
-                isShowingCategoryFilter = true
-            },
-            onMoved: { offset in
-                // Persist button location here per ticket #179
-            }
-        )
-        .accessibilityLabel("filter-by-category".localized)
-    }
+//    @ViewBuilder
+//    var filterButtonOld: some View {
+//        let imageName = selectedCategoryNames.isEmpty
+//        ? "line.3.horizontal.decrease.circle"
+//        : "line.3.horizontal.decrease.circle.fill"
+//        DraggableControlButton(
+//            systemImageName: imageName,
+//            onTap: {
+//                isShowingCategoryFilter = true
+//            },
+//            onMoved: { offset in
+//                // Persist button location here per ticket #179
+//            }
+//        )
+//        .accessibilityLabel("filter-by-category".localized)
+//    }
     
     var locateButton: some View {
         DraggableControlButton(
@@ -267,57 +272,20 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        // theatermasks, map, circle.grid.3x3, mappin.and.ellipse.circle.fill, square.stack.3d.down.right.fill, circle.grid.2x2.topleft.checkmark.filled
-        let iconName = selectedCategoryNames.isEmpty ? "map" : "map.fill"
+        let iconName = selectedCategories.isEmpty ? "map" : "map.fill"
         Button("Categories", systemImage: iconName) {
             isShowingCategoryFilter = true
         }
     }
     
-    @ViewBuilder
-    private var categoriesMenuOld: some View {
-        Menu("Categories".localized, systemImage: "camera.filters") {
-            Text("Categories")
-            Button {
-                selectedCategoryNames = []
-            } label: {
-                HStack {
-                    if selectedCategoryNames.isEmpty {
-                        Label("All", systemImage: "checkmark")
-                    } else {
-                        Spacer()
-                    }
-                    Text("All")
-                }
-            }
-            Divider()
-            ForEach(allCategories) { category in
-                Button {
-                    if selectedCategoryNames.contains(category.name) {
-                        selectedCategoryNames.remove(category.name)
-                    } else {
-                        selectedCategoryNames.insert(category.name)
-                    }
-                } label: {
-                    HStack {
-                        Spacer()
-                        if selectedCategoryNames.contains(category.name) {
-                            Label(category.name, systemImage: "checkmark")
-                        }
-                        Text(category.name)
-                    }
-                }
-            }
-            Divider()
-            Button {
-                // TODO patmcg add category edit screen
-            } label: {
-                Text("Edit...")
-            }
-        }
-    }
-    
     // MARK: - Helper Methods
+    
+    private func loadCategories(from context: ModelContext) {
+        let descriptor = FetchDescriptor<LandmarkCategory>(
+            sortBy: [SortDescriptor(\.name, order: .forward)]
+        )
+        allCategories = (try? context.fetch(descriptor)) ?? []
+    }
     
     /// Animate the selected landmarks changing
     private func blinkLandmarks() async {
@@ -342,11 +310,11 @@ struct MainMapView: View {
     /// Returns landmarks filtered by the selected category names.
     /// If no categories are selected, all landmarks are returned.
     private var filteredLandmarks: [Landmark] {
-        if selectedCategoryNames.isEmpty {
+        if selectedCategories.isEmpty {
             return landmarks
         }
         return landmarks.filter { landmark in
-            landmark.categories.contains { selectedCategoryNames.contains($0.name) }
+            landmark.categories.contains(selectedCategories)
         }
     }
 
