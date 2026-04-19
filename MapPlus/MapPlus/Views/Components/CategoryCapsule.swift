@@ -23,7 +23,7 @@ struct CategoryCapsule: View {
     @Binding var category: LandmarkCategory
 
     /// Callback when a category is toggles.  A nil value means no toggling.
-    let onToggle: ((LandmarkCategory) -> Void)?
+    let canToggle: Bool
     
     /// An optional action to add to the category
     let action: Action?
@@ -49,10 +49,9 @@ struct CategoryCapsule: View {
             }
         }
         .onTapGesture {
-            if let onToggle = onToggle {
+            if canToggle {
                 withAnimation() {
                     category.isSelected.toggle()
-                    onToggle(category)
                 }
             }
         }
@@ -78,7 +77,7 @@ struct CategoryCapsule: View {
 #Preview("Basic") {
     CategoryCapsule(
         category: .constant(LandmarkCategory(name: "Beer Gardens")),
-        onToggle: nil,
+        canToggle: false,
         action: nil
     )
 }
@@ -87,7 +86,7 @@ struct CategoryCapsule: View {
     
     CategoryCapsule(
         category: .constant(LandmarkCategory(name: "Golf")),
-        onToggle: nil,
+        canToggle: false,
         action: CategoryCapsule.Action(
             systemImage: "x.circle",
             onTap: { category in }
@@ -101,7 +100,7 @@ struct CategoryCapsule: View {
     
     CategoryCapsule(
         category: $category,
-        onToggle: { _ in },
+        canToggle: true,
         action: nil
     )
     

@@ -186,7 +186,6 @@ struct MainMapView: View {
                         zoomTo(landmark: landmark)
                     }, label: {
                         HStack {
-//                            Text(landmark.emoji) // TODO patmcg some bug here...
                             Text(landmark.name)
                         }
                     })

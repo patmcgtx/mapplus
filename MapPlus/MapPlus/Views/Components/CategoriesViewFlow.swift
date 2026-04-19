@@ -21,7 +21,7 @@ struct CategoriesViewFlow: View {
                 ForEach(categories) { category in
                     CategoryCapsule(
                         category: .constant(category),
-                        onToggle: nil,
+                        canToggle: false,
                         action: nil
                     )
                 }

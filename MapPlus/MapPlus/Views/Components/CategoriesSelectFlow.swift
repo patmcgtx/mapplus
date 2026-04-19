@@ -19,7 +19,7 @@ struct CategoriesSelectFlow: View {
             ForEach($allCategories) { category in
                 CategoryCapsule(
                     category: category,
-                    onToggle: { category in },
+                    canToggle: true,
                     action: nil
                 )
             }
@@ -37,7 +37,8 @@ struct CategoriesSelectFlow: View {
         .init(name: "Three")
     ]
     CategoriesSelectFlow(allCategories: $categories)
-    Text(selectedCategoryNames.joined(separator: ", "))
+    let selected = categories.filter(\.self.isSelected)
+    Text(selected.map(\.name).joined(separator: ", "))
 }
 
 #endif // DEBUG
