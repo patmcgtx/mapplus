@@ -184,6 +184,7 @@
       }
     },
     "filter-places" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
@@ -537,6 +538,7 @@
       }
     },
     "show-all" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {
