@@ -17,11 +17,11 @@ struct CategoriesSelectFlow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("Categories")
+                Text("categories".localized)
                     .font(.headline)
                 Spacer()
                 if hasSelectedCategories {
-                    Button("Clear") {
+                    Button("clear".localized) {
                         clearAllSelections()
                     }
                     .buttonStyle(.borderless)
