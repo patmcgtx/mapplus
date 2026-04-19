@@ -25,7 +25,8 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
-    @State private var showMarkers: Bool = true
+    @State private var displayedLandmarks: [Landmark] = []
+    @State private var animationOpacity: Double = 1.0
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -43,13 +44,13 @@ struct MainMapView: View {
         NavigationStack {
             ZStack {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                    if showMarkers {
-                        ForEach(filteredLandmarks, id: \.self) { landmark in
-                            Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
-                                LandmarkMapAnnotation(emoji: landmark.emoji)
-                            }
-                            .tag(landmark)
+                    ForEach(displayedLandmarks, id: \.self) { landmark in
+                        Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
+                            LandmarkMapAnnotation(emoji: landmark.emoji)
+                                .opacity(animationOpacity)
+                                .animation(.easeInOut(duration: 0.35), value: animationOpacity)
                         }
+                        .tag(landmark)
                     }
                     UserAnnotation()
                 }
@@ -113,9 +114,12 @@ struct MainMapView: View {
             }
             .task {
                 loadCategories(from: modelContext)
+                displayedLandmarks = filteredLandmarks
             }
-            .task(id: allCategories) {
-                await blinkLandmarks()
+            .onChange(of: selectedCategories) { oldValue, newValue in
+                Task {
+                    await animateLandmarkChange()
+                }
             }
             .sheet(isPresented: $showingLandmarkList) {
                 LandmarksView()
@@ -266,23 +270,21 @@ struct MainMapView: View {
     }
 
     /// Animate the selected landmarks changing
-    private func blinkLandmarks() async {
-        let animateSecs = 0.25
-        do {
-            await MainActor.run {
-                withAnimation(.easeOut(duration: animateSecs)) {
-                    showMarkers = false
-                }
-            }
-            try await Task.sleep(for: .seconds(animateSecs))
-            await MainActor.run {
-                withAnimation(.easeOut(duration: animateSecs)) {
-                    showMarkers = true
-                }
-            }
-        } catch {
-            await MainActor.run { showMarkers = true }
-        }
+    private func animateLandmarkChange() async {
+        // Fade out current landmarks
+        animationOpacity = 0.0
+        
+        // Wait for fade out to complete
+        try? await Task.sleep(for: .seconds(0.35))
+        
+        // Update the landmarks while invisible
+        displayedLandmarks = filteredLandmarks
+        
+        // Small delay to ensure the update completes
+        try? await Task.sleep(for: .seconds(0.05))
+        
+        // Fade in new landmarks
+        animationOpacity = 1.0
     }
     
     /// Returns landmarks filtered by the selected category names.
