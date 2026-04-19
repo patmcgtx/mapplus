@@ -121,7 +121,7 @@ struct MainMapView: View {
             .task {
                 loadCategories(from: modelContext)
             }
-            .task(id: selectedCategories) {
+            .task(id: allCategories) {
                 await blinkLandmarks()
             }
             .sheet(isPresented: $showingLandmarkList) {
@@ -314,7 +314,7 @@ struct MainMapView: View {
             return landmarks
         }
         return landmarks.filter { landmark in
-            landmark.categories.contains(selectedCategories)
+            landmark.categories.contains { $0.isSelected }
         }
     }
 
