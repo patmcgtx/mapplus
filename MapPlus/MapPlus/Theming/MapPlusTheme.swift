@@ -92,6 +92,21 @@ enum MapPlusTheme: String, CaseIterable, Identifiable {
         }
     }
 
+    /// The font color to use on a selected capsule, which has `tintColor` as its background.
+    /// Each value is chosen to contrast well against the corresponding `tintColor`:
+    /// - `.cupertino`: white on blue (`.accentColor`)
+    /// - `.eightBit`: black on green
+    /// - `.kerby`: white on orange
+    /// - `.flamingo`: black on light pink (`softFlamingoPink`)
+    var selectedCapsuleFontColor: Color {
+        switch self {
+        case .cupertino: return .white
+        case .eightBit: return .black
+        case .kerby: return .white
+        case .flamingo: return .black
+        }
+    }
+
     // MARK: Private helpers
     
     /// A high-contrast variation of 8-bit green specialized for text in dark or light mode
