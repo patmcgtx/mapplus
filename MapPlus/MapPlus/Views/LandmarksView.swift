@@ -17,6 +17,7 @@ struct LandmarksView : View {
     // UI state
     @State private var showLandmarkForm: Bool = false
     @State private var landmarkToEdit: Landmark? = nil
+    @State private var didDeleteLandmark: Bool = false
 
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -37,6 +38,7 @@ struct LandmarksView : View {
                 }
                 .onDelete(perform: deleteLandmarks)
             }
+            .sensoryFeedback(.impact(weight: .medium), trigger: didDeleteLandmark)
             .navigationTitle("my-places".localized)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -74,6 +76,7 @@ struct LandmarksView : View {
             let store = LandmarkStore(modelContext: self.modelContext)
             try? store.delete(landmark: landmarkToDelete)
         }
+        didDeleteLandmark.toggle()
     }
 }
 

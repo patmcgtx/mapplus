@@ -21,6 +21,7 @@ struct MainMapView: View {
     @State private var showingLandmarkList: Bool = false
     @State private var isShowingAddLandmarkSheet: Bool = false
     @State private var isShowingCategoryFilter: Bool = false
+    @State private var didTapLocate: Bool = false
 
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -161,6 +162,7 @@ struct MainMapView: View {
                 withAnimation {
                     self.mapPosition = .userLocation(fallback: .automatic)
                 }
+                didTapLocate.toggle()
             },
             onMoved: { offset in
                 // Persist button location here per ticket #179
@@ -168,6 +170,7 @@ struct MainMapView: View {
             }
         )
         .accessibilityLabel("me".localized)
+        .sensoryFeedback(.impact(weight: .light), trigger: didTapLocate)
     }
     
     var landmarksMenuDraggable : some View {

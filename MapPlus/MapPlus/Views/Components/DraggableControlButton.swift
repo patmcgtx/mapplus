@@ -47,6 +47,8 @@ struct DraggableControlButton: View {
         .foregroundStyle(theme.tintColor)
         .glassEffect()
         .isBeingDragged(isDragging)
+        .sensoryFeedback(.impact(weight: .medium), trigger: isDragging) { _, new in new }
+        .sensoryFeedback(.impact(weight: .light), trigger: isDragging) { _, new in !new }
         .offset(draggedOffset)
         .simultaneousGesture(
             DragGesture()
