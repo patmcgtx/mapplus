@@ -116,6 +116,11 @@ struct MainMapView: View {
                 loadCategories(from: modelContext)
                 displayedLandmarks = filteredLandmarks
             }
+            .onChange(of: landmarks) { _, _ in
+                Task { @MainActor in
+                    await animateLandmarkChange()
+                }
+            }
             .onChange(of: selectedCategories) { _, _ in
                 Task { @MainActor in
                     await animateLandmarkChange()
