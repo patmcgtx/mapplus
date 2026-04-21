@@ -26,7 +26,7 @@ struct MainMapView: View {
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
     @State private var displayedLandmarks: [Landmark] = []
-    @State private var animationOpacity: Double = 1.0
+    @State private var landmarkOpacities: [Landmark: Double] = [:]
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -47,8 +47,8 @@ struct MainMapView: View {
                     ForEach(displayedLandmarks, id: \.self) { landmark in
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
-                                .opacity(animationOpacity)
-                                .animation(.easeInOut(duration: 0.35), value: animationOpacity)
+                                .opacity(landmarkOpacities[landmark, default: 1.0])
+                                .animation(.easeInOut(duration: 0.35), value: landmarkOpacities[landmark, default: 1.0])
                         }
                         .tag(landmark)
                     }
@@ -276,20 +276,42 @@ struct MainMapView: View {
 
     /// Animate the selected landmarks changing
     private func animateLandmarkChange() async {
-        // Fade out current landmarks
-        animationOpacity = 0.0
-        
-        // Wait for fade out to complete
-        try? await Task.sleep(for: .seconds(0.35))
-        
-        // Update the landmarks while invisible
-        displayedLandmarks = filteredLandmarks
-        
+        let newLandmarks = filteredLandmarks
+        let currentSet = Set(displayedLandmarks)
+        let newSet = Set(newLandmarks)
+
+        // Determine which landmarks are being removed or added
+        let removed = displayedLandmarks.filter { !newSet.contains($0) }
+        let added = newLandmarks.filter { !currentSet.contains($0) }
+
+        // Fade out only the landmarks being removed
+        for landmark in removed {
+            landmarkOpacities[landmark] = 0.0
+        }
+
+        // Wait for fade out to complete (only if there are landmarks to remove)
+        if !removed.isEmpty {
+            try? await Task.sleep(for: .seconds(0.35))
+        }
+
+        // Start added landmarks at 0 opacity before inserting them
+        for landmark in added {
+            landmarkOpacities[landmark] = 0.0
+        }
+
+        // Update the displayed landmarks and clean up removed entries
+        displayedLandmarks = newLandmarks
+        for landmark in removed {
+            landmarkOpacities.removeValue(forKey: landmark)
+        }
+
         // Small delay to ensure the update completes
         try? await Task.sleep(for: .seconds(0.05))
-        
-        // Fade in new landmarks
-        animationOpacity = 1.0
+
+        // Fade in added landmarks
+        for landmark in added {
+            landmarkOpacities[landmark] = 1.0
+        }
     }
     
     /// Returns landmarks filtered by the selected category names.
