@@ -36,12 +36,13 @@ struct CategoryCapsule: View {
     var body: some View {
         HStack {
             let fontWeight: Font.Weight = canToggle && !category.isSelected ? .regular : .heavy
-            let fontColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
+            let fontColor: Color = category.isSelected
+                ? theme.selectedCapsuleFontColor
+                : theme.foregroundColor(for: colorScheme)
             Text(category.name.uppercased())
                 .fontWeight(fontWeight)
                 .fontDesign(.rounded)
                 .foregroundStyle(fontColor)
-                .shadow(radius: 1.0)
             
             if let categoryAction = action {
                 Button(action: {
@@ -71,9 +72,14 @@ struct CategoryCapsule: View {
             )
         )
         .background {
-            let borderColor = category.isSelected ? theme.tintColor : theme.foregroundColor(for: colorScheme)
-            Capsule(style: .circular)
-                .strokeBorder(borderColor, lineWidth: category.isSelected ? 2.0 : 1.0)
+            if category.isSelected {
+                Capsule(style: .circular)
+                    .fill(theme.tintColor)
+            } else {
+                let borderColor = theme.foregroundColor(for: colorScheme)
+                Capsule(style: .circular)
+                    .strokeBorder(borderColor, lineWidth: 1.0)
+            }
         }
     }
 }
