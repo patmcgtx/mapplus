@@ -81,6 +81,9 @@ struct CategoryCapsule: View {
                     .strokeBorder(borderColor, lineWidth: 1.0)
             }
         }
+        .sensoryFeedback(.impact(weight: .light), trigger: category.isSelected) { _, _ in
+            canToggle
+        }
     }
 }
 
