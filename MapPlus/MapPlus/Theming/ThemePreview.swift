@@ -29,17 +29,17 @@ struct ThemePreview: View {
                 Button("(Im)press me!") {}
                 CategoryCapsule(
                     category: .constant(LandmarkCategory(name: "View")),
-                    canToggle: false,
+                    isSelectable: false,
                     action: nil
                 )
                 CategoryCapsule(
                     category: .constant(LandmarkCategory(name: "Select")),
-                    canToggle: true,
+                    isSelectable: true,
                     action: nil
                 )
                 CategoryCapsule(
                     category: .constant(LandmarkCategory(name: "Edit")),
-                    canToggle: false,
+                    isSelectable: false,
                     action: CategoryCapsule
                         .Action(systemImage: "x.circle", onTap: { _ in }
                     )

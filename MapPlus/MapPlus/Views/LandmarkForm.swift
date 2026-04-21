@@ -30,6 +30,7 @@ struct LandmarkForm: View {
     // UI state
     @State private var isNotesPreviewEnabled: Bool = false
     @State private var isNameEdited: Bool = false
+    @State private var didSaveLandmark: Bool = false
 
     // Field focus
     private enum FocusField: Hashable {
@@ -65,9 +66,11 @@ struct LandmarkForm: View {
         }
         .onChange(of: viewModel.saveState) { _, newState in
             if case .saved = newState {
+                didSaveLandmark.toggle()
                 dismiss()
             }
         }
+        .sensoryFeedback(.success, trigger: didSaveLandmark)
         .onChange(of: viewModel.addressSearchState) { _, newState in
             if !isNameEdited, case .searchResolved(let locationInfo) = newState {
                 self.viewModel.name = locationInfo.briefDescription
