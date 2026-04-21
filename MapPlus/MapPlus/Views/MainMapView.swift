@@ -11,44 +11,24 @@ import MapKit
 
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
-    
-    // TODO patmcg rework this view with a proper view model
 
-    // Location
-    private var locationPermissionsService = LocationPermissionsService()
-    
-    // UI state
-    @State private var showingLandmarkList: Bool = false
-    @State private var isShowingAddLandmarkSheet: Bool = false
-    @State private var isShowingCategoryFilter: Bool = false
-
-    // Map state
-    @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
-    @State private var selectedLandmark: Landmark?
-    @State private var displayedLandmarks: [Landmark] = []
-    @State private var landmarkOpacities: [Landmark: Double] = [:]
-    
     // Persistence
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
 
-    // Categories
-    @State private var allCategories: [LandmarkCategory] = []
-
-    // Preferences
-    @State private var activeTheme: MapPlusTheme = .cupertino
-    @State private var activePOILevel: PointsOfInterestLevel = .none
+    // View model owns all state and logic
+    @State private var viewModel = MainMapViewModel()
         
     var body: some View {
         
         NavigationStack {
             ZStack {
-                Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                    ForEach(displayedLandmarks, id: \.self) { landmark in
+                Map(position: $viewModel.mapPosition, selection: $viewModel.selectedLandmark) {
+                    ForEach(viewModel.displayedLandmarks, id: \.self) { landmark in
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
-                                .opacity(landmarkOpacities[landmark, default: 1.0])
-                                .animation(.easeInOut(duration: 0.35), value: landmarkOpacities[landmark, default: 1.0])
+                                .opacity(viewModel.landmarkOpacities[landmark, default: 1.0])
+                                .animation(.easeInOut(duration: 0.35), value: viewModel.landmarkOpacities[landmark, default: 1.0])
                         }
                         .tag(landmark)
                     }
@@ -68,11 +48,11 @@ struct MainMapView: View {
                     ToolbarItem() {
                         categoriesButton
                             .popover(
-                                isPresented: $isShowingCategoryFilter,
+                                isPresented: $viewModel.isShowingCategoryFilter,
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoriesSelectFlow(allCategories: $allCategories)
+                                CategoriesSelectFlow(allCategories: $viewModel.allCategories)
                                     .padding()
                                     .frame(minWidth: 300, idealWidth: 400, maxWidth: .infinity)
                                     .presentationCompactAdaptation(.none)
@@ -80,13 +60,13 @@ struct MainMapView: View {
                             }
                     }
                 }
-                .sheet(item: self.$selectedLandmark) { landmark in
+                .sheet(item: $viewModel.selectedLandmark) { landmark in
                     LandmarkDetailsView(landmark: landmark)
                         .presentationDetents([.medium, .large])
                 }
                 .mapStyle(MapStyle.standard(elevation: .realistic,
                                             emphasis: .muted,
-                                            pointsOfInterest: activePOILevel.categories,
+                                            pointsOfInterest: viewModel.activePOILevel.categories,
                                             showsTraffic: false))
                 .mapControls {
                     MapCompass()
@@ -108,34 +88,31 @@ struct MainMapView: View {
                 }
             }
             .onAppear(){
-                self.locationPermissionsService.requestPermissions() { _ in
-                    // TODO patmcg handle issues on the location permissions request
-                }
+                viewModel.requestLocationPermissions()
             }
             .task {
-                loadCategories(from: modelContext)
-                displayedLandmarks = filteredLandmarks
+                viewModel.setup(modelContext: modelContext, landmarks: landmarks)
             }
             .onChange(of: landmarks) { _, _ in
                 Task { @MainActor in
-                    await animateLandmarkChange()
+                    await viewModel.animateLandmarkChange(landmarks: landmarks)
                 }
             }
-            .onChange(of: selectedCategories) { _, _ in
+            .onChange(of: viewModel.selectedCategories) { _, _ in
                 Task { @MainActor in
-                    await animateLandmarkChange()
+                    await viewModel.animateLandmarkChange(landmarks: landmarks)
                 }
             }
-            .sheet(isPresented: $showingLandmarkList) {
+            .sheet(isPresented: $viewModel.showingLandmarkList) {
                 LandmarksView()
             }
-            .sheet(isPresented: $isShowingAddLandmarkSheet) {
+            .sheet(isPresented: $viewModel.isShowingAddLandmarkSheet) {
                 NavigationStack {
                     LandmarkForm(mode: .create)
                 }
             }
-            .environment(\.theme, self.activeTheme)
-            .apply(theme: activeTheme)
+            .environment(\.theme, viewModel.activeTheme)
+            .apply(theme: viewModel.activeTheme)
         }
     }
     
@@ -145,7 +122,7 @@ struct MainMapView: View {
         DraggableControlButton(
             systemImageName: "plus",
             onTap: {
-                isShowingAddLandmarkSheet = true
+                viewModel.isShowingAddLandmarkSheet = true
             },
             onMoved: { offset in
                 // Persist button location here per ticket #179
@@ -158,9 +135,7 @@ struct MainMapView: View {
         DraggableControlButton(
             systemImageName: "location",
             onTap: {
-                withAnimation {
-                    self.mapPosition = .userLocation(fallback: .automatic)
-                }
+                viewModel.zoomToUserLocation()
             },
             onMoved: { offset in
                 // Persist button location here per ticket #179
@@ -175,7 +150,7 @@ struct MainMapView: View {
             systemImageName: "list.bullet",
             onTap: {
                 // TODO patmcg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
-                self.showingLandmarkList = true
+                viewModel.showingLandmarkList = true
             },
             onMoved: { offset in
                 // Persist button location here per ticket #179
@@ -188,12 +163,12 @@ struct MainMapView: View {
     var landmarksMenu : some View {
         Menu {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
-                self.showingLandmarkList = true
+                viewModel.showingLandmarkList = true
             }
             Section {
                 ForEach(self.landmarks, id: \.self) { landmark in
                     Button(action: {
-                        zoomTo(landmark: landmark)
+                        viewModel.zoomTo(landmark: landmark)
                     }, label: {
                         HStack {
                             Text(landmark.name)
@@ -213,14 +188,14 @@ struct MainMapView: View {
     }
     
     private var themeMenu: some View {
-        Menu("theme".localized, systemImage: activeTheme.menuIconName) {
+        Menu("theme".localized, systemImage: viewModel.activeTheme.menuIconName) {
             Text("theme".localized)
             ForEach(MapPlusTheme.allCases) { themeOption in
                 Button {
-                    activeTheme = themeOption
+                    viewModel.activeTheme = themeOption
                 } label: {
                     HStack {
-                        if themeOption == self.activeTheme {
+                        if themeOption == viewModel.activeTheme {
                             Label(themeOption.localizedName, systemImage: "checkmark")
                         } else {
                             Text(themeOption.localizedName)
@@ -233,14 +208,14 @@ struct MainMapView: View {
     
     @ViewBuilder
     private var poiMenu: some View {
-        Menu("points-of-interest".localized, systemImage: activePOILevel.menuIconName) {
+        Menu("points-of-interest".localized, systemImage: viewModel.activePOILevel.menuIconName) {
             Text("points-of-interest".localized)
             ForEach(PointsOfInterestLevel.allCases) { level in
                 Button {
-                    activePOILevel = level
+                    viewModel.activePOILevel = level
                 } label: {
                     HStack {
-                        if level == activePOILevel {
+                        if level == viewModel.activePOILevel {
                             Label(level.localizedName, systemImage: "checkmark")
                         } else {
                             Spacer()
@@ -254,85 +229,8 @@ struct MainMapView: View {
     
     @ViewBuilder
     var categoriesButton: some View {
-        // TODO patmcg move view logic ^ in here if you can
-        let iconName = selectedCategories.isEmpty ? "map" : "map.fill"
-        Button("categories".localized, systemImage: iconName) {
-            isShowingCategoryFilter = true
-        }
-    }
-    
-    // MARK: - Helper Methods
-    
-    private func loadCategories(from context: ModelContext) {
-        let descriptor = FetchDescriptor<LandmarkCategory>(
-            sortBy: [SortDescriptor(\.name, order: .forward)]
-        )
-        allCategories = (try? context.fetch(descriptor)) ?? []
-    }
-    
-    private var selectedCategories: Set<LandmarkCategory> {
-        Set(allCategories.filter({ $0.isSelected }))
-    }
-
-    /// Animate the selected landmarks changing
-    private func animateLandmarkChange() async {
-        let newLandmarks = filteredLandmarks
-        let currentSet = Set(displayedLandmarks)
-        let newSet = Set(newLandmarks)
-
-        // Determine which landmarks are being removed or added
-        let removed = displayedLandmarks.filter { !newSet.contains($0) }
-        let added = newLandmarks.filter { !currentSet.contains($0) }
-
-        // Fade out only the landmarks being removed
-        for landmark in removed {
-            landmarkOpacities[landmark] = 0.0
-        }
-
-        // Wait for fade out to complete (only if there are landmarks to remove)
-        if !removed.isEmpty {
-            try? await Task.sleep(for: .seconds(0.35))
-        }
-
-        // Start added landmarks at 0 opacity before inserting them
-        for landmark in added {
-            landmarkOpacities[landmark] = 0.0
-        }
-
-        // Update the displayed landmarks and clean up removed entries
-        displayedLandmarks = newLandmarks
-        for landmark in removed {
-            landmarkOpacities.removeValue(forKey: landmark)
-        }
-
-        // Small delay to ensure the update completes
-        try? await Task.sleep(for: .seconds(0.05))
-
-        // Fade in added landmarks
-        for landmark in added {
-            landmarkOpacities[landmark] = 1.0
-        }
-    }
-    
-    /// Returns landmarks filtered by the selected category names.
-    /// If no categories are selected, all landmarks are returned.
-    private var filteredLandmarks: [Landmark] {
-        if selectedCategories.isEmpty {
-            return landmarks
-        }
-        return landmarks.filter { landmark in
-            landmark.categories.contains { $0.isSelected }
-        }
-    }
-
-    private func zoomTo(landmark: Landmark) {
-        withAnimation {
-            self.mapPosition = .camera(
-                MapCamera(
-                    centerCoordinate: landmark.location,
-                    distance: 2000 // meters
-                )
-            )
+        Button("categories".localized, systemImage: viewModel.categoriesIconName) {
+            viewModel.isShowingCategoryFilter = true
         }
     }
 
