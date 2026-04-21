@@ -26,7 +26,7 @@ struct CategoryCapsule: View {
     @Binding var category: LandmarkCategory
 
     /// Whether this category can be selected and de-selected
-    let canToggle: Bool
+    let isSelectable: Bool
     
     /// An optional action to add to the category
     let action: Action?
@@ -35,7 +35,7 @@ struct CategoryCapsule: View {
 
     var body: some View {
         HStack {
-            let fontWeight: Font.Weight = canToggle && !category.isSelected ? .regular : .heavy
+            let fontWeight: Font.Weight = isSelectable && !category.isSelected ? .regular : .heavy
             let fontColor: Color = category.isSelected
                 ? theme.selectedCapsuleFontColor
                 : theme.foregroundColor(for: colorScheme)
@@ -55,13 +55,12 @@ struct CategoryCapsule: View {
             }
         }
         .onTapGesture {
-            if canToggle {
+            if isSelectable {
                 withAnimation() {
                     category.isSelected.toggle()
                 }
             }
         }
-
         .foregroundStyle(.primary)
         .padding(
             EdgeInsets(
@@ -82,7 +81,7 @@ struct CategoryCapsule: View {
             }
         }
         .sensoryFeedback(.impact(weight: .light), trigger: category.isSelected) { _, _ in
-            canToggle
+            isSelectable // Sends haptics when tapped and this is a selectable category
         }
     }
 }
@@ -92,7 +91,7 @@ struct CategoryCapsule: View {
 #Preview("Basic") {
     CategoryCapsule(
         category: .constant(LandmarkCategory(name: "Beer Gardens")),
-        canToggle: false,
+        isSelectable: false,
         action: nil
     )
 }
@@ -101,7 +100,7 @@ struct CategoryCapsule: View {
     
     CategoryCapsule(
         category: .constant(LandmarkCategory(name: "Golf")),
-        canToggle: false,
+        isSelectable: false,
         action: CategoryCapsule.Action(
             systemImage: "x.circle",
             onTap: { category in }
@@ -115,7 +114,7 @@ struct CategoryCapsule: View {
     
     CategoryCapsule(
         category: $category,
-        canToggle: true,
+        isSelectable: true,
         action: nil
     )
     

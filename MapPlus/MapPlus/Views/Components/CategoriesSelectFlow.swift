@@ -32,7 +32,7 @@ struct CategoriesSelectFlow: View {
                 ForEach($allCategories) { category in
                     CategoryCapsule(
                         category: category,
-                        canToggle: true,
+                        isSelectable: true,
                         action: nil
                     )
                 }

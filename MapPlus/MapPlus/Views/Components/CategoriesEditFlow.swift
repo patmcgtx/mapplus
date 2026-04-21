@@ -21,7 +21,7 @@ struct CategoriesEditFlow: View {
                 ForEach($categories) { category in
                     CategoryCapsule(
                         category: category,
-                        canToggle: false,
+                        isSelectable: false,
                         action: CategoryCapsule.Action(
                                 systemImage: "x.circle",
                                 onTap: { tappedCategory in
