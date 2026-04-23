@@ -450,6 +450,72 @@ struct LandmarkFormViewModelTests {
         #expect(viewModel.categories.first?.name == "Visited")
     }
     
+    // MARK: - hasUnsavedChanges
+
+    @Test func testHasUnsavedChangesCreateInitiallyFalse() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        #expect(!viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesCreateWithName() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.name = "New Place"
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesCreateWithChangedEmoji() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.emoji = "🏖️"
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesCreateWithNotes() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.notes = "Some notes"
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesCreateWithCategory() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        viewModel.categories = [LandmarkCategory(name: "Parks")]
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesEditInitiallyFalse() {
+        let landmark = Landmark(name: "Eiffel Tower", notes: "Iron lattice", emoji: "🗼")
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        #expect(!viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesEditWithChangedName() {
+        let landmark = Landmark(name: "Eiffel Tower", emoji: "🗼")
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        viewModel.name = "Changed"
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesEditWithChangedEmoji() {
+        let landmark = Landmark(name: "Eiffel Tower", emoji: "🗼")
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        viewModel.emoji = "🏰"
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesEditWithChangedNotes() {
+        let landmark = Landmark(name: "Eiffel Tower", notes: "Original notes", emoji: "🗼")
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        viewModel.notes = "Updated notes"
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
+    @Test func testHasUnsavedChangesEditWithChangedCategories() {
+        let category = LandmarkCategory(name: "Monuments")
+        let landmark = Landmark(name: "Eiffel Tower", emoji: "🗼")
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
+        viewModel.addCategory(category)
+        #expect(viewModel.hasUnsavedChanges)
+    }
+
     // MARK: - unassignedCategories
     
     @Test func testUnassignedCategoriesReturnsOnlyUnassigned() {

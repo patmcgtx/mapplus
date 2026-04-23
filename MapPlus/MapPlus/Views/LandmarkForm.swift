@@ -31,6 +31,7 @@ struct LandmarkForm: View {
     @State private var isNotesPreviewEnabled: Bool = false
     @State private var isNameEdited: Bool = false
     @State private var didSaveLandmark: Bool = false
+    @State private var showDiscardAlert: Bool = false
 
     // Field focus
     private enum FocusField: Hashable {
@@ -75,6 +76,14 @@ struct LandmarkForm: View {
             if !isNameEdited, case .searchResolved(let locationInfo) = newState {
                 self.viewModel.name = locationInfo.briefDescription
             }
+        }
+        .alert("discard-changes?".localized, isPresented: $showDiscardAlert) {
+            Button("discard".localized, role: .destructive) {
+                dismiss()
+            }
+            Button("keep-editing".localized, role: .cancel) {}
+        } message: {
+            Text("you-have-unsaved-changes".localized)
         }
     }
     
@@ -212,14 +221,21 @@ struct LandmarkForm: View {
 
     private var cancelButton: some View {
         Button("cancel".localized, systemImage: "xmark") {
-            dismiss()
+            if viewModel.hasUnsavedChanges {
+                showDiscardAlert = true
+            } else {
+                dismiss()
+            }
         }
     }
     
     private var saveButton: some View {
-        Button("save".localized) {
+        Button {
             viewModel.save(using: LandmarkStore(modelContext: modelContext))
+        } label: {
+            Image(systemName: "checkmark")
         }
+        .glassEffect()
         .disabled(!viewModel.isSaveEnabled)
     }
     

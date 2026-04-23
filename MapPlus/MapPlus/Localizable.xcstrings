@@ -107,6 +107,28 @@
         }
       }
     },
+    "discard" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard"
+          }
+        }
+      }
+    },
+    "discard-changes?" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Discard Changes?"
+          }
+        }
+      }
+    },
     "dismiss" : {
       "localizations" : {
         "en" : {
@@ -224,6 +246,17 @@
     },
     "Key" : {
       "extractionState" : "manual"
+    },
+    "keep-editing" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keep Editing"
+          }
+        }
+      }
     },
     "landmark-form-categories-instructions" : {
       "extractionState" : "manual",
@@ -437,6 +470,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Nada que ver aquí"
+          }
+        }
+      }
+    },
+    "you-have-unsaved-changes" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "You have unsaved changes that will be lost."
           }
         }
       }

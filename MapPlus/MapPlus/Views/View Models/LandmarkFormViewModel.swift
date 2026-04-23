@@ -95,6 +95,13 @@ final class LandmarkFormViewModel {
     /// All available categories (loaded from persistence)
     var allCategories: [LandmarkCategory] = []
 
+    // MARK: - Original field values (for unsaved-changes tracking)
+
+    private var originalName: String = ""
+    private var originalEmoji: String = "📍"
+    private var originalNotes: String = ""
+    private var originalCategories: [LandmarkCategory] = []
+
     init(mode: Mode) {
         self.mode = mode
         switch mode {
@@ -107,6 +114,11 @@ final class LandmarkFormViewModel {
             emoji = landmark.emoji
             notes = landmark.notes
             categories = landmark.categories
+            // Record originals for unsaved-changes detection
+            originalName = landmark.name
+            originalEmoji = landmark.emoji
+            originalNotes = landmark.notes
+            originalCategories = landmark.categories
         }
     }
 
@@ -174,6 +186,19 @@ final class LandmarkFormViewModel {
         }
     }
     
+    /// Whether the user has made any unsaved changes to the form.
+    var hasUnsavedChanges: Bool {
+        switch mode {
+        case .create:
+            return name.isPopulated || emoji != "📍" || notes.isPopulated || !categories.isEmpty
+        case .edit:
+            return name != originalName
+                || emoji != originalEmoji
+                || notes != originalNotes
+                || categories.map(\.id) != originalCategories.map(\.id)
+        }
+    }
+
     /// Categories not yet assigned to this landmark
     var unassignedCategories: [LandmarkCategory] {
         allCategories.filter { !categories.contains($0) }
