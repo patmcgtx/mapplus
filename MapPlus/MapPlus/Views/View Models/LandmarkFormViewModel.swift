@@ -192,6 +192,8 @@ final class LandmarkFormViewModel {
         case .create:
             return name.isPopulated || emoji != "📍" || notes.isPopulated || !categories.isEmpty
         case .edit:
+            // Compare by ID: this form only adds/removes categories, never edits them in-place,
+            // so ID equality is sufficient to detect set and order changes.
             return name != originalName
                 || emoji != originalEmoji
                 || notes != originalNotes
