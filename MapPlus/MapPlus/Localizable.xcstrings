@@ -502,6 +502,7 @@
       }
     },
     "save" : {
+      "extractionState" : "stale",
       "localizations" : {
         "en" : {
           "stringUnit" : {

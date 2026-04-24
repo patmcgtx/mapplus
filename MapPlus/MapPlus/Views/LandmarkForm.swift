@@ -217,8 +217,10 @@ struct LandmarkForm: View {
     }
     
     private var saveButton: some View {
-        Button("save".localized) {
+        Button {
             viewModel.save(using: LandmarkStore(modelContext: modelContext))
+        } label: {
+            Image(systemName: "checkmark")
         }
         .disabled(!viewModel.isSaveEnabled)
     }
