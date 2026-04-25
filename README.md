@@ -1,8 +1,8 @@
 # Map Plus: iOS Maps With Less Noise
 
-[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, responsive, and useful.  but it's doing a lot.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful.  But it's doing a **lot**.
 
-Built on Apple's maps stack, Map Plus does _less_ to make things are _easier_ for you. 
+Built on Apple's maps stack, Map Plus does _less_ to make things _easier_ for you. 
 
 ## Map Plus allows you to basically do two things:
 
@@ -12,15 +12,15 @@ Build your own world with exactly the places you care about.
 
 Each place has a name, notes, and an icon that you pick.
 
-### Organize your places into categories to be shown or hidden on the map.
+### Organize your places into categories to be shown or hidden on the map
 
-Narrow your map's focus to your favorite coffee shops, restaurants to try, dream vacation destinations, late night haunts, whataver you want.
+Narrow your map's focus to your favorite coffee shops, restaurants to try, dream vacation destinations, late night haunts, whatever you want.
 
 ## Everything else is just frosting on the cake
 
 ### Themes for the visual pop you want
 
-Match the map  to your vibe.
+Match the map to your vibe.
 
 * Cupertino to look like standard iOS app
 * 8-bit for a retro arcade flair
@@ -48,4 +48,4 @@ In the experimental spirit, I'm playing with a few architectural ideas in this a
 
 I've tried some views in classic MVVM with SwiftUI.
 
-In places where it makes more sense, I'm fully embracing SwiftData as an app-wide, reactive, persistent state to keep things super simple and responsive. While this approach breaks with traditional MVVM, I am tyring to answer the question: is there any down side for an app like this?
+In places where it makes more sense, I'm fully embracing SwiftData as an app-wide, reactive, persistent state to keep things super simple and responsive. While this approach breaks with traditional MVVM, I am trying to answer the question: is there any downside for an app like this?
