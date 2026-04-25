@@ -38,7 +38,7 @@ Are you left-handed?  Prefer the button on the bottom of the screen?  Just move 
 
 This app was coded in Swift and SwiftUI _mostly_ by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
 
-AI (Copilot) was used _occasionally_ as an assistant, mostly to run some spikes, iterate on experimental ideas, fix some bugs, and review some PRs.
+AI (Copilot and Claude) were used _occasionally_ as an assistant, mostly to run some spikes, iterate on experimental ideas, fix some bugs, and review PRs.
 
 I wanted this app to be a hands-on experience where I got to experiment with ideas personally, so I left _most_ of the coding to myself.
 
