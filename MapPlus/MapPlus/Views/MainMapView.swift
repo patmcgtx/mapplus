@@ -26,35 +26,22 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
-//    @State private var displayedLandmarks: [Landmark] = []
     @State private var landmarkOpacities: [Landmark: Double] = [:]
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
+
+    // Landmarks
+    @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
-    
-    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected == true }) })
+    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) })
     var displayedLandmarks: [Landmark]
 
-//    private var filteredLandmarks: [Landmark] {
-//        if selectedCategories.isEmpty {
-//            return landmarks
-//        }
-//        return landmarks.filter { landmark in
-//            landmark.categories.contains { $0.isSelected }
-//        }
-//    }
-
     // Categories
-//    @State private var allCategories: [LandmarkCategory] = []
     @Query var allCategories: [LandmarkCategory]
     
-    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected == true })
+    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
     var selectedCategories: [LandmarkCategory]
-//    private var selectedCategories: Set<LandmarkCategory> {
-//        Set(allCategories.filter({ $0.isSelected }))
-//    }
 
     // Preferences
     @State private var activeTheme: MapPlusTheme = .cupertino
@@ -133,20 +120,16 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
             }
-            .task {
-//                loadCategories(from: modelContext)
-//                displayedLandmarks = filteredLandmarks
+            .onChange(of: allLandmarks) { _, _ in
+                Task { @MainActor in
+                    await animateLandmarkChange()
+                }
             }
-//            .onChange(of: landmarks) { _, _ in
-//                Task { @MainActor in
-//                    await animateLandmarkChange()
-//                }
-//            }
-//            .onChange(of: selectedCategories) { _, _ in
-//                Task { @MainActor in
-//                    await animateLandmarkChange()
-//                }
-//            }
+            .onChange(of: selectedCategories) { _, _ in
+                Task { @MainActor in
+                    await animateLandmarkChange()
+                }
+            }
             .sheet(isPresented: $showingLandmarkList) {
                 LandmarksView()
             }
@@ -214,7 +197,7 @@ struct MainMapView: View {
                 self.showingLandmarkList = true
             }
             Section {
-                ForEach(self.landmarks, id: \.self) { landmark in
+                ForEach(self.allLandmarks, id: \.self) { landmark in
                     Button(action: {
                         zoomTo(landmark: landmark)
                     }, label: {
@@ -286,14 +269,7 @@ struct MainMapView: View {
     
     // MARK: - Helper Methods
     
-//    private func loadCategories(from context: ModelContext) {
-//        let descriptor = FetchDescriptor<LandmarkCategory>(
-//            sortBy: [SortDescriptor(\.name, order: .forward)]
-//        )
-//        allCategories = (try? context.fetch(descriptor)) ?? []
-//    }
-
-//    private func animateLandmarkChange() async { }
+    private func animateLandmarkChange() async { }
 
     /// Animate the selected landmarks changing
 //    private func animateLandmarkChange() async {

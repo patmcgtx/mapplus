@@ -5,6 +5,7 @@
 //  Created by Patrick McGonigle on 4/16/26.
 //
 import SwiftUI
+import SwiftData
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
@@ -21,6 +22,7 @@ struct CategoryCapsule: View {
     
     @Environment(\.theme) var theme: MapPlusTheme
     @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.modelContext) private var modelContext
 
     /// Which category to represent - TODO patmcg does this need a BInding?!
     let category: LandmarkCategory
@@ -40,7 +42,7 @@ struct CategoryCapsule: View {
                 ? theme.selectedCapsuleFontColor
                 : theme.foregroundColor(for: colorScheme)
             Text(category.name.uppercased())
-                .fontWeight(fontWeight)
+//                .fontWeight(fontWeight)
                 .fontDesign(.rounded)
                 .foregroundStyle(fontColor)
             
@@ -50,15 +52,18 @@ struct CategoryCapsule: View {
                     Image(systemName: categoryAction.systemImage)
                 })
                 .onTapGesture {
-                    categoryAction.onTap(category)
+                    withAnimation {
+                        categoryAction.onTap(category)
+                    }
                 }
             }
         }
         .onTapGesture {
             if isSelectable {
-                withAnimation() {
+//                withAnimation() {
                     category.isSelected.toggle()
-                }
+                try! modelContext.save()
+//                }
             }
         }
         .foregroundStyle(.primary)
