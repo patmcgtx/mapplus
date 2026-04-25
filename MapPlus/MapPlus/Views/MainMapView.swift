@@ -26,7 +26,12 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
+    
+    // Added landmark animation state
     @State private var glowingLandmarks: Set<Landmark> = []
+
+    // Removed landmark animation state
+    // TODO patmcg abstract / encapsulate this better!
     @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
     @State private var glowScales: [UUID: CGFloat] = [:]
     @State private var glowOpacities: [UUID: Double] = [:]
