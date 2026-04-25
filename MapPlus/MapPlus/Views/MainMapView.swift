@@ -16,6 +16,7 @@ struct MainMapView: View {
 
     // Location
     private var locationPermissionsService = LocationPermissionsService()
+    @State private var userLocation: CLLocationCoordinate2D?
     
     // UI state
     @State private var showingLandmarkList: Bool = false
@@ -30,6 +31,7 @@ struct MainMapView: View {
     @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
     @State private var glowScales: [UUID: CGFloat] = [:]
     @State private var glowOpacities: [UUID: Double] = [:]
+    @State private var mischiefMessage: (coordinate: CLLocationCoordinate2D, opacity: Double)? = nil
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -63,13 +65,13 @@ struct MainMapView: View {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
                                 .shadow(
                                     color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor : .clear,
-                                    radius: glowingLandmarks.contains(landmark) ? 12 : 0
+                                    radius: glowingLandmarks.contains(landmark) ? 6 : 0
                                 )
                                 .shadow(
-                                    color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor.opacity(0.6) : .clear,
-                                    radius: glowingLandmarks.contains(landmark) ? 20 : 0
+                                    color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor.opacity(0.2) : .clear,
+                                    radius: glowingLandmarks.contains(landmark) ? 8 : 0
                                 )
-                                .animation(.easeOut(duration: 0.3), value: glowingLandmarks)
+                                .animation(.easeInOut(duration: 0.2), value: glowingLandmarks)
                         }
                         .tag(landmark)
                     }
@@ -91,7 +93,31 @@ struct MainMapView: View {
                         }
                     }
                     
+                    // Magical "Mischief managed" message
+                    if let message = mischiefMessage {
+                        Annotation("", coordinate: message.coordinate) {
+                            Text("Mischief managed")
+                                .font(.system(size: 16, weight: .medium, design: .serif))
+                                .italic()
+                                .foregroundStyle(.white)
+                                .padding(.horizontal, 12)
+                                .padding(.vertical, 6)
+                                .background(
+                                    RoundedRectangle(cornerRadius: 8)
+                                        .fill(.black.opacity(0.7))
+                                        .shadow(color: activeTheme.tintColor.opacity(0.8), radius: 12)
+                                        .shadow(color: activeTheme.tintColor.opacity(0.4), radius: 20)
+                                )
+                                .opacity(message.opacity)
+                                .animation(.easeOut(duration: 0.5), value: message.opacity)
+                        }
+                    }
+                    
                     UserAnnotation()
+                }
+                .onMapCameraChange { context in
+                    // Update user location when camera changes
+                    userLocation = context.camera.centerCoordinate
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
@@ -323,6 +349,9 @@ struct MainMapView: View {
         if !removedLandmarks.isEmpty {
             let glowsToAdd = removedLandmarks.map { (UUID(), $0.location) }
             
+            // Show "Mischief managed" on the removed landmark closest to user and start poof animation simultaneously
+            async let mischiefTask: Void = showMischiefManaged(removedLandmarks: removedLandmarks, userLocation: userLocation)
+            
             await MainActor.run {
                 for (id, coordinate) in glowsToAdd {
                     fadingGlows[id] = coordinate
@@ -345,7 +374,10 @@ struct MainMapView: View {
                 }
             }
             
-            // wait for the animation to complete before cleaning up
+            // Wait for both animations to complete
+            await mischiefTask
+            
+            // wait for the poof animation to complete before cleaning up
             try? await Task.sleep(for: .seconds(animationDuration))
             
             // Clear all glow dictionaries after animation completes
@@ -355,6 +387,70 @@ struct MainMapView: View {
                 glowOpacities.removeAll()
             }
         }
+    }
+    
+    /// Show the magical "Mischief managed" message
+    private func showMischiefManaged(removedLandmarks: Set<Landmark>, userLocation: CLLocationCoordinate2D?) async {
+        // Find the removed landmark closest to the user
+        guard let userLoc = userLocation else {
+            // Fallback to first landmark if user location unknown
+            guard let firstRemoved = removedLandmarks.first else { return }
+            await displayMessage(at: firstRemoved.location)
+            return
+        }
+        
+        let closestLandmark = removedLandmarks.min { landmark1, landmark2 in
+            let dist1 = distance(from: userLoc, to: landmark1.location)
+            let dist2 = distance(from: userLoc, to: landmark2.location)
+            return dist1 < dist2
+        }
+        
+        guard let closest = closestLandmark else { return }
+        
+        await displayMessage(at: closest.location)
+    }
+    
+    /// Display the message at a specific coordinate
+    private func displayMessage(at location: CLLocationCoordinate2D) async {
+        // Position above the landmark (roughly 100 meters north)
+        let messageCoordinate = CLLocationCoordinate2D(
+            latitude: location.latitude + 0.001,
+            longitude: location.longitude
+        )
+        
+        await MainActor.run {
+            mischiefMessage = (coordinate: messageCoordinate, opacity: 0.0)
+        }
+        
+        // Small delay for rendering
+        try? await Task.sleep(for: .milliseconds(50))
+        
+        // Fade in
+        await MainActor.run {
+            mischiefMessage = (coordinate: messageCoordinate, opacity: 1.0)
+        }
+        
+        // Wait 1 second before fading out
+        try? await Task.sleep(for: .seconds(1.0))
+        
+        // Fade out
+        await MainActor.run {
+            mischiefMessage = (coordinate: messageCoordinate, opacity: 0.0)
+        }
+        
+        // Remove after fade completes
+        try? await Task.sleep(for: .seconds(0.5))
+        
+        await MainActor.run {
+            mischiefMessage = nil
+        }
+    }
+    
+    /// Calculate distance between two coordinates (simple Euclidean approximation)
+    private func distance(from: CLLocationCoordinate2D, to: CLLocationCoordinate2D) -> Double {
+        let latDiff = from.latitude - to.latitude
+        let lonDiff = from.longitude - to.longitude
+        return sqrt(latDiff * latDiff + lonDiff * lonDiff)
     }
 
     private func zoomTo(landmark: Landmark) {
