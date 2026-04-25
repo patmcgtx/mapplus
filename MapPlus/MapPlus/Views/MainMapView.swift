@@ -12,7 +12,7 @@ import MapKit
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
     
-    // TODO patmcg rework this view with a proper view model
+    // TODO patmcg rework this view with a view model?
 
     // Location
     private var locationPermissionsService = LocationPermissionsService()
@@ -35,7 +35,11 @@ struct MainMapView: View {
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
     @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) })
-    var displayedLandmarks: [Landmark]
+    var filteredLandmarks: [Landmark]
+    
+    private var visibleLandmarks: [Landmark] {
+        selectedCategories.isEmpty ? allLandmarks : filteredLandmarks
+    }
 
     // Categories
     @Query var allCategories: [LandmarkCategory]
@@ -52,7 +56,7 @@ struct MainMapView: View {
         NavigationStack {
             ZStack {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                    ForEach(displayedLandmarks, id: \.self) { landmark in
+                    ForEach(visibleLandmarks, id: \.self) { landmark in
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
                                 .opacity(landmarkOpacities[landmark, default: 1.0])
@@ -120,12 +124,7 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
             }
-            .onChange(of: allLandmarks) { _, _ in
-                Task { @MainActor in
-                    await animateLandmarkChange()
-                }
-            }
-            .onChange(of: selectedCategories) { _, _ in
+            .onChange(of: visibleLandmarks) { _, _ in
                 Task { @MainActor in
                     await animateLandmarkChange()
                 }
