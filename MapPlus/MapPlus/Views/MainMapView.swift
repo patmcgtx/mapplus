@@ -27,6 +27,7 @@ struct MainMapView: View {
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
     @State private var glowingLandmarks: Set<Landmark> = []
+    @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -67,10 +68,24 @@ struct MainMapView: View {
                                     color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor.opacity(0.6) : .clear,
                                     radius: glowingLandmarks.contains(landmark) ? 20 : 0
                                 )
-                                .animation(.easeInOut(duration: 0.3), value: glowingLandmarks)
+                                .animation(.easeOut(duration: 0.3), value: glowingLandmarks)
                         }
                         .tag(landmark)
                     }
+                    
+                    // Fading glows for removed landmarks
+                    ForEach(Array(fadingGlows.keys), id: \.self) { glowId in
+                        if let coordinate = fadingGlows[glowId] {
+                            Annotation("", coordinate: coordinate) {
+                                Circle()
+                                    .fill(activeTheme.tintColor.opacity(0.4))
+                                    .frame(width: 40, height: 40)
+                                    .shadow(color: activeTheme.tintColor, radius: 12)
+                                    .shadow(color: activeTheme.tintColor.opacity(0.6), radius: 20)
+                            }
+                        }
+                    }
+                    
                     UserAnnotation()
                 }
                 .toolbar {
@@ -289,11 +304,31 @@ struct MainMapView: View {
                 glowingLandmarks.formUnion(addedLandmarks)
             }
             
-            // Remove glow after 1 second
+            // Remove glow after 0.5 seconds
             try? await Task.sleep(for: .seconds(0.5))
             
             await MainActor.run {
                 glowingLandmarks.subtract(addedLandmarks)
+            }
+        }
+        
+        // Add fading glows for removed landmarks
+        if !removedLandmarks.isEmpty {
+            let glowsToAdd = removedLandmarks.map { (UUID(), $0.location) }
+            
+            await MainActor.run {
+                for (id, coordinate) in glowsToAdd {
+                    fadingGlows[id] = coordinate
+                }
+            }
+            
+            // Remove fading glows after 0.5 seconds
+            try? await Task.sleep(for: .seconds(0.5))
+            
+            await MainActor.run {
+                for (id, _) in glowsToAdd {
+                    fadingGlows.removeValue(forKey: id)
+                }
             }
         }
     }
