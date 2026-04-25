@@ -37,6 +37,12 @@ struct MainMapView: View {
     @State private var glowOpacities: [UUID: Double] = [:]
     @State private var animationTask: Task<Void, Never>?
     
+    // "Mischief managed" message state
+    @State private var showMischiefMessage: Bool = false
+    @State private var mischiefMessageOffsetX: CGFloat = -100
+    @State private var mischiefMessageOffsetY: CGFloat = 0
+    @State private var mischiefMessageOpacity: Double = 0
+    
     // Persistence
     @Environment(\.modelContext) private var modelContext
 
@@ -149,6 +155,29 @@ struct MainMapView: View {
                         }
                         .padding(.trailing, 16)
                         .padding(.bottom, 16)
+                    }
+                }
+                
+                // "Mischief managed!" message overlay
+                if showMischiefMessage {
+                    VStack {
+                        Spacer()
+                        HStack {
+                            Spacer()
+                            Text("Mischief managed!")
+                                .font(.title2)
+                                .italic()
+                                .foregroundStyle(.primary.opacity(0.7))
+                                .padding(.horizontal, 24)
+                                .padding(.vertical, 12)
+                                .background(.ultraThinMaterial)
+                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                .shadow(color: activeTheme.tintColor.opacity(0.3), radius: 8)
+                                .offset(x: mischiefMessageOffsetX, y: mischiefMessageOffsetY)
+                                .opacity(mischiefMessageOpacity)
+                            Spacer()
+                        }
+                        .padding(.bottom, 80)
                     }
                 }
             }
@@ -341,20 +370,33 @@ struct MainMapView: View {
                     glowScales[id] = 1.0
                     glowOpacities[id] = 1.0
                 }
+                
+                // Show the "Mischief managed!" message
+                showMischiefMessage = true
+                mischiefMessageOffsetX = -100
+                mischiefMessageOffsetY = 0
+                mischiefMessageOpacity = 0
             }
             
             // Small delay to let SwiftUI render the initial state
             do {
                 try await Task.sleep(for: .milliseconds(100))
             } catch {
-                await MainActor.run { clearFadingGlowState() }
+                await MainActor.run { 
+                    clearFadingGlowState()
+                    clearMischiefMessage()
+                }
                 return
             }
             
-            // Animate the "poof" effect - expand and fade out like smoke
-            let animationDuration = 0.5
+            // Animate the message sliding in and the "poof" effect simultaneously
             await MainActor.run {
-                withAnimation(.easeOut(duration: animationDuration)) {
+                withAnimation(.easeOut(duration: 0.4)) {
+                    mischiefMessageOffsetX = 0
+                    mischiefMessageOpacity = 1.0
+                }
+                
+                withAnimation(.easeOut(duration: 0.5)) {
                     for (id, _) in glowsToAdd {
                         glowScales[id] = 2.5
                         glowOpacities[id] = 0.0
@@ -362,17 +404,39 @@ struct MainMapView: View {
                 }
             }
             
-            // wait for the animation to complete before cleaning up
+            // Wait 1.5 seconds while message is visible
             do {
-                try await Task.sleep(for: .seconds(animationDuration))
+                try await Task.sleep(for: .seconds(1.5))
             } catch {
-                await MainActor.run { clearFadingGlowState() }
+                await MainActor.run { 
+                    clearFadingGlowState()
+                    clearMischiefMessage()
+                }
                 return
             }
             
-            // Clear all glow dictionaries after animation completes
+            // Poof away the message
+            await MainActor.run {
+                withAnimation(.easeOut(duration: 0.5)) {
+                    mischiefMessageOpacity = 0.0
+                }
+            }
+            
+            // Wait for poof animation to complete
+            do {
+                try await Task.sleep(for: .seconds(0.5))
+            } catch {
+                await MainActor.run { 
+                    clearFadingGlowState()
+                    clearMischiefMessage()
+                }
+                return
+            }
+            
+            // Clear all glow dictionaries and message after animations complete
             await MainActor.run {
                 clearFadingGlowState()
+                clearMischiefMessage()
             }
         }
     }
@@ -382,6 +446,14 @@ struct MainMapView: View {
         fadingGlows.removeAll()
         glowScales.removeAll()
         glowOpacities.removeAll()
+    }
+    
+    @MainActor
+    private func clearMischiefMessage() {
+        showMischiefMessage = false
+        mischiefMessageOffsetX = -100
+        mischiefMessageOffsetY = 0
+        mischiefMessageOpacity = 0
     }
 
     private func zoomTo(landmark: Landmark) {
