@@ -308,14 +308,14 @@ struct MainMapView: View {
         // Add glow to newly added landmarks
         if !addedLandmarks.isEmpty {
             await MainActor.run {
-                glowingLandmarks.formUnion(addedLandmarks)
+                glowingLandmarks = Set(addedLandmarks)
             }
             
             // Remove glow after 0.5 seconds
             try? await Task.sleep(for: .seconds(0.5))
             
             await MainActor.run {
-                glowingLandmarks.subtract(addedLandmarks)
+                glowingLandmarks = []
             }
         }
         
