@@ -342,11 +342,7 @@ struct MainMapView: View {
             do {
                 try await Task.sleep(for: .milliseconds(100))
             } catch {
-                await MainActor.run {
-                    fadingGlows.removeAll()
-                    glowScales.removeAll()
-                    glowOpacities.removeAll()
-                }
+                await MainActor.run { clearFadingGlowState() }
                 return
             }
             
@@ -365,21 +361,22 @@ struct MainMapView: View {
             do {
                 try await Task.sleep(for: .seconds(animationDuration))
             } catch {
-                await MainActor.run {
-                    fadingGlows.removeAll()
-                    glowScales.removeAll()
-                    glowOpacities.removeAll()
-                }
+                await MainActor.run { clearFadingGlowState() }
                 return
             }
             
             // Clear all glow dictionaries after animation completes
             await MainActor.run {
-                fadingGlows.removeAll()
-                glowScales.removeAll()
-                glowOpacities.removeAll()
+                clearFadingGlowState()
             }
         }
+    }
+
+    @MainActor
+    private func clearFadingGlowState() {
+        fadingGlows.removeAll()
+        glowScales.removeAll()
+        glowOpacities.removeAll()
     }
 
     private func zoomTo(landmark: Landmark) {
