@@ -37,7 +37,8 @@ struct MainMapView: View {
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) })
+    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) },
+           sort: \Landmark.name)
     var filteredLandmarks: [Landmark]
     
     private var visibleLandmarks: [Landmark] {
@@ -45,8 +46,6 @@ struct MainMapView: View {
     }
 
     // Categories
-    @Query var allCategories: [LandmarkCategory]
-    
     @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
     var selectedCategories: [LandmarkCategory]
 

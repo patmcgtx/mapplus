@@ -27,7 +27,7 @@ class LandmarkCategory {
     
     /// Creates a new empty category
     /// - Parameter name: The name of the category, e.g. "Cafes"
-    /// - Parameter isSelected: Whether this landmark is currently selected for display
+    /// - Parameter isSelected: Whether this category is currently selected for display
     init(name: String, isSelected: Bool = false) {
         self.name = name
         self.isSelected = isSelected

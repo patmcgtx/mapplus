@@ -14,7 +14,7 @@ import Flow
 struct CategoriesSelectFlow: View {
         
     // All categories available to filter by
-    @Query private var allCategories: [LandmarkCategory]
+    @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
