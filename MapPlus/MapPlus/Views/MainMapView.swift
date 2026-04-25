@@ -300,6 +300,8 @@ struct MainMapView: View {
         from previousLandmarks: [Landmark],
         to newLandmarks: [Landmark]
     ) async {
+        // Thanks to Claude for iterating with me on this animation logic...
+        
         let addedLandmarks = Set(newLandmarks).subtracting(Set(previousLandmarks))
         let removedLandmarks = Set(previousLandmarks).subtracting(Set(newLandmarks))
         
@@ -333,17 +335,20 @@ struct MainMapView: View {
             try? await Task.sleep(for: .milliseconds(100))
             
             // Animate the "poof" effect - expand and fade out like smoke
+            let animationDuration = 0.5
             await MainActor.run {
-                for (id, _) in glowsToAdd {
-                    glowScales[id] = 2.5
-                    glowOpacities[id] = 0.0
+                withAnimation(.easeOut(duration: animationDuration)) {
+                    for (id, _) in glowsToAdd {
+                        glowScales[id] = 2.5
+                        glowOpacities[id] = 0.0
+                    }
                 }
             }
             
-            // Clean up after animation completes (500ms animation + buffer)
-            try? await Task.sleep(for: .seconds(0.6))
+            // wait for the animation to complete before cleaning up
+            try? await Task.sleep(for: .seconds(animationDuration))
             
-            // Clear all glow dictionaries
+            // Clear all glow dictionaries after animation completes
             await MainActor.run {
                 fadingGlows.removeAll()
                 glowScales.removeAll()
