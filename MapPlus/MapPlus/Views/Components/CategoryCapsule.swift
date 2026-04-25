@@ -23,7 +23,7 @@ struct CategoryCapsule: View {
     @Environment(\.colorScheme) var colorScheme: ColorScheme
 
     /// Which category to represent - TODO patmcg does this need a BInding?!
-    @Binding var category: LandmarkCategory
+    let category: LandmarkCategory
 
     /// Whether this category can be selected and de-selected
     let isSelectable: Bool
@@ -90,7 +90,7 @@ struct CategoryCapsule: View {
 
 #Preview("Basic") {
     CategoryCapsule(
-        category: .constant(LandmarkCategory(name: "Beer Gardens")),
+        category: LandmarkCategory(name: "Beer Gardens"),
         isSelectable: false,
         action: nil
     )
@@ -99,7 +99,7 @@ struct CategoryCapsule: View {
 #Preview("Delete") {
     
     CategoryCapsule(
-        category: .constant(LandmarkCategory(name: "Golf")),
+        category: LandmarkCategory(name: "Golf"),
         isSelectable: false,
         action: CategoryCapsule.Action(
             systemImage: "x.circle",
@@ -113,7 +113,7 @@ struct CategoryCapsule: View {
     @Previewable @State var category = LandmarkCategory(name: "Groceries")
     
     CategoryCapsule(
-        category: $category,
+        category: category,
         isSelectable: true,
         action: nil
     )

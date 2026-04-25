@@ -26,15 +26,35 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
-    @State private var displayedLandmarks: [Landmark] = []
+//    @State private var displayedLandmarks: [Landmark] = []
     @State private var landmarkOpacities: [Landmark: Double] = [:]
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
+    
     @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
+    
+    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected == true }) })
+    var displayedLandmarks: [Landmark]
+
+//    private var filteredLandmarks: [Landmark] {
+//        if selectedCategories.isEmpty {
+//            return landmarks
+//        }
+//        return landmarks.filter { landmark in
+//            landmark.categories.contains { $0.isSelected }
+//        }
+//    }
 
     // Categories
-    @State private var allCategories: [LandmarkCategory] = []
+//    @State private var allCategories: [LandmarkCategory] = []
+    @Query var allCategories: [LandmarkCategory]
+    
+    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected == true })
+    var selectedCategories: [LandmarkCategory]
+//    private var selectedCategories: Set<LandmarkCategory> {
+//        Set(allCategories.filter({ $0.isSelected }))
+//    }
 
     // Preferences
     @State private var activeTheme: MapPlusTheme = .cupertino
@@ -73,7 +93,7 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoriesSelectFlow(allCategories: $allCategories)
+                                CategoriesSelectFlow()
                                     .padding()
                                     .frame(minWidth: 300, idealWidth: 400, maxWidth: .infinity)
                                     .presentationCompactAdaptation(.none)
@@ -114,19 +134,19 @@ struct MainMapView: View {
                 }
             }
             .task {
-                loadCategories(from: modelContext)
-                displayedLandmarks = filteredLandmarks
+//                loadCategories(from: modelContext)
+//                displayedLandmarks = filteredLandmarks
             }
-            .onChange(of: landmarks) { _, _ in
-                Task { @MainActor in
-                    await animateLandmarkChange()
-                }
-            }
-            .onChange(of: selectedCategories) { _, _ in
-                Task { @MainActor in
-                    await animateLandmarkChange()
-                }
-            }
+//            .onChange(of: landmarks) { _, _ in
+//                Task { @MainActor in
+//                    await animateLandmarkChange()
+//                }
+//            }
+//            .onChange(of: selectedCategories) { _, _ in
+//                Task { @MainActor in
+//                    await animateLandmarkChange()
+//                }
+//            }
             .sheet(isPresented: $showingLandmarkList) {
                 LandmarksView()
             }
@@ -266,67 +286,65 @@ struct MainMapView: View {
     
     // MARK: - Helper Methods
     
-    private func loadCategories(from context: ModelContext) {
-        let descriptor = FetchDescriptor<LandmarkCategory>(
-            sortBy: [SortDescriptor(\.name, order: .forward)]
-        )
-        allCategories = (try? context.fetch(descriptor)) ?? []
-    }
-    
-    private var selectedCategories: Set<LandmarkCategory> {
-        Set(allCategories.filter({ $0.isSelected }))
-    }
+//    private func loadCategories(from context: ModelContext) {
+//        let descriptor = FetchDescriptor<LandmarkCategory>(
+//            sortBy: [SortDescriptor(\.name, order: .forward)]
+//        )
+//        allCategories = (try? context.fetch(descriptor)) ?? []
+//    }
+
+//    private func animateLandmarkChange() async { }
 
     /// Animate the selected landmarks changing
-    private func animateLandmarkChange() async {
-        let newLandmarks = filteredLandmarks
-        let currentSet = Set(displayedLandmarks)
-        let newSet = Set(newLandmarks)
-
-        // Determine which landmarks are being removed or added
-        let removed = displayedLandmarks.filter { !newSet.contains($0) }
-        let added = newLandmarks.filter { !currentSet.contains($0) }
-
-        // Fade out only the landmarks being removed
-        for landmark in removed {
-            landmarkOpacities[landmark] = 0.0
-        }
-
-        // Wait for fade out to complete (only if there are landmarks to remove)
-        if !removed.isEmpty {
-            try? await Task.sleep(for: .seconds(0.35))
-        }
-
-        // Start added landmarks at 0 opacity before inserting them
-        for landmark in added {
-            landmarkOpacities[landmark] = 0.0
-        }
-
-        // Update the displayed landmarks and clean up removed entries
-        displayedLandmarks = newLandmarks
-        for landmark in removed {
-            landmarkOpacities.removeValue(forKey: landmark)
-        }
-
-        // Small delay to ensure the update completes
-        try? await Task.sleep(for: .seconds(0.05))
-
-        // Fade in added landmarks
-        for landmark in added {
-            landmarkOpacities[landmark] = 1.0
-        }
-    }
+//    private func animateLandmarkChange() async {
+//        let newLandmarks = filteredLandmarks
+//        let currentSet = Set(displayedLandmarks)
+//        let newSet = Set(newLandmarks)
+//
+//        // Determine which landmarks are being removed or added
+//        let removed = displayedLandmarks.filter { !newSet.contains($0) }
+//        let added = newLandmarks.filter { !currentSet.contains($0) }
+//
+//        // Fade out only the landmarks being removed
+//        for landmark in removed {
+//            landmarkOpacities[landmark] = 0.0
+//        }
+//
+//        // Wait for fade out to complete (only if there are landmarks to remove)
+//        if !removed.isEmpty {
+//            try? await Task.sleep(for: .seconds(0.35))
+//        }
+//
+//        // Start added landmarks at 0 opacity before inserting them
+//        for landmark in added {
+//            landmarkOpacities[landmark] = 0.0
+//        }
+//
+//        // Update the displayed landmarks and clean up removed entries
+//        displayedLandmarks = newLandmarks
+//        for landmark in removed {
+//            landmarkOpacities.removeValue(forKey: landmark)
+//        }
+//
+//        // Small delay to ensure the update completes
+//        try? await Task.sleep(for: .seconds(0.05))
+//
+//        // Fade in added landmarks
+//        for landmark in added {
+//            landmarkOpacities[landmark] = 1.0
+//        }
+//    }
     
     /// Returns landmarks filtered by the selected category names.
     /// If no categories are selected, all landmarks are returned.
-    private var filteredLandmarks: [Landmark] {
-        if selectedCategories.isEmpty {
-            return landmarks
-        }
-        return landmarks.filter { landmark in
-            landmark.categories.contains { $0.isSelected }
-        }
-    }
+//    private var filteredLandmarks: [Landmark] {
+//        if selectedCategories.isEmpty {
+//            return landmarks
+//        }
+//        return landmarks.filter { landmark in
+//            landmark.categories.contains { $0.isSelected }
+//        }
+//    }
 
     private func zoomTo(landmark: Landmark) {
         withAnimation {

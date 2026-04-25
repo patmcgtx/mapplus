@@ -13,7 +13,7 @@ extension ModelContainer {
     static func persistentContainer() throws -> ModelContainer {
         let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
-        container.mainContext.autosaveEnabled = false
+//        container.mainContext.autosaveEnabled = false
         
         for category in SampleCategories().all {
             container.mainContext.insert(category)

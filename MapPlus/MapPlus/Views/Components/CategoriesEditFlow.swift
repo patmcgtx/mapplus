@@ -20,7 +20,8 @@ struct CategoriesEditFlow: View {
             HFlow {
                 ForEach($categories) { category in
                     CategoryCapsule(
-                        category: category,
+                        // TODO patmcg this case is going to need some work
+                        category: category.wrappedValue,
                         isSelectable: false,
                         action: CategoryCapsule.Action(
                                 systemImage: "x.circle",

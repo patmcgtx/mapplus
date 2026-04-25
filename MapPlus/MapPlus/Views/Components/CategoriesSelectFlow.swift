@@ -6,14 +6,17 @@
 //
 
 import SwiftUI
+import SwiftData
 import Flow
 
 /// Displays landmark categories, allowing individual ones to be selected or unselected.
 struct CategoriesSelectFlow: View {
         
     /// All available categories to filter by
-    @Binding var allCategories: [LandmarkCategory]
-    
+//    @Binding var allCategories: [LandmarkCategory]
+//    @Environment(\.modelContext) private var modelContext
+    @Query private var allCategories: [LandmarkCategory]
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -29,7 +32,7 @@ struct CategoriesSelectFlow: View {
             }
             
             HFlow {
-                ForEach($allCategories) { category in
+                ForEach(allCategories) { category in
                     CategoryCapsule(
                         category: category,
                         isSelectable: true,
@@ -60,9 +63,8 @@ struct CategoriesSelectFlow: View {
         .init(name: "Two"),
         .init(name: "Three")
     ]
-    CategoriesSelectFlow(allCategories: $categories)
-    let selected = categories.filter(\.isSelected)
-    Text(selected.map(\.name).joined(separator: ", "))
+    CategoriesSelectFlow()
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #endif // DEBUG
