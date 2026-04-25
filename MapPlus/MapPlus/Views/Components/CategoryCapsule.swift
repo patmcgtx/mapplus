@@ -61,10 +61,18 @@ struct CategoryCapsule: View {
         .onTapGesture {
             if isSelectable {
                 withAnimation {
-                    category.isSelected.toggle()
                     do {
-                        try modelContext.save()
+                        try withAnimation {
+                            // Update and commit the selected state to immediately reflect across
+                            // the app.  This is part of an opinionated approach that leverages
+                            // SwiftData for simple app-wide, reactive persistent state, breaking
+                            // somewhat with traditional MVVM for simplicity and responsiveness.
+                            // Basically, it works really well. 🤷🏻‍♂️
+                            category.isSelected.toggle()
+                            try modelContext.save()
+                        }
                     } catch {
+                        // TODO patmcg what to do if the persist fails?  Show an error alert? 🤔
                         print("Failed to save category selection: \(error)")
                     }
                 }
@@ -148,6 +156,7 @@ struct CategoryCapsule: View {
         action: nil
     )
     
+    // TODO patmcg this is not reflecting the state change on category; fix
     Text(category.isSelected ? "Selected" : "Not selected")
     
 }
@@ -162,8 +171,8 @@ struct CategoryCapsule: View {
         action: nil
     )
     
+    // TODO patmcg this is not reflecting the state change on category; fix
     Text(category.isSelected ? "Selected" : "Not selected")
-    
 }
 
 #endif // DEBUG
