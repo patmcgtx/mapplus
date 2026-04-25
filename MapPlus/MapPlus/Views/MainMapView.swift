@@ -340,15 +340,14 @@ struct MainMapView: View {
                 }
             }
             
-            // Clean up after animation completes
+            // Clean up after animation completes (500ms animation + buffer)
             try? await Task.sleep(for: .seconds(0.6))
             
+            // Clear all glow dictionaries
             await MainActor.run {
-                for (id, _) in glowsToAdd {
-                    fadingGlows.removeValue(forKey: id)
-                    glowScales.removeValue(forKey: id)
-                    glowOpacities.removeValue(forKey: id)
-                }
+                fadingGlows.removeAll()
+                glowScales.removeAll()
+                glowOpacities.removeAll()
             }
         }
     }
