@@ -24,8 +24,8 @@ Match the map to your vibe.
 
 * Cupertino to look like standard iOS app
 * 8-bit for a retro arcade flair
-* Flamingo for a a beachy pink vibe
-* Kerby for a hometown Austin flair
+* Flamingo for a beachy pink vibe
+* Kerby for an Austin flair
 * Or add your own (with an upgrade)
 
 ### Movable buttons
