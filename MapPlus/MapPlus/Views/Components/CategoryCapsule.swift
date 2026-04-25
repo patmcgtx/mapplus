@@ -68,7 +68,14 @@ struct CategoryCapsule: View {
         .onTapGesture {
             if isSelectable {
                 withAnimation {
+                    // Update and commit the selected state to immediately reflect across
+                    // the app.  This is part of an opinionated approach that leverages
+                    // SwiftData for simple app-wide, reactive persistent state, breaking
+                    // somewhat with traditional MVVM for simplicity and responsiveness.
+                    // Basically, it works really well. 🤷🏻‍♂️
                     category.isSelected.toggle()
+                    
+                    // TODO patmcg what to do if the persist fails?  Show an error alert? 🤔
                     try? modelContext.save()
                 }
             }
@@ -143,16 +150,20 @@ struct CategoryCapsule: View {
 
 #Preview("Toggle") {
     
-    let category = LandmarkCategory(name: "Groceries")
-    
-    CategoryCapsule(
-        category: category,
-        isSelectable: true,
-        action: nil
-    )
-    
-    Text(category.isSelected ? "Selected" : "Not selected")
-    
+    VStack {
+        let category = SampleCategories().cafes
+        
+        CategoryCapsule(
+            category: category,
+            isSelectable: true,
+            action: nil
+        )
+        
+        // TODO patmcg fix this; it's not reacting to the category change...
+        Text(category.isSelected ? "Selected" : "Not selected")
+    }
+    .modelContainer(try! ModelContainer.inMemorySampleContainer())
+
 }
 
 #Preview("Toggle, selected") {
