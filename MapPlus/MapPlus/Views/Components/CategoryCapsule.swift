@@ -20,11 +20,11 @@ struct CategoryCapsule: View {
         let onTap: (LandmarkCategory) -> Void
     }
     
-    @Environment(\.theme) var theme: MapPlusTheme
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.theme) private var theme: MapPlusTheme
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @Environment(\.modelContext) private var modelContext
 
-    /// Which category to represent - TODO patmcg does this need a BInding?!
+    /// Which category to display
     let category: LandmarkCategory
 
     /// Whether this category can be selected and de-selected
@@ -37,21 +37,24 @@ struct CategoryCapsule: View {
 
     var body: some View {
         HStack {
-            let fontWeight: Font.Weight = isSelectable && !category.isSelected ? .regular : .heavy
-            let fontColor: Color = category.isSelected
+            let fontWeight: Font.Weight = shouldShowSelectionState ? .heavy : .regular
+            
+            let fontColor: Color = shouldShowSelectionState
                 ? theme.selectedCapsuleFontColor
                 : theme.foregroundColor(for: colorScheme)
+            
             Text(category.name.uppercased())
                 .fontWeight(fontWeight)
                 .fontDesign(.rounded)
                 .foregroundStyle(fontColor)
             
             if let categoryAction = action {
-                Button(action: {
-                }, label: {
+                Button(action: {}, label: {
                     Image(systemName: categoryAction.systemImage)
                 })
                 .onTapGesture {
+                    // In this case, the Button action does not work,
+                    // and we have to use the tap gesture instead.
                     withAnimation {
                         categoryAction.onTap(category)
                     }
@@ -60,9 +63,9 @@ struct CategoryCapsule: View {
         }
         .onTapGesture {
             if isSelectable {
-                withAnimation() {
+                withAnimation {
                     category.isSelected.toggle()
-                try! modelContext.save()
+                    try? modelContext.save()
                 }
             }
         }
@@ -76,7 +79,7 @@ struct CategoryCapsule: View {
             )
         )
         .background {
-            if category.isSelected {
+            if shouldShowSelectionState {
                 Capsule(style: .circular)
                     .fill(theme.tintColor)
             } else {
@@ -89,13 +92,27 @@ struct CategoryCapsule: View {
             isSelectable // Sends haptics when tapped and this is a selectable category
         }
     }
+    
+    /// Whether or not to show the selection state of the category
+    private var shouldShowSelectionState: Bool {
+        isSelectable && category.isSelected
+    }
 }
 
 #if DEBUG
 
-#Preview("Basic") {
+#Preview("View-only") {
     CategoryCapsule(
         category: LandmarkCategory(name: "Beer Gardens"),
+        isSelectable: false,
+        action: nil
+    )
+}
+
+#Preview("View-only, selected") {
+    // In the view-only case, we actually don't want to see the selection state.
+    CategoryCapsule(
+        category: LandmarkCategory(name: "Beer Gardens", isSelected: true),
         isSelectable: false,
         action: nil
     )
@@ -115,7 +132,7 @@ struct CategoryCapsule: View {
 
 #Preview("Toggle") {
     
-    @Previewable @State var category = LandmarkCategory(name: "Groceries")
+    let category = LandmarkCategory(name: "Groceries")
     
     CategoryCapsule(
         category: category,
