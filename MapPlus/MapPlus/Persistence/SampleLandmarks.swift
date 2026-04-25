@@ -45,21 +45,7 @@ struct SampleLandmarks {
             categories: [categories.cafes, categories.fun]
         )
     }
-    
-    var school: Landmark {
-        Landmark(
-            name: "School",
-            notes: "Learning and such.",
-            formattedAddress: "123 School",
-            emoji: "📚",
-            location: CLLocationCoordinate2D(
-                latitude: 30.20632,
-                longitude: -97.77506
-            ),
-            categories: [categories.education]
-        )
-    }
-    
+        
     var work: Landmark {
         Landmark(
             name: "Work",
@@ -77,7 +63,7 @@ struct SampleLandmarks {
 
     /// A few landmarks around Austin, Texas
     var austinPlaces: [Landmark] {
-        [capital, coffee, school, work]
+        [capital, coffee, work]
     }
 
     // MARK: - Global sites
@@ -106,7 +92,7 @@ struct SampleLandmarks {
                 latitude: 51.5074,
                 longitude: -0.1278
             ),
-            categories: [categories.fun, categories.education]
+            categories: [categories.fun]
         )
     }
     

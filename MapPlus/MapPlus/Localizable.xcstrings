@@ -538,6 +538,23 @@
         }
       }
     },
+    "selected-categories" : {
+      "comment" : "A label displayed above a list of the user's currently selected landmark categories.",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selected Categories:"
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Categorías seleccionadas:"
+          }
+        }
+      }
+    },
     "show-all" : {
       "extractionState" : "stale",
       "localizations" : {

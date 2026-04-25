@@ -12,7 +12,7 @@ import MapKit
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
     
-    // TODO patmcg rework this view with a proper view model
+    // TODO patmcg rework this view with a view model?
 
     // Location
     private var locationPermissionsService = LocationPermissionsService()
@@ -26,15 +26,34 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
-    @State private var displayedLandmarks: [Landmark] = []
-    @State private var landmarkOpacities: [Landmark: Double] = [:]
+    
+    // Added landmark animation state
+    @State private var glowingLandmarks: Set<Landmark> = []
+
+    // Removed landmark animation state
+    // TODO patmcg abstract / encapsulate this better!
+    @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
+    @State private var glowScales: [UUID: CGFloat] = [:]
+    @State private var glowOpacities: [UUID: Double] = [:]
+    @State private var animationTask: Task<Void, Never>?
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Landmark.name, order: .reverse) var landmarks: [Landmark]
+
+    // Landmarks
+    @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
+    
+    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) },
+           sort: \Landmark.name)
+    var filteredLandmarks: [Landmark]
+    
+    private var visibleLandmarks: [Landmark] {
+        selectedCategories.isEmpty ? allLandmarks : filteredLandmarks
+    }
 
     // Categories
-    @State private var allCategories: [LandmarkCategory] = []
+    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
+    var selectedCategories: [LandmarkCategory]
 
     // Preferences
     @State private var activeTheme: MapPlusTheme = .cupertino
@@ -45,14 +64,39 @@ struct MainMapView: View {
         NavigationStack {
             ZStack {
                 Map(position: $mapPosition, selection: self.$selectedLandmark) {
-                    ForEach(displayedLandmarks, id: \.self) { landmark in
+                    ForEach(visibleLandmarks, id: \.self) { landmark in
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
-                                .opacity(landmarkOpacities[landmark, default: 1.0])
-                                .animation(.easeInOut(duration: 0.35), value: landmarkOpacities[landmark, default: 1.0])
+                                .shadow(
+                                    color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor : .clear,
+                                    radius: glowingLandmarks.contains(landmark) ? 12 : 0
+                                )
+                                .shadow(
+                                    color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor.opacity(0.6) : .clear,
+                                    radius: glowingLandmarks.contains(landmark) ? 20 : 0
+                                )
+                                .animation(.easeOut(duration: 0.3), value: glowingLandmarks)
                         }
                         .tag(landmark)
                     }
+                    
+                    // Fading glows for removed landmarks
+                    ForEach(Array(fadingGlows.keys), id: \.self) { glowId in
+                        if let coordinate = fadingGlows[glowId] {
+                            Annotation("", coordinate: coordinate) {
+                                Circle()
+                                    .fill(activeTheme.tintColor.opacity(0.3))
+                                    .frame(width: 20, height: 20)
+                                    .shadow(color: activeTheme.tintColor.opacity(0.5), radius: 8)
+                                    .shadow(color: activeTheme.tintColor.opacity(0.3), radius: 12)
+                                    .scaleEffect(glowScales[glowId] ?? 1.0)
+                                    .opacity(glowOpacities[glowId] ?? 1.0)
+                                    .animation(.easeOut(duration: 0.5), value: glowScales[glowId])
+                                    .animation(.easeOut(duration: 0.5), value: glowOpacities[glowId])
+                            }
+                        }
+                    }
+                    
                     UserAnnotation()
                 }
                 .toolbar {
@@ -73,7 +117,7 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoriesSelectFlow(allCategories: $allCategories)
+                                CategoriesSelectFlow()
                                     .padding()
                                     .frame(minWidth: 300, idealWidth: 400, maxWidth: .infinity)
                                     .presentationCompactAdaptation(.none)
@@ -113,18 +157,10 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
             }
-            .task {
-                loadCategories(from: modelContext)
-                displayedLandmarks = filteredLandmarks
-            }
-            .onChange(of: landmarks) { _, _ in
-                Task { @MainActor in
-                    await animateLandmarkChange()
-                }
-            }
-            .onChange(of: selectedCategories) { _, _ in
-                Task { @MainActor in
-                    await animateLandmarkChange()
+            .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
+                animationTask?.cancel()
+                animationTask = Task { @MainActor in
+                    await animateLandmarkChange(from: oldVisibleLandmarks, to: newVisibleLandmarks)
                 }
             }
             .sheet(isPresented: $showingLandmarkList) {
@@ -194,7 +230,7 @@ struct MainMapView: View {
                 self.showingLandmarkList = true
             }
             Section {
-                ForEach(self.landmarks, id: \.self) { landmark in
+                ForEach(self.allLandmarks, id: \.self) { landmark in
                     Button(action: {
                         zoomTo(landmark: landmark)
                     }, label: {
@@ -266,66 +302,86 @@ struct MainMapView: View {
     
     // MARK: - Helper Methods
     
-    private func loadCategories(from context: ModelContext) {
-        let descriptor = FetchDescriptor<LandmarkCategory>(
-            sortBy: [SortDescriptor(\.name, order: .forward)]
-        )
-        allCategories = (try? context.fetch(descriptor)) ?? []
-    }
-    
-    private var selectedCategories: Set<LandmarkCategory> {
-        Set(allCategories.filter({ $0.isSelected }))
-    }
-
     /// Animate the selected landmarks changing
-    private func animateLandmarkChange() async {
-        let newLandmarks = filteredLandmarks
-        let currentSet = Set(displayedLandmarks)
-        let newSet = Set(newLandmarks)
-
-        // Determine which landmarks are being removed or added
-        let removed = displayedLandmarks.filter { !newSet.contains($0) }
-        let added = newLandmarks.filter { !currentSet.contains($0) }
-
-        // Fade out only the landmarks being removed
-        for landmark in removed {
-            landmarkOpacities[landmark] = 0.0
+    private func animateLandmarkChange(
+        from previousLandmarks: [Landmark],
+        to newLandmarks: [Landmark]
+    ) async {
+        // Thanks to Claude for iterating with me on this animation logic...
+        
+        let addedLandmarks = Set(newLandmarks).subtracting(Set(previousLandmarks))
+        let removedLandmarks = Set(previousLandmarks).subtracting(Set(newLandmarks))
+        
+        // Add glow to newly added landmarks
+        if !addedLandmarks.isEmpty {
+            await MainActor.run {
+                glowingLandmarks = Set(addedLandmarks)
+            }
+            
+            // Remove glow after 0.5 seconds
+            do {
+                try await Task.sleep(for: .seconds(0.5))
+            } catch {
+                await MainActor.run { glowingLandmarks = [] }
+                return
+            }
+            
+            await MainActor.run {
+                glowingLandmarks = []
+            }
         }
-
-        // Wait for fade out to complete (only if there are landmarks to remove)
-        if !removed.isEmpty {
-            try? await Task.sleep(for: .seconds(0.35))
-        }
-
-        // Start added landmarks at 0 opacity before inserting them
-        for landmark in added {
-            landmarkOpacities[landmark] = 0.0
-        }
-
-        // Update the displayed landmarks and clean up removed entries
-        displayedLandmarks = newLandmarks
-        for landmark in removed {
-            landmarkOpacities.removeValue(forKey: landmark)
-        }
-
-        // Small delay to ensure the update completes
-        try? await Task.sleep(for: .seconds(0.05))
-
-        // Fade in added landmarks
-        for landmark in added {
-            landmarkOpacities[landmark] = 1.0
+        
+        // Add fading glows for removed landmarks
+        if !removedLandmarks.isEmpty {
+            let glowsToAdd = removedLandmarks.map { (UUID(), $0.location) }
+            
+            await MainActor.run {
+                for (id, coordinate) in glowsToAdd {
+                    fadingGlows[id] = coordinate
+                    glowScales[id] = 1.0
+                    glowOpacities[id] = 1.0
+                }
+            }
+            
+            // Small delay to let SwiftUI render the initial state
+            do {
+                try await Task.sleep(for: .milliseconds(100))
+            } catch {
+                await MainActor.run { clearFadingGlowState() }
+                return
+            }
+            
+            // Animate the "poof" effect - expand and fade out like smoke
+            let animationDuration = 0.5
+            await MainActor.run {
+                withAnimation(.easeOut(duration: animationDuration)) {
+                    for (id, _) in glowsToAdd {
+                        glowScales[id] = 2.5
+                        glowOpacities[id] = 0.0
+                    }
+                }
+            }
+            
+            // wait for the animation to complete before cleaning up
+            do {
+                try await Task.sleep(for: .seconds(animationDuration))
+            } catch {
+                await MainActor.run { clearFadingGlowState() }
+                return
+            }
+            
+            // Clear all glow dictionaries after animation completes
+            await MainActor.run {
+                clearFadingGlowState()
+            }
         }
     }
-    
-    /// Returns landmarks filtered by the selected category names.
-    /// If no categories are selected, all landmarks are returned.
-    private var filteredLandmarks: [Landmark] {
-        if selectedCategories.isEmpty {
-            return landmarks
-        }
-        return landmarks.filter { landmark in
-            landmark.categories.contains { $0.isSelected }
-        }
+
+    @MainActor
+    private func clearFadingGlowState() {
+        fadingGlows.removeAll()
+        glowScales.removeAll()
+        glowOpacities.removeAll()
     }
 
     private func zoomTo(landmark: Landmark) {

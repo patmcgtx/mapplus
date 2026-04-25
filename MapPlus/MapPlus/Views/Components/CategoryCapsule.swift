@@ -5,6 +5,7 @@
 //  Created by Patrick McGonigle on 4/16/26.
 //
 import SwiftUI
+import SwiftData
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
@@ -19,11 +20,12 @@ struct CategoryCapsule: View {
         let onTap: (LandmarkCategory) -> Void
     }
     
-    @Environment(\.theme) var theme: MapPlusTheme
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
+    @Environment(\.theme) private var theme: MapPlusTheme
+    @Environment(\.colorScheme) private var colorScheme: ColorScheme
+    @Environment(\.modelContext) private var modelContext
 
-    /// Which category to represent - TODO patmcg does this need a BInding?!
-    @Binding var category: LandmarkCategory
+    /// Which category to display
+    let category: LandmarkCategory
 
     /// Whether this category can be selected and de-selected
     let isSelectable: Bool
@@ -35,10 +37,12 @@ struct CategoryCapsule: View {
 
     var body: some View {
         HStack {
-            let fontWeight: Font.Weight = isSelectable && !category.isSelected ? .regular : .heavy
-            let fontColor: Color = category.isSelected
+            let fontWeight: Font.Weight = shouldShowSelectionState ? .heavy : .regular
+            
+            let fontColor: Color = shouldShowSelectionState
                 ? theme.selectedCapsuleFontColor
                 : theme.foregroundColor(for: colorScheme)
+            
             Text(category.name.uppercased())
                 .fontWeight(fontWeight)
                 .fontDesign(.rounded)
@@ -46,18 +50,31 @@ struct CategoryCapsule: View {
             
             if let categoryAction = action {
                 Button(action: {
+                    withAnimation {
+                        categoryAction.onTap(category)
+                    }
                 }, label: {
                     Image(systemName: categoryAction.systemImage)
                 })
-                .onTapGesture {
-                    categoryAction.onTap(category)
-                }
             }
         }
         .onTapGesture {
             if isSelectable {
-                withAnimation() {
-                    category.isSelected.toggle()
+                withAnimation {
+                    do {
+                        try withAnimation {
+                            // Update and commit the selected state to immediately reflect across
+                            // the app.  This is part of an opinionated approach that leverages
+                            // SwiftData for simple app-wide, reactive persistent state, breaking
+                            // somewhat with traditional MVVM for simplicity and responsiveness.
+                            // Basically, it works really well. 🤷🏻‍♂️
+                            category.isSelected.toggle()
+                            try modelContext.save()
+                        }
+                    } catch {
+                        // TODO patmcg what to do if the persist fails?  Show an error alert? 🤔
+                        print("Failed to save category selection: \(error)")
+                    }
                 }
             }
         }
@@ -71,7 +88,7 @@ struct CategoryCapsule: View {
             )
         )
         .background {
-            if category.isSelected {
+            if shouldShowSelectionState {
                 Capsule(style: .circular)
                     .fill(theme.tintColor)
             } else {
@@ -84,13 +101,27 @@ struct CategoryCapsule: View {
             isSelectable // Sends haptics when tapped and this is a selectable category
         }
     }
+    
+    /// Whether or not to show the selection state of the category
+    private var shouldShowSelectionState: Bool {
+        isSelectable && category.isSelected
+    }
 }
 
 #if DEBUG
 
-#Preview("Basic") {
+#Preview("View-only") {
     CategoryCapsule(
-        category: .constant(LandmarkCategory(name: "Beer Gardens")),
+        category: LandmarkCategory(name: "Beer Gardens"),
+        isSelectable: false,
+        action: nil
+    )
+}
+
+#Preview("View-only, selected") {
+    // In the view-only case, we actually don't want to see the selection state.
+    CategoryCapsule(
+        category: LandmarkCategory(name: "Beer Gardens", isSelected: true),
         isSelectable: false,
         action: nil
     )
@@ -98,28 +129,50 @@ struct CategoryCapsule: View {
 
 #Preview("Delete") {
     
+    @Previewable @State var isDeleted: Bool = false
+    
     CategoryCapsule(
-        category: .constant(LandmarkCategory(name: "Golf")),
+        category: LandmarkCategory(name: "Golf"),
         isSelectable: false,
         action: CategoryCapsule.Action(
             systemImage: "x.circle",
-            onTap: { category in }
+            onTap: { category in
+                isDeleted.toggle()
+            }
         )
     )
+    
+    Text("Is deleted?")
+    Text(isDeleted ? "Yes" : "No")
 }
 
 #Preview("Toggle") {
     
-    @Previewable @State var category = LandmarkCategory(name: "Groceries")
+    let category = LandmarkCategory(name: "Groceries")
     
     CategoryCapsule(
-        category: $category,
+        category: category,
         isSelectable: true,
         action: nil
     )
     
+    // TODO patmcg this is not reflecting the state change on category; fix
     Text(category.isSelected ? "Selected" : "Not selected")
     
+}
+
+#Preview("Toggle, selected") {
+    
+    let category = LandmarkCategory(name: "Groceries", isSelected: true)
+    
+    CategoryCapsule(
+        category: category,
+        isSelectable: true,
+        action: nil
+    )
+    
+    // TODO patmcg this is not reflecting the state change on category; fix
+    Text(category.isSelected ? "Selected" : "Not selected")
 }
 
 #endif // DEBUG

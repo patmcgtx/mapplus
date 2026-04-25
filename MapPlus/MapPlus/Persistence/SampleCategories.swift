@@ -12,10 +12,6 @@ struct SampleCategories {
     var family: LandmarkCategory {
         LandmarkCategory(name: "Family")
     }
-
-    var education: LandmarkCategory {
-        LandmarkCategory(name: "Education")
-    }
     
     var fun: LandmarkCategory {
         LandmarkCategory(name: "Fun")
@@ -31,6 +27,6 @@ struct SampleCategories {
 
     
     var all: [LandmarkCategory] {
-        [family, education, fun, work, cafes]
+        [family, fun, work, cafes]
     }
 }

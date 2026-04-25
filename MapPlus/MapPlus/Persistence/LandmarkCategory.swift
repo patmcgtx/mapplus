@@ -18,15 +18,19 @@ class LandmarkCategory {
     /// The name of the category, e.g. "Cafes"
     var name: String
     
-    /// Whether this landmark is currently selected in app
+    /// Whether this landmark is currently selected for display
     var isSelected: Bool = false
     
     /// Which landmarks are tagged with this category
     @Relationship(inverse: \Landmark.categories)
     var landmarks: [Landmark] = []
     
-    init(name: String) {
+    /// Creates a new empty category
+    /// - Parameter name: The name of the category, e.g. "Cafes"
+    /// - Parameter isSelected: Whether this category is currently selected for display
+    init(name: String, isSelected: Bool = false) {
         self.name = name
+        self.isSelected = isSelected
     }
 }
 
