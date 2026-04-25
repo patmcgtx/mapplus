@@ -1,5 +1,5 @@
 //
-//  CategoriesEditFlow.swift
+//  CategoriesDeleteFlow.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 4/16/26.
@@ -7,10 +7,13 @@
 import SwiftUI
 import Flow
 
-/// Displays landmark categories, allowing individual categories to be added or deleted.
-struct CategoriesEditFlow: View {
+/// Displays landmark categories, allowing individual categories to be deleted.
+struct CategoriesDeleteFlow: View {
     
     /// The categories list to edit.
+    ///
+    /// In this case we use a binding (not a @Query) because we want this editing to be in-memory only.
+    /// Only once the user saves the changes, do we commit them.
     @Binding var categories: [LandmarkCategory]
     
     var body: some View {
@@ -20,7 +23,6 @@ struct CategoriesEditFlow: View {
             HFlow {
                 ForEach($categories) { category in
                     CategoryCapsule(
-                        // TODO patmcg this case is going to need some work
                         category: category.wrappedValue,
                         isSelectable: false,
                         action: CategoryCapsule.Action(
@@ -41,13 +43,17 @@ struct CategoriesEditFlow: View {
 #if DEBUG
 
 #Preview {
+    
     @Previewable @State var categories: [LandmarkCategory] = [
         LandmarkCategory(name: "One"),
         LandmarkCategory(name: "Two"),
         LandmarkCategory(name: "Three"),
     ]
-    CategoriesEditFlow(categories: $categories)
     
+    CategoriesDeleteFlow(categories: $categories)
+
+    let remaining = categories.map{ $0.name }.joined(separator: ", ")
+    Text("Remaining: \(remaining)")
 }
 
 #endif // DEBUG

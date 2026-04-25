@@ -49,11 +49,15 @@ struct CategoryCapsule: View {
                 .foregroundStyle(fontColor)
             
             if let categoryAction = action {
-                Button(action: {}, label: {
+                Button(action: {
+                    withAnimation {
+                        categoryAction.onTap(category)
+                    }
+                }, label: {
                     Image(systemName: categoryAction.systemImage)
                 })
                 .onTapGesture {
-                    // In this case, the Button action does not work,
+                    // Sometimes the button action does not run,
                     // and we have to use the tap gesture instead.
                     withAnimation {
                         categoryAction.onTap(category)
@@ -120,14 +124,21 @@ struct CategoryCapsule: View {
 
 #Preview("Delete") {
     
+    @Previewable @State var isDeleted: Bool = false
+    
     CategoryCapsule(
         category: LandmarkCategory(name: "Golf"),
         isSelectable: false,
         action: CategoryCapsule.Action(
             systemImage: "x.circle",
-            onTap: { category in }
+            onTap: { category in
+                isDeleted.toggle()
+            }
         )
     )
+    
+    Text("Is deleted?")
+    Text(isDeleted ? "Yes" : "No")
 }
 
 #Preview("Toggle") {

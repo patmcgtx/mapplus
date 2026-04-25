@@ -10,6 +10,7 @@ import SwiftData
 import Flow
 
 /// Displays landmark categories, allowing individual ones to be selected or unselected.
+/// Once presented, any of the known categories could become selected or deselected.
 struct CategoriesSelectFlow: View {
         
     // All categories available to filter by
