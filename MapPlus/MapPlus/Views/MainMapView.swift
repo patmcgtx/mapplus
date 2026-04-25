@@ -28,6 +28,8 @@ struct MainMapView: View {
     @State private var selectedLandmark: Landmark?
     @State private var glowingLandmarks: Set<Landmark> = []
     @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
+    @State private var glowScales: [UUID: CGFloat] = [:]
+    @State private var glowOpacities: [UUID: Double] = [:]
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -78,10 +80,14 @@ struct MainMapView: View {
                         if let coordinate = fadingGlows[glowId] {
                             Annotation("", coordinate: coordinate) {
                                 Circle()
-                                    .fill(activeTheme.tintColor.opacity(0.4))
-                                    .frame(width: 40, height: 40)
-                                    .shadow(color: activeTheme.tintColor, radius: 12)
-                                    .shadow(color: activeTheme.tintColor.opacity(0.6), radius: 20)
+                                    .fill(activeTheme.tintColor.opacity(0.3))
+                                    .frame(width: 20, height: 20)
+                                    .shadow(color: activeTheme.tintColor.opacity(0.5), radius: 8)
+                                    .shadow(color: activeTheme.tintColor.opacity(0.3), radius: 12)
+                                    .scaleEffect(glowScales[glowId] ?? 1.0)
+                                    .opacity(glowOpacities[glowId] ?? 1.0)
+                                    .animation(.easeOut(duration: 0.5), value: glowScales[glowId])
+                                    .animation(.easeOut(duration: 0.5), value: glowOpacities[glowId])
                             }
                         }
                     }
@@ -319,15 +325,30 @@ struct MainMapView: View {
             await MainActor.run {
                 for (id, coordinate) in glowsToAdd {
                     fadingGlows[id] = coordinate
+                    glowScales[id] = 1.0
+                    glowOpacities[id] = 1.0
                 }
             }
             
-            // Remove fading glows after 0.5 seconds
-            try? await Task.sleep(for: .seconds(0.5))
+            // Small delay to let SwiftUI render the initial state
+            try? await Task.sleep(for: .milliseconds(100))
+            
+            // Animate the "poof" effect - expand and fade out like smoke
+            await MainActor.run {
+                for (id, _) in glowsToAdd {
+                    glowScales[id] = 2.5
+                    glowOpacities[id] = 0.0
+                }
+            }
+            
+            // Clean up after animation completes
+            try? await Task.sleep(for: .seconds(0.6))
             
             await MainActor.run {
                 for (id, _) in glowsToAdd {
                     fadingGlows.removeValue(forKey: id)
+                    glowScales.removeValue(forKey: id)
+                    glowOpacities.removeValue(forKey: id)
                 }
             }
         }
