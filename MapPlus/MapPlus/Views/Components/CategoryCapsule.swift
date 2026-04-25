@@ -56,20 +56,17 @@ struct CategoryCapsule: View {
                 }, label: {
                     Image(systemName: categoryAction.systemImage)
                 })
-                .onTapGesture {
-                    // Sometimes the button action does not run,
-                    // and we have to use the tap gesture instead.
-                    withAnimation {
-                        categoryAction.onTap(category)
-                    }
-                }
             }
         }
         .onTapGesture {
             if isSelectable {
                 withAnimation {
                     category.isSelected.toggle()
-                    try? modelContext.save()
+                    do {
+                        try modelContext.save()
+                    } catch {
+                        print("Failed to save category selection: \(error)")
+                    }
                 }
             }
         }

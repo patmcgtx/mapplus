@@ -61,7 +61,7 @@ private struct SelectedCategoriesView: View {
     private var selectedCategories: [LandmarkCategory]
     
     var body: some View {
-        Text("Selected Categories:").bold()
+        Text("selected-categories".localized).bold()
         let selected = selectedCategories.map{ $0.name }.joined(separator: ", ")
         Text(selected)
     }

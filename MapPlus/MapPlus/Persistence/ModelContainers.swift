@@ -16,9 +16,9 @@ extension ModelContainer {
         
         // Only insert sample categories if the database is empty
         let descriptor = FetchDescriptor<LandmarkCategory>()
-        let existingCategories = try? container.mainContext.fetch(descriptor)
+        let existingCategories = try container.mainContext.fetch(descriptor)
         
-        if existingCategories?.isEmpty ?? true {
+        if existingCategories.isEmpty {
             for category in SampleCategories().all {
                 container.mainContext.insert(category)
             }

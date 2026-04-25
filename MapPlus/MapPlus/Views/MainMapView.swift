@@ -30,6 +30,7 @@ struct MainMapView: View {
     @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
     @State private var glowScales: [UUID: CGFloat] = [:]
     @State private var glowOpacities: [UUID: Double] = [:]
+    @State private var animationTask: Task<Void, Never>?
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -152,7 +153,8 @@ struct MainMapView: View {
                 }
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
-                Task { @MainActor in
+                animationTask?.cancel()
+                animationTask = Task { @MainActor in
                     await animateLandmarkChange(from: oldVisibleLandmarks, to: newVisibleLandmarks)
                 }
             }
@@ -312,7 +314,12 @@ struct MainMapView: View {
             }
             
             // Remove glow after 0.5 seconds
-            try? await Task.sleep(for: .seconds(0.5))
+            do {
+                try await Task.sleep(for: .seconds(0.5))
+            } catch {
+                await MainActor.run { glowingLandmarks = [] }
+                return
+            }
             
             await MainActor.run {
                 glowingLandmarks = []
@@ -332,7 +339,16 @@ struct MainMapView: View {
             }
             
             // Small delay to let SwiftUI render the initial state
-            try? await Task.sleep(for: .milliseconds(100))
+            do {
+                try await Task.sleep(for: .milliseconds(100))
+            } catch {
+                await MainActor.run {
+                    fadingGlows.removeAll()
+                    glowScales.removeAll()
+                    glowOpacities.removeAll()
+                }
+                return
+            }
             
             // Animate the "poof" effect - expand and fade out like smoke
             let animationDuration = 0.5
@@ -346,7 +362,16 @@ struct MainMapView: View {
             }
             
             // wait for the animation to complete before cleaning up
-            try? await Task.sleep(for: .seconds(animationDuration))
+            do {
+                try await Task.sleep(for: .seconds(animationDuration))
+            } catch {
+                await MainActor.run {
+                    fadingGlows.removeAll()
+                    glowScales.removeAll()
+                    glowOpacities.removeAll()
+                }
+                return
+            }
             
             // Clear all glow dictionaries after animation completes
             await MainActor.run {
