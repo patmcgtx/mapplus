@@ -13,12 +13,17 @@ extension ModelContainer {
     static func persistentContainer() throws -> ModelContainer {
         let config = ModelConfiguration()
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
-//        container.mainContext.autosaveEnabled = false
         
-        for category in SampleCategories().all {
-            container.mainContext.insert(category)
+        // Only insert sample categories if the database is empty
+        let descriptor = FetchDescriptor<LandmarkCategory>()
+        let existingCategories = try? container.mainContext.fetch(descriptor)
+        
+        if existingCategories?.isEmpty ?? true {
+            for category in SampleCategories().all {
+                container.mainContext.insert(category)
+            }
+            try container.mainContext.save()
         }
-        try container.mainContext.save()
         
         return container
     }
@@ -29,7 +34,6 @@ extension ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
-//        container.mainContext.autosaveEnabled = false
 
         for landmark in SampleLandmarks().austinPlaces {
             container.mainContext.insert(landmark)
