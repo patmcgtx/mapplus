@@ -42,7 +42,7 @@ struct CategoryCapsule: View {
                 ? theme.selectedCapsuleFontColor
                 : theme.foregroundColor(for: colorScheme)
             Text(category.name.uppercased())
-//                .fontWeight(fontWeight)
+                .fontWeight(fontWeight)
                 .fontDesign(.rounded)
                 .foregroundStyle(fontColor)
             
@@ -60,10 +60,10 @@ struct CategoryCapsule: View {
         }
         .onTapGesture {
             if isSelectable {
-//                withAnimation() {
+                withAnimation() {
                     category.isSelected.toggle()
                 try! modelContext.save()
-//                }
+                }
             }
         }
         .foregroundStyle(.primary)

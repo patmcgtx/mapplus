@@ -12,9 +12,7 @@ import Flow
 /// Displays landmark categories, allowing individual ones to be selected or unselected.
 struct CategoriesSelectFlow: View {
         
-    /// All available categories to filter by
-//    @Binding var allCategories: [LandmarkCategory]
-//    @Environment(\.modelContext) private var modelContext
+    // All categories available to filter by
     @Query private var allCategories: [LandmarkCategory]
 
     var body: some View {
@@ -56,15 +54,24 @@ struct CategoriesSelectFlow: View {
 
 #if DEBUG
 
+private struct SelectedCategoriesView: View {
+    
+    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
+    private var selectedCategories: [LandmarkCategory]
+    
+    var body: some View {
+        Text("Selected Categories:").bold()
+        let selected = selectedCategories.map{ $0.name }.joined(separator: ", ")
+        Text(selected)
+    }
+}
+
 #Preview {
-    @Previewable @State var selectedCategoryNames: Set<String> = []
-    @Previewable @State var categories: [LandmarkCategory] = [
-        .init(name: "One"),
-        .init(name: "Two"),
-        .init(name: "Three")
-    ]
-    CategoriesSelectFlow()
-        .modelContainer(try! ModelContainer.inMemorySampleContainer())
+    VStack {
+        CategoriesSelectFlow()
+        SelectedCategoriesView()
+    }
+    .modelContainer(try! ModelContainer.inMemorySampleContainer())
 }
 
 #endif // DEBUG
