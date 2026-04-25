@@ -26,7 +26,7 @@ struct MainMapView: View {
     // Map state
     @State private var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     @State private var selectedLandmark: Landmark?
-    @State private var landmarkOpacities: [Landmark: Double] = [:]
+    @State private var glowingLandmarks: Set<Landmark> = []
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -59,8 +59,15 @@ struct MainMapView: View {
                     ForEach(visibleLandmarks, id: \.self) { landmark in
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
-                                .opacity(landmarkOpacities[landmark, default: 1.0])
-                                .animation(.easeInOut(duration: 0.35), value: landmarkOpacities[landmark, default: 1.0])
+                                .shadow(
+                                    color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor : .clear,
+                                    radius: glowingLandmarks.contains(landmark) ? 12 : 0
+                                )
+                                .shadow(
+                                    color: glowingLandmarks.contains(landmark) ? activeTheme.tintColor.opacity(0.6) : .clear,
+                                    radius: glowingLandmarks.contains(landmark) ? 20 : 0
+                                )
+                                .animation(.easeInOut(duration: 0.3), value: glowingLandmarks)
                         }
                         .tag(landmark)
                     }
@@ -124,9 +131,9 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
             }
-            .onChange(of: visibleLandmarks) { _, _ in
+            .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
                 Task { @MainActor in
-                    await animateLandmarkChange()
+                    await animateLandmarkChange(from: oldVisibleLandmarks, to: newVisibleLandmarks)
                 }
             }
             .sheet(isPresented: $showingLandmarkList) {
@@ -268,58 +275,28 @@ struct MainMapView: View {
     
     // MARK: - Helper Methods
     
-    private func animateLandmarkChange() async { }
-
     /// Animate the selected landmarks changing
-//    private func animateLandmarkChange() async {
-//        let newLandmarks = filteredLandmarks
-//        let currentSet = Set(displayedLandmarks)
-//        let newSet = Set(newLandmarks)
-//
-//        // Determine which landmarks are being removed or added
-//        let removed = displayedLandmarks.filter { !newSet.contains($0) }
-//        let added = newLandmarks.filter { !currentSet.contains($0) }
-//
-//        // Fade out only the landmarks being removed
-//        for landmark in removed {
-//            landmarkOpacities[landmark] = 0.0
-//        }
-//
-//        // Wait for fade out to complete (only if there are landmarks to remove)
-//        if !removed.isEmpty {
-//            try? await Task.sleep(for: .seconds(0.35))
-//        }
-//
-//        // Start added landmarks at 0 opacity before inserting them
-//        for landmark in added {
-//            landmarkOpacities[landmark] = 0.0
-//        }
-//
-//        // Update the displayed landmarks and clean up removed entries
-//        displayedLandmarks = newLandmarks
-//        for landmark in removed {
-//            landmarkOpacities.removeValue(forKey: landmark)
-//        }
-//
-//        // Small delay to ensure the update completes
-//        try? await Task.sleep(for: .seconds(0.05))
-//
-//        // Fade in added landmarks
-//        for landmark in added {
-//            landmarkOpacities[landmark] = 1.0
-//        }
-//    }
-    
-    /// Returns landmarks filtered by the selected category names.
-    /// If no categories are selected, all landmarks are returned.
-//    private var filteredLandmarks: [Landmark] {
-//        if selectedCategories.isEmpty {
-//            return landmarks
-//        }
-//        return landmarks.filter { landmark in
-//            landmark.categories.contains { $0.isSelected }
-//        }
-//    }
+    private func animateLandmarkChange(
+        from previousLandmarks: [Landmark],
+        to newLandmarks: [Landmark]
+    ) async {
+        let addedLandmarks = Set(newLandmarks).subtracting(Set(previousLandmarks))
+        let removedLandmarks = Set(previousLandmarks).subtracting(Set(newLandmarks))
+        
+        // Add glow to newly added landmarks
+        if !addedLandmarks.isEmpty {
+            await MainActor.run {
+                glowingLandmarks.formUnion(addedLandmarks)
+            }
+            
+            // Remove glow after 1 second
+            try? await Task.sleep(for: .seconds(0.5))
+            
+            await MainActor.run {
+                glowingLandmarks.subtract(addedLandmarks)
+            }
+        }
+    }
 
     private func zoomTo(landmark: Landmark) {
         withAnimation {

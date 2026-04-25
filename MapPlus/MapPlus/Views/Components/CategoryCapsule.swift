@@ -155,4 +155,18 @@ struct CategoryCapsule: View {
     
 }
 
+#Preview("Toggle, selected") {
+    
+    let category = LandmarkCategory(name: "Groceries", isSelected: true)
+    
+    CategoryCapsule(
+        category: category,
+        isSelectable: true,
+        action: nil
+    )
+    
+    Text(category.isSelected ? "Selected" : "Not selected")
+    
+}
+
 #endif // DEBUG
