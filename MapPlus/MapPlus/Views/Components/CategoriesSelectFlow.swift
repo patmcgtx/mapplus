@@ -15,6 +15,8 @@ struct CategoriesSelectFlow: View {
         
     // All categories available to filter by
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
+    
+    @State private var isShowingEditView = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -22,12 +24,16 @@ struct CategoriesSelectFlow: View {
                 Text("categories".localized)
                     .font(.headline)
                 Spacer()
-                if hasSelectedCategories {
-                    Button("clear".localized) {
-                        clearAllSelections()
-                    }
-                    .buttonStyle(.borderless)
+                Button("clear".localized) {
+                    clearAllSelections()
                 }
+                .buttonStyle(.borderless)
+                .disabled(!hasSelectedCategories)
+                
+                Button("edit".localized) {
+                    isShowingEditView = true
+                }
+                .buttonStyle(.borderless)
             }
             
             HFlow {
@@ -39,6 +45,9 @@ struct CategoriesSelectFlow: View {
                     )
                 }
             }
+        }
+        .sheet(isPresented: $isShowingEditView) {
+            CategoriesEditView()
         }
     }
     
