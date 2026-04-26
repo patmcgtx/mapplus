@@ -17,10 +17,7 @@ struct CategoriesEditView: View {
     
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
-    @State private var newCategoryName: String = ""
-    @State private var editingCategory: LandmarkCategory?
-    @State private var editedName: String = ""
-    @State private var showingDeleteAlert: LandmarkCategory?
+    @State private var viewModel: CategoriesEditViewModel?
     @FocusState private var isAddFieldFocused: Bool
     
     var body: some View {
@@ -29,17 +26,26 @@ struct CategoriesEditView: View {
                 // Add new category section
                 Section {
                     HStack {
-                        TextField("new-category-name".localized, text: $newCategoryName)
+                        TextField("new-category-name".localized, text: Binding(
+                            get: { viewModel?.newCategoryName ?? "" },
+                            set: { viewModel?.newCategoryName = $0 }
+                        ))
                             .focused($isAddFieldFocused)
                             .onSubmit {
-                                addCategory()
+                                if viewModel?.addCategory(allCategories: allCategories) == true {
+                                    isAddFieldFocused = true
+                                }
                             }
                         
-                        Button(action: addCategory) {
+                        Button(action: {
+                            if viewModel?.addCategory(allCategories: allCategories) == true {
+                                isAddFieldFocused = true
+                            }
+                        }) {
                             Image(systemName: "plus.circle.fill")
                                 .foregroundStyle(theme.tintColor)
                         }
-                        .disabled(newCategoryName.trimmingCharacters(in: .whitespaces).isEmpty)
+                        .disabled(viewModel?.newCategoryName.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
                     }
                 } header: {
                     Text("add-category".localized)
@@ -48,23 +54,26 @@ struct CategoriesEditView: View {
                 // Existing categories section
                 Section {
                     ForEach(allCategories) { category in
-                        if editingCategory?.id == category.id {
+                        if viewModel?.editingCategory?.id == category.id {
                             // Edit mode for this category
                             HStack {
-                                TextField("category-name".localized, text: $editedName)
+                                TextField("category-name".localized, text: Binding(
+                                    get: { viewModel?.editedName ?? "" },
+                                    set: { viewModel?.editedName = $0 }
+                                ))
                                     .textFieldStyle(.roundedBorder)
                                     .onSubmit {
-                                        saveEdit(for: category)
+                                        viewModel?.saveEdit(for: category, allCategories: allCategories)
                                     }
                                 
                                 Button("save".localized) {
-                                    saveEdit(for: category)
+                                    viewModel?.saveEdit(for: category, allCategories: allCategories)
                                 }
                                 .buttonStyle(.bordered)
-                                .disabled(editedName.trimmingCharacters(in: .whitespaces).isEmpty)
+                                .disabled(viewModel?.editedName.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
                                 
                                 Button("cancel".localized) {
-                                    cancelEdit()
+                                    viewModel?.cancelEdit()
                                 }
                                 .buttonStyle(.bordered)
                             }
@@ -76,7 +85,7 @@ struct CategoriesEditView: View {
                                 Spacer()
                                 
                                 Button(action: {
-                                    startEditing(category)
+                                    viewModel?.startEditing(category)
                                 }) {
                                     Image(systemName: "pencil")
                                         .foregroundStyle(theme.tintColor)
@@ -85,7 +94,7 @@ struct CategoriesEditView: View {
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
-                                    showingDeleteAlert = category
+                                    viewModel?.showingDeleteAlert = category
                                 } label: {
                                     Label("delete".localized, systemImage: "trash")
                                 }
@@ -107,85 +116,27 @@ struct CategoriesEditView: View {
             }
             .alert(
                 "delete-category-title".localized,
-                isPresented: .constant(showingDeleteAlert != nil),
-                presenting: showingDeleteAlert
+                isPresented: Binding(
+                    get: { viewModel?.showingDeleteAlert != nil },
+                    set: { if !$0 { viewModel?.showingDeleteAlert = nil } }
+                ),
+                presenting: viewModel?.showingDeleteAlert
             ) { category in
                 Button("cancel".localized, role: .cancel) {
-                    showingDeleteAlert = nil
+                    viewModel?.showingDeleteAlert = nil
                 }
                 Button("delete".localized, role: .destructive) {
-                    deleteCategory(category)
-                    showingDeleteAlert = nil
+                    viewModel?.deleteCategory(category)
+                    viewModel?.showingDeleteAlert = nil
                 }
             } message: { category in
-                Text("delete-category-message-\(category.name)".localized)
+                Text("Are you sure you want to delete '\(category.name)'? This action cannot be undone.")
             }
-        }
-    }
-    
-    // MARK: - Actions
-    
-    private func addCategory() {
-        let trimmedName = newCategoryName.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
-        
-        // Check if category already exists
-        if allCategories.contains(where: { $0.name.lowercased() == trimmedName.lowercased() }) {
-            // Could show an error here
-            return
-        }
-        
-        let newCategory = LandmarkCategory(name: trimmedName)
-        modelContext.insert(newCategory)
-        
-        do {
-            try modelContext.save()
-            newCategoryName = ""
-            isAddFieldFocused = true
-        } catch {
-            print("Failed to add category: \(error)")
-        }
-    }
-    
-    private func startEditing(_ category: LandmarkCategory) {
-        editingCategory = category
-        editedName = category.name
-    }
-    
-    private func saveEdit(for category: LandmarkCategory) {
-        let trimmedName = editedName.trimmingCharacters(in: .whitespaces)
-        guard !trimmedName.isEmpty else { return }
-        
-        // Check if another category already has this name
-        if allCategories.contains(where: { 
-            $0.id != category.id && $0.name.lowercased() == trimmedName.lowercased() 
-        }) {
-            // Could show an error here
-            return
-        }
-        
-        category.name = trimmedName
-        
-        do {
-            try modelContext.save()
-            cancelEdit()
-        } catch {
-            print("Failed to save category edit: \(error)")
-        }
-    }
-    
-    private func cancelEdit() {
-        editingCategory = nil
-        editedName = ""
-    }
-    
-    private func deleteCategory(_ category: LandmarkCategory) {
-        modelContext.delete(category)
-        
-        do {
-            try modelContext.save()
-        } catch {
-            print("Failed to delete category: \(error)")
+            .onAppear {
+                if viewModel == nil {
+                    viewModel = CategoriesEditViewModel(modelContext: modelContext)
+                }
+            }
         }
     }
 }
