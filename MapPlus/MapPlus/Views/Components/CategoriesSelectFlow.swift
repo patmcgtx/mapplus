@@ -24,16 +24,22 @@ struct CategoriesSelectFlow: View {
                 Text("categories".localized)
                     .font(.headline)
                 Spacer()
-                Button("clear".localized) {
-                    clearAllSelections()
-                }
-                .buttonStyle(.borderless)
-                .disabled(!hasSelectedCategories)
                 
-                Button("edit".localized) {
-                    isShowingEditView = true
+                HStack(spacing: 8) {
+                    Button("clear".localized) {
+                        clearAllSelections()
+                    }
+                    .buttonStyle(.bordered)
+                    .disabled(!hasSelectedCategories)
+                    
+                    Divider()
+                        .frame(height: 20)
+                    
+                    Button("edit".localized) {
+                        isShowingEditView = true
+                    }
+                    .buttonStyle(.bordered)
                 }
-                .buttonStyle(.borderless)
             }
             
             HFlow {

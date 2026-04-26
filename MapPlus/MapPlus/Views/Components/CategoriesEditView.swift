@@ -37,7 +37,7 @@ struct CategoriesEditView: View {
                         
                         Button(action: addCategory) {
                             Image(systemName: "plus.circle.fill")
-                                .foregroundStyle(.green)
+                                .foregroundStyle(theme.tintColor)
                         }
                         .disabled(newCategoryName.trimmingCharacters(in: .whitespaces).isEmpty)
                     }
