@@ -85,23 +85,6 @@
         }
       }
     },
-    "Are you sure you want to delete '%@'? This action cannot be undone." : {
-      "extractionState" : "manual",
-      "localizations" : {
-        "en" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Are you sure you want to delete '%@'? This action cannot be undone."
-          }
-        },
-        "es" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "¿Estás seguro de que quieres eliminar '%@'? Esta acción no se puede deshacer."
-          }
-        }
-      }
-    },
     "cancel" : {
       "extractionState" : "manual",
       "localizations" : {
@@ -197,6 +180,23 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Cerrar"
+          }
+        }
+      }
+    },
+    "confirm-delete-category-%@" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete  category ‘%@’? No landmarks will be deleted."
+          }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "¿Estás seguro de que quieres eliminar '%@'? Esta acción no se puede deshacer."
           }
         }
       }
@@ -726,6 +726,17 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Vista previa"
+          }
+        }
+      }
+    },
+    "rename-category" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Rename category"
           }
         }
       }

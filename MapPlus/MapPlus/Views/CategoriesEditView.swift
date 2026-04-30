@@ -46,6 +46,7 @@ struct CategoriesEditView: View {
                                 .foregroundStyle(theme.tintColor)
                         }
                         .disabled(viewModel?.newCategoryName.trimmingCharacters(in: .whitespaces).isEmpty ?? true)
+                        .accessibilityLabel("add-category".localized)
                     }
                 } header: {
                     Text("add-category".localized)
@@ -98,6 +99,7 @@ struct CategoriesEditView: View {
                                         .foregroundStyle(theme.tintColor)
                                 }
                                 .buttonStyle(.borderless)
+                                .accessibilityLabel("rename-category".localized)
                             }
                             .swipeActions(edge: .trailing, allowsFullSwipe: false) {
                                 Button(role: .destructive) {
@@ -139,7 +141,7 @@ struct CategoriesEditView: View {
                     viewModel?.showingDeleteAlert = nil
                 }
             } message: { category in
-                Text("Are you sure you want to delete '\(category.name)'? This action cannot be undone.")
+                Text("confirm-delete-category-\(category.name)")
             }
             .onAppear {
                 if viewModel == nil {
