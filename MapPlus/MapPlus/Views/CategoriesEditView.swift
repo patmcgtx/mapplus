@@ -82,10 +82,17 @@ struct CategoriesEditView: View {
                             HStack {
                                 Text(category.name)
                                 
-                                Spacer()
                                 
+                                let numItems = category.landmarks.count
+                                Text("\(numItems) landmarks")
+                                    .fontWeight(.thin)
+
+                                Spacer()
+
                                 Button(action: {
-                                    viewModel?.startEditing(category)
+                                    withAnimation {
+                                        viewModel?.startEditing(category)
+                                    }
                                 }) {
                                     Image(systemName: "pencil")
                                         .foregroundStyle(theme.tintColor)
@@ -102,7 +109,9 @@ struct CategoriesEditView: View {
                         }
                     }
                 } header: {
-                    Text("existing-categories".localized)
+                    Text("existing-categories")
+                } footer: {
+                    Text("category-deletion-explanation")
                 }
             }
             .navigationTitle("edit-categories".localized)
