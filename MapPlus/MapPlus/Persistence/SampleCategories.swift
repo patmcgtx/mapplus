@@ -5,7 +5,6 @@
 //  Created by Patrick McGonigle on 2/21/26.
 //
 
-
 /// Some sample categories for development and testing.
 struct SampleCategories {
 
@@ -25,8 +24,29 @@ struct SampleCategories {
         LandmarkCategory(name: "Cafes")
     }
 
+    var arcades: LandmarkCategory {
+        LandmarkCategory(name: "Arcades")
+    }
+
+    var clothing: LandmarkCategory {
+        LandmarkCategory(name: "Clothing")
+    }
+
+    var thrifting: LandmarkCategory {
+        LandmarkCategory(name: "Thrifting")
+    }
     
     var all: [LandmarkCategory] {
         [family, fun, work, cafes]
+    }
+    
+    /// Generate a large number of categories for edge and stress testing
+    func manyCategories(howMany count: Int) -> [LandmarkCategory] {
+        var retval = [LandmarkCategory]()
+        for catNum in 0..<count {
+            let categoryName = "Category \(catNum)"
+            retval.append(LandmarkCategory(name: categoryName))
+        }
+        return retval
     }
 }

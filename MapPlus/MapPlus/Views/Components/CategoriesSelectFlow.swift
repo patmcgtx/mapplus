@@ -42,13 +42,15 @@ struct CategoriesSelectFlow: View {
                 }
             }
             
-            HFlow {
-                ForEach(allCategories) { category in
-                    CategoryCapsule(
-                        category: category,
-                        isSelectable: true,
-                        action: nil
-                    )
+            ScrollView {
+                HFlow {
+                    ForEach(allCategories) { category in
+                        CategoryCapsule(
+                            category: category,
+                            isSelectable: true,
+                            action: nil
+                        )
+                    }
                 }
             }
         }
@@ -82,12 +84,26 @@ private struct SelectedCategoriesView: View {
     }
 }
 
-#Preview {
+#Preview("Basic") {
     VStack {
         CategoriesSelectFlow()
         SelectedCategoriesView()
     }
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
+    .modelContainer(
+        try! ModelContainer.inMemorySampleContainer()
+    )
+}
+
+#Preview("Many") {
+    VStack {
+        CategoriesSelectFlow()
+        SelectedCategoriesView()
+    }
+    .modelContainer(
+        try! ModelContainer.inMemorySampleContainer(
+            numExtraCategories: 50
+        )
+    )
 }
 
 #endif // DEBUG

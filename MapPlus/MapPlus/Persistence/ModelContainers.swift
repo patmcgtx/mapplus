@@ -28,9 +28,12 @@ extension ModelContainer {
         return container
     }
 
+    /// Create an in-memory persistent container for testing.
+    /// All changes are loaded fresh on each app launch and lost on each app exit.
+    /// - Parameter category: The category to add
+    /// - Parameter numExtraCategories: How many extra categories, beyond the basics, to add to the in-memory database.  This is useful for edge and stress testing.
     @MainActor
-    // TODO patmcg doc
-    static func inMemorySampleContainer() throws -> ModelContainer {
+    static func inMemorySampleContainer(numExtraCategories: Int = 0) throws -> ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try! ModelContainer(for: Landmark.self, configurations: config)
@@ -41,6 +44,12 @@ extension ModelContainer {
         
         try container.mainContext.save()
         
+        for category in SampleCategories().manyCategories(howMany: numExtraCategories) {
+            container.mainContext.insert(category)
+        }
+
+        try container.mainContext.save()
+
         return container
     }
 }
