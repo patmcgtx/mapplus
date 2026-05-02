@@ -28,7 +28,14 @@ struct SampleLandmarks {
                 latitude: 30.27381,
                 longitude: -97.74063
             ),
-            categories: [categories.fun, categories.family]
+            // Just adding a bunch of random sample categories 
+            categories: [
+                categories.fun,
+                categories.family,
+                categories.arcades,
+                categories.clothing,
+                categories.thrifting
+            ]
         )
     }
 
