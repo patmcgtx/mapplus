@@ -43,10 +43,37 @@ struct MainMapView: View {
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) },
+    @Query(
+        filter: #Predicate<Landmark> {
+            $0.categories
+                .contains(
+                    where: {
+                        $0.isSelected
+                    })
+        },
            sort: \Landmark.name)
-    var filteredLandmarks: [Landmark]
+    var filteredLandmarksOr: [Landmark]
+
+    // Note: This query fetches all landmarks; filtering for ALL selected categories
+    // happens in the computed property below since SwiftData predicates cannot
+    // easily express "contains all of a separate set"
+    @Query(sort: \Landmark.name)
+    var allLandmarksForAndFilter: [Landmark]
     
+    /// Landmarks that contain ALL selected categories (AND logic)
+    private var filteredLandmarks: [Landmark] {
+        guard !selectedCategories.isEmpty else {
+            return allLandmarksForAndFilter
+        }
+        
+        return allLandmarksForAndFilter.filter { landmark in
+            // Check if the landmark contains ALL selected categories
+            selectedCategories.allSatisfy { selectedCategory in
+                landmark.categories.contains { $0.name == selectedCategory.name }
+            }
+        }
+    }
+
     private var visibleLandmarks: [Landmark] {
         selectedCategories.isEmpty ? allLandmarks : filteredLandmarks
     }

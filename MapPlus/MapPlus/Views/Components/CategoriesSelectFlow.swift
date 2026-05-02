@@ -24,12 +24,9 @@ struct CategoriesSelectFlow: View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
                 Button(
-                    action: {
-                        dismiss()
-                    },
-                    label: {
-                      Image(systemName: "xmark.circle")
-                  })
+                    action: { dismiss() },
+                    label: { Image(systemName: "xmark.circle") }
+                )
 
                 Spacer()
                 
