@@ -12,8 +12,10 @@ import Flow
 /// Displays landmark categories, allowing individual ones to be selected or unselected.
 /// Once presented, any of the known categories could become selected or deselected.
 struct CategoriesSelectFlow: View {
+    
+    @Environment(\.dismiss) private var dismiss
         
-    // All categories available to filter by
+    // We're going to show all categories for filtering
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
     @State private var isShowingEditView = false
@@ -21,8 +23,14 @@ struct CategoriesSelectFlow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("categories".localized)
-                    .font(.headline)
+                Button(
+                    action: {
+                        dismiss()
+                    },
+                    label: {
+                      Image(systemName: "xmark.circle")
+                  })
+
                 Spacer()
                 
                 HStack(spacing: 8) {
@@ -107,3 +115,4 @@ private struct SelectedCategoriesView: View {
 }
 
 #endif // DEBUG
+
