@@ -119,9 +119,11 @@ struct MainMapView: View {
                             ) {
                                 CategoriesSelectFlow()
                                     .padding()
+                                // Have to specify a concrete width or idealWidth for the view
+                                // to show up on-screen due to the HFlow inside the CategoriesSelectFlow.
+                                // Basically putting an HFlow inside a popover seems to have some issues.
                                     .frame(minWidth: 300, idealWidth: 400, maxWidth: .infinity)
-                                    .presentationCompactAdaptation(.none)
-                                    .presentationSizing(.fitted)
+                                    .presentationCompactAdaptation(.popover)
                             }
                     }
                 }
