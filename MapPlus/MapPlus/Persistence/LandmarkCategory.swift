@@ -19,6 +19,7 @@ class LandmarkCategory {
     var name: String
     
     /// Whether this landmark is currently selected for display
+    /// Note: I considered making this @Transient, but then I can't run a @Query on it.
     var isSelected: Bool = false
     
     /// Which landmarks are tagged with this category
