@@ -39,6 +39,9 @@ struct MainMapView: View {
     
     // Persistence
     @Environment(\.modelContext) private var modelContext
+    
+    // App settings
+    @State private var settings = MapsPlusSettings()
 
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
@@ -52,14 +55,14 @@ struct MainMapView: View {
                     })
         },
            sort: \Landmark.name)
-    var filteredLandmarksOr: [Landmark]
+    var filteredLandmarksMatchAny: [Landmark]
     
     // Landmarks that contain ALL selected categories (AND logic)
     // Note: This query fetches all landmarks; filtering for ALL selected categories
     // happens in the computed property below since SwiftData predicates cannot
     // easily express "contains all of a separate set"
     // TODO patmcg this complexity is one more very good reason to refactor this view to a View Model
-    private var filteredLandmarks: [Landmark] {
+    private var filteredLandmarksMatchAll: [Landmark] {
         guard !selectedCategories.isEmpty else {
             return allLandmarks
         }
@@ -73,7 +76,11 @@ struct MainMapView: View {
     }
 
     private var visibleLandmarks: [Landmark] {
-        selectedCategories.isEmpty ? allLandmarks : filteredLandmarks
+        if selectedCategories.isEmpty { return allLandmarks }
+        switch settings.categorySelectionType {
+        case .matchingAny: return filteredLandmarksMatchAny
+        case .matchingAll: return filteredLandmarksMatchAll
+        }
     }
 
     // Categories
@@ -183,6 +190,7 @@ struct MainMapView: View {
                 self.locationPermissionsService.requestPermissions() { _ in
                     // TODO patmcg handle issues on the location permissions request
                 }
+                self.settings = MapsPlusSettingsStore(modelContext: modelContext).settings
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
                 animationTask?.cancel()

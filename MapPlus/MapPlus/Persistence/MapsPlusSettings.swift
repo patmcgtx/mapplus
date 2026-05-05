@@ -16,16 +16,18 @@ import SwiftData
 ///
 /// We could be using `@AppStorage` instead, but I'm trying SwiftData for these reasons:
 /// * Some of the user state such as `LandmarkCategory.isSelected` are saved in SwiftData,
-///     so saving any related state the same way provided consistency.  For example the category selection
-///     interacts with `LandmarkCategory.isSelected`, so I want to keep them in the same place to prevent bugs.
+///     so saving any related state the same way provides consistency.  For example, the category selection
+///     type interacts with `LandmarkCategory.isSelected`, so I want to keep them in the same place
+///     to prevent bugs.
 /// * Putting these settings in SwiftData will (potentially) allow cross-device sync of state via iCloud.
-/// * It also goes with my "all in on SwiftData for app state" approach / experiment.
+/// * It goes with my "all in on SwiftData for app state" approach / experiment.
 @Model
-class AppSettings {    
+class MapsPlusSettings {    
     
     /// The current state of category selection.
-    var categorySelectionType = CategorySelectionType.showLandmarksMatchingAny
+    var categorySelectionType = CategorySelectionType.matchingAny
     
+    /// Creates a new instance of AppSettings
     init() {
         //
     }

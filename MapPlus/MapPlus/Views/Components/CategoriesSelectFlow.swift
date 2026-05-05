@@ -14,11 +14,13 @@ import Flow
 struct CategoriesSelectFlow: View {
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
         
     // We're going to show all categories for filtering
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
     @State private var isShowingEditView = false
+    @State private var matchAllCategories = false
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -29,6 +31,11 @@ struct CategoriesSelectFlow: View {
                 )
 
                 Spacer()
+                
+                Toggle(isOn: $matchAllCategories) {
+                    Text("Match all")
+                }
+                .toggleStyle(.button)
                 
                 HStack(spacing: 8) {
                     Button("clear".localized) {
@@ -61,6 +68,12 @@ struct CategoriesSelectFlow: View {
         }
         .sheet(isPresented: $isShowingEditView) {
             CategoriesEditView()
+        }
+        .onChange(of: matchAllCategories) { _, matchAll in
+            // TODO patmcg need a view model!
+            let settings = MapsPlusSettingsStore(modelContext: modelContext).settings
+            settings.categorySelectionType = matchAll ? .matchingAll : .matchingAny
+            try? modelContext.save()
         }
     }
     

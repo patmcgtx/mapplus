@@ -10,9 +10,9 @@ enum CategorySelectionType: String, Codable {
     
     /// Show landmarks with _any_ of the selected categories.
     /// For example "Cafe" and "Open Early" means all cafes and all places that are open early.
-    case showLandmarksMatchingAny
+    case matchingAny
     
     /// Show landmarks with _all_ of the selected categories.
     /// For example "Cafe" and "Open Early" means only cafes that are open early.
-    case showLandmarksMatchingAll
+    case matchingAll
 }
