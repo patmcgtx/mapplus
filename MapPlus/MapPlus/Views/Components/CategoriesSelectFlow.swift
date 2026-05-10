@@ -71,9 +71,11 @@ struct CategoriesSelectFlow: View {
         }
         .onChange(of: matchAllCategories) { _, matchAll in
             // TODO patmcg need a view model!
+            let newSetting : CategorySelectionType = matchAll ? .matchingAll : .matchingAny
             let settings = MapsPlusSettingsStore(modelContext: modelContext).settings
-            settings.categorySelectionType = matchAll ? .matchingAll : .matchingAny
+            settings.categorySelectionType = newSetting
             try? modelContext.save()
+            print("+++ Saved new category sel type: \(newSetting)")
         }
     }
     

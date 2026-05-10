@@ -75,13 +75,7 @@ struct MainMapView: View {
         }
     }
 
-    private var visibleLandmarks: [Landmark] {
-        if selectedCategories.isEmpty { return allLandmarks }
-        switch settings.categorySelectionType {
-        case .matchingAny: return filteredLandmarksMatchAny
-        case .matchingAll: return filteredLandmarksMatchAll
-        }
-    }
+    @State private var visibleLandmarks: [Landmark] = []
 
     // Categories
     @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
@@ -191,11 +185,35 @@ struct MainMapView: View {
                     // TODO patmcg handle issues on the location permissions request
                 }
                 self.settings = MapsPlusSettingsStore(modelContext: modelContext).settings
+                if selectedCategories.isEmpty { visibleLandmarks = allLandmarks }
+                else {
+                    switch settings.categorySelectionType {
+                    case .matchingAny:
+                        print("+++ Showing landmarks magtching any category")
+                        visibleLandmarks = filteredLandmarksMatchAny
+                    case .matchingAll:
+                        print("+++ Showing landmarks magtching all categories")
+                        visibleLandmarks = filteredLandmarksMatchAll
+                    }
+                }
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
                 animationTask?.cancel()
                 animationTask = Task { @MainActor in
                     await animateLandmarkChange(from: oldVisibleLandmarks, to: newVisibleLandmarks)
+                }
+            }
+            .onChange(of: settings.categorySelectionType) { _, newCategorySelectionType in
+                if selectedCategories.isEmpty { visibleLandmarks = allLandmarks }
+                else {
+                    switch settings.categorySelectionType {
+                    case .matchingAny:
+                        print("+++ Showing landmarks magtching any category")
+                        visibleLandmarks = filteredLandmarksMatchAny
+                    case .matchingAll:
+                        print("+++ Showing landmarks magtching all categories")
+                        visibleLandmarks = filteredLandmarksMatchAll
+                    }
                 }
             }
             .sheet(isPresented: $showingLandmarkList) {
