@@ -22,6 +22,7 @@ struct CategoriesViewFlow: View {
                     CategoryCapsule(
                         category: category,
                         isSelectable: false,
+                        categorySelection: nil,
                         action: nil
                     )
                 }

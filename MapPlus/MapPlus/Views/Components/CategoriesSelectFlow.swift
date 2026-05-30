@@ -14,6 +14,9 @@ import Flow
 struct CategoriesSelectFlow: View {
     
     @Environment(\.dismiss) private var dismiss
+    
+    /// Manages category selection state
+    var categorySelection: CategorySelection
         
     // We're going to show all categories for filtering
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
@@ -56,6 +59,7 @@ struct CategoriesSelectFlow: View {
                         CategoryCapsule(
                             category: category,
                             isSelectable: true,
+                            categorySelection: categorySelection,
                             action: nil
                         )
                     }
@@ -68,13 +72,11 @@ struct CategoriesSelectFlow: View {
     }
     
     private var hasSelectedCategories: Bool {
-        allCategories.contains { $0.isSelected }
+        categorySelection.hasSelections
     }
 
     private func clearAllSelections() {
-        for index in allCategories.indices {
-            allCategories[index].isSelected = false
-        }
+        categorySelection.clearAll()
     }
 }
 
@@ -82,20 +84,27 @@ struct CategoriesSelectFlow: View {
 
 private struct SelectedCategoriesView: View {
     
-    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
-    private var selectedCategories: [LandmarkCategory]
+    var categorySelection: CategorySelection
+    @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
     var body: some View {
         Text("selected-categories".localized).bold()
-        let selected = selectedCategories.map{ $0.name }.joined(separator: ", ")
-        Text(selected)
+        let selectedIDs = categorySelection.selectedIDs
+        let selectedNames = allCategories
+            .filter { selectedIDs.contains($0.id) }
+            .map { $0.name }
+            .sorted()
+            .joined(separator: ", ")
+        Text(selectedNames.isEmpty ? "None" : selectedNames)
     }
 }
 
 #Preview("Basic") {
+    @Previewable @State var categorySelection = CategorySelection()
+    
     VStack {
-        CategoriesSelectFlow()
-        SelectedCategoriesView()
+        CategoriesSelectFlow(categorySelection: categorySelection)
+        SelectedCategoriesView(categorySelection: categorySelection)
     }
     .modelContainer(
         try! ModelContainer.inMemorySampleContainer()
@@ -103,9 +112,11 @@ private struct SelectedCategoriesView: View {
 }
 
 #Preview("Many") {
+    @Previewable @State var categorySelection = CategorySelection()
+    
     VStack {
-        CategoriesSelectFlow()
-        SelectedCategoriesView()
+        CategoriesSelectFlow(categorySelection: categorySelection)
+        SelectedCategoriesView(categorySelection: categorySelection)
     }
     .modelContainer(
         try! ModelContainer.inMemorySampleContainer(

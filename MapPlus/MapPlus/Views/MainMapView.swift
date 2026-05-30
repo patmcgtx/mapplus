@@ -15,6 +15,9 @@ struct MainMapView: View {
     // View model manages all state and business logic
     @State private var viewModel = MainMapViewModel()
     
+    // Category selection manager
+    @State private var categorySelection = CategorySelection()
+    
     // Location service
     private var locationPermissionsService = LocationPermissionsService()
     
@@ -24,17 +27,21 @@ struct MainMapView: View {
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) },
-           sort: \Landmark.name)
-    var filteredLandmarks: [Landmark]
+    // Categories
+    @Query(sort: \LandmarkCategory.name) var allCategories: [LandmarkCategory]
     
     private var visibleLandmarks: [Landmark] {
-        selectedCategories.isEmpty ? allLandmarks : filteredLandmarks
+        let selectedIDs = categorySelection.selectedIDs
+        guard !selectedIDs.isEmpty else {
+            return allLandmarks
+        }
+        
+        return allLandmarks.filter { landmark in
+            landmark.categories.contains { category in
+                selectedIDs.contains(category.id)
+            }
+        }
     }
-
-    // Categories
-    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
-    var selectedCategories: [LandmarkCategory]
     
     // MARK: - Animation State
     
@@ -111,7 +118,7 @@ struct MainMapView: View {
                                 attachmentAnchor: .point(.topTrailing),
                                 arrowEdge: .top
                             ) {
-                                CategoriesSelectFlow()
+                                CategoriesSelectFlow(categorySelection: categorySelection)
                                     .padding()
                                 // Have to specify a concrete width or idealWidth for the view
                                 // to show up on-screen due to the HFlow inside the CategoriesSelectFlow.
@@ -292,7 +299,7 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let iconName = selectedCategories.isEmpty ? "map" : "map.fill"
+        let iconName = categorySelection.hasSelections ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }

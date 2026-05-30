@@ -25,6 +25,7 @@ struct CategoriesDeleteFlow: View {
                     CategoryCapsule(
                         category: category.wrappedValue,
                         isSelectable: false,
+                        categorySelection: nil,
                         action: CategoryCapsule.Action(
                                 systemImage: "x.circle",
                                 onTap: { tappedCategory in
