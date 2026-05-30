@@ -11,6 +11,7 @@ import CoreLocation
 @testable import MapPlus
 
 @MainActor
+@Suite("MainMapViewModel Tests")
 struct MainMapViewModelTests {
     
     // MARK: - Initial State Tests
@@ -27,13 +28,6 @@ struct MainMapViewModelTests {
         
         // Map State
         #expect(viewModel.selectedLandmark == nil)
-        
-        // Animation State
-        #expect(viewModel.glowingLandmarks.isEmpty)
-        #expect(viewModel.fadingGlows.isEmpty)
-        #expect(viewModel.glowScales.isEmpty)
-        #expect(viewModel.glowOpacities.isEmpty)
-        #expect(viewModel.animationTask == nil)
         
         // Preferences
         #expect(viewModel.activeTheme == .cupertino)
@@ -178,146 +172,6 @@ struct MainMapViewModelTests {
         
         viewModel.activePOILevel = .all
         #expect(viewModel.activePOILevel == .all)
-    }
-    
-    // MARK: - Animation Tests
-    
-    @Test("Animate landmark change with added landmarks applies glow")
-    func testAnimateLandmarkChangeWithAddedLandmarks() async {
-        let viewModel = MainMapViewModel()
-        let landmark1 = Landmark(name: "Place 1")
-        let landmark2 = Landmark(name: "Place 2")
-        
-        let previousLandmarks: [Landmark] = [landmark1]
-        let newLandmarks: [Landmark] = [landmark1, landmark2]
-        
-        // Start the animation (don't await - we'll check intermediate state)
-        let task = Task { @MainActor in
-            await viewModel.animateLandmarkChange(from: previousLandmarks, to: newLandmarks)
-        }
-        
-        // Give it a moment to apply the glow
-        try? await Task.sleep(for: .milliseconds(100))
-        
-        // Verify the glow was applied to the new landmark
-        #expect(viewModel.glowingLandmarks.contains(landmark2))
-        #expect(!viewModel.glowingLandmarks.contains(landmark1))
-        
-        // Wait for completion
-        await task.value
-        
-        // After animation completes, glow should be removed
-        #expect(viewModel.glowingLandmarks.isEmpty)
-    }
-    
-    @Test("Animate landmark change with removed landmarks creates fading glow")
-    func testAnimateLandmarkChangeWithRemovedLandmarks() async {
-        let viewModel = MainMapViewModel()
-        let landmark1 = Landmark(name: "Place 1", location: CLLocationCoordinate2D(latitude: 37.0, longitude: -122.0))
-        let landmark2 = Landmark(name: "Place 2", location: CLLocationCoordinate2D(latitude: 38.0, longitude: -123.0))
-        
-        let previousLandmarks: [Landmark] = [landmark1, landmark2]
-        let newLandmarks: [Landmark] = [landmark1]
-        
-        // Start the animation
-        let task = Task { @MainActor in
-            await viewModel.animateLandmarkChange(from: previousLandmarks, to: newLandmarks)
-        }
-        
-        // Give it a moment to create the fading glows
-        try? await Task.sleep(for: .milliseconds(150))
-        
-        // Verify fading glows were created
-        #expect(viewModel.fadingGlows.count == 1)
-        #expect(viewModel.glowScales.count == 1)
-        #expect(viewModel.glowOpacities.count == 1)
-        
-        // Initial scale and opacity should be 1.0
-        let glowId = viewModel.fadingGlows.keys.first!
-        #expect(viewModel.glowScales[glowId] != nil)
-        #expect(viewModel.glowOpacities[glowId] != nil)
-        
-        // Wait for completion
-        await task.value
-        
-        // After animation completes, fading glows should be cleared
-        #expect(viewModel.fadingGlows.isEmpty)
-        #expect(viewModel.glowScales.isEmpty)
-        #expect(viewModel.glowOpacities.isEmpty)
-    }
-    
-    @Test("Animate landmark change with no changes does nothing")
-    func testAnimateLandmarkChangeWithNoChanges() async {
-        let viewModel = MainMapViewModel()
-        let landmark1 = Landmark(name: "Place 1")
-        let landmark2 = Landmark(name: "Place 2")
-        
-        let landmarks: [Landmark] = [landmark1, landmark2]
-        
-        await viewModel.animateLandmarkChange(from: landmarks, to: landmarks)
-        
-        // No glows should be created
-        #expect(viewModel.glowingLandmarks.isEmpty)
-        #expect(viewModel.fadingGlows.isEmpty)
-        #expect(viewModel.glowScales.isEmpty)
-        #expect(viewModel.glowOpacities.isEmpty)
-    }
-    
-    @Test("Animate landmark change with both added and removed landmarks")
-    func testAnimateLandmarkChangeWithBothAddedAndRemoved() async {
-        let viewModel = MainMapViewModel()
-        let landmark1 = Landmark(name: "Place 1")
-        let landmark2 = Landmark(name: "Place 2", location: CLLocationCoordinate2D(latitude: 37.0, longitude: -122.0))
-        let landmark3 = Landmark(name: "Place 3")
-        
-        let previousLandmarks: [Landmark] = [landmark1, landmark2]
-        let newLandmarks: [Landmark] = [landmark1, landmark3]
-        
-        // Start the animation
-        let task = Task { @MainActor in
-            await viewModel.animateLandmarkChange(from: previousLandmarks, to: newLandmarks)
-        }
-        
-        // Give it a moment to process
-        try? await Task.sleep(for: .milliseconds(100))
-        
-        // Both glow types should be active
-        #expect(viewModel.glowingLandmarks.contains(landmark3)) // Added
-        #expect(viewModel.fadingGlows.isEmpty) // Removed
-        
-        // Wait for completion
-        await task.value
-        
-        // After completion, everything should be cleared
-        #expect(viewModel.glowingLandmarks.isEmpty)
-        #expect(viewModel.fadingGlows.isEmpty)
-    }
-    
-    @Test("Animation task can be cancelled")
-    func testAnimationTaskCancellation() async {
-        let viewModel = MainMapViewModel()
-        let landmark1 = Landmark(name: "Place 1")
-        let landmark2 = Landmark(name: "Place 2")
-        
-        let previousLandmarks: [Landmark] = []
-        let newLandmarks: [Landmark] = [landmark1, landmark2]
-        
-        // Start an animation
-        viewModel.animationTask = Task { @MainActor in
-            await viewModel.animateLandmarkChange(from: previousLandmarks, to: newLandmarks)
-        }
-        
-        // Give it a moment to start
-        try? await Task.sleep(for: .milliseconds(50))
-        
-        // Cancel it
-        viewModel.animationTask?.cancel()
-        
-        // Wait a bit more
-        try? await Task.sleep(for: .milliseconds(100))
-        
-        // The glowing landmarks should be cleared when task is cancelled
-        #expect(viewModel.glowingLandmarks.isEmpty)
     }
     
     // MARK: - Location Permissions Tests
