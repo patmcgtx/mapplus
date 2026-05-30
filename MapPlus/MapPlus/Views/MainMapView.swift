@@ -157,6 +157,9 @@ struct MainMapView: View {
                     await animateLandmarkChange(from: oldVisibleLandmarks, to: newVisibleLandmarks)
                 }
             }
+            .onDisappear {
+                animationTask?.cancel()
+            }
             .sheet(isPresented: $viewModel.showingLandmarkList) {
                 LandmarksView()
             }
