@@ -6,6 +6,14 @@
 //
 import SwiftData
 
+/// Determines how multiple selected categories are combined when filtering landmarks
+enum CategoryFilterMode: String, Codable {
+    /// Show landmarks that match ANY of the selected categories (OR logic)
+    case matchAny
+    /// Show landmarks that match ALL of the selected categories (AND logic)
+    case matchAll
+}
+
 /// Manages the set of categories currently selected for filtering landmarks on the map.
 /// This is a singleton model that persists which categories the user has selected.
 /// 
@@ -18,9 +26,23 @@ class SelectedCategories {
     /// The categories currently selected for filtering
     @Relationship(deleteRule: .nullify) var categories: [LandmarkCategory] = []
     
+    /// The raw string value of the filter mode (for SwiftData persistence)
+    private var filterModeRawValue: String = CategoryFilterMode.matchAny.rawValue
+    
+    /// The filter mode determining how multiple categories are combined
+    var filterMode: CategoryFilterMode {
+        get {
+            CategoryFilterMode(rawValue: filterModeRawValue) ?? .matchAny
+        }
+        set {
+            filterModeRawValue = newValue.rawValue
+        }
+    }
+    
     /// Creates a new SelectedCategories instance
-    init(categories: [LandmarkCategory] = []) {
+    init(categories: [LandmarkCategory] = [], filterMode: CategoryFilterMode = .matchAny) {
         self.categories = categories
+        self.filterModeRawValue = filterMode.rawValue
     }
     
     /// Checks if a category is currently selected

@@ -15,6 +15,9 @@ struct MainMapView: View {
     // View model manages all state and business logic
     @State private var viewModel = MainMapViewModel()
     
+    // Category filtering service
+    @State private var categoriesService: DefaultCategorySelectionService?
+    
     // Location service
     private var locationPermissionsService = LocationPermissionsService()
     
@@ -24,27 +27,11 @@ struct MainMapView: View {
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    // Category selection
-    @Query var allSelectedCategories: [SelectedCategories]
-    
-    private var selectedCategoriesModel: SelectedCategories? {
-        allSelectedCategories.first
-    }
-    
-    private var selectedCategories: [LandmarkCategory] {
-        selectedCategoriesModel?.categories ?? []
-    }
-    
     private var visibleLandmarks: [Landmark] {
-        guard !selectedCategories.isEmpty else {
+        guard let service = categoriesService else {
             return allLandmarks
         }
-        
-        return allLandmarks.filter { landmark in
-            landmark.categories.contains { category in
-                selectedCategories.contains(category)
-            }
-        }
+        return service.filterLandmarks(allLandmarks)
     }
     
     // MARK: - Animation State
@@ -160,6 +147,9 @@ struct MainMapView: View {
                 }
             }
             .onAppear(){
+                if categoriesService == nil {
+                    categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
+                }
                 viewModel.requestLocationPermissions(using: locationPermissionsService)
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
@@ -303,7 +293,7 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let iconName = selectedCategories.isEmpty ? "map" : "map.fill"
+        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }

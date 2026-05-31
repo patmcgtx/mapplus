@@ -31,41 +31,23 @@ struct CategoriesSelectFlowViewModelTests {
     }
     
     // MARK: - Tests
-    
-    @MainActor @Test("Loading categories fetches from model context")
-    func loadCategories() throws {
-        let container = try makeTestContainer()
-        let context = container.mainContext
         
-        // Insert test categories
-        let category1 = LandmarkCategory(name: "Cafes")
-        let category2 = LandmarkCategory(name: "Museums")
-        context.insert(category1)
-        context.insert(category2)
-        try context.save()
-        
-        // Create view model and load
-        let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
-        viewModel.loadCategories()
-        
-        // Verify
-        #expect(viewModel.allCategories.count == 2)
-        #expect(viewModel.allCategories.contains { $0.name == "Cafes" })
-        #expect(viewModel.allCategories.contains { $0.name == "Museums" })
-    }
-    
     @MainActor @Test("Initially has no selected categories")
     func initiallyNoSelections() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
         
-        let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
+        let service = DefaultCategorySelectionService(modelContext: context)
+        let viewModel = CategoriesSelectFlowViewModel(service: service)
         
         #expect(viewModel.hasSelectedCategories == false)
 
         let descriptor = FetchDescriptor<SelectedCategories>()
         let selections = try context.fetch(descriptor)
-        #expect(selections.isEmpty)
+         
+        // Service lazily creates a SelectedCategories model on first access
+        #expect(selections.count == 1)
+        #expect(!selections.isEmpty)
     }
     
     @MainActor @Test("Clear all selections removes all categories")
@@ -84,8 +66,9 @@ struct CategoriesSelectFlowViewModelTests {
         context.insert(selection)
         try context.save()
         
-        // Create view model
-        let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
+        // Create service and view model
+        let service = DefaultCategorySelectionService(modelContext: context)
+        let viewModel = CategoriesSelectFlowViewModel(service: service)
         
         // Initially should have selections
         #expect(viewModel.hasSelectedCategories == true)
@@ -97,27 +80,4 @@ struct CategoriesSelectFlowViewModelTests {
         #expect(viewModel.hasSelectedCategories == false)
     }
     
-    @MainActor @Test("Categories are sorted by name")
-    func categoriesSortedByName() throws {
-        let container = try makeTestContainer()
-        let context = container.mainContext
-        
-        // Insert in random order
-        let categoryC = LandmarkCategory(name: "Zoos")
-        let categoryA = LandmarkCategory(name: "Cafes")
-        let categoryB = LandmarkCategory(name: "Museums")
-        context.insert(categoryC)
-        context.insert(categoryA)
-        context.insert(categoryB)
-        try context.save()
-        
-        // Load and verify sorting
-        let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
-        viewModel.loadCategories()
-        
-        #expect(viewModel.allCategories.count == 3)
-        #expect(viewModel.allCategories[0].name == "Cafes")
-        #expect(viewModel.allCategories[1].name == "Museums")
-        #expect(viewModel.allCategories[2].name == "Zoos")
-    }
 }

@@ -17,6 +17,7 @@ struct CategoriesSelectFlow: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
+    @State private var categoriesService: DefaultCategorySelectionService?
     @State private var viewModel: CategoriesSelectFlowViewModel?
     @State private var isShowingEditView = false
 
@@ -50,6 +51,40 @@ struct CategoriesSelectFlow: View {
                 }
             }
             
+            // Filter mode picker - only shown when 2+ categories are selected
+            if viewModel?.shouldShowFilterModePicker == true {
+                VStack(alignment: .leading, spacing: 8) {
+                    HStack {
+                        Text("filter-mode".localized)
+                            .font(.subheadline)
+                            .foregroundStyle(.secondary)
+                        
+                        Spacer()
+                        
+                        Picker("filter-mode".localized, selection: Binding(
+                            get: { viewModel?.filterMode ?? .matchAny },
+                            set: { viewModel?.setFilterMode($0) }
+                        )) {
+                            Text("match-any".localized).tag(CategoryFilterMode.matchAny)
+                            Text("match-all".localized).tag(CategoryFilterMode.matchAll)
+                        }
+                        .pickerStyle(.segmented)
+                        .fixedSize()
+                    }
+                    
+                    // Helpful explanation text
+                    if let filterMode = viewModel?.filterMode {
+                        Text(filterMode == .matchAny 
+                            ? "match-any-explanation".localized 
+                            : "match-all-explanation".localized)
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                }
+                .padding(.vertical, 8)
+                .transition(.opacity.combined(with: .move(edge: .top)))
+            }
+            
             ScrollView {
                 HFlow {
                     ForEach(allCategories) { category in
@@ -62,9 +97,13 @@ struct CategoriesSelectFlow: View {
                 }
             }
         }
+        .animation(.default, value: viewModel?.shouldShowFilterModePicker)
         .onAppear {
-            if viewModel == nil {
-                viewModel = CategoriesSelectFlowViewModel(modelContext: modelContext)
+            if categoriesService == nil {
+                categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
+            }
+            if viewModel == nil, let service = categoriesService {
+                viewModel = CategoriesSelectFlowViewModel(service: service)
             }
         }
         .sheet(isPresented: $isShowingEditView) {
