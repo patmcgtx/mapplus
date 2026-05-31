@@ -5,7 +5,6 @@
 //  Created by Patrick McGonigle on 5/30/26.
 //
 
-import SwiftUI
 import SwiftData
 
 /// Manages the state and business logic for category selection
@@ -17,9 +16,6 @@ class CategoriesSelectFlowViewModel {
     private let modelContext: ModelContext
     
     // MARK: - State
-    
-    /// All available categories
-    private(set) var allCategories: [LandmarkCategory] = []
     
     /// The selection model (lazy-loaded)
     private var _selectedCategoriesModel: SelectedCategories?
@@ -36,20 +32,6 @@ class CategoriesSelectFlowViewModel {
     }
     
     // MARK: - Public Methods
-    
-    /// Loads categories from the model context
-    func loadCategories() {
-        let descriptor = FetchDescriptor<LandmarkCategory>(
-            sortBy: [SortDescriptor(\.name)]
-        )
-        
-        do {
-            allCategories = try modelContext.fetch(descriptor)
-        } catch {
-            print("Failed to fetch categories: \(error)")
-            allCategories = []
-        }
-    }
     
     /// Clears all category selections
     func clearAllSelections() {
