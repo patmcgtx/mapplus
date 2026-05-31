@@ -34,10 +34,10 @@ struct CategoryCapsule: View {
     let action: Action?
     
     // Category selection state
-    @Query private var selectedCategoriesModels: [SelectedCategories]
+    @Query private var selectedCategories: [SelectedCategories]
     
     private var selectedCategoriesModel: SelectedCategories? {
-        selectedCategoriesModels.first
+        selectedCategories.first
     }
     
     private var isSelected: Bool {
@@ -76,7 +76,7 @@ struct CategoryCapsule: View {
                         try withAnimation {
                             // Get or create the selection model
                             let selectionModel: SelectedCategories
-                            if let existing = selectedCategoriesModels.first {
+                            if let existing = selectedCategories.first {
                                 selectionModel = existing
                             } else {
                                 selectionModel = SelectedCategories()

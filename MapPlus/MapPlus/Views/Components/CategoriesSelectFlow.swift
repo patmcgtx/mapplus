@@ -20,10 +20,10 @@ struct CategoriesSelectFlow: View {
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
     // The selection state
-    @Query private var selectedCategoriesModels: [SelectedCategories]
+    @Query private var selectedCategories: [SelectedCategories]
     
     private var selectedCategoriesModel: SelectedCategories {
-        if let existing = selectedCategoriesModels.first {
+        if let existing = selectedCategories.first {
             return existing
         } else {
             // Create one if it doesn't exist
@@ -96,10 +96,10 @@ struct CategoriesSelectFlow: View {
 
 private struct SelectedCategoriesView: View {
     
-    @Query private var selectedCategoriesModels: [SelectedCategories]
+    @Query private var selectedCategoriesForPreview: [SelectedCategories]
     
     private var selectedCategories: [LandmarkCategory] {
-        selectedCategoriesModels.first?.categories ?? []
+        selectedCategoriesForPreview.first?.categories ?? []
     }
     
     var body: some View {

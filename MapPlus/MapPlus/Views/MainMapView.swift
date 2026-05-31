@@ -25,10 +25,10 @@ struct MainMapView: View {
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
     // Category selection
-    @Query var selectedCategoriesModels: [SelectedCategories]
+    @Query var allSelectedCategories: [SelectedCategories]
     
     private var selectedCategoriesModel: SelectedCategories? {
-        selectedCategoriesModels.first
+        allSelectedCategories.first
     }
     
     private var selectedCategories: [LandmarkCategory] {
