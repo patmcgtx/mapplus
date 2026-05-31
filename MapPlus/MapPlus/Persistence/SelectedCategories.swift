@@ -10,7 +10,7 @@ import SwiftData
 /// This is a singleton model that persists which categories the user has selected.
 /// 
 /// The LandmarkCategory model used to have an `isSelected` property, but
-/// it proved difficult to work work on complex queries, as did App Settings, so I'm
+/// it proved difficult to work with on complex queries, as did App Settings, so I'm
 /// hoping this is the solution.
 @Model
 class SelectedCategories {
