@@ -16,7 +16,7 @@ import SwiftData
 class SelectedCategories {
     
     /// The categories currently selected for filtering
-    var categories: [LandmarkCategory] = []
+    @Relationship(deleteRule: .nullify) var categories: [LandmarkCategory] = []
     
     /// Creates a new SelectedCategories instance
     init(categories: [LandmarkCategory] = []) {
