@@ -15,6 +15,7 @@ struct CategoriesSelectFlow: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
+    @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
     @State private var viewModel: CategoriesSelectFlowViewModel?
     @State private var isShowingEditView = false
@@ -49,16 +50,14 @@ struct CategoriesSelectFlow: View {
                 }
             }
             
-            if let viewModel = viewModel {
-                ScrollView {
-                    HFlow {
-                        ForEach(viewModel.allCategories) { category in
-                            CategoryCapsule(
-                                category: category,
-                                isSelectable: true,
-                                action: nil
-                            )
-                        }
+            ScrollView {
+                HFlow {
+                    ForEach(allCategories) { category in
+                        CategoryCapsule(
+                            category: category,
+                            isSelectable: true,
+                            action: nil
+                        )
                     }
                 }
             }
@@ -66,16 +65,10 @@ struct CategoriesSelectFlow: View {
         .onAppear {
             if viewModel == nil {
                 viewModel = CategoriesSelectFlowViewModel(modelContext: modelContext)
-                viewModel?.loadCategories()
             }
         }
         .sheet(isPresented: $isShowingEditView) {
             CategoriesEditView()
-        }
-        .onChange(of: isShowingEditView) { _, isShowing in
-            if isShowing == false {
-                viewModel?.loadCategories()
-            }
         }
     }
 }
