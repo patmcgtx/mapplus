@@ -37,13 +37,16 @@ struct CategoriesSelectFlowViewModelTests {
         let container = try makeTestContainer()
         let context = container.mainContext
         
-        let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
+        let service = SelectedCategoriesService(modelContext: context)
+        let viewModel = CategoriesSelectFlowViewModel(service: service)
         
         #expect(viewModel.hasSelectedCategories == false)
 
         let descriptor = FetchDescriptor<SelectedCategories>()
         let selections = try context.fetch(descriptor)
-        #expect(selections.isEmpty)
+        // Service auto-creates a SelectedCategories model on init
+        #expect(selections.count == 1)
+        #expect(selections.first?.categories.isEmpty == true)
     }
     
     @MainActor @Test("Clear all selections removes all categories")
@@ -62,8 +65,9 @@ struct CategoriesSelectFlowViewModelTests {
         context.insert(selection)
         try context.save()
         
-        // Create view model
-        let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
+        // Create service and view model
+        let service = SelectedCategoriesService(modelContext: context)
+        let viewModel = CategoriesSelectFlowViewModel(service: service)
         
         // Initially should have selections
         #expect(viewModel.hasSelectedCategories == true)
