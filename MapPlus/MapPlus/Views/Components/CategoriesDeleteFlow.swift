@@ -21,7 +21,7 @@ struct CategoriesDeleteFlow: View {
             EmptyView()
         } else {
             HFlow {
-                ForEach($categories) { category in
+                ForEach($categories, id: \.id) { category in
                     CategoryCapsule(
                         category: category.wrappedValue,
                         isSelectable: false,
@@ -29,7 +29,7 @@ struct CategoriesDeleteFlow: View {
                                 systemImage: "x.circle",
                                 onTap: { tappedCategory in
                                     withAnimation(.bouncy) {
-                                        categories.removeAll { $0 == tappedCategory }
+                                        categories.removeAll { $0.id == tappedCategory.id }
                                     }
                                 }
                             )

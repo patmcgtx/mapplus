@@ -47,6 +47,33 @@ struct CategoryCapsule: View {
     // MARK: View
 
     var body: some View {
+        capsuleContent
+            .foregroundStyle(.primary)
+            .padding(
+                EdgeInsets(
+                    top: 4,
+                    leading: 15,
+                    bottom: 4,
+                    trailing: 15
+                )
+            )
+            .background {
+                if shouldShowSelectionState {
+                    Capsule(style: .circular)
+                        .fill(theme.tintColor)
+                } else {
+                    let borderColor = theme.foregroundColor(for: colorScheme)
+                    Capsule(style: .circular)
+                        .strokeBorder(borderColor, lineWidth: 1.0)
+                }
+            }
+            .sensoryFeedback(.impact(weight: .light), trigger: isSelected) { _, _ in
+                isSelectable // Sends haptics when tapped and this is a selectable category
+            }
+    }
+    
+    @ViewBuilder
+    private var capsuleContent: some View {
         HStack {
             let fontWeight: Font.Weight = shouldShowSelectionState ? .heavy : .regular
             
@@ -60,15 +87,18 @@ struct CategoryCapsule: View {
                 .foregroundStyle(fontColor)
             
             if let categoryAction = action {
-                Button(action: {
-                    withAnimation {
-                        categoryAction.onTap(category)
-                    }
-                }, label: {
+                Button {
+                    categoryAction.onTap(category)
+                } label: {
                     Image(systemName: categoryAction.systemImage)
-                })
+                        .padding(8) // Increase tap target
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("delete".localized)
             }
         }
+        .contentShape(Rectangle())
         .onTapGesture {
             if isSelectable {
                 withAnimation {
@@ -99,28 +129,6 @@ struct CategoryCapsule: View {
                     }
                 }
             }
-        }
-        .foregroundStyle(.primary)
-        .padding(
-            EdgeInsets(
-                top: 4,
-                leading: 15,
-                bottom: 4,
-                trailing: 15
-            )
-        )
-        .background {
-            if shouldShowSelectionState {
-                Capsule(style: .circular)
-                    .fill(theme.tintColor)
-            } else {
-                let borderColor = theme.foregroundColor(for: colorScheme)
-                Capsule(style: .circular)
-                    .strokeBorder(borderColor, lineWidth: 1.0)
-            }
-        }
-        .sensoryFeedback(.impact(weight: .light), trigger: isSelected) { _, _ in
-            isSelectable // Sends haptics when tapped and this is a selectable category
         }
     }
     
