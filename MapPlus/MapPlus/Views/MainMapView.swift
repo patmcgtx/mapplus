@@ -293,7 +293,7 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map" : "map.fill"
+        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }
