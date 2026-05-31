@@ -16,7 +16,7 @@ struct MainMapView: View {
     @State private var viewModel = MainMapViewModel()
     
     // Category filtering service
-    @State private var categoriesService: SelectedCategoriesService?
+    @State private var categoriesService: CategorySelectionService?
     
     // Location service
     private var locationPermissionsService = LocationPermissionsService()
@@ -148,7 +148,7 @@ struct MainMapView: View {
             }
             .onAppear(){
                 if categoriesService == nil {
-                    categoriesService = SelectedCategoriesService(modelContext: modelContext)
+                    categoriesService = CategorySelectionService(modelContext: modelContext)
                 }
                 viewModel.requestLocationPermissions(using: locationPermissionsService)
             }

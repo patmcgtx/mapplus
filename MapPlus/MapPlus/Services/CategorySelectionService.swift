@@ -1,5 +1,5 @@
 //
-//  SelectedCategoriesService.swift
+//  CategorySelectionService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 5/31/26.
@@ -11,7 +11,7 @@ import SwiftData
 /// This encapsulates all logic related to category selection and landmark filtering,
 /// making it reusable across different views.
 @Observable
-class SelectedCategoriesService {
+class CategorySelectionService {
     
     // MARK: - Dependencies
     

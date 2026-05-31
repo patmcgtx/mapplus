@@ -8,13 +8,13 @@
 import SwiftData
 
 /// Manages the state and business logic for category selection
-/// This is now a lightweight wrapper around SelectedCategoriesService
+/// This is now a lightweight wrapper around CategorySelectionService
 @Observable
 class CategoriesSelectFlowViewModel {
     
     // MARK: - Dependencies
     
-    private let service: SelectedCategoriesService
+    private let service: CategorySelectionService
     
     // MARK: - State
     
@@ -35,7 +35,7 @@ class CategoriesSelectFlowViewModel {
     
     // MARK: - Initialization
     
-    init(service: SelectedCategoriesService) {
+    init(service: CategorySelectionService) {
         self.service = service
     }
     
