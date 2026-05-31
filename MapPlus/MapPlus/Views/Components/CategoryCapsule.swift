@@ -32,6 +32,17 @@ struct CategoryCapsule: View {
     
     /// An optional action to add to the category
     let action: Action?
+    
+    // Category selection state
+    @Query private var selectedCategoriesModels: [SelectedCategories]
+    
+    private var selectedCategoriesModel: SelectedCategories? {
+        selectedCategoriesModels.first
+    }
+    
+    private var isSelected: Bool {
+        selectedCategoriesModel?.contains(category) ?? false
+    }
         
     // MARK: View
 
@@ -63,16 +74,27 @@ struct CategoryCapsule: View {
                 withAnimation {
                     do {
                         try withAnimation {
+                            // Get or create the selection model
+                            let selectionModel: SelectedCategories
+                            if let existing = selectedCategoriesModels.first {
+                                selectionModel = existing
+                            } else {
+                                selectionModel = SelectedCategories()
+                                modelContext.insert(selectionModel)
+                            }
+                            
+                            // Toggle the category selection
+                            selectionModel.toggle(category)
+                            
                             // Update and commit the selected state to immediately reflect across
-                            // the app.  This is part of an opinionated approach that leverages
+                            // the app. This is part of an opinionated approach that leverages
                             // SwiftData for simple app-wide, reactive persistent state, breaking
                             // somewhat with traditional MVVM for simplicity and responsiveness.
                             // Basically, it works really well. 🤷🏻‍♂️
-                            category.isSelected.toggle()
                             try modelContext.save()
                         }
                     } catch {
-                        // TODO patmcg what to do if the persist fails?  Show an error alert? 🤔
+                        // TODO patmcg what to do if the persist fails? Show an error alert? 🤔
                         print("Failed to save category selection: \(error)")
                     }
                 }
@@ -97,14 +119,14 @@ struct CategoryCapsule: View {
                     .strokeBorder(borderColor, lineWidth: 1.0)
             }
         }
-        .sensoryFeedback(.impact(weight: .light), trigger: category.isSelected) { _, _ in
+        .sensoryFeedback(.impact(weight: .light), trigger: isSelected) { _, _ in
             isSelectable // Sends haptics when tapped and this is a selectable category
         }
     }
     
     /// Whether or not to show the selection state of the category
     private var shouldShowSelectionState: Bool {
-        isSelectable && category.isSelected
+        isSelectable && isSelected
     }
 }
 
@@ -121,7 +143,7 @@ struct CategoryCapsule: View {
 #Preview("View-only, selected") {
     // In the view-only case, we actually don't want to see the selection state.
     CategoryCapsule(
-        category: LandmarkCategory(name: "Beer Gardens", isSelected: true),
+        category: LandmarkCategory(name: "Beer Gardens"),
         isSelectable: false,
         action: nil
     )
@@ -155,24 +177,26 @@ struct CategoryCapsule: View {
         isSelectable: true,
         action: nil
     )
+    .modelContainer(try! ModelContainer.inMemorySampleContainer())
     
     // TODO patmcg this is not reflecting the state change on category; fix
-    Text(category.isSelected ? "Selected" : "Not selected")
+    Text("Check selection in UI")
     
 }
 
 #Preview("Toggle, selected") {
     
-    let category = LandmarkCategory(name: "Groceries", isSelected: true)
+    let category = LandmarkCategory(name: "Groceries")
     
     CategoryCapsule(
         category: category,
         isSelectable: true,
         action: nil
     )
+    .modelContainer(try! ModelContainer.inMemorySampleContainer())
     
     // TODO patmcg this is not reflecting the state change on category; fix
-    Text(category.isSelected ? "Selected" : "Not selected")
+    Text("Check selection in UI")
 }
 
 #endif // DEBUG

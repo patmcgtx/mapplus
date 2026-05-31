@@ -12,7 +12,10 @@ extension ModelContainer {
     // TODO patmcg doc
     static func persistentContainer() throws -> ModelContainer {
         let config = ModelConfiguration()
-        let container = try! ModelContainer(for: Landmark.self, configurations: config)
+        let container = try! ModelContainer(
+            for: Landmark.self, SelectedCategories.self,
+            configurations: config
+        )
         
         // Only insert sample categories if the database is empty
         let descriptor = FetchDescriptor<LandmarkCategory>()
@@ -36,7 +39,10 @@ extension ModelContainer {
     static func inMemorySampleContainer(numExtraCategories: Int = 0) throws -> ModelContainer {
         
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try! ModelContainer(for: Landmark.self, configurations: config)
+        let container = try! ModelContainer(
+            for: Landmark.self, SelectedCategories.self,
+            configurations: config
+        )
 
         for landmark in SampleLandmarks().austinPlaces {
             container.mainContext.insert(landmark)

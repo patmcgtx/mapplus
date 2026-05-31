@@ -14,9 +14,24 @@ import Flow
 struct CategoriesSelectFlow: View {
     
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
         
     // We're going to show all categories for filtering
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
+    
+    // The selection state
+    @Query private var selectedCategoriesModels: [SelectedCategories]
+    
+    private var selectedCategoriesModel: SelectedCategories {
+        if let existing = selectedCategoriesModels.first {
+            return existing
+        } else {
+            // Create one if it doesn't exist
+            let newModel = SelectedCategories()
+            modelContext.insert(newModel)
+            return newModel
+        }
+    }
     
     @State private var isShowingEditView = false
 
@@ -68,13 +83,12 @@ struct CategoriesSelectFlow: View {
     }
     
     private var hasSelectedCategories: Bool {
-        allCategories.contains { $0.isSelected }
+        !selectedCategoriesModel.categories.isEmpty
     }
 
     private func clearAllSelections() {
-        for index in allCategories.indices {
-            allCategories[index].isSelected = false
-        }
+        selectedCategoriesModel.clearAll()
+        try? modelContext.save()
     }
 }
 
@@ -82,8 +96,11 @@ struct CategoriesSelectFlow: View {
 
 private struct SelectedCategoriesView: View {
     
-    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
-    private var selectedCategories: [LandmarkCategory]
+    @Query private var selectedCategoriesModels: [SelectedCategories]
+    
+    private var selectedCategories: [LandmarkCategory] {
+        selectedCategoriesModels.first?.categories ?? []
+    }
     
     var body: some View {
         Text("selected-categories".localized).bold()
