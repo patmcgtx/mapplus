@@ -121,6 +121,7 @@ class DefaultCategorySelectionService: CategorySelectionService {
                 }
             }
         }
+    }
     
     /// Checks if a category is currently selected
     /// - Parameter category: The category to check

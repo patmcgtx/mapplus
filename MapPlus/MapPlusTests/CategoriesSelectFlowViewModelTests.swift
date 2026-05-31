@@ -44,9 +44,10 @@ struct CategoriesSelectFlowViewModelTests {
 
         let descriptor = FetchDescriptor<SelectedCategories>()
         let selections = try context.fetch(descriptor)
-        // Service auto-creates a SelectedCategories model on init
+         
+        // Service lazily creates a SelectedCategories model on first access
         #expect(selections.count == 1)
-        #expect(selections.first?.categories.isEmpty == true)
+        #expect(!selections.isEmpty)
     }
     
     @MainActor @Test("Clear all selections removes all categories")

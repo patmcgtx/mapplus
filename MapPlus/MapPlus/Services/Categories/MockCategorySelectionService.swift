@@ -6,7 +6,6 @@
 //
 
 import SwiftData
-@testable import MapPlus
 
 /// Mock implementation of CategorySelectionService for testing
 @Observable
