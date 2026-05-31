@@ -62,6 +62,10 @@ struct CategoriesSelectFlowViewModelTests {
         let viewModel = CategoriesSelectFlowViewModel(modelContext: context)
         
         #expect(viewModel.hasSelectedCategories == false)
+
+        let descriptor = FetchDescriptor<SelectedCategories>()
+        let selections = try context.fetch(descriptor)
+        #expect(selections.isEmpty)
     }
     
     @MainActor @Test("Clear all selections removes all categories")

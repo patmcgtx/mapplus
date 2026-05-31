@@ -26,7 +26,7 @@ class CategoriesSelectFlowViewModel {
     
     /// Whether there are any selected categories
     var hasSelectedCategories: Bool {
-        selectedCategoriesModel.categories.isEmpty == false
+        selectedCategoriesModel?.categories.isEmpty == false
     }
     
     // MARK: - Initialization
@@ -53,14 +53,15 @@ class CategoriesSelectFlowViewModel {
     
     /// Clears all category selections
     func clearAllSelections() {
+        guard let selectedCategoriesModel else { return }
         selectedCategoriesModel.clearAll()
         save()
     }
     
     // MARK: - Private Methods
     
-    /// Gets or creates the SelectedCategories model
-    private var selectedCategoriesModel: SelectedCategories {
+    /// Gets the SelectedCategories model if one exists
+    private var selectedCategoriesModel: SelectedCategories? {
         // Return cached if available
         if let existing = _selectedCategoriesModel {
             return existing
@@ -73,12 +74,7 @@ class CategoriesSelectFlowViewModel {
             return fetched
         }
         
-        // Create new if doesn't exist
-        let newModel = SelectedCategories()
-        modelContext.insert(newModel)
-        _selectedCategoriesModel = newModel
-        save()
-        return newModel
+        return nil
     }
     
     /// Saves the model context
