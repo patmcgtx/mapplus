@@ -72,6 +72,11 @@ struct CategoriesSelectFlow: View {
         .sheet(isPresented: $isShowingEditView) {
             CategoriesEditView()
         }
+        .onChange(of: isShowingEditView) { _, isShowing in
+            if isShowing == false {
+                viewModel?.loadCategories()
+            }
+        }
     }
 }
 
@@ -115,4 +120,3 @@ private struct SelectedCategoriesView: View {
 }
 
 #endif // DEBUG
-
