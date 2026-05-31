@@ -25,6 +25,16 @@ class CategoriesSelectFlowViewModel {
         selectedCategoriesModel?.categories.isEmpty == false
     }
     
+    /// The current filter mode
+    var filterMode: CategoryFilterMode {
+        selectedCategoriesModel?.filterMode ?? .matchAny
+    }
+    
+    /// Whether the filter mode picker should be shown (only relevant when 2+ categories selected)
+    var shouldShowFilterModePicker: Bool {
+        (selectedCategoriesModel?.categories.count ?? 0) >= 2
+    }
+    
     // MARK: - Initialization
     
     init(modelContext: ModelContext) {
@@ -37,6 +47,14 @@ class CategoriesSelectFlowViewModel {
     func clearAllSelections() {
         guard let selectedCategoriesModel else { return }
         selectedCategoriesModel.clearAll()
+        save()
+    }
+    
+    /// Sets the filter mode for combining multiple categories
+    /// - Parameter mode: The filter mode to use
+    func setFilterMode(_ mode: CategoryFilterMode) {
+        guard let selectedCategoriesModel else { return }
+        selectedCategoriesModel.filterMode = mode
         save()
     }
     

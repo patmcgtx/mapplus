@@ -40,9 +40,21 @@ struct MainMapView: View {
             return allLandmarks
         }
         
+        // Filter based on the selected filter mode
+        let filterMode = selectedCategoriesModel?.filterMode ?? .matchAny
+        
         return allLandmarks.filter { landmark in
-            landmark.categories.contains { category in
-                selectedCategories.contains(category)
+            switch filterMode {
+            case .matchAny:
+                // Show landmarks that have at least one matching category (OR logic)
+                landmark.categories.contains { category in
+                    selectedCategories.contains(category)
+                }
+            case .matchAll:
+                // Show landmarks that have all selected categories (AND logic)
+                selectedCategories.allSatisfy { selectedCategory in
+                    landmark.categories.contains(selectedCategory)
+                }
             }
         }
     }
