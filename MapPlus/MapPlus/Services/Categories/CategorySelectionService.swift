@@ -105,22 +105,22 @@ class DefaultCategorySelectionService: CategorySelectionService {
         }
         
         let mode = filterMode
+        let selected = selectedCategories
         
         return landmarks.filter { landmark in
             switch mode {
             case .matchAny:
                 // Show landmarks that have at least one matching category (OR logic)
                 landmark.categories.contains { category in
-                    selectedCategories.contains(category)
+                    selected.contains(category)
                 }
             case .matchAll:
                 // Show landmarks that have all selected categories (AND logic)
-                selectedCategories.allSatisfy { selectedCategory in
+                selected.allSatisfy { selectedCategory in
                     landmark.categories.contains(selectedCategory)
                 }
             }
         }
-    }
     
     /// Checks if a category is currently selected
     /// - Parameter category: The category to check
