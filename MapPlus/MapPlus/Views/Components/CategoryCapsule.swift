@@ -87,14 +87,15 @@ struct CategoryCapsule: View {
                 .foregroundStyle(fontColor)
             
             if let categoryAction = action {
-                Image(systemName: categoryAction.systemImage)
-                    .padding(8) // Increase tap target
-                    .contentShape(Rectangle())
-                    .highPriorityGesture(
-                        TapGesture().onEnded { _ in
-                            categoryAction.onTap(category)
-                        }
-                    )
+                Button {
+                    categoryAction.onTap(category)
+                } label: {
+                    Image(systemName: categoryAction.systemImage)
+                        .padding(8) // Increase tap target
+                        .contentShape(Rectangle())
+                }
+                .buttonStyle(.plain)
+                .accessibilityLabel("delete".localized)
             }
         }
         .contentShape(Rectangle())
