@@ -15,24 +15,8 @@ struct CategoriesSelectFlow: View {
     
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-        
-    // We're going to show all categories for filtering
-    @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
-    // The selection state
-    @Query private var selectedCategories: [SelectedCategories]
-    
-    private var selectedCategoriesModel: SelectedCategories {
-        if let existing = selectedCategories.first {
-            return existing
-        } else {
-            // Create one if it doesn't exist
-            let newModel = SelectedCategories()
-            modelContext.insert(newModel)
-            return newModel
-        }
-    }
-    
+    @State private var viewModel: CategoriesSelectFlowViewModel?
     @State private var isShowingEditView = false
 
     var body: some View {
@@ -50,10 +34,10 @@ struct CategoriesSelectFlow: View {
                 
                 HStack(spacing: 8) {
                     Button("clear".localized) {
-                        clearAllSelections()
+                        viewModel?.clearAllSelections()
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!hasSelectedCategories)
+                    .disabled(viewModel?.hasSelectedCategories != true)
                     
                     Divider()
                         .frame(height: 20)
@@ -65,30 +49,29 @@ struct CategoriesSelectFlow: View {
                 }
             }
             
-            ScrollView {
-                HFlow {
-                    ForEach(allCategories) { category in
-                        CategoryCapsule(
-                            category: category,
-                            isSelectable: true,
-                            action: nil
-                        )
+            if let viewModel = viewModel {
+                ScrollView {
+                    HFlow {
+                        ForEach(viewModel.allCategories) { category in
+                            CategoryCapsule(
+                                category: category,
+                                isSelectable: true,
+                                action: nil
+                            )
+                        }
                     }
                 }
+            }
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = CategoriesSelectFlowViewModel(modelContext: modelContext)
+                viewModel?.loadCategories()
             }
         }
         .sheet(isPresented: $isShowingEditView) {
             CategoriesEditView()
         }
-    }
-    
-    private var hasSelectedCategories: Bool {
-        !selectedCategoriesModel.categories.isEmpty
-    }
-
-    private func clearAllSelections() {
-        selectedCategoriesModel.clearAll()
-        try? modelContext.save()
     }
 }
 
