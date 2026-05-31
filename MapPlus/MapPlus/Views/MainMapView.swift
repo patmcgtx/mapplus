@@ -24,17 +24,28 @@ struct MainMapView: View {
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    @Query(filter: #Predicate<Landmark> { $0.categories.contains(where: { $0.isSelected }) },
-           sort: \Landmark.name)
-    var filteredLandmarks: [Landmark]
+    // Category selection
+    @Query var allSelectedCategories: [SelectedCategories]
+    
+    private var selectedCategoriesModel: SelectedCategories? {
+        allSelectedCategories.first
+    }
+    
+    private var selectedCategories: [LandmarkCategory] {
+        selectedCategoriesModel?.categories ?? []
+    }
     
     private var visibleLandmarks: [Landmark] {
-        selectedCategories.isEmpty ? allLandmarks : filteredLandmarks
+        guard !selectedCategories.isEmpty else {
+            return allLandmarks
+        }
+        
+        return allLandmarks.filter { landmark in
+            landmark.categories.contains { category in
+                selectedCategories.contains(category)
+            }
+        }
     }
-
-    // Categories
-    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
-    var selectedCategories: [LandmarkCategory]
     
     // MARK: - Animation State
     

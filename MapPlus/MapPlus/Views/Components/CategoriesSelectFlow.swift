@@ -14,10 +14,10 @@ import Flow
 struct CategoriesSelectFlow: View {
     
     @Environment(\.dismiss) private var dismiss
-        
-    // We're going to show all categories for filtering
+    @Environment(\.modelContext) private var modelContext
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
+    @State private var viewModel: CategoriesSelectFlowViewModel?
     @State private var isShowingEditView = false
 
     var body: some View {
@@ -35,10 +35,10 @@ struct CategoriesSelectFlow: View {
                 
                 HStack(spacing: 8) {
                     Button("clear".localized) {
-                        clearAllSelections()
+                        viewModel?.clearAllSelections()
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!hasSelectedCategories)
+                    .disabled(viewModel?.hasSelectedCategories != true)
                     
                     Divider()
                         .frame(height: 20)
@@ -62,18 +62,13 @@ struct CategoriesSelectFlow: View {
                 }
             }
         }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = CategoriesSelectFlowViewModel(modelContext: modelContext)
+            }
+        }
         .sheet(isPresented: $isShowingEditView) {
             CategoriesEditView()
-        }
-    }
-    
-    private var hasSelectedCategories: Bool {
-        allCategories.contains { $0.isSelected }
-    }
-
-    private func clearAllSelections() {
-        for index in allCategories.indices {
-            allCategories[index].isSelected = false
         }
     }
 }
@@ -82,8 +77,11 @@ struct CategoriesSelectFlow: View {
 
 private struct SelectedCategoriesView: View {
     
-    @Query(filter: #Predicate<LandmarkCategory> { $0.isSelected })
-    private var selectedCategories: [LandmarkCategory]
+    @Query private var selectedCategoriesForPreview: [SelectedCategories]
+    
+    private var selectedCategories: [LandmarkCategory] {
+        selectedCategoriesForPreview.first?.categories ?? []
+    }
     
     var body: some View {
         Text("selected-categories".localized).bold()
@@ -115,4 +113,3 @@ private struct SelectedCategoriesView: View {
 }
 
 #endif // DEBUG
-
