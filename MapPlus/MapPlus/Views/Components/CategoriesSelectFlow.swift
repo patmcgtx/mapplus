@@ -17,7 +17,7 @@ struct CategoriesSelectFlow: View {
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
-    @State private var categoriesService: CategorySelectionService?
+    @State private var categoriesService: DefaultCategorySelectionService?
     @State private var viewModel: CategoriesSelectFlowViewModel?
     @State private var isShowingEditView = false
 
@@ -100,7 +100,7 @@ struct CategoriesSelectFlow: View {
         .animation(.default, value: viewModel?.shouldShowFilterModePicker)
         .onAppear {
             if categoriesService == nil {
-                categoriesService = CategorySelectionService(modelContext: modelContext)
+                categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
             }
             if viewModel == nil, let service = categoriesService {
                 viewModel = CategoriesSelectFlowViewModel(service: service)

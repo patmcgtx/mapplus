@@ -16,7 +16,7 @@ struct MainMapView: View {
     @State private var viewModel = MainMapViewModel()
     
     // Category filtering service
-    @State private var categoriesService: CategorySelectionService?
+    @State private var categoriesService: DefaultCategorySelectionService?
     
     // Location service
     private var locationPermissionsService = LocationPermissionsService()
@@ -148,7 +148,7 @@ struct MainMapView: View {
             }
             .onAppear(){
                 if categoriesService == nil {
-                    categoriesService = CategorySelectionService(modelContext: modelContext)
+                    categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
                 }
                 viewModel.requestLocationPermissions(using: locationPermissionsService)
             }
@@ -293,8 +293,7 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let hasSelectedCategories = categoriesService?.hasSelectedCategories ?? false
-        let iconName = hasSelectedCategories ? "map.fill" : "map"
+        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map" : "map.fill"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }
