@@ -20,7 +20,7 @@ struct CategoryCapsule: View {
         let onTap: (LandmarkCategory) -> Void
     }
     
-    @Environment(\.theme) private var theme: MapPlusTheme
+    @AppStorage("theme") private var theme: MapPlusTheme = .cupertino
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
     @Environment(\.modelContext) private var modelContext
 

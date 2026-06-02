@@ -20,7 +20,10 @@ struct MainMapView: View {
     
     // Location service
     private var locationPermissionsService = LocationPermissionsService()
-    
+
+    // App storage
+    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
+
     // Persistence
     @Environment(\.modelContext) private var modelContext
 
@@ -60,11 +63,11 @@ struct MainMapView: View {
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
                             LandmarkMapAnnotation(emoji: landmark.emoji)
                                 .shadow(
-                                    color: glowingLandmarks.contains(landmark) ? viewModel.activeTheme.tintColor : .clear,
+                                    color: glowingLandmarks.contains(landmark) ? theme.tintColor : .clear,
                                     radius: glowingLandmarks.contains(landmark) ? 12 : 0
                                 )
                                 .shadow(
-                                    color: glowingLandmarks.contains(landmark) ? viewModel.activeTheme.tintColor.opacity(0.6) : .clear,
+                                    color: glowingLandmarks.contains(landmark) ? theme.tintColor.opacity(0.6) : .clear,
                                     radius: glowingLandmarks.contains(landmark) ? 20 : 0
                                 )
                                 .animation(.easeOut(duration: 0.3), value: glowingLandmarks)
@@ -77,10 +80,10 @@ struct MainMapView: View {
                         if let coordinate = fadingGlows[glowId] {
                             Annotation("", coordinate: coordinate) {
                                 Circle()
-                                    .fill(viewModel.activeTheme.tintColor.opacity(0.3))
+                                    .fill(theme.tintColor.opacity(0.3))
                                     .frame(width: 20, height: 20)
-                                    .shadow(color: viewModel.activeTheme.tintColor.opacity(0.5), radius: 8)
-                                    .shadow(color: viewModel.activeTheme.tintColor.opacity(0.3), radius: 12)
+                                    .shadow(color: theme.tintColor.opacity(0.5), radius: 8)
+                                    .shadow(color: theme.tintColor.opacity(0.3), radius: 12)
                                     .scaleEffect(glowScales[glowId] ?? 1.0)
                                     .opacity(glowOpacities[glowId] ?? 1.0)
                                     .animation(.easeOut(duration: 0.5), value: glowScales[glowId])
@@ -169,8 +172,7 @@ struct MainMapView: View {
                     LandmarkForm(mode: .create)
                 }
             }
-            .environment(\.theme, viewModel.activeTheme)
-            .apply(theme: viewModel.activeTheme)
+            .apply(theme: theme)
         }
     }
     
@@ -251,14 +253,14 @@ struct MainMapView: View {
     }
     
     private var themeMenu: some View {
-        Menu("theme".localized, systemImage: viewModel.activeTheme.menuIconName) {
+        Menu("theme".localized, systemImage: theme.menuIconName) {
             Text("theme".localized)
             ForEach(MapPlusTheme.allCases) { themeOption in
                 Button {
-                    viewModel.activeTheme = themeOption
+                    theme = themeOption
                 } label: {
                     HStack {
-                        if themeOption == viewModel.activeTheme {
+                        if themeOption == theme {
                             Label(themeOption.localizedName, systemImage: "checkmark")
                         } else {
                             Text(themeOption.localizedName)

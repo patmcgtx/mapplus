@@ -30,7 +30,6 @@ struct MainMapViewModelTests {
         #expect(viewModel.selectedLandmark == nil)
         
         // Preferences
-        #expect(viewModel.activeTheme == .cupertino)
         #expect(viewModel.activePOILevel == .none)
     }
     
@@ -146,20 +145,7 @@ struct MainMapViewModelTests {
         #expect(!viewModel.didTapLocate)
     }
     
-    // MARK: - Preferences Tests
-    
-    @Test("Active theme can be changed")
-    func testActiveTheme() {
-        let viewModel = MainMapViewModel()
-        
-        #expect(viewModel.activeTheme == .cupertino)
-        
-        viewModel.activeTheme = .eightBit
-        #expect(viewModel.activeTheme == .eightBit)
-        
-        viewModel.activeTheme = .kerby
-        #expect(viewModel.activeTheme == .kerby)
-    }
+    // MARK: - Preferences Tests    
     
     @Test("Active POI level can be changed")
     func testActivePOILevel() {

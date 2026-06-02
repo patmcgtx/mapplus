@@ -38,10 +38,7 @@ final class MainMapViewModel {
 
     
     // MARK: - Preferences
-    
-    /// The currently active theme
-    var activeTheme: MapPlusTheme = .cupertino
-    
+        
     /// The current points of interest visibility level
     var activePOILevel: PointsOfInterestLevel = .none
     
