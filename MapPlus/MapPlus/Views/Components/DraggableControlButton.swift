@@ -21,7 +21,7 @@ struct DraggableControlButton: View {
     
     // MARK: Environment
     
-    @Environment(\.theme) private var theme: MapPlusTheme
+    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
     @Environment(\.colorScheme) private var colorScheme: ColorScheme
 
     // MARK: Private state

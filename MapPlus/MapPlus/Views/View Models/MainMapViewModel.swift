@@ -34,17 +34,7 @@ final class MainMapViewModel {
     
     /// The currently selected landmark (shows detail sheet)
     var selectedLandmark: Landmark?
-    
-
-    
-    // MARK: - Preferences
-    
-    /// The currently active theme
-    var activeTheme: MapPlusTheme = .cupertino
-    
-    /// The current points of interest visibility level
-    var activePOILevel: PointsOfInterestLevel = .none
-    
+            
     // MARK: - Initialization
     
     init() {}

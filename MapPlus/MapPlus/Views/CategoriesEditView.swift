@@ -11,10 +11,10 @@ import SwiftData
 /// A view for managing landmark categories - adding, renaming, and deleting them.
 struct CategoriesEditView: View {
     
+    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
     @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
-    @Environment(\.theme) private var theme: MapPlusTheme
-    
+
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
     @State private var viewModel: CategoriesEditViewModel?
