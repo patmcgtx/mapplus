@@ -14,5 +14,8 @@ enum AppStorageKeys: String, CaseIterable, Identifiable {
     /// The selected map Points of Interest level
     case poiLevel
     
+    /// Show or hide the category selector explanation
+    case showCategorySelectorExplanation
+    
     var id: String { rawValue }
 }
