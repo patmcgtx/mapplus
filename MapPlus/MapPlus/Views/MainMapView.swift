@@ -23,6 +23,7 @@ struct MainMapView: View {
 
     // App storage
     @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
+    @AppStorage(AppStorageKeys.poiLevel.rawValue) private var poiLevel: PointsOfInterestLevel = .none
 
     // Persistence
     @Environment(\.modelContext) private var modelContext
@@ -128,7 +129,7 @@ struct MainMapView: View {
                 }
                 .mapStyle(MapStyle.standard(elevation: .realistic,
                                             emphasis: .muted,
-                                            pointsOfInterest: viewModel.activePOILevel.categories,
+                                            pointsOfInterest: poiLevel.categories,
                                             showsTraffic: false))
                 .mapControls {
                     MapCompass()
@@ -273,14 +274,14 @@ struct MainMapView: View {
     
     @ViewBuilder
     private var poiMenu: some View {
-        Menu("points-of-interest".localized, systemImage: viewModel.activePOILevel.menuIconName) {
+        Menu("points-of-interest".localized, systemImage: poiLevel.menuIconName) {
             Text("points-of-interest".localized)
             ForEach(PointsOfInterestLevel.allCases) { level in
                 Button {
-                    viewModel.activePOILevel = level
+                    poiLevel = level
                 } label: {
                     HStack {
-                        if level == viewModel.activePOILevel {
+                        if level == poiLevel {
                             Label(level.localizedName, systemImage: "checkmark")
                         } else {
                             Spacer()

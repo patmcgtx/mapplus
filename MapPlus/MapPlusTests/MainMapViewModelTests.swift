@@ -28,9 +28,6 @@ struct MainMapViewModelTests {
         
         // Map State
         #expect(viewModel.selectedLandmark == nil)
-        
-        // Preferences
-        #expect(viewModel.activePOILevel == .none)
     }
     
     @Test("Map position initializes to user location")
@@ -143,22 +140,7 @@ struct MainMapViewModelTests {
         // Toggle again
         viewModel.centerOnUserLocation()
         #expect(!viewModel.didTapLocate)
-    }
-    
-    // MARK: - Preferences Tests    
-    
-    @Test("Active POI level can be changed")
-    func testActivePOILevel() {
-        let viewModel = MainMapViewModel()
-        
-        #expect(viewModel.activePOILevel == .none)
-        
-        viewModel.activePOILevel = .limited
-        #expect(viewModel.activePOILevel == .limited)
-        
-        viewModel.activePOILevel = .all
-        #expect(viewModel.activePOILevel == .all)
-    }
+    }        
     
     // MARK: - Location Permissions Tests
     
