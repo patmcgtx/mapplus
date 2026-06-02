@@ -13,7 +13,9 @@ import Flow
 /// Once presented, any of the known categories could become selected or deselected.
 struct CategoriesSelectFlow: View {
     
-    @Environment(\.dismiss) private var dismiss
+    @AppStorage(AppStorageKeys.showCategorySelectorExplanation.rawValue)
+    private var showCategorySelectorExplanation: Bool = true
+    
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
@@ -24,13 +26,7 @@ struct CategoriesSelectFlow: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Button(
-                    action: {
-                        dismiss()
-                    },
-                    label: {
-                      Image(systemName: "xmark.circle")
-                  })
+                Text("categories".localized)
 
                 Spacer()
                 
@@ -73,12 +69,32 @@ struct CategoriesSelectFlow: View {
                     }
                     
                     // Helpful explanation text
-                    if let filterMode = viewModel?.filterMode {
-                        Text(filterMode == .matchAny 
-                            ? "match-any-explanation".localized 
-                            : "match-all-explanation".localized)
+                    if let filterMode = viewModel?.filterMode, showCategorySelectorExplanation {
+                        HStack {
+                            Text(filterMode == .matchAny
+                                 ? "match-any-explanation".localized
+                                 : "match-all-explanation".localized)
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(.primary)
+                            
+                            Spacer()
+                            
+                            Button {
+                                withAnimation {
+                                    showCategorySelectorExplanation = false
+                                }
+                            } label: {
+                                Image(
+                                    systemName: "xmark.circle"
+                                )
+                            }
+                            .accessibilityLabel(
+                                "hide-explanation".localized
+                            )
+                            .buttonStyle(
+                                .plain
+                            )
+                        }
                     }
                 }
                 .padding(.vertical, 8)

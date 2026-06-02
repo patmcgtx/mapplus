@@ -19,15 +19,17 @@ struct AppStorageKeysTests {
     @Test("All cases are defined")
     func allCasesAreDefined() {
         let cases = AppStorageKeys.allCases
-        #expect(cases.count == 2)
+        #expect(cases.count == 3)
         #expect(cases.contains(.theme))
         #expect(cases.contains(.poiLevel))
+        #expect(cases.contains(.showCategorySelectorExplanation))
     }
     
     @Test("Raw values are correct")
     func rawValuesAreCorrect() {
         #expect(AppStorageKeys.theme.rawValue == "theme")
         #expect(AppStorageKeys.poiLevel.rawValue == "poiLevel")
+        #expect(AppStorageKeys.showCategorySelectorExplanation.rawValue == "showCategorySelectorExplanation")
     }
     
     @Test("Identifiable ID matches raw value")
@@ -185,32 +187,103 @@ struct AppStorageKeysTests {
         UserDefaults.standard.removeObject(forKey: key)
     }
     
+    @Test("Show Category Selector Explanation AppStorage stores and retrieves values")
+    func showCategorySelectorExplanationAppStorageStoresAndRetrievesValues() throws {
+        // Clean up before test
+        let key = AppStorageKeys.showCategorySelectorExplanation.rawValue
+        UserDefaults.standard.removeObject(forKey: key)
+        
+        // Create a wrapper to simulate AppStorage usage
+        @AppStorage(key) var showExplanation: Bool = true
+        
+        // Test default value
+        #expect(showExplanation == true)
+        
+        // Test setting to false
+        showExplanation = false
+        #expect(showExplanation == false)
+        
+        // Verify it's actually in UserDefaults
+        let storedValue = UserDefaults.standard.bool(forKey: key)
+        #expect(storedValue == false)
+        
+        // Test setting to true
+        showExplanation = true
+        #expect(showExplanation == true)
+        
+        let storedValueTrue = UserDefaults.standard.bool(forKey: key)
+        #expect(storedValueTrue == true)
+        
+        // Clean up after test
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+    
+    @Test("Show Category Selector Explanation AppStorage persists across instances")
+    func showCategorySelectorExplanationAppStoragePersistsAcrossInstances() throws {
+        let key = AppStorageKeys.showCategorySelectorExplanation.rawValue
+        UserDefaults.standard.removeObject(forKey: key)
+        
+        // First instance sets the value
+        do {
+            @AppStorage(key) var showExplanation: Bool = true
+            showExplanation = false
+            #expect(showExplanation == false)
+        }
+        
+        // Second instance should read the persisted value
+        do {
+            @AppStorage(key) var showExplanation: Bool = true
+            #expect(showExplanation == false, "Show explanation flag should persist across AppStorage instances")
+        }
+        
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+    
+    @Test("Show Category Selector Explanation uses default when no value stored")
+    func showCategorySelectorExplanationUsesDefaultWhenNoValueStored() {
+        let key = AppStorageKeys.showCategorySelectorExplanation.rawValue
+        UserDefaults.standard.removeObject(forKey: key)
+        
+        @AppStorage(key) var showExplanation: Bool = true
+        #expect(showExplanation == true, "Should use default value when nothing is stored")
+        
+        UserDefaults.standard.removeObject(forKey: key)
+    }
+    
     @Test("AppStorage keys don't conflict")
     func appStorageKeysDontConflict() {
         let themeKey = AppStorageKeys.theme.rawValue
         let poiKey = AppStorageKeys.poiLevel.rawValue
+        let explanationKey = AppStorageKeys.showCategorySelectorExplanation.rawValue
         
         UserDefaults.standard.removeObject(forKey: themeKey)
         UserDefaults.standard.removeObject(forKey: poiKey)
+        UserDefaults.standard.removeObject(forKey: explanationKey)
         
         @AppStorage(themeKey) var theme: MapPlusTheme = .cupertino
         @AppStorage(poiKey) var poiLevel: PointsOfInterestLevel = .all
+        @AppStorage(explanationKey) var showExplanation: Bool = true
         
         // Set different values
         theme = .kerby
         poiLevel = .none
+        showExplanation = false
         
         // Verify they're stored independently
         #expect(theme == .kerby)
         #expect(poiLevel == .none)
+        #expect(showExplanation == false)
         
         let storedTheme = UserDefaults.standard.string(forKey: themeKey)
         let storedPOI = UserDefaults.standard.string(forKey: poiKey)
+        let storedExplanation = UserDefaults.standard.bool(forKey: explanationKey)
         
         #expect(storedTheme == "kerby")
         #expect(storedPOI == "none")
+        #expect(storedExplanation == false)
         
         UserDefaults.standard.removeObject(forKey: themeKey)
         UserDefaults.standard.removeObject(forKey: poiKey)
+        UserDefaults.standard.removeObject(forKey: explanationKey)
     }
 }
