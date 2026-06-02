@@ -80,16 +80,21 @@ struct CategoriesSelectFlow: View {
                             
                             Spacer()
                             
-                            Button(
-                                action: {
-                                    withAnimation {
-                                        showCategorySelectorExplanation = false
-                                    }
-                                },
-                                label: {
-                                  Image(systemName: "xmark.circle")
-                              })
-
+                            Button {
+                                withAnimation {
+                                    showCategorySelectorExplanation = false
+                                }
+                            } label: {
+                                Image(
+                                    systemName: "xmark.circle"
+                                )
+                            }
+                            .accessibilityLabel(
+                                "hide-explanation".localized
+                            )
+                            .buttonStyle(
+                                .plain
+                            )
                         }
                     }
                 }
