@@ -16,7 +16,6 @@ struct CategoriesSelectFlow: View {
     @AppStorage(AppStorageKeys.showCategorySelectorExplanation.rawValue)
     private var showCategorySelectorExplanation: Bool = true
     
-    @Environment(\.dismiss) private var dismiss
     @Environment(\.modelContext) private var modelContext
     @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
     
