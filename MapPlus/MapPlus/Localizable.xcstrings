@@ -459,8 +459,15 @@
             "state" : "translated",
             "value" : "Hide explanation"
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ocultar explicación"
+          }
         }
       }
+    }
     },
     "Key" : {
       "extractionState" : "manual"
