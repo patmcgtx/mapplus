@@ -32,6 +32,19 @@ struct DraggableControlButton: View {
     
     private let buttonSize: CGFloat = 24
     private let buttonPadding: CGFloat = 16
+    private let snapInterval: CGFloat = 22
+    
+    /// Snaps a coordinate value to the nearest grid point on a global grid
+    private func snapToGlobalGrid(_ value: CGFloat, original: CGFloat) -> CGFloat {
+        // Calculate the absolute position
+        let absolutePosition = original + value
+        
+        // Snap to the nearest grid
+        let snappedAbsolute = round(absolutePosition / snapInterval) * snapInterval
+        
+        // Convert back to offset from original
+        return snappedAbsolute - original
+    }
 
     var body: some View {
         Button(action: {
