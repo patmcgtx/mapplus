@@ -35,7 +35,7 @@ struct LandmarkFormViewModelTests {
     @Test func testInitialFormFieldsAreEmptyForCreate() {
         let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(viewModel.name == "")
-        #expect(viewModel.emoji == "📍")
+        #expect(viewModel.symbol == "📍")
         #expect(viewModel.notes == "")
         #expect(viewModel.categories.isEmpty)
     }
@@ -46,12 +46,12 @@ struct LandmarkFormViewModelTests {
             name: "Statue of Liberty",
             notes: "A gift from France",
             formattedAddress: "New York, NY",
-            emoji: "🗽",
+            symbol: "🗽",
             categories: [category]
         )
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         #expect(viewModel.name == "Statue of Liberty")
-        #expect(viewModel.emoji == "🗽")
+        #expect(viewModel.symbol == "🗽")
         #expect(viewModel.notes == "A gift from France")
         #expect(viewModel.categories.count == 1)
         #expect(viewModel.categories.first?.name == "Museums")
@@ -289,7 +289,7 @@ struct LandmarkFormViewModelTests {
         )
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "New Place"
-        viewModel.emoji = "📍"
+        viewModel.symbol = "📍"
         viewModel.notes = "A great spot"
 
         viewModel.save(using: LandmarkStore(modelContext: container.mainContext))
@@ -304,7 +304,7 @@ struct LandmarkFormViewModelTests {
         )
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "Persisted Place"
-        viewModel.emoji = "🏛️"
+        viewModel.symbol = "🏛️"
         viewModel.notes = "Historical site"
         // Simulate location being resolved
         viewModel.addressSearchState = .searchResolved(
@@ -321,7 +321,7 @@ struct LandmarkFormViewModelTests {
         let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
         #expect(stored.count == 1)
         #expect(stored.first?.name == "Persisted Place")
-        #expect(stored.first?.emoji == "🏛️")
+        #expect(stored.first?.symbol == "🏛️")
         #expect(stored.first?.notes == "Historical site")
     }
 
@@ -336,14 +336,14 @@ struct LandmarkFormViewModelTests {
 
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         viewModel.name = "New Name"
-        viewModel.emoji = "🏰"
+        viewModel.symbol = "🏰"
 
         viewModel.save(using: LandmarkStore(modelContext: container.mainContext))
 
         #expect(viewModel.saveState == .saved)
         let stored = try container.mainContext.fetch(FetchDescriptor<Landmark>())
         #expect(stored.first?.name == "New Name")
-        #expect(stored.first?.emoji == "🏰")
+        #expect(stored.first?.symbol == "🏰")
     }
 
     @Test func testSaveFailureSetsStateToSaveFailed() {
@@ -369,7 +369,7 @@ struct LandmarkFormViewModelTests {
         
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "Central Park"
-        viewModel.emoji = "🌳"
+        viewModel.symbol = "🌳"
         viewModel.notes = "Beautiful green space"
         viewModel.categories = [category1, category2]
         viewModel.addressSearchState = .searchResolved(
@@ -387,7 +387,7 @@ struct LandmarkFormViewModelTests {
         #expect(stored.count == 1)
         let savedLandmark = try #require(stored.first)
         #expect(savedLandmark.name == "Central Park")
-        #expect(savedLandmark.emoji == "🌳")
+        #expect(savedLandmark.symbol == "🌳")
         #expect(savedLandmark.notes == "Beautiful green space")
         #expect(savedLandmark.categories.count == 2)
     }

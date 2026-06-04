@@ -62,7 +62,7 @@ struct MainMapView: View {
                 Map(position: $viewModel.mapPosition, selection: $viewModel.selectedLandmark) {
                     ForEach(visibleLandmarks, id: \.self) { landmark in
                         Annotation(landmark.name, coordinate: landmark.location, anchor: .bottom) {
-                            LandmarkMapAnnotation(emoji: landmark.emoji)
+                            LandmarkMapAnnotation(symbol: landmark.symbol)
                                 .shadow(
                                     color: glowingLandmarks.contains(landmark) ? theme.tintColor : .clear,
                                     radius: glowingLandmarks.contains(landmark) ? 12 : 0

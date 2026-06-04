@@ -340,13 +340,13 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emoji…"
+            "value" : "Symbol..."
           }
         },
         "es" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Emoji…"
+            "value" : "Signo..."
           }
         }
       }
@@ -488,7 +488,7 @@
         "en" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "Pick a name and an emoji to appear on the map."
+            "value" : "Pick a name and a symbol to appear on the map."
           }
         }
       }

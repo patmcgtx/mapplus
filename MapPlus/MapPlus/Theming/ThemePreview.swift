@@ -44,7 +44,7 @@ struct ThemePreview: View {
                         .Action(systemImage: "x.circle", onTap: { _ in }
                     )
                 )
-                LandmarkMapAnnotation(emoji: "P")
+                LandmarkMapAnnotation(symbol: "P")
             }
             .padding()
             .border(.primary, width: 1)

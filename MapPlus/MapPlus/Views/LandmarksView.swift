@@ -31,7 +31,7 @@ struct LandmarksView : View {
                         self.landmarkToEdit = landmark
                     } label: {
                         HStack {
-                            Text(landmark.emoji)
+                            Text(landmark.symbol)
                             Text(landmark.name)
                         }
                     }

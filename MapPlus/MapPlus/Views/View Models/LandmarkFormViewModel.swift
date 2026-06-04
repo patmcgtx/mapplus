@@ -84,7 +84,7 @@ final class LandmarkFormViewModel {
     var name: String = ""
     
     /// The landmark's emoji icon
-    var emoji: String = "📍"
+    var symbol: String = "📍"
     
     /// The landmark's notes
     var notes: String = ""
@@ -104,7 +104,7 @@ final class LandmarkFormViewModel {
             landmarkToEdit = landmark
             // Populate form fields from existing landmark
             name = landmark.name
-            emoji = landmark.emoji
+            symbol = landmark.symbol
             notes = landmark.notes
             categories = landmark.categories
         }
@@ -124,7 +124,7 @@ final class LandmarkFormViewModel {
     func save(using store: any LandmarkStoring) {
         // Apply form fields to the model
         landmarkToEdit.name = name
-        landmarkToEdit.emoji = emoji
+        landmarkToEdit.symbol = symbol
         landmarkToEdit.notes = notes
         landmarkToEdit.categories = categories
         

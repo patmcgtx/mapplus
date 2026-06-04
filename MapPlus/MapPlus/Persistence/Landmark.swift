@@ -21,8 +21,9 @@ class Landmark: Identifiable, Hashable {
     /// Optional descriptive notes for a landmark
     var notes: String = ""
 
-    /// An emoji representing the landmark
-    var emoji: String
+    /// A symbol representing the landmark
+    @Attribute(originalName: "emoji")
+    var symbol: String
     
     /// The full address description from MapKit
     var formattedAddress: String = ""
@@ -45,14 +46,14 @@ class Landmark: Identifiable, Hashable {
         name: String = "",
         notes: String = "",
         formattedAddress: String = "",
-        emoji: String = "",
+        symbol: String = "",
         location: CLLocationCoordinate2D = .init(latitude: 0.0, longitude: 0.0),
         categories: [LandmarkCategory] = []
     ) {
         self.name = name
         self.notes = notes
         self.formattedAddress = formattedAddress
-        self.emoji = emoji
+        self.symbol = symbol
         self.latitude = location.latitude
         self.longitude = location.longitude
         self.categories = categories
@@ -63,7 +64,7 @@ class Landmark: Identifiable, Hashable {
         self.name = source.name
         self.notes = source.notes
         self.formattedAddress = source.formattedAddress
-        self.emoji = source.emoji
+        self.symbol = source.symbol
         self.latitude = source.location.latitude
         self.longitude = source.location.longitude
         self.categories = source.categories

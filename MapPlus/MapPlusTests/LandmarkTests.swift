@@ -12,7 +12,7 @@ struct LandmarkTests {
         let name: String
         let notes: String
         let formattedAddress: String
-        let emoji: String
+        let symbol: String
         let latitude: CLLocationDegrees
         let longitude: CLLocationDegrees
         let description: String
@@ -23,7 +23,7 @@ struct LandmarkTests {
             name: "Golden Gate Bridge",
             notes: "bridge",
             formattedAddress: "San Francisco, CA",
-            emoji: "🌉",
+            symbol: "🌉",
             latitude: 37.81985,
             longitude: -122.47852,
             description: "Golden Gate Bridge"
@@ -32,7 +32,7 @@ struct LandmarkTests {
             name: "Sunny Beach Pocket Park",
             notes: "Nice small beach with amenities",
             formattedAddress: "123 Beach Rd, Sunnyville",
-            emoji: "🏖️",
+            symbol: "🏖️",
             latitude: 29.23755,
             longitude: -94.87794,
             description: "Beach park"
@@ -41,7 +41,7 @@ struct LandmarkTests {
             name: "Smithville",
             notes: "",
             formattedAddress: "Smithville, TX",
-            emoji: "📍",
+            symbol: "📍",
             latitude: 30.00458,
             longitude: -97.14810,
             description: "Smithville"
@@ -50,7 +50,7 @@ struct LandmarkTests {
             name: "Central Park",
             notes: "Large urban park",
             formattedAddress: "New York, NY",
-            emoji: "🌳",
+            symbol: "🌳",
             latitude: 40.785091,
             longitude: -73.968285,
             description: "Central Park"
@@ -59,7 +59,7 @@ struct LandmarkTests {
             name: "Empty Notes Location",
             notes: "",
             formattedAddress: "Test Address",
-            emoji: "📌",
+            symbol: "📌",
             latitude: 0.0,
             longitude: 0.0,
             description: "Location with empty notes"
@@ -74,7 +74,7 @@ struct LandmarkTests {
             name: testCase.name,
             notes: testCase.notes,
             formattedAddress: testCase.formattedAddress,
-            emoji: testCase.emoji,
+            symbol: testCase.symbol,
             location: coordinate
         )
         
@@ -84,8 +84,8 @@ struct LandmarkTests {
                 "Expected notes '\(testCase.notes)' for \(testCase.description)")
         #expect(landmark.formattedAddress == testCase.formattedAddress,
                 "Expected address '\(testCase.formattedAddress)' for \(testCase.description)")
-        #expect(landmark.emoji == testCase.emoji,
-                "Expected emoji '\(testCase.emoji)' for \(testCase.description)")
+        #expect(landmark.symbol == testCase.symbol,
+                "Expected symbol '\(testCase.symbol)' for \(testCase.description)")
         #expect(landmark.location.latitude == coordinate.latitude,
                 "Expected latitude \(coordinate.latitude) for \(testCase.description)")
         #expect(landmark.location.longitude == coordinate.longitude,
@@ -131,7 +131,7 @@ struct LandmarkTests {
             name: "Test Location",
             notes: "Test",
             formattedAddress: "Test Address",
-            emoji: "📌",
+            symbol: "📌",
             location: .init(
                 latitude: testCase.latitude,
                 longitude: testCase.longitude
@@ -154,14 +154,14 @@ struct LandmarkTests {
             name: "Smithville",
             notes: "",
             formattedAddress: "Smithville, TX",
-            emoji: "📍",
+            symbol: "📍",
             location: coordinate
         )
         let smithville4thStreet = Landmark(
             name: "4th Street",
             notes: "",
             formattedAddress: "4th St, Smithville, TX",
-            emoji: "📌",
+            symbol: "📌",
             location: coordinate
         )
         
@@ -181,7 +181,7 @@ struct LandmarkTests {
             name: "Golden Gate Bridge",
             notes: "Iconic suspension bridge",
             formattedAddress: "San Francisco, CA",
-            emoji: "🌉",
+            symbol: "🌉",
             location: CLLocationCoordinate2D(latitude: 37.81985, longitude: -122.47852)
         )
         
@@ -190,13 +190,13 @@ struct LandmarkTests {
         #expect(copy.name == source.name)
         #expect(copy.notes == source.notes)
         #expect(copy.formattedAddress == source.formattedAddress)
-        #expect(copy.emoji == source.emoji)
+        #expect(copy.symbol == source.symbol)
         #expect(copy.location.latitude == source.location.latitude)
         #expect(copy.location.longitude == source.location.longitude)
     }
     
     @Test func testInitFromProducesSeparateInstance() {
-        let source = Landmark(name: "Eiffel Tower", notes: "Paris landmark", emoji: "🗼",
+        let source = Landmark(name: "Eiffel Tower", notes: "Paris landmark", symbol: "🗼",
                               location: .init(latitude: 48.8584, longitude: 2.2945))
         let copy = Landmark(from: source)
         
@@ -205,7 +205,7 @@ struct LandmarkTests {
     }
     
     @Test func testInitFromMutationsDoNotAffectSource() {
-        let source = Landmark(name: "Original Name", notes: "Original notes", emoji: "📍",
+        let source = Landmark(name: "Original Name", notes: "Original notes", symbol: "📍",
                               location: .init(latitude: 10.0, longitude: 20.0))
         let copy = Landmark(from: source)
         
@@ -217,14 +217,14 @@ struct LandmarkTests {
     }
     
     @Test func testInitFromWithEmptyFields() {
-        let source = Landmark(name: "", notes: "", formattedAddress: "", emoji: "",
+        let source = Landmark(name: "", notes: "", formattedAddress: "", symbol: "",
                               location: .init(latitude: 0.0, longitude: 0.0))
         let copy = Landmark(from: source)
         
         #expect(copy.name == "")
         #expect(copy.notes == "")
         #expect(copy.formattedAddress == "")
-        #expect(copy.emoji == "")
+        #expect(copy.symbol == "")
         #expect(copy.location.latitude == 0.0)
         #expect(copy.location.longitude == 0.0)
     }
@@ -256,7 +256,7 @@ struct LandmarkTests {
             name: "Smithville",
             notes: "County seat",
             formattedAddress: "Smithville, TX",
-            emoji: "📍",
+            symbol: "📍",
             location: coordinate
         )
 
