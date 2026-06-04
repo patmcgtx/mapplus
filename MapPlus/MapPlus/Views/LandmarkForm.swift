@@ -141,7 +141,7 @@ struct LandmarkForm: View {
             }
             
             HStack {
-                TextField("emoji-placeholder", text: $viewModel.symbol)
+                TextField("symbol-placeholder", text: $viewModel.symbol)
                     .focused($focusField, equals: .symbol)
                 Button {
                     viewModel.symbol = ""
