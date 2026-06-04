@@ -28,7 +28,7 @@ struct LandmarkStoreTests {
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
         
-        let landmark = Landmark(name: "Alamo", emoji: "🏛️",
+        let landmark = Landmark(name: "Alamo", symbol: "🏛️",
                                 location: .init(latitude: 29.4259, longitude: -98.4861))
         try store.commit(landmark: landmark)
         
@@ -46,9 +46,9 @@ struct LandmarkStoreTests {
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
         
-        let first = Landmark(name: "Space Needle", emoji: "🗼",
+        let first = Landmark(name: "Space Needle", symbol: "🗼",
                              location: .init(latitude: 47.6205, longitude: -122.3493))
-        let second = Landmark(name: "Pike Place Market", emoji: "🐟",
+        let second = Landmark(name: "Pike Place Market", symbol: "🐟",
                               location: .init(latitude: 47.6090, longitude: -122.3420))
         try store.commit(landmark: first)
         try store.commit(landmark: second)
@@ -69,7 +69,7 @@ struct LandmarkStoreTests {
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
         
-        let landmark = Landmark(name: "Wrigley Field", emoji: "⚾",
+        let landmark = Landmark(name: "Wrigley Field", symbol: "⚾",
                                 location: .init(latitude: 41.9484, longitude: -87.6553))
         try store.commit(landmark: landmark)
         try store.delete(landmark: landmark)
@@ -86,7 +86,7 @@ struct LandmarkStoreTests {
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
         
-        let landmark = Landmark(name: "Fenway Park", emoji: "⚾",
+        let landmark = Landmark(name: "Fenway Park", symbol: "⚾",
                                 location: .init(latitude: 42.3467, longitude: -71.0972))
         try store.commit(landmark: landmark)
         

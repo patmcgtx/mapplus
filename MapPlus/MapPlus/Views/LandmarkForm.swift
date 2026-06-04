@@ -36,7 +36,7 @@ struct LandmarkForm: View {
     private enum FocusField: Hashable {
         case landmarkName
         case address
-        case emoji
+        case symbol
     }
     @FocusState private var focusField: FocusField?
     
@@ -59,7 +59,7 @@ struct LandmarkForm: View {
         }
         .toolbarTitleDisplayMode(.inline)
         .navigationTitle(viewModel.formTitle)
-        .scrollDismissesKeyboard(ScrollDismissesKeyboardMode.immediately)
+        .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(using: locationService)
             viewModel.loadCategories(from: modelContext)
@@ -141,13 +141,11 @@ struct LandmarkForm: View {
             }
             
             HStack {
-                // TODO patmcg allow full keyboard in settings
-                TextField("emoji-placeholder", text: $viewModel.emoji)
-                    .keyboardType(.emoji ?? .default)
-                    .focused($focusField, equals: .emoji)
+                TextField("symbol-placeholder", text: $viewModel.symbol)
+                    .focused($focusField, equals: .symbol)
                 Button {
-                    viewModel.emoji = ""
-                    focusField = .emoji
+                    viewModel.symbol = ""
+                    focusField = .symbol
                 } label: {
                     Image(systemName: "xmark.circle")
                 }
@@ -248,7 +246,7 @@ struct LandmarkForm: View {
                     // Landmark icon
                     VStack {
                         Spacer()
-                        LandmarkMapAnnotation(emoji: viewModel.emoji)
+                        LandmarkMapAnnotation(symbol: viewModel.symbol)
                         Spacer()
                         Text(viewModel.name).bold()
                         Spacer()

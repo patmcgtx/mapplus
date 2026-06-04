@@ -23,7 +23,7 @@ struct SampleLandmarks {
             name: "Texas Capital Lawn",
             notes: "Lawn of the Texas state capital building.",
             formattedAddress: "1100 Congress Ave\nAustin, TX 78701",
-            emoji: "🏛️",
+            symbol: "🏛️",
             location: CLLocationCoordinate2D(
                 latitude: 30.27381,
                 longitude: -97.74063
@@ -44,7 +44,7 @@ struct SampleLandmarks {
             name: "Cosmic Coffee & Beer Garden",
             notes: "A good place for coffee & beer. 🍻",
             formattedAddress: "121 Pickle Rd\nSte 111\nAustin, TX 78704",
-            emoji: "☕️",
+            symbol: "☕️",
             location: CLLocationCoordinate2D(
                 latitude: 30.22744,
                 longitude: -97.76237
@@ -58,7 +58,7 @@ struct SampleLandmarks {
             name: "Work",
             notes: "Another day, another dollar.",
             formattedAddress: "123 Work",
-            emoji: "🏢",
+            symbol: "🏢",
             location: CLLocationCoordinate2D(
                 latitude: 30.27267,
                 longitude: -97.74109
@@ -80,7 +80,7 @@ struct SampleLandmarks {
             name: "Brooklyn Bridge",
             notes: "Under the bridge, views of Manhattan",
             formattedAddress: "1 Water St\nBrooklyn, NY 11201",
-            emoji: "🌉",
+            symbol: "🌉",
             location: CLLocationCoordinate2D(
                 latitude: 40.70584,
                 longitude: -73.99642
@@ -94,7 +94,7 @@ struct SampleLandmarks {
             name: "Charing Cross, London",
             notes: "Where six routes meet.",
             formattedAddress: "Charing Cross\nLondon WC2N\nEngland UK",
-            emoji: "🚉",
+            symbol: "🚉",
             location: CLLocationCoordinate2D(
                 latitude: 51.5074,
                 longitude: -0.1278
@@ -108,7 +108,7 @@ struct SampleLandmarks {
             name: "Park Hyatt Tokyo",
             notes: "From _Lost in Translation_.",
             formattedAddress: "〒163-1055\n東京都新宿区\n西新宿3丁目7-1-2",
-            emoji: "🇯🇵",
+            symbol: "🇯🇵",
             location: CLLocationCoordinate2D(
                 latitude: 35.68529,
                 longitude: 139.69072

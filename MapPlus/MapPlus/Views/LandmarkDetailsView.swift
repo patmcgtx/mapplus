@@ -48,7 +48,7 @@ struct LandmarkDetailsView: View {
             HStack {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text(landmark.emoji)
+                        Text(landmark.symbol)
                         Text(landmark.name)
                     }
                     .font(.title)

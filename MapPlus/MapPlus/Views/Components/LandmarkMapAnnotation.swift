@@ -11,8 +11,8 @@ import MapKit
 /// The map itself will display the landmark name; this is just the visual to go with it.
 struct LandmarkMapAnnotation: View {
     
-    /// The landmark's emoji to display
-    let emoji: String
+    /// The landmark's symbol to display
+    let symbol: String
         
     // Constants
     private let annotationPadding: CGFloat = 10
@@ -22,7 +22,7 @@ struct LandmarkMapAnnotation: View {
     private let endGradientRadius: CGFloat = 8.0
     
     var body: some View {
-        Text(String(emoji))
+        Text(symbol)
             .font(.headline)
             .foregroundStyle(.primary)
             .padding(annotationPadding)
@@ -56,13 +56,13 @@ struct LandmarkMapAnnotation: View {
 
 private struct AnnotationPreview: View {
     
-    let landmarkEmoji: String
+    let landmarkSymbol: String
     
     var body: some View {
         ForEach(MapPlusTheme.allCases) { theme in
             HStack{
                 Text(theme.localizedName)
-                LandmarkMapAnnotation(emoji: landmarkEmoji)
+                LandmarkMapAnnotation(symbol: landmarkSymbol)
             }
             .apply(theme: theme)
         }
@@ -72,35 +72,35 @@ private struct AnnotationPreview: View {
 #if DEBUG
 
 #Preview("Cart") {
-    AnnotationPreview(landmarkEmoji: "🛒")
+    AnnotationPreview(landmarkSymbol: "🛒")
 }
 
 #Preview("Coffee") {
-    AnnotationPreview(landmarkEmoji: "☕️")
+    AnnotationPreview(landmarkSymbol: "☕️")
 }
 
 #Preview("Letter") {
-    AnnotationPreview(landmarkEmoji: "P")
+    AnnotationPreview(landmarkSymbol: "P")
 }
 
 #Preview("Letters") {
-    AnnotationPreview(landmarkEmoji: "PM")
+    AnnotationPreview(landmarkSymbol: "PM")
 }
 
 #Preview("Double") {
-    AnnotationPreview(landmarkEmoji: "☕️🔥")
+    AnnotationPreview(landmarkSymbol: "☕️🔥")
 }
 
 #Preview("Triple") {
-    AnnotationPreview(landmarkEmoji: "☕️🔥☺️")
+    AnnotationPreview(landmarkSymbol: "☕️🔥☺️")
 }
 
 #Preview("Overlap") {
     ZStack {
-        LandmarkMapAnnotation(emoji: "📍")
-        LandmarkMapAnnotation(emoji: "📍")
+        LandmarkMapAnnotation(symbol: "📍")
+        LandmarkMapAnnotation(symbol: "📍")
             .offset(CGSize(width: 20, height: 20))
-        LandmarkMapAnnotation(emoji: "📍")
+        LandmarkMapAnnotation(symbol: "📍")
             .offset(CGSize(width: 40, height: 40))
     }
     .padding(40)
