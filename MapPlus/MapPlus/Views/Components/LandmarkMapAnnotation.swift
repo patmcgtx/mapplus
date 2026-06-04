@@ -22,7 +22,7 @@ struct LandmarkMapAnnotation: View {
     private let endGradientRadius: CGFloat = 8.0
     
     var body: some View {
-        Text(String(symbol))
+        Text(symbol)
             .font(.headline)
             .foregroundStyle(.primary)
             .padding(annotationPadding)
