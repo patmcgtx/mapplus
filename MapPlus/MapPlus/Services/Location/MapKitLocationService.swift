@@ -23,7 +23,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
     }
 
     // TODO patmcg doc
-    func currentLocationInfo() async throws -> [MKMapItem] {
+    func nearbyMapItems() async throws -> [MKMapItem] {
         let location = try await requestCurrentLocation()
         let request = MKReverseGeocodingRequest(location: location)
         return (try? await request?.mapItems) ?? []

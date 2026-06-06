@@ -16,7 +16,7 @@ import MapKit
 struct MockAddressLookupService: AddressLookupService {
     
     // TODO patmcg impl
-    func lookupNew(address: String) async throws -> [MKMapItem] {
+    func mapItemsFor(searchString: String) async throws -> [MKMapItem] {
         return []
     }    
     

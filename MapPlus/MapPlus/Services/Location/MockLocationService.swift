@@ -17,7 +17,7 @@ import MapKit
 class MockLocationService: LocationService {
     
     // TODO patmcg implement
-    func currentLocationInfo() async throws -> [MKMapItem] {
+    func nearbyMapItems() async throws -> [MKMapItem] {
         return []
     }
     

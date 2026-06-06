@@ -10,7 +10,7 @@ import MapKit
 protocol LocationService {
 
     // TODO patmcg doc
-    func currentLocationInfo() async throws -> [MKMapItem]
+    func nearbyMapItems() async throws -> [MKMapItem]
 
     /// Gets the user's current location and converts it to a common `LocationInfo` value.
     /// - Returns: A `LocationInfo` value containing the formatted address and coordinates.

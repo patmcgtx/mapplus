@@ -11,7 +11,7 @@ import MapKit
 protocol AddressLookupService {
 
     // TODO patmcg doc
-    func lookupNew(address: String) async throws -> [MKMapItem]
+    func mapItemsFor(searchString: String) async throws -> [MKMapItem]
 
     /// Converts a user-supplied address string into an AddressInfo object.
     /// - Parameter address: The address or place name to search for, expressed as a user-friendly string.
