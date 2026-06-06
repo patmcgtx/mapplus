@@ -1,5 +1,5 @@
 //
-//  MapItemSynthesizerTests.swift
+//  MapItemGeneratorTests.swift
 //  MapPlusTests
 //
 //  Created by Patrick McGonigle on 6/5/26.
@@ -50,7 +50,7 @@ struct MapItemSynthesizerTests {
     @Test("LocationAddOns can be initialized")
     func testLocationAddOnsInitialization() {
         let category = LandmarkCategory(name: "Museums")
-        let addOns = LocationAddOns(
+        let addOns = MapItemAddOns(
             notes: "A famous museum with art collections",
             symbol: "🏛️"
         )
@@ -72,7 +72,7 @@ struct MapItemSynthesizerTests {
         ]
         
         for testCase in testCases {
-            let addOns = LocationAddOns(
+            let addOns = MapItemAddOns(
                 notes: testCase.description,
                 symbol: testCase.emoji
             )
@@ -227,14 +227,14 @@ struct MapItemSynthesizerTests {
         ]
         
         // Make concurrent requests
-        let results = try await withThrowingTaskGroup(of: LocationAddOns.self) { group in
+        let results = try await withThrowingTaskGroup(of: MapItemAddOns.self) { group in
             for mapItem in mapItems {
                 group.addTask {
                     try await mapItem.addOns
                 }
             }
             
-            var addOnsArray: [LocationAddOns] = []
+            var addOnsArray: [MapItemAddOns] = []
             for try await result in group {
                 addOnsArray.append(result)
             }

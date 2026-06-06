@@ -1,5 +1,5 @@
 //
-//  MapItemSynthesizer.swift
+//  MapItemGenerator.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 6/5/26.
@@ -11,7 +11,7 @@ import FoundationModels
 // TODO patmcg addd protocol & mock
 
 @Generable(description: "Additional generated information for a location")
-struct LocationAddOns {
+struct MapItemAddOns {
     
     @Guide(description: "A brief description of the location, 1-3 sentences")
     let notes: String
@@ -25,13 +25,12 @@ struct LocationAddOns {
 
 extension MKMapItem {
         
-    var addOns: LocationAddOns {
+    var addOns: MapItemAddOns {
         get async throws {
             let prompt = "Generate add-ons for map item: \(self.name ?? "unknown location") at \(self.address?.fullAddress ?? "unknown address")"
             let sesh = LanguageModelSession()
-            let response = try await sesh.respond(to: prompt, generating: LocationAddOns.self)
+            let response = try await sesh.respond(to: prompt, generating: MapItemAddOns.self)
             return response.content
         }
     }
 }
-
