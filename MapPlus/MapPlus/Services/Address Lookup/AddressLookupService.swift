@@ -4,11 +4,15 @@
 //
 //  Created by Patrick McGonigle on 2/6/26.
 //
-import Foundation
+
+import MapKit
 
 /// A protocol for performing asynchronous address lookups.
 protocol AddressLookupService {
-    
+
+    // TODO patmcg doc
+    func lookupNew(address: String) async throws -> [MKMapItem]
+
     /// Converts a user-supplied address string into an AddressInfo object.
     /// - Parameter address: The address or place name to search for, expressed as a user-friendly string.
     /// - Returns: An AddressInfo object containing a formatted description and coordinates of the found location.

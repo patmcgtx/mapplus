@@ -4,7 +4,7 @@
 //
 //  Created by Patrick McGonigle on 2/6/26.
 //
-import Foundation
+import MapKit
 
 #if DEBUG
 
@@ -14,6 +14,11 @@ import Foundation
 /// Returns predefined addresses or throws errors based on the input.
 /// (Thanks, Claude Sonnet.)
 struct MockAddressLookupService: AddressLookupService {
+    
+    // TODO patmcg impl
+    func lookupNew(address: String) async throws -> [MKMapItem] {
+        return []
+    }    
     
     /// Controls whether the mock should simulate a successful lookup or throw an error.
     var shouldSucceed: Bool = true

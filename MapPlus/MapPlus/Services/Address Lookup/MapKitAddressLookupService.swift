@@ -11,7 +11,17 @@ import MapKit
 /// A service for performing asynchronous address lookups using MapKit.
 /// Used throughout MapPlus to resolve user-entered locations into structured data.
 struct MapKitAddressLookupService: AddressLookupService {
-    
+
+    func lookupNew(address: String) async throws -> [MKMapItem] {
+        
+        let request = MKLocalSearch.Request()
+        request.naturalLanguageQuery = address
+        
+        let search = MKLocalSearch(request: request)
+        let response = try await search.start()
+        return response.mapItems
+    }
+
     /// Provides lookup functionality for converting address strings into geographic coordinates and descriptions, using MapKit's local search capabilities.
     /// Converts a user-supplied address string into an AddressInfo object, or throws if no address could be found.
     /// - Parameter address: The address or place name to search for, expressed as a user-friendly string.
