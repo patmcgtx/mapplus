@@ -16,7 +16,7 @@ struct MapItemSuggestions {
     @Guide(description: "A brief name for the location, ideally 1-3 words")
     let name: String
 
-    @Guide(description: "A description of the location, ideally 1-3 sentences")
+    @Guide(description: "Some notes on the location, ideally 1-3 sentences")
     let notes: String
     
     @Guide(description: "A single emoji to represent the location")
@@ -29,8 +29,9 @@ struct MapItemSuggestions {
 }
 
 extension MKMapItem {
-        
-    var addOns: MapItemSuggestions {
+ 
+    // TODO patmcg doc
+    var suggestions: MapItemSuggestions {
         get async throws {
             let prompt = "Generate add-ons for map item: \(self.name ?? "unknown location") at \(self.address?.fullAddress ?? "unknown address")"
             let sesh = LanguageModelSession()

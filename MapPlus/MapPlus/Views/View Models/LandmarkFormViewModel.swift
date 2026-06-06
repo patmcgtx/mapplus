@@ -34,9 +34,11 @@ final class LandmarkFormViewModel {
                 return true
             case (.searchResolved(let a), .searchResolved(let b)):
                 return a.briefDescription == b.briefDescription &&
-                       a.fullDescription == b.fullDescription &&
-                       a.coordinates.latitude == b.coordinates.latitude &&
-                       a.coordinates.longitude == b.coordinates.longitude
+                a.fullDescription == b.fullDescription &&
+                a.suggestedNotes == b.suggestedNotes &&
+                a.suggestedSymbol == b.suggestedSymbol &&
+                a.coordinates.latitude == b.coordinates.latitude &&
+                a.coordinates.longitude == b.coordinates.longitude
             case (.searchFailed(let e1), .searchFailed(let e2)):
                 return type(of: e1) == type(of: e2)
             default:
@@ -67,7 +69,7 @@ final class LandmarkFormViewModel {
     let mode: Mode
 
     /// The landmark being edited (private - not exposed to view)
-    private var landmarkToEdit: Landmark
+    private var landmarkInEdit: Landmark
 
     /// The current state of the address/location search
     var addressSearchState: AddressSearchState = .searchInitial
@@ -99,9 +101,9 @@ final class LandmarkFormViewModel {
         self.mode = mode
         switch mode {
         case .create:
-            landmarkToEdit = Landmark()
+            landmarkInEdit = Landmark()
         case .edit(let landmark):
-            landmarkToEdit = landmark
+            landmarkInEdit = landmark
             // Populate form fields from existing landmark
             name = landmark.name
             symbol = landmark.symbol
@@ -123,13 +125,13 @@ final class LandmarkFormViewModel {
     /// - Parameter store: The store used to commit the landmark.
     func save(using store: any LandmarkStoring) {
         // Apply form fields to the model
-        landmarkToEdit.name = name
-        landmarkToEdit.symbol = symbol
-        landmarkToEdit.notes = notes
-        landmarkToEdit.categories = categories
+        landmarkInEdit.name = name
+        landmarkInEdit.symbol = symbol
+        landmarkInEdit.notes = notes
+        landmarkInEdit.categories = categories
         
         do {
-            try store.commit(landmark: landmarkToEdit)
+            try store.commit(landmark: landmarkInEdit)
             saveState = .saved
         } catch {
             saveState = .saveFailed(error)
@@ -190,29 +192,43 @@ final class LandmarkFormViewModel {
         case .create:
             do {
                 let resolvedAddress = try await locationService.getCurrentLocation()
-                applyResolvedAddress(resolvedAddress, updateSearchInput: false)
+                applyLocationResult(resolvedAddress, updateSearchInput: false)
             } catch {
                 // Not a reportable error if this fails; just let them proceed as normal
             }
         case .edit:
             addressSearchState = .searchResolved(
                 LocationInfo(
-                    briefDescription: landmarkToEdit.name,
-                    fullDescription: landmarkToEdit.formattedAddress,
-                    latitude: landmarkToEdit.location.latitude,
-                    longitude: landmarkToEdit.location.longitude
+                    briefDescription: landmarkInEdit.name,
+                    fullDescription: landmarkInEdit.formattedAddress,
+                    latitude: landmarkInEdit.location.latitude,
+                    longitude: landmarkInEdit.location.longitude,
                 )
             )
         }
     }
 
-    /// Looks up the address entered in `locationSearchInput` and updates location state.
-    /// - Parameter addressLookupService: The service used to perform the address lookup.
+//    /// Looks up the address entered in `locationSearchInput` and updates location state.
+//    /// - Parameter addressLookupService: The service used to perform the address lookup.
+//    func searchByTextOld(using addressLookupService: any AddressLookupService) async {
+//        addressSearchState = .searching
+//        do {
+//            let resolvedAddress = try await addressLookupService.lookup(address: locationSearchInput)
+//            applyLocationResult(resolvedAddress, updateSearchInput: true)
+//        } catch {
+//            addressSearchState = .searchFailed(error)
+//        }
+//    }
+
     func searchByText(using addressLookupService: any AddressLookupService) async {
         addressSearchState = .searching
         do {
-            let resolvedAddress = try await addressLookupService.lookup(address: locationSearchInput)
-            applyResolvedAddress(resolvedAddress, updateSearchInput: true)
+            let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
+            var service = MapItemInfoService(mapItems: mapItems)
+            // TODO patmcg provide a way to cycle through the location info's
+            if let locationInfo = await service.nextLocationInfo() {
+                applyLocationResult(locationInfo, updateSearchInput: true)
+            }
         } catch {
             addressSearchState = .searchFailed(error)
         }
@@ -224,7 +240,7 @@ final class LandmarkFormViewModel {
         addressSearchState = .searching
         do {
             let resolvedAddress = try await locationService.getCurrentLocation()
-            applyResolvedAddress(resolvedAddress, updateSearchInput: true)
+            applyLocationResult(resolvedAddress, updateSearchInput: true)
         } catch {
             addressSearchState = .searchFailed(error)
         }
@@ -236,11 +252,18 @@ final class LandmarkFormViewModel {
     /// - Parameters:
     ///   - address: The resolved location to apply.
     ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
-    private func applyResolvedAddress(_ address: LocationInfo, updateSearchInput: Bool) {
+    private func applyLocationResult(_ address: LocationInfo, updateSearchInput: Bool) {
         addressSearchState = .searchResolved(address)
-        landmarkToEdit.formattedAddress = address.fullDescription
-        landmarkToEdit.latitude = address.coordinates.latitude
-        landmarkToEdit.longitude = address.coordinates.longitude
+        landmarkInEdit.formattedAddress = address.fullDescription
+        landmarkInEdit.latitude = address.coordinates.latitude
+        landmarkInEdit.longitude = address.coordinates.longitude
+
+        // TODO patmcg only apply the next two if the fields are not dirty
+        landmarkInEdit.notes = address.suggestedNotes
+        landmarkInEdit.symbol = address.suggestedSymbol
+        name = address.briefDescription
+        symbol = address.suggestedSymbol
+        notes = address.suggestedNotes
     }
 
 }

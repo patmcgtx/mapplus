@@ -104,7 +104,7 @@ struct MapItemSynthesizerTests {
         
         // This test requires the actual FoundationModels framework to be available
         // and will make a real call to the language model
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         // Verify the structure is correct
         #expect(!addOns.name.isEmpty, "Name should not be empty")
@@ -130,7 +130,7 @@ struct MapItemSynthesizerTests {
             ]
         )
         
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         // Verify basic structure
         #expect(!addOns.name.isEmpty, "Name should not be empty")
@@ -158,7 +158,7 @@ struct MapItemSynthesizerTests {
             ]
         )
         
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         #expect(!addOns.name.isEmpty, "Name should not be empty")
         #expect(!addOns.notes.isEmpty, "Notes should not be empty")
@@ -179,7 +179,7 @@ struct MapItemSynthesizerTests {
         )
         
         // Should still generate add-ons even without a name
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         #expect(!addOns.name.isEmpty, "Name should be generated even without an original name")
         #expect(!addOns.notes.isEmpty, "Notes should be generated even without a name")
@@ -192,7 +192,7 @@ struct MapItemSynthesizerTests {
         let mapItem = Self.createTestMapItem(coordinate: coordinate)
         
         // Should generate add-ons based on coordinates and generic location description
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         #expect(!addOns.name.isEmpty, "Name should be generated for coordinate-only location")
         #expect(!addOns.notes.isEmpty, "Notes should be generated for coordinate-only location")
@@ -210,7 +210,7 @@ struct MapItemSynthesizerTests {
         )
         
         // Should still attempt to generate add-ons
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         #expect(!addOns.name.isEmpty, "Should generate name even for unusual coordinates")
         #expect(!addOns.notes.isEmpty, "Should generate notes even for unusual coordinates")
@@ -240,7 +240,7 @@ struct MapItemSynthesizerTests {
         let results = try await withThrowingTaskGroup(of: MapItemSuggestions.self) { group in
             for mapItem in mapItems {
                 group.addTask {
-                    try await mapItem.addOns
+                    try await mapItem.suggestions
                 }
             }
             
@@ -270,7 +270,7 @@ struct MapItemSynthesizerTests {
             name: "Ferry Building Marketplace"
         )
         
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         // Name should be 1-3 words as specified in the @Guide
         let words = addOns.name.components(separatedBy: .whitespaces)
@@ -289,7 +289,7 @@ struct MapItemSynthesizerTests {
             name: "Ferry Building Marketplace"
         )
         
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         // Notes should be 1-3 sentences as specified in the @Guide
         let sentences = addOns.notes.components(separatedBy: CharacterSet(charactersIn: ".!?"))
@@ -307,7 +307,7 @@ struct MapItemSynthesizerTests {
             name: "Starbucks Reserve Roastery"
         )
         
-        let addOns = try await mapItem.addOns
+        let addOns = try await mapItem.suggestions
         
         // Symbol should be a single emoji (might be 1-4 characters due to unicode modifiers)
         #expect(addOns.symbol.count >= 1, "Symbol should not be empty")
