@@ -195,6 +195,7 @@ final class LandmarkFormViewModel {
                 applyLocationResult(resolvedAddress, updateSearchInput: false)
             } catch {
                 // Not a reportable error if this fails; just let them proceed as normal
+                addressSearchState = .searchFailed(MapPlusError.noAddressFound)
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -226,8 +227,11 @@ final class LandmarkFormViewModel {
             let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
             var service = MapItemInfoService(mapItems: mapItems)
             // TODO patmcg provide a way to cycle through the location info's
-            if let locationInfo = await service.nextLocationInfo() {
+            if let locationInfo = try await service.nextLocationInfo() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
+            } else {
+                // TODO patmcg no (more) locations found - not an error state per se
+                addressSearchState = .searchFailed(MapPlusError.noAddressFound)
             }
         } catch {
             addressSearchState = .searchFailed(error)
@@ -236,11 +240,27 @@ final class LandmarkFormViewModel {
 
     /// Fetches the current device location and updates location state.
     /// - Parameter locationService: The service used to get the current location.
+//    func searchByCurrentLocationOld(using locationService: any LocationService) async {
+//        addressSearchState = .searching
+//        do {
+//            let resolvedAddress = try await locationService.getCurrentLocation()
+//            applyLocationResult(resolvedAddress, updateSearchInput: true)
+//        } catch {
+//            addressSearchState = .searchFailed(error)
+//        }
+//    }
+
     func searchByCurrentLocation(using locationService: any LocationService) async {
         addressSearchState = .searching
         do {
-            let resolvedAddress = try await locationService.getCurrentLocation()
-            applyLocationResult(resolvedAddress, updateSearchInput: true)
+            let mapItems = try await locationService.nearbyMapItems()
+            var service = MapItemInfoService(mapItems: mapItems)
+            if let locationInfo = try await service.nextLocationInfo() {
+                applyLocationResult(locationInfo, updateSearchInput: true)
+            } else {
+                // TODO patmcg no (more) locations found - not an error state per se
+                addressSearchState = .searchFailed(MapPlusError.noAddressFound)
+            }
         } catch {
             addressSearchState = .searchFailed(error)
         }

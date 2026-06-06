@@ -6,7 +6,7 @@
 //
 import MapKit
 
-// TODO patmcg add protocol, mocks, unit tests
+// TODO patmcg add protocol, mocks, unit tests?
 
 // TODO patmcg doc - a stateful service to iterate through an array of map items
 struct MapItemInfoService {
@@ -20,10 +20,10 @@ struct MapItemInfoService {
     }
         
     // TODO patmcg doc
-    mutating func nextLocationInfo() async -> LocationInfo? {
+    mutating func nextLocationInfo() async throws -> LocationInfo? {
         guard let mapItem = iterator.next(),
               let suggestions = try? await mapItem.suggestions
-        else { return nil }
+        else { throw MapPlusError.noAddressFound }
         return LocationInfo(
             briefDescription: mapItem.name ?? suggestions.name,
             fullDescription: mapItem.fullDescription,
