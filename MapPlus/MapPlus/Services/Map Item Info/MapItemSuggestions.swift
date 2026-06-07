@@ -13,12 +13,12 @@ struct MapItemSuggestions {
 
     @Guide(description: "A brief name for the location, ideally 1-3 words")
     let name: String
-    
-    @Guide(description: "A single emoji to represent the location")
-    let symbol: String
 
     @Guide(description: "Some notes on the location, ideally 1-3 sentences")
     let notes: String
+
+    @Guide(description: "A single emoji to represent the location")
+    let symbol: String
 }
 
 extension MKMapItem {

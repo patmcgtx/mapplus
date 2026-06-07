@@ -11,8 +11,8 @@ import Contacts
 import FoundationModels
 @testable import MapPlus
 
-@Suite("MapItemSynthesizer Tests")
-struct MapItemSynthesizerTests {
+@Suite("MapItemSuggestionsTests Tests")
+struct MapItemSuggestionsTests {
     
     // MARK: - Test Helpers
     

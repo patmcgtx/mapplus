@@ -52,8 +52,62 @@ struct MockAddressLookupService: AddressLookupService {
     ]
     
     func mapItemsFor(searchString: String) async throws -> [MKMapItem] {
-        // TODO patmcg impl
-        return []
+        guard shouldSucceed else {
+            throw MapPlusError.noAddressFound
+        }
+        
+        // If a custom address is provided, convert it to a MKMapItem
+        if let customAddress = customAddress {
+            let placemark = MKPlacemark(
+                coordinate: customAddress.coordinates
+            )
+            let mapItem = MKMapItem(placemark: placemark)
+            mapItem.name = customAddress.briefDescription
+            return [mapItem]
+        }
+        
+        // Try to find a matching mock address
+        // Check for exact match first
+        if let matchedAddress = Self.mockAddresses[searchString] {
+            let placemark = MKPlacemark(
+                coordinate: matchedAddress.coordinates
+            )
+            let mapItem = MKMapItem(placemark: placemark)
+            mapItem.name = matchedAddress.briefDescription
+            return [mapItem]
+        }
+        
+        // Try case-insensitive match
+        let lowercaseQuery = searchString.lowercased()
+        for (key, address) in Self.mockAddresses {
+            if key.lowercased() == lowercaseQuery {
+                let placemark = MKPlacemark(
+                    coordinate: address.coordinates
+                )
+                let mapItem = MKMapItem(placemark: placemark)
+                mapItem.name = address.briefDescription
+                return [mapItem]
+            }
+        }
+        
+        // Try partial match
+        for (key, address) in Self.mockAddresses {
+            if key.lowercased().contains(lowercaseQuery) || lowercaseQuery.contains(key.lowercased()) {
+                let placemark = MKPlacemark(
+                    coordinate: address.coordinates
+                )
+                let mapItem = MKMapItem(placemark: placemark)
+                mapItem.name = address.briefDescription
+                return [mapItem]
+            }
+        }
+        
+        // Return a generic mock result for unknown addresses
+        let defaultCoordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
+        let placemark = MKPlacemark(coordinate: defaultCoordinate)
+        let mapItem = MKMapItem(placemark: placemark)
+        mapItem.name = "Mock address"
+        return [mapItem]
     }
 }
 
