@@ -8,18 +8,9 @@ import MapKit
 
 #if DEBUG
 
-// TODO patmcg cleanup?
-
-/// A mock implementation of AddressLookupProtocol for testing and previews.
-/// Returns predefined addresses or throws errors based on the input.
-/// (Thanks, Claude Sonnet.)
+/// A mock implementation of `AddressLookupService` for testing and previews.
 struct MockAddressLookupService: AddressLookupService {
-    
-    // TODO patmcg impl
-    func mapItemsFor(searchString: String) async throws -> [MKMapItem] {
-        return []
-    }    
-    
+        
     /// Controls whether the mock should simulate a successful lookup or throw an error.
     var shouldSucceed: Bool = true
     
@@ -60,41 +51,9 @@ struct MockAddressLookupService: AddressLookupService {
         )
     ]
     
-    /// Performs a mock address lookup.
-    /// - Parameter address: The address string to look up.
-    /// - Returns: A mock AddressInfo object.
-    /// - Throws: MapPlusError.noAddressFound if shouldSucceed is false or address is not in mock data.
-    func lookup(address: String) async throws -> LocationInfo {
-        // Simulate network delay
-        try await Task.sleep(for: .seconds(2))
-        
-        if !shouldSucceed {
-            throw MapPlusError.noAddressFound
-        }
-        
-        if let customAddress = customAddress {
-            return customAddress
-        }
-        
-        // Try to find an exact match first
-        if let mockAddress = Self.mockAddresses[address] {
-            return mockAddress
-        }
-        
-        // Try case-insensitive partial match
-        if let match = Self.mockAddresses.first(where: { key, _ in
-            key.localizedCaseInsensitiveContains(address) || address.localizedCaseInsensitiveContains(key)
-        }) {
-            return match.value
-        }
-        
-        // Return a generic address for any other query
-        return LocationInfo(
-            briefDescription: "Mock address",
-            fullDescription: "\(address) (Mock Result)",
-            latitude: 37.7749,
-            longitude: -122.4194
-        )
+    func mapItemsFor(searchString: String) async throws -> [MKMapItem] {
+        // TODO patmcg impl
+        return []
     }
 }
 

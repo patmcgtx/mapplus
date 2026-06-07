@@ -62,8 +62,6 @@ struct LandmarkForm: View {
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(using: locationService)
-            // TODO patmcg this call fails...
-//            await viewModel.searchByCurrentLocation(using: locationService)
             viewModel.loadCategories(from: modelContext)
         }
         .onChange(of: viewModel.saveState) { _, newState in

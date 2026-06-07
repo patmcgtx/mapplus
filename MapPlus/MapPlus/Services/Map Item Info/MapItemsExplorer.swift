@@ -6,10 +6,10 @@
 //
 import MapKit
 
-// TODO patmcg add protocol, mocks, unit tests?
+// TODO patmcg add unit tests
 
-// TODO patmcg doc - a stateful service to iterate through an array of map items
-struct MapItemInfoService {
+///A stateful service to iterate through an array of map items
+struct MapItemsExplorer {
 
     private var mapItems: [MKMapItem]
     private var iterator: IndexingIterator<[MKMapItem]>
@@ -19,7 +19,11 @@ struct MapItemInfoService {
         self.iterator = mapItems.makeIterator()
     }
         
-    // TODO patmcg doc
+    /// Iterates to the next location info, complete with embedded AI suggestions.
+    ///
+    /// This method must be called to get the first map item.
+    /// 
+    /// - Returns:The next LocationInfo object or `nil` if no more are available
     mutating func nextLocationInfo() async throws -> LocationInfo? {
         guard let mapItem = iterator.next(),
               let suggestions = try? await mapItem.suggestions

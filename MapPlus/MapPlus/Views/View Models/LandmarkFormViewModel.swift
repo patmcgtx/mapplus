@@ -209,25 +209,12 @@ final class LandmarkFormViewModel {
         }
     }
 
-//    /// Looks up the address entered in `locationSearchInput` and updates location state.
-//    /// - Parameter addressLookupService: The service used to perform the address lookup.
-//    func searchByTextOld(using addressLookupService: any AddressLookupService) async {
-//        addressSearchState = .searching
-//        do {
-//            let resolvedAddress = try await addressLookupService.lookup(address: locationSearchInput)
-//            applyLocationResult(resolvedAddress, updateSearchInput: true)
-//        } catch {
-//            addressSearchState = .searchFailed(error)
-//        }
-//    }
-
     func searchByText(using addressLookupService: any AddressLookupService) async {
         addressSearchState = .searching
         do {
             let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
-            var service = MapItemInfoService(mapItems: mapItems)
-            // TODO patmcg provide a way to cycle through the location info's
-            if let locationInfo = try await service.nextLocationInfo() {
+            var itemsExplorer = MapItemsExplorer(mapItems: mapItems)
+            if let locationInfo = try await itemsExplorer.nextLocationInfo() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
                 // TODO patmcg no (more) locations found - not an error state per se
@@ -238,24 +225,13 @@ final class LandmarkFormViewModel {
         }
     }
 
-    /// Fetches the current device location and updates location state.
-    /// - Parameter locationService: The service used to get the current location.
-//    func searchByCurrentLocationOld(using locationService: any LocationService) async {
-//        addressSearchState = .searching
-//        do {
-//            let resolvedAddress = try await locationService.getCurrentLocation()
-//            applyLocationResult(resolvedAddress, updateSearchInput: true)
-//        } catch {
-//            addressSearchState = .searchFailed(error)
-//        }
-//    }
-
+    // TODO patmcg note: this isn't even used currently
     func searchByCurrentLocation(using locationService: any LocationService) async {
         addressSearchState = .searching
         do {
             let mapItems = try await locationService.nearbyMapItems()
-            var service = MapItemInfoService(mapItems: mapItems)
-            if let locationInfo = try await service.nextLocationInfo() {
+            var itemsExplorer = MapItemsExplorer(mapItems: mapItems)
+            if let locationInfo = try await itemsExplorer.nextLocationInfo() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
                 // TODO patmcg no (more) locations found - not an error state per se
@@ -273,17 +249,23 @@ final class LandmarkFormViewModel {
     ///   - address: The resolved location to apply.
     ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
     private func applyLocationResult(_ address: LocationInfo, updateSearchInput: Bool) {
+        
+        // TODO patmcg could this use some cleanup?
+        // Why do we have properties for the text fields and landmarkInEdit? Seems redundant.
+        // This applies the search results to both the landmark object being edits
+        // and the applicable view fields.
+        
         addressSearchState = .searchResolved(address)
+        
         landmarkInEdit.formattedAddress = address.fullDescription
         landmarkInEdit.latitude = address.coordinates.latitude
         landmarkInEdit.longitude = address.coordinates.longitude
 
-        // TODO patmcg only apply the next two if the fields are not dirty
-        landmarkInEdit.notes = address.suggestedNotes
         landmarkInEdit.symbol = address.suggestedSymbol
-        name = address.briefDescription
         symbol = address.suggestedSymbol
-        notes = address.suggestedNotes
+        
+        landmarkInEdit.notes = address.briefDescription
+        name = address.briefDescription
     }
 
 }
