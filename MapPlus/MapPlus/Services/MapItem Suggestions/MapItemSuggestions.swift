@@ -21,18 +21,6 @@ struct MapItemSuggestions {
     let symbol: String
 }
 
-extension MKMapItem {
- 
-    /// Generated suggestions for additional landmark data using AI
-    var suggestions: MapItemSuggestions {
-        get async throws {
-            let prompt = "Generate suggestions for map item: \(self.name ?? "unknown location") at \(self.address?.fullAddress ?? "unknown address")"
-            let sesh = LanguageModelSession()
-            let response = try await sesh.respond(
-                to: prompt,
-                generating: MapItemSuggestions.self
-            )
-            return response.content
-        }
-    }
-}
+
+
+

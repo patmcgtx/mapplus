@@ -11,6 +11,8 @@ import CoreData
 @Observable @MainActor
 final class LandmarkFormViewModel {
 
+    let suggestionsService: MapItemSuggestionService
+    
     /// Indicates how the form is being used.
     /// - Note: In `create` mode, there is no backing landmark yet; in `edit` mode,
     ///         the provided `Landmark` supplies initial values.
@@ -97,7 +99,8 @@ final class LandmarkFormViewModel {
     /// All available categories (loaded from persistence)
     var allCategories: [LandmarkCategory] = []
 
-    init(mode: Mode) {
+    init(mode: Mode, suggestionsService: MapItemSuggestionService) {
+        self .suggestionsService = suggestionsService
         self.mode = mode
         switch mode {
         case .create:
@@ -213,7 +216,10 @@ final class LandmarkFormViewModel {
         addressSearchState = .searching
         do {
             let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
-            var itemsExplorer = MapItemsExplorer(mapItems: mapItems)
+            var itemsExplorer = MapItemsIterator(
+                suggestionService: suggestionsService,
+                mapItems: mapItems
+            )
             if let locationInfo = try await itemsExplorer.nextLocationInfo() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
@@ -230,7 +236,10 @@ final class LandmarkFormViewModel {
         addressSearchState = .searching
         do {
             let mapItems = try await locationService.nearbyMapItems()
-            var itemsExplorer = MapItemsExplorer(mapItems: mapItems)
+            var itemsExplorer = MapItemsIterator(
+                suggestionService: suggestionsService,
+                mapItems: mapItems
+            )
             if let locationInfo = try await itemsExplorer.nextLocationInfo() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {

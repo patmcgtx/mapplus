@@ -1,22 +1,24 @@
 //
-//  MapItemInfoService.swift
+//  MapItemsIterator.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 6/6/26.
 //
 import MapKit
 
-// TODO patmcg add unit tests
-
-///A stateful service to iterate through an array of map items
-struct MapItemsExplorer {
+///A stateful service to iterate through an array of map items with suggestions embedded.
+struct MapItemsIterator {
 
     private var mapItems: [MKMapItem]
     private var iterator: IndexingIterator<[MKMapItem]>
-
-    init(mapItems: [MKMapItem]) {
+    private var suggestionService: MapItemSuggestionService
+    
+    /// Creates an instance for the given map items.
+    /// - Parameter mapItems: The maps items to iterate through
+    init(suggestionService: MapItemSuggestionService, mapItems: [MKMapItem]) {
         self.mapItems = mapItems
         self.iterator = mapItems.makeIterator()
+        self.suggestionService = suggestionService
     }
         
     /// Iterates to the next location info, complete with embedded AI suggestions.
@@ -26,7 +28,7 @@ struct MapItemsExplorer {
     /// - Returns:The next LocationInfo object or `nil` if no more are available
     mutating func nextLocationInfo() async throws -> LocationInfo? {
         guard let mapItem = iterator.next(),
-              let suggestions = try? await mapItem.suggestions
+              let suggestions = try? await suggestionService.suggestions(for: mapItem)
         else { throw MapPlusError.noAddressFound }
         return LocationInfo(
             briefDescription: mapItem.name ?? suggestions.name,
