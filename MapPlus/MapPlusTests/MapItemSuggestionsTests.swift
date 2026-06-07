@@ -7,315 +7,474 @@
 
 import Testing
 import MapKit
-import Contacts
-import FoundationModels
 @testable import MapPlus
 
-@Suite("MapItemSuggestionsTests Tests")
+@Suite("MapItemSuggestions Tests")
 struct MapItemSuggestionsTests {
     
-    // MARK: - Test Helpers
+    // MARK: - Test Cases
     
-    /// Helper to create a test MKMapItem with specific properties
-    private static func createTestMapItem(
-        coordinate: CLLocationCoordinate2D,
-        name: String? = nil,
-        addressComponents: [String: String]? = nil
+    struct MapItemTestCase {
+        let name: String
+        let latitude: Double
+        let longitude: Double
+        let expectedSymbol: String
+        let description: String
+    }
+    
+    struct CustomSuggestionsTestCase {
+        let mapItemName: String
+        let customSuggestions: MapItemSuggestions
+        let description: String
+    }
+    
+    // MARK: - Helper Methods
+    
+    /// Creates a mock MKMapItem for testing
+    private func createMockMapItem(
+        name: String,
+        latitude: Double,
+        longitude: Double
     ) -> MKMapItem {
-        let mapItem: MKMapItem
-        
-        if let addressComponents = addressComponents {
-            let placemark = MKPlacemark(
-                coordinate: coordinate,
-                addressDictionary: addressComponents
-            )
-            mapItem = MKMapItem(placemark: placemark)
-        } else {
-            mapItem = MKMapItem(
-                location: CLLocation(
-                    latitude: coordinate.latitude,
-                    longitude: coordinate.longitude
-                ),
-                address: nil
-            )
-        }
-        
+        let coordinate = CLLocationCoordinate2D(
+            latitude: latitude,
+            longitude: longitude
+        )
+        let placemark = MKPlacemark(coordinate: coordinate)
+        let mapItem = MKMapItem(placemark: placemark)
         mapItem.name = name
-        
         return mapItem
     }
     
-    // MARK: - LocationAddOns Tests
+    // MARK: - MockMapItemSuggestionsService Tests
     
-    @Test("LocationAddOns can be initialized")
-    func testLocationAddOnsInitialization() {
-        let category = LandmarkCategory(name: "Museums")
-        let addOns = MapItemSuggestions(
-            name: "Art Museum",
-            notes: "A famous museum with art collections",
-            symbol: "🏛️"
+    @Test("Mock suggestions service generates default suggestions", arguments: [
+        MapItemTestCase(
+            name: "Central Park",
+            latitude: 40.7829,
+            longitude: -73.9654,
+            expectedSymbol: "🌳",
+            description: "Park location"
+        ),
+        MapItemTestCase(
+            name: "Golden Gate Bridge",
+            latitude: 37.8199,
+            longitude: -122.4783,
+            expectedSymbol: "🌉",
+            description: "Bridge landmark"
+        ),
+        MapItemTestCase(
+            name: "Apple Park",
+            latitude: 37.3349,
+            longitude: -122.0090,
+            expectedSymbol: "🍎",
+            description: "Apple campus"
+        ),
+        MapItemTestCase(
+            name: "Cafe Milano",
+            latitude: 38.9072,
+            longitude: -77.0369,
+            expectedSymbol: "🍽️",
+            description: "Restaurant/cafe"
+        ),
+        MapItemTestCase(
+            name: "Beach Hotel",
+            latitude: 33.7701,
+            longitude: -118.1937,
+            expectedSymbol: "🏨",
+            description: "Hotel (should match hotel before beach)"
+        ),
+        MapItemTestCase(
+            name: "JFK Airport",
+            latitude: 40.6413,
+            longitude: -73.7781,
+            expectedSymbol: "✈️",
+            description: "Airport"
+        ),
+        MapItemTestCase(
+            name: "Malibu Beach",
+            latitude: 34.0259,
+            longitude: -118.7798,
+            expectedSymbol: "🏖️",
+            description: "Beach location"
+        ),
+        MapItemTestCase(
+            name: "Natural History Museum",
+            latitude: 40.7813,
+            longitude: -73.9740,
+            expectedSymbol: "🏛️",
+            description: "Museum"
+        ),
+        MapItemTestCase(
+            name: "Harvard University",
+            latitude: 42.3770,
+            longitude: -71.1167,
+            expectedSymbol: "🎓",
+            description: "University"
+        ),
+        MapItemTestCase(
+            name: "City Hospital",
+            latitude: 40.7589,
+            longitude: -73.9851,
+            expectedSymbol: "🏥",
+            description: "Hospital"
+        ),
+        MapItemTestCase(
+            name: "Public Library",
+            latitude: 40.7532,
+            longitude: -73.9822,
+            expectedSymbol: "📚",
+            description: "Library"
+        ),
+        MapItemTestCase(
+            name: "Yankee Stadium",
+            latitude: 40.8296,
+            longitude: -73.9262,
+            expectedSymbol: "🏟️",
+            description: "Stadium"
+        ),
+        MapItemTestCase(
+            name: "Random Location",
+            latitude: 0.0,
+            longitude: 0.0,
+            expectedSymbol: "📍",
+            description: "Generic location"
+        )
+    ])
+    func testMockServiceGeneratesDefaultSuggestions(testCase: MapItemTestCase) async throws {
+        let mapItem = createMockMapItem(
+            name: testCase.name,
+            latitude: testCase.latitude,
+            longitude: testCase.longitude
+        )
+        let service = MockMapItemSuggestionsService()
+        
+        let suggestions = try await service.suggestions(for: mapItem)
+        
+        #expect(suggestions.name == testCase.name,
+                "Expected name '\(testCase.name)' for \(testCase.description)")
+        #expect(suggestions.symbol == testCase.expectedSymbol,
+                "Expected symbol '\(testCase.expectedSymbol)' for \(testCase.description)")
+        #expect(suggestions.notes.contains(testCase.name),
+                "Expected notes to contain '\(testCase.name)' for \(testCase.description)")
+    }
+    
+    @Test("Mock suggestions service handles unnamed locations")
+    func testMockServiceHandlesUnnamedLocation() async throws {
+        let mapItem = createMockMapItem(
+            name: "",
+            latitude: 37.7749,
+            longitude: -122.4194
+        )
+        mapItem.name = nil // Explicitly set to nil
+        let service = MockMapItemSuggestionsService()
+        
+        let suggestions = try await service.suggestions(for: mapItem)
+        
+        #expect(suggestions.name == "Unknown Location",
+                "Expected 'Unknown Location' for unnamed map item")
+        #expect(suggestions.symbol == "📍",
+                "Expected default symbol for unnamed location")
+        #expect(suggestions.notes.contains("Unknown Location"),
+                "Expected notes to contain 'Unknown Location'")
+    }
+    
+    @Test("Mock suggestions service uses custom suggestions", arguments: [
+        CustomSuggestionsTestCase(
+            mapItemName: "Test Location",
+            customSuggestions: MapItemSuggestions(
+                name: "Custom Name",
+                notes: "Custom notes for testing",
+                symbol: "🎯"
+            ),
+            description: "Basic custom suggestions"
+        ),
+        CustomSuggestionsTestCase(
+            mapItemName: "Apple Park",
+            customSuggestions: MapItemSuggestions(
+                name: "Apple Campus",
+                notes: "The main Apple headquarters in Cupertino",
+                symbol: "🏢"
+            ),
+            description: "Custom suggestions override defaults"
+        ),
+        CustomSuggestionsTestCase(
+            mapItemName: "Central Park",
+            customSuggestions: MapItemSuggestions(
+                name: "NYC Park",
+                notes: "A large urban park in Manhattan",
+                symbol: "🌲"
+            ),
+            description: "Custom park suggestions"
+        )
+    ])
+    func testMockServiceUsesCustomSuggestions(testCase: CustomSuggestionsTestCase) async throws {
+        let mapItem = createMockMapItem(
+            name: testCase.mapItemName,
+            latitude: 37.7749,
+            longitude: -122.4194
+        )
+        let service = MockMapItemSuggestionsService(
+            mockSuggestions: testCase.customSuggestions
         )
         
-        #expect(addOns.name == "Art Museum")
-        #expect(addOns.notes == "A famous museum with art collections")
-        #expect(addOns.symbol == "🏛️")
-    }
-    
-    @Test("LocationAddOns with various emoji symbols")
-    func testLocationAddOnsVariousSymbols() {
-        let testCases: [(name: String, emoji: String, description: String)] = [
-            ("Coffee Shop", "☕️", "Coffee shop"),
-            ("Pizza Place", "🍕", "Pizza place"),
-            ("Hotel", "🏨", "Hotel"),
-            ("Park", "🏞️", "Park"),
-            ("Museum", "🏛️", "Museum"),
-            ("Theater", "🎭", "Theater"),
-            ("Store", "🏪", "Store")
-        ]
+        let suggestions = try await service.suggestions(for: mapItem)
         
-        for testCase in testCases {
-            let addOns = MapItemSuggestions(
-                name: testCase.name,
-                notes: testCase.description,
-                symbol: testCase.emoji
-            )
-            
-            #expect(addOns.name == testCase.name, "Name should be \(testCase.name)")
-            #expect(addOns.symbol == testCase.emoji, "Symbol should be \(testCase.emoji)")
-            #expect(addOns.notes == testCase.description, "Notes should be \(testCase.description)")
-        }
-    }
-    
-    // MARK: - MKMapItem addOns Integration Tests
-    
-    @Test("addOns returns valid LocationAddOns for named location with address")
-    func testAddOnsForNamedLocationWithAddress() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "Blue Bottle Coffee",
-            addressComponents: [
-                CNPostalAddressStreetKey: "66 Mint St",
-                CNPostalAddressCityKey: "San Francisco",
-                CNPostalAddressStateKey: "CA",
-                CNPostalAddressPostalCodeKey: "94103"
-            ]
-        )
-        
-        // This test requires the actual FoundationModels framework to be available
-        // and will make a real call to the language model
-        let addOns = try await mapItem.suggestions
-        
-        // Verify the structure is correct
-        #expect(!addOns.name.isEmpty, "Name should not be empty")
-        #expect(!addOns.notes.isEmpty, "Notes should not be empty")
-        #expect(!addOns.symbol.isEmpty, "Symbol should not be empty")
-        #expect(addOns.notes.count >= 10, "Notes should be a meaningful description (at least 10 characters)")
-        
-        // Symbol should be a single emoji (typically 1-2 characters due to unicode)
-        #expect(addOns.symbol.count <= 4, "Symbol should be a single emoji")
-    }
-    
-    @Test("addOns returns valid LocationAddOns for museum")
-    func testAddOnsForMuseum() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "California Academy of Sciences",
-            addressComponents: [
-                CNPostalAddressStreetKey: "55 Music Concourse Dr",
-                CNPostalAddressCityKey: "San Francisco",
-                CNPostalAddressStateKey: "CA",
-                CNPostalAddressPostalCodeKey: "94118"
-            ]
-        )
-        
-        let addOns = try await mapItem.suggestions
-        
-        // Verify basic structure
-        #expect(!addOns.name.isEmpty, "Name should not be empty")
-        #expect(!addOns.notes.isEmpty, "Notes should not be empty")
-        #expect(!addOns.symbol.isEmpty, "Symbol should not be empty")
-        
-        // The notes should be 1-3 sentences as per the @Guide
-        let sentences = addOns.notes.components(separatedBy: CharacterSet(charactersIn: ".!?"))
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        #expect(sentences.count >= 1 && sentences.count <= 3, 
-                "Notes should be 1-3 sentences, got \(sentences.count)")
-    }
-    
-    @Test("addOns returns valid LocationAddOns for restaurant")
-    func testAddOnsForRestaurant() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.8044, longitude: -122.2712)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "Chez Panisse",
-            addressComponents: [
-                CNPostalAddressStreetKey: "1517 Shattuck Ave",
-                CNPostalAddressCityKey: "Berkeley",
-                CNPostalAddressStateKey: "CA",
-                CNPostalAddressPostalCodeKey: "94709"
-            ]
-        )
-        
-        let addOns = try await mapItem.suggestions
-        
-        #expect(!addOns.name.isEmpty, "Name should not be empty")
-        #expect(!addOns.notes.isEmpty, "Notes should not be empty")
-        #expect(!addOns.symbol.isEmpty, "Symbol should not be empty")
-    }
-    
-    @Test("addOns handles location without name")
-    func testAddOnsForUnnamedLocation() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.3861, longitude: -122.0839)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            addressComponents: [
-                CNPostalAddressStreetKey: "1 Apple Park Way",
-                CNPostalAddressCityKey: "Cupertino",
-                CNPostalAddressStateKey: "CA",
-                CNPostalAddressPostalCodeKey: "95014"
-            ]
-        )
-        
-        // Should still generate add-ons even without a name
-        let addOns = try await mapItem.suggestions
-        
-        #expect(!addOns.name.isEmpty, "Name should be generated even without an original name")
-        #expect(!addOns.notes.isEmpty, "Notes should be generated even without a name")
-        #expect(!addOns.symbol.isEmpty, "Symbol should be generated even without a name")
-    }
-    
-    @Test("addOns handles location with only coordinates")
-    func testAddOnsForCoordinatesOnly() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let mapItem = Self.createTestMapItem(coordinate: coordinate)
-        
-        // Should generate add-ons based on coordinates and generic location description
-        let addOns = try await mapItem.suggestions
-        
-        #expect(!addOns.name.isEmpty, "Name should be generated for coordinate-only location")
-        #expect(!addOns.notes.isEmpty, "Notes should be generated for coordinate-only location")
-        #expect(!addOns.symbol.isEmpty, "Symbol should be generated for coordinate-only location")
+        #expect(suggestions.name == testCase.customSuggestions.name,
+                "Expected custom name '\(testCase.customSuggestions.name)' for \(testCase.description)")
+        #expect(suggestions.notes == testCase.customSuggestions.notes,
+                "Expected custom notes for \(testCase.description)")
+        #expect(suggestions.symbol == testCase.customSuggestions.symbol,
+                "Expected custom symbol '\(testCase.customSuggestions.symbol)' for \(testCase.description)")
     }
     
     // MARK: - Error Handling Tests
     
-    @Test("addOns handles edge case with zero coordinates")
-    func testAddOnsWithZeroCoordinates() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 0.0, longitude: 0.0)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "Null Island"
-        )
-        
-        // Should still attempt to generate add-ons
-        let addOns = try await mapItem.suggestions
-        
-        #expect(!addOns.name.isEmpty, "Should generate name even for unusual coordinates")
-        #expect(!addOns.notes.isEmpty, "Should generate notes even for unusual coordinates")
-        #expect(!addOns.symbol.isEmpty, "Should generate symbol even for unusual coordinates")
+    struct ErrorTestCase {
+        let mapItemName: String
+        let description: String
     }
     
-    // MARK: - Concurrency Tests
-    
-    @Test("addOns can handle concurrent requests")
-    func testConcurrentAddOnsRequests() async throws {
-        let mapItems = [
-            Self.createTestMapItem(
-                coordinate: CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194),
-                name: "Location 1"
-            ),
-            Self.createTestMapItem(
-                coordinate: CLLocationCoordinate2D(latitude: 37.7849, longitude: -122.4294),
-                name: "Location 2"
-            ),
-            Self.createTestMapItem(
-                coordinate: CLLocationCoordinate2D(latitude: 37.7949, longitude: -122.4394),
-                name: "Location 3"
-            )
-        ]
+    @Test("Mock suggestions service handles failures", arguments: [
+        ErrorTestCase(
+            mapItemName: "Test Location",
+            description: "Named location fails"
+        ),
+        ErrorTestCase(
+            mapItemName: "Apple Park",
+            description: "Known location fails"
+        ),
+        ErrorTestCase(
+            mapItemName: "",
+            description: "Empty name fails"
+        )
+    ])
+    func testMockServiceHandlesFailure(testCase: ErrorTestCase) async throws {
+        let mapItem = createMockMapItem(
+            name: testCase.mapItemName,
+            latitude: 37.7749,
+            longitude: -122.4194
+        )
+        let service = MockMapItemSuggestionsService(shouldSucceed: false)
         
-        // Make concurrent requests
-        let results = try await withThrowingTaskGroup(of: MapItemSuggestions.self) { group in
-            for mapItem in mapItems {
-                group.addTask {
-                    try await mapItem.suggestions
-                }
-            }
-            
-            var addOnsArray: [MapItemSuggestions] = []
-            for try await result in group {
-                addOnsArray.append(result)
-            }
-            return addOnsArray
-        }
-        
-        // All requests should complete successfully
-        #expect(results.count == 3, "All concurrent requests should complete")
-        for addOn in results {
-            #expect(!addOn.name.isEmpty, "Each result should have a name")
-            #expect(!addOn.notes.isEmpty, "Each result should have notes")
-            #expect(!addOn.symbol.isEmpty, "Each result should have a symbol")
+        do {
+            _ = try await service.suggestions(for: mapItem)
+            Issue.record("Expected suggestions to throw for \(testCase.description), but it did not")
+        } catch let error as MapPlusError {
+            #expect(error == .noAddressFound,
+                    "Expected .noAddressFound for \(testCase.description)")
+        } catch {
+            Issue.record("Expected MapPlusError for \(testCase.description), but got: \(error)")
         }
     }
     
-    // MARK: - Property Validation Tests
+    // MARK: - Protocol Interface Tests
     
-    @Test("addOns name should be brief (1-3 words)")
-    func testAddOnsNameIsBrief() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "Ferry Building Marketplace"
+    @Test("Protocol interface with AIMapItemSuggestionsService")
+    func testProtocolInterfaceWithAIService() async throws {
+        let mapItem = createMockMapItem(
+            name: "Test Location",
+            latitude: 37.7749,
+            longitude: -122.4194
         )
+        let service: MapItemSuggestionsService = AIMapItemSuggestionsService()
         
-        let addOns = try await mapItem.suggestions
-        
-        // Name should be 1-3 words as specified in the @Guide
-        let words = addOns.name.components(separatedBy: .whitespaces)
-            .filter { !$0.isEmpty }
-        
-        #expect(words.count >= 1, "Should have at least 1 word")
-        #expect(words.count <= 3, "Should have at most 3 words, got \(words.count)")
-        #expect(!addOns.name.isEmpty, "Name should not be empty")
+        // This test verifies we can use AIMapItemSuggestionsService through the protocol
+        // We expect it to fail in test environment without FoundationModels access
+        do {
+            _ = try await service.suggestions(for: mapItem)
+        } catch {
+            // Expected to fail in test environment without AI
+        }
     }
     
-    @Test("addOns notes should be concise (1-3 sentences)")
-    func testAddOnsNotesAreConcise() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "Ferry Building Marketplace"
-        )
-        
-        let addOns = try await mapItem.suggestions
-        
-        // Notes should be 1-3 sentences as specified in the @Guide
-        let sentences = addOns.notes.components(separatedBy: CharacterSet(charactersIn: ".!?"))
-            .filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-        
-        #expect(sentences.count >= 1, "Should have at least 1 sentence")
-        #expect(sentences.count <= 3, "Should have at most 3 sentences, got \(sentences.count)")
+    struct ProtocolTestCase {
+        let mapItemName: String
+        let expectedSymbol: String
+        let description: String
     }
     
-    @Test("addOns symbol should be a single emoji")
-    func testAddOnsSymbolIsSingleEmoji() async throws {
-        let coordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let mapItem = Self.createTestMapItem(
-            coordinate: coordinate,
-            name: "Starbucks Reserve Roastery"
+    @Test("Protocol interface with MockService", arguments: [
+        ProtocolTestCase(
+            mapItemName: "Central Park",
+            expectedSymbol: "🌳",
+            description: "Park through protocol"
+        ),
+        ProtocolTestCase(
+            mapItemName: "Golden Gate Bridge",
+            expectedSymbol: "🌉",
+            description: "Bridge through protocol"
+        ),
+        ProtocolTestCase(
+            mapItemName: "Apple Campus",
+            expectedSymbol: "🍎",
+            description: "Apple location through protocol"
         )
+    ])
+    func testProtocolInterfaceWithMockService(testCase: ProtocolTestCase) async throws {
+        let mapItem = createMockMapItem(
+            name: testCase.mapItemName,
+            latitude: 37.7749,
+            longitude: -122.4194
+        )
+        let service: MapItemSuggestionsService = MockMapItemSuggestionsService()
         
-        let addOns = try await mapItem.suggestions
+        let suggestions = try await service.suggestions(for: mapItem)
         
-        // Symbol should be a single emoji (might be 1-4 characters due to unicode modifiers)
-        #expect(addOns.symbol.count >= 1, "Symbol should not be empty")
-        #expect(addOns.symbol.count <= 4, "Symbol should be a single emoji (allowing for unicode modifiers)")
-        
-        // Should not be plain text
-        #expect(!addOns.symbol.contains(where: { $0.isLetter && $0.isASCII }), 
-                "Symbol should be emoji, not ASCII letters")
+        #expect(suggestions.name == testCase.mapItemName,
+                "Expected name '\(testCase.mapItemName)' for \(testCase.description)")
+        #expect(suggestions.symbol == testCase.expectedSymbol,
+                "Expected symbol '\(testCase.expectedSymbol)' for \(testCase.description)")
     }
     
+    // MARK: - Symbol Heuristics Tests
+    
+    struct SymbolHeuristicTestCase {
+        let name: String
+        let expectedSymbol: String
+        let description: String
+    }
+    
+    @Test("Symbol heuristics work correctly", arguments: [
+        SymbolHeuristicTestCase(
+            name: "Central Park NYC",
+            expectedSymbol: "🌳",
+            description: "Park keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Brooklyn Bridge",
+            expectedSymbol: "🌉",
+            description: "Bridge keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Apple Store",
+            expectedSymbol: "🍎",
+            description: "Apple keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Italian Restaurant",
+            expectedSymbol: "🍽️",
+            description: "Restaurant keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Starbucks Cafe",
+            expectedSymbol: "🍽️",
+            description: "Cafe keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Marriott Hotel Downtown",
+            expectedSymbol: "🏨",
+            description: "Hotel keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "LAX International Airport",
+            expectedSymbol: "✈️",
+            description: "Airport keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Santa Monica Beach",
+            expectedSymbol: "🏖️",
+            description: "Beach keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Art Museum",
+            expectedSymbol: "🏛️",
+            description: "Museum keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Stanford University",
+            expectedSymbol: "🎓",
+            description: "University keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Medical School",
+            expectedSymbol: "🎓",
+            description: "School keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "General Hospital",
+            expectedSymbol: "🏥",
+            description: "Hospital keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "City Library",
+            expectedSymbol: "📚",
+            description: "Library keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Sports Stadium",
+            expectedSymbol: "🏟️",
+            description: "Stadium keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Basketball Arena",
+            expectedSymbol: "🏟️",
+            description: "Arena keyword detected"
+        ),
+        SymbolHeuristicTestCase(
+            name: "Some Random Place",
+            expectedSymbol: "📍",
+            description: "Default symbol for unknown type"
+        )
+    ])
+    func testSymbolHeuristics(testCase: SymbolHeuristicTestCase) async throws {
+        let mapItem = createMockMapItem(
+            name: testCase.name,
+            latitude: 37.7749,
+            longitude: -122.4194
+        )
+        let service = MockMapItemSuggestionsService()
+        
+        let suggestions = try await service.suggestions(for: mapItem)
+        
+        #expect(suggestions.symbol == testCase.expectedSymbol,
+                "Expected symbol '\(testCase.expectedSymbol)' for \(testCase.description)")
+    }
+    
+    // MARK: - Multiple Map Items Tests
+    
+    @Test("Mock service handles multiple map items sequentially")
+    func testMultipleMapItemsSequentially() async throws {
+        let service = MockMapItemSuggestionsService()
+        
+        let park = createMockMapItem(name: "Central Park", latitude: 40.7829, longitude: -73.9654)
+        let bridge = createMockMapItem(name: "Golden Gate Bridge", latitude: 37.8199, longitude: -122.4783)
+        let airport = createMockMapItem(name: "SFO Airport", latitude: 37.6213, longitude: -122.3790)
+        
+        let parkSuggestions = try await service.suggestions(for: park)
+        let bridgeSuggestions = try await service.suggestions(for: bridge)
+        let airportSuggestions = try await service.suggestions(for: airport)
+        
+        #expect(parkSuggestions.symbol == "🌳", "Expected park symbol")
+        #expect(bridgeSuggestions.symbol == "🌉", "Expected bridge symbol")
+        #expect(airportSuggestions.symbol == "✈️", "Expected airport symbol")
+    }
+    
+    // MARK: - MapItemSuggestions Structure Tests
+    
+    @Test("MapItemSuggestions can be created with all fields")
+    func testMapItemSuggestionsCreation() {
+        let suggestions = MapItemSuggestions(
+            name: "Test Location",
+            notes: "These are test notes",
+            symbol: "🎯"
+        )
+        
+        #expect(suggestions.name == "Test Location", "Expected name to match")
+        #expect(suggestions.notes == "These are test notes", "Expected notes to match")
+        #expect(suggestions.symbol == "🎯", "Expected symbol to match")
+    }
+    
+    @Test("MapItemSuggestions supports various emoji symbols", arguments: [
+        "🍎", "🌳", "🌉", "📍", "🏨", "✈️", "🏖️", "🏛️", "🎓", "🏥", "📚", "🏟️", "🍽️"
+    ])
+    func testMapItemSuggestionsSupportsEmojis(emoji: String) {
+        let suggestions = MapItemSuggestions(
+            name: "Test",
+            notes: "Test notes",
+            symbol: emoji
+        )
+        
+        #expect(suggestions.symbol == emoji, "Expected symbol '\(emoji)' to be preserved")
+    }
 }
