@@ -8,8 +8,10 @@
 import MapKit
 import FoundationModels
 
-// TODO patmcg doc
+/// A local AI implementation of the map item suggestion service
 struct AIMapItemSuggestionService: MapItemSuggestionService {
+    
+    // TODO patmcg check local device AI capabilities
     
     func suggestions(for mapItem: MKMapItem) async throws -> MapItemSuggestions {
         let prompt = "Generate suggestions for map item: \(mapItem.name ?? "unknown location") at \(mapItem.address?.fullAddress ?? "unknown address")"
