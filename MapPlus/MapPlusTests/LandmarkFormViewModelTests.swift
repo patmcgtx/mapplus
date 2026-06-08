@@ -199,9 +199,7 @@ struct LandmarkFormViewModelTests {
         }
     }
 
-    // TODO patmcg re-enable and fix this test
-    @Test(.disabled())
-    func testInitializeLocationCreateFailureStaysAtInitial() async {
+    @Test func testInitializeLocationCreateFailureStaysAtInitial() async {
         let viewModel = LandmarkFormViewModel(
             mode: .create,
             suggestionsService: BasicMapItemSuggestionService()
@@ -245,8 +243,7 @@ struct LandmarkFormViewModelTests {
     // MARK: - searchByText
 
     // TODO patmcg re-enable and fix this test
-    @Test(.disabled())
-    func testSearchByTextSuccess() async {
+    @Test func testSearchByTextSuccess() async {
         let viewModel = LandmarkFormViewModel(
             mode: .create,
             suggestionsService: BasicMapItemSuggestionService()
@@ -293,65 +290,6 @@ struct LandmarkFormViewModelTests {
         let mockService = MockAddressLookupService(shouldSucceed: false)
 
         await viewModel.searchByText(using: mockService)
-
-        if case .searchFailed = viewModel.addressSearchState {
-            // Expected
-        } else {
-            Issue.record("Expected .searchFailed, got \(viewModel.addressSearchState)")
-        }
-    }
-
-    // MARK: - searchByCurrentLocation
-
-    // TODO patmcg re-enable and fix this test
-    @Test(.disabled())
-    func testSearchByCurrentLocationSuccess() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
-        let mockService = MockLocationService()
-
-        await viewModel.searchByCurrentLocation(using: mockService)
-
-        if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Mock SF")
-            #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
-            #expect(viewModel.locationSearchInput == "")
-        } else {
-            Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
-        }
-    }
-
-    // TODO patmcg re-enable and fix this test
-    @Test(.disabled())
-    func testSearchByCurrentLocationSuccessUpdatesCoordinates() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
-        let mockService = MockLocationService()
-
-        await viewModel.searchByCurrentLocation(using: mockService)
-
-        if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Mock SF")
-            #expect(info.coordinates.latitude == 37.7749)
-            #expect(info.coordinates.longitude == -122.4194)
-        } else {
-            Issue.record("Expected .searchResolved")
-        }
-    }
-
-    @Test func testSearchByCurrentLocationFailure() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
-        let mockService = MockLocationService()
-        mockService.shouldSucceed = false
-
-        await viewModel.searchByCurrentLocation(using: mockService)
 
         if case .searchFailed = viewModel.addressSearchState {
             // Expected

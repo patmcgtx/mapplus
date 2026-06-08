@@ -197,8 +197,7 @@ final class LandmarkFormViewModel {
                 let resolvedAddress = try await locationService.getCurrentLocation()
                 applyLocationResult(resolvedAddress, updateSearchInput: false)
             } catch {
-                // Not a reportable error if this fails; just let them proceed as normal
-                // TODO patmcg revisit error handling
+                // TODO patmcg revisit error handling - not a user-impactting error?
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -220,11 +219,10 @@ final class LandmarkFormViewModel {
                 suggestionService: suggestionsService,
                 mapItems: mapItems
             )
-            if let locationInfo = try await itemsExplorer.nextMapItem() {
+            if let locationInfo = await itemsExplorer.nextMapItem() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
-                // TODO patmcg no (more) locations found - not an error state per se
-                addressSearchState = .searchFailed(MapPlusError.noAddressFound)
+                // TODO patmcg revisit error handling - not a user-impactting error?
             }
         } catch {
             addressSearchState = .searchFailed(error)
@@ -232,6 +230,7 @@ final class LandmarkFormViewModel {
     }
 
     // TODO patmcg note: this isn't even used currently
+    /*
     func searchByCurrentLocation(using locationService: any LocationService) async {
         addressSearchState = .searching
         do {
@@ -240,7 +239,7 @@ final class LandmarkFormViewModel {
                 suggestionService: suggestionsService,
                 mapItems: mapItems
             )
-            if let locationInfo = try await itemsExplorer.nextMapItem() {
+            if let locationInfo = await itemsExplorer.nextMapItem() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
                 // TODO patmcg no (more) locations found - not an error state per se
@@ -250,6 +249,7 @@ final class LandmarkFormViewModel {
             addressSearchState = .searchFailed(error)
         }
     }
+     */
 
     // MARK: - Private helpers
 

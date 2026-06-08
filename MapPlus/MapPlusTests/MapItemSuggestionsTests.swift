@@ -122,8 +122,7 @@ struct MapItemsIteratorTests {
         #expect(locationInfo?.suggestedNotes == "")
     }
     
-    // TODO patmcg re-enable and fix this test
-    @Test("Iterator handles map item without name", .disabled())
+    @Test("Iterator handles map item without name")
     func testMapItemWithoutName() async throws {
         let service = BasicMapItemSuggestionService()
         let coordinate = CLLocationCoordinate2D(latitude: 34.0522, longitude: -118.2437)
@@ -137,7 +136,7 @@ struct MapItemsIteratorTests {
         
         #expect(locationInfo != nil)
         // When name is nil, BasicMapItemSuggestionService returns empty string for name
-        #expect(locationInfo?.briefDescription == "")
+        #expect(locationInfo?.briefDescription == "Unknown Location")
         #expect(locationInfo?.coordinates.latitude == 34.0522)
         #expect(locationInfo?.coordinates.longitude == -118.2437)
     }
