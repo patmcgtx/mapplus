@@ -25,6 +25,10 @@ MapPlus/
 └── MapPlusUITests/           # UI tests
 ```
 
+## Concurrency
+
+Modern Swift Concurrency (async/await) is used for all concurrency needs.
+
 ---
 
 ## Layers

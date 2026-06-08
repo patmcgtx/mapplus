@@ -8,7 +8,6 @@ Please reference ARCHITECTURE.md for architectural patterns in this project.
 
 ## Code Conventions
 
-- Use Swift Concurrency (async/await) where appropriate
 - Prefer Swift over other languages for new code
 - Use Apple frameworks and APIs (MapKit, Foundation, etc.)
 
@@ -16,7 +15,7 @@ Please reference ARCHITECTURE.md for architectural patterns in this project.
 
 Reference LOCALIZATION.md for localization rules.
 
-## Test Files
+## Testin
 
 All test files belong under the `MapPlus/MapPlusTests` directory.
 
