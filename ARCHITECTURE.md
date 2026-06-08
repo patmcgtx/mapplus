@@ -12,15 +12,17 @@ MapPlus is an iOS app for saving and organizing personal points of interest on a
 
 ```
 MapPlus/
-├── MapPlus/              # App source code
-│   ├── App/              # Entry point and configuration
-│   ├── Models/           # SwiftData persistent models
-│   ├── Views/            # SwiftUI views
-│   ├── ViewModels/       # @Observable view models
-│   ├── Services/         # Business logic and external APIs
-│   └── Utilities/        # Extensions, themes, error types
-├── MapPlusTests/         # Unit tests (Swift Testing)
-└── MapPlusUITests/       # UI tests
+├── MapPlus/                 # App source code
+│   ├── MapPlusApp.swift      # Entry point
+│   ├── Common/               # Shared helpers (e.g., Environment)
+│   ├── Extensions/           # Swift extensions
+│   ├── Persistence/          # SwiftData models + containers/stores
+│   ├── Preferences/          # App settings / AppStorage keys
+│   ├── Services/             # Business logic and external APIs
+│   ├── Theming/              # Themes, fonts, styling
+│   └── Views/                # SwiftUI views (incl. Views/View Models/)
+├── MapPlusTests/             # Unit tests (Swift Testing)
+└── MapPlusUITests/           # UI tests
 ```
 
 ---
