@@ -67,9 +67,10 @@ struct LandmarkForm: View {
         .navigationTitle(viewModel.formTitle)
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
-            viewModel.suggestionsService = suggestionsService
-            await viewModel.initializeLocation(using: locationService)
+            viewModel.suggestionsService = suggestionsService ?? BasicMapItemSuggestionService()
+            await viewModel.initializeLocation(using: locationService ?? MapKitLocationService())
             viewModel.loadCategories(from: modelContext)
+        }
         }
         .onChange(of: viewModel.saveState) { _, newState in
             if case .saved = newState {
