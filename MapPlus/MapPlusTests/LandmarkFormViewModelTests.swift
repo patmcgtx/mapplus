@@ -14,10 +14,7 @@ struct LandmarkFormViewModelTests {
     // MARK: - Initial state
 
     @Test func testInitialAddressSearchState() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         if case .searchInitial = viewModel.addressSearchState {
             // Expected
         } else {
@@ -26,26 +23,17 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testInitialSaveState() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(viewModel.saveState == .saveInitial)
     }
 
     @Test func testInitialLocationSearchInput() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(viewModel.locationSearchInput == "")
     }
 
     @Test func testInitialFormFieldsAreEmptyForCreate() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(viewModel.name == "")
         #expect(viewModel.symbol == "📍")
         #expect(viewModel.notes == "")
@@ -61,10 +49,7 @@ struct LandmarkFormViewModelTests {
             symbol: "🗽",
             categories: [category]
         )
-        let viewModel = LandmarkFormViewModel(
-            mode: .edit(landmark),
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         #expect(viewModel.name == "Statue of Liberty")
         #expect(viewModel.symbol == "🗽")
         #expect(viewModel.notes == "A gift from France")
@@ -75,75 +60,51 @@ struct LandmarkFormViewModelTests {
     // MARK: - formTitle
 
     @Test func testFormTitleCreate() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(viewModel.formTitle == "new-landmark".localized)
     }
 
     @Test func testFormTitleEdit() {
         let landmark = Landmark(name: "Golden Gate Bridge")
-        let viewModel = LandmarkFormViewModel(
-            mode: .edit(landmark),
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         #expect(viewModel.formTitle == "Golden Gate Bridge")
     }
 
     // MARK: - isSaveEnabled
 
     @Test func testIsSaveEnabledInitially() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         #expect(!viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledWhileSearching() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.addressSearchState = .searching
         #expect(!viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterSearchFailed() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.addressSearchState = .searchFailed(MapPlusError.noAddressFound)
         #expect(!viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithPopulatedName() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "My Place"
         viewModel.addressSearchState = .searchResolved(LocationInfo(briefDescription: "", fullDescription: "", latitude: 0.0, longitude: 0.0))
         #expect(viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithEmptyName() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = ""
         viewModel.addressSearchState = .searchResolved(LocationInfo(briefDescription: "", fullDescription: "", latitude: 0.0, longitude: 0.0))
         #expect(!viewModel.isSaveEnabled)
     }
 
     @Test func testIsSaveEnabledAfterResolvedWithWhitespaceOnlyName() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "   "
         viewModel.addressSearchState = .searchResolved(LocationInfo(briefDescription: "", fullDescription: "", latitude: 0.0, longitude: 0.0))
         #expect(!viewModel.isSaveEnabled)
@@ -152,10 +113,7 @@ struct LandmarkFormViewModelTests {
     // MARK: - initializeLocation
 
     @Test func testInitializeLocationCreateSuccess() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         let mockService = MockLocationService()
 
         await viewModel.initializeLocation(using: mockService)
@@ -169,10 +127,7 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testInitializeLocationCreateSuccessDoesNotUpdateLocationSearchInput() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         let mockService = MockLocationService()
 
         await viewModel.initializeLocation(using: mockService)
@@ -181,10 +136,7 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testInitializeLocationCreateSuccessUpdatesCoordinates() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         let mockService = MockLocationService()
 
         await viewModel.initializeLocation(using: mockService)
@@ -200,10 +152,7 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testInitializeLocationCreateFailureStaysAtInitial() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         let mockService = MockLocationService()
         mockService.shouldSucceed = false
 
@@ -223,10 +172,7 @@ struct LandmarkFormViewModelTests {
             formattedAddress: "123 Main St",
             location: .init(latitude: 37.77, longitude: -122.41)
         )
-        let viewModel = LandmarkFormViewModel(
-            mode: .edit(landmark),
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         let mockService = MockLocationService()
 
         await viewModel.initializeLocation(using: mockService)
@@ -244,14 +190,11 @@ struct LandmarkFormViewModelTests {
 
     // TODO patmcg re-enable and fix this test
     @Test func testSearchByTextSuccess() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.searchByText(using: mockService)
+        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "San Francisco")
@@ -264,14 +207,11 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testSearchByTextSuccessUpdatesCoordinates() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.searchByText(using: mockService)
+        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "San Francisco")
@@ -283,14 +223,11 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testSearchByTextFailure() async {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "Nowhere"
         let mockService = MockAddressLookupService(shouldSucceed: false)
 
-        await viewModel.searchByText(using: mockService)
+        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchFailed = viewModel.addressSearchState {
             // Expected
@@ -306,10 +243,7 @@ struct LandmarkFormViewModelTests {
             for: Landmark.self, LandmarkCategory.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "New Place"
         viewModel.symbol = "📍"
         viewModel.notes = "A great spot"
@@ -324,10 +258,7 @@ struct LandmarkFormViewModelTests {
             for: Landmark.self, LandmarkCategory.self,
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "Persisted Place"
         viewModel.symbol = "🏛️"
         viewModel.notes = "Historical site"
@@ -359,10 +290,7 @@ struct LandmarkFormViewModelTests {
         container.mainContext.insert(landmark)
         try container.mainContext.save()
 
-        let viewModel = LandmarkFormViewModel(
-            mode: .edit(landmark),
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         viewModel.name = "New Name"
         viewModel.symbol = "🏰"
 
@@ -375,10 +303,7 @@ struct LandmarkFormViewModelTests {
     }
 
     @Test func testSaveFailureSetsStateToSaveFailed() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "Test"
         viewModel.save(using: FailingLandmarkStore())
         if case .saveFailed = viewModel.saveState {
@@ -398,10 +323,7 @@ struct LandmarkFormViewModelTests {
         container.mainContext.insert(category1)
         container.mainContext.insert(category2)
         
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.name = "Central Park"
         viewModel.symbol = "🌳"
         viewModel.notes = "Beautiful green space"
@@ -441,10 +363,7 @@ struct LandmarkFormViewModelTests {
         container.mainContext.insert(category3)
         try container.mainContext.save()
         
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.loadCategories(from: container.mainContext)
         
         #expect(viewModel.allCategories.count == 3)
@@ -457,10 +376,7 @@ struct LandmarkFormViewModelTests {
             configurations: ModelConfiguration(isStoredInMemoryOnly: true)
         )
         
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.loadCategories(from: container.mainContext)
         
         #expect(viewModel.allCategories.isEmpty)
@@ -469,10 +385,7 @@ struct LandmarkFormViewModelTests {
     // MARK: - addCategory / removeCategory
     
     @Test func testAddCategoryAddsToCategories() {
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         let category = LandmarkCategory(name: "Favorites")
         
         viewModel.addCategory(category)
@@ -484,10 +397,7 @@ struct LandmarkFormViewModelTests {
     @Test func testRemoveCategoryRemovesFromCategories() {
         let category1 = LandmarkCategory(name: "Favorites")
         let category2 = LandmarkCategory(name: "Visited")
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.categories = [category1, category2]
         
         viewModel.removeCategory(category1)
@@ -503,10 +413,7 @@ struct LandmarkFormViewModelTests {
         let category2 = LandmarkCategory(name: "Museums")
         let category3 = LandmarkCategory(name: "Parks")
         
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.allCategories = [category1, category2, category3]
         viewModel.categories = [category1]
         
@@ -522,10 +429,7 @@ struct LandmarkFormViewModelTests {
         let category1 = LandmarkCategory(name: "Restaurants")
         let category2 = LandmarkCategory(name: "Museums")
         
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.allCategories = [category1, category2]
         viewModel.categories = [category1, category2]
         
@@ -536,10 +440,7 @@ struct LandmarkFormViewModelTests {
         let category1 = LandmarkCategory(name: "Restaurants")
         let category2 = LandmarkCategory(name: "Museums")
         
-        let viewModel = LandmarkFormViewModel(
-            mode: .create,
-            suggestionsService: BasicMapItemSuggestionService()
-        )
+        let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.allCategories = [category1, category2]
         viewModel.categories = []
         
@@ -553,6 +454,9 @@ struct LandmarkFormViewModelTests {
 private struct FailingLandmarkStore: LandmarkStoring {
     struct SaveError: Error {}
     func commit(landmark: Landmark) throws {
+        throw SaveError()
+    }
+    func delete(landmark: Landmark) throws {
         throw SaveError()
     }
 }

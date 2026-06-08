@@ -5,16 +5,11 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 import SwiftData
-import CoreData
 
 /// View model that provides state and logic for `LandmarkForm`.
 @Observable @MainActor
 final class LandmarkFormViewModel {
 
-    /// Inject another service such as AI as needed
-    /// TODO patmcg find a better way? It gets complicated with the Environment.
-    var suggestionsService: MapItemSuggestionService = BasicMapItemSuggestionService()
-    
     /// Indicates how the form is being used.
     /// - Note: In `create` mode, there is no backing landmark yet; in `edit` mode,
     ///         the provided `Landmark` supplies initial values.
@@ -101,8 +96,7 @@ final class LandmarkFormViewModel {
     /// All available categories (loaded from persistence)
     var allCategories: [LandmarkCategory] = []
     
-    init(mode: Mode, suggestionsService: MapItemSuggestionService) {
-        self .suggestionsService = suggestionsService
+    init(mode: Mode) {
         self.mode = mode
         switch mode {
         case .create:
@@ -213,7 +207,10 @@ final class LandmarkFormViewModel {
         }
     }
 
-    func searchByText(using addressLookupService: any AddressLookupService) async {
+    func searchByText(
+        using addressLookupService: any AddressLookupService,
+        suggestionsService: any MapItemSuggestionService
+    ) async {
         addressSearchState = .searching
         do {
             let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
@@ -231,28 +228,6 @@ final class LandmarkFormViewModel {
         }
     }
 
-    // TODO patmcg note: this isn't even used currently
-    /*
-    func searchByCurrentLocation(using locationService: any LocationService) async {
-        addressSearchState = .searching
-        do {
-            let mapItems = try await locationService.nearbyMapItems()
-            var itemsExplorer = MapItemsExplorer(
-                suggestionService: suggestionsService,
-                mapItems: mapItems
-            )
-            if let locationInfo = await itemsExplorer.nextMapItem() {
-                applyLocationResult(locationInfo, updateSearchInput: true)
-            } else {
-                // TODO patmcg no (more) locations found - not an error state per se
-                addressSearchState = .searchFailed(MapPlusError.noAddressFound)
-            }
-        } catch {
-            addressSearchState = .searchFailed(error)
-        }
-    }
-     */
-
     // MARK: - Private helpers
 
     /// Applies a resolved address to the landmark and updates the search state.
@@ -260,23 +235,11 @@ final class LandmarkFormViewModel {
     ///   - address: The resolved location to apply.
     ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
     private func applyLocationResult(_ address: LocationInfo, updateSearchInput: Bool) {
-        
-        // TODO patmcg could this use some cleanup?
-        // Why do we have properties for the text fields and landmarkInEdit? Seems redundant.
-        // This applies the search results to both the landmark object being edits
-        // and the applicable view fields.
-        
         addressSearchState = .searchResolved(address)
-        
         landmarkInEdit.formattedAddress = address.fullDescription
         landmarkInEdit.latitude = address.coordinates.latitude
         landmarkInEdit.longitude = address.coordinates.longitude
-
-        landmarkInEdit.symbol = address.suggestedSymbol
         symbol = address.suggestedSymbol
-        
-        landmarkInEdit.notes = address.briefDescription
-        name = address.briefDescription
     }
 
 }

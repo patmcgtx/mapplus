@@ -14,10 +14,7 @@ struct LandmarkForm: View {
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
         self._viewModel = State(
-            initialValue: LandmarkFormViewModel(
-                mode: mode,
-                suggestionsService: BasicMapItemSuggestionService()
-            )
+            initialValue: LandmarkFormViewModel(mode: mode)
         )
     }
 
@@ -67,7 +64,6 @@ struct LandmarkForm: View {
         .navigationTitle(viewModel.formTitle)
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
-            viewModel.suggestionsService = suggestionsService ?? BasicMapItemSuggestionService()
             await viewModel.initializeLocation(using: locationService ?? MapKitLocationService())
             viewModel.loadCategories(from: modelContext)
         }
@@ -200,12 +196,18 @@ struct LandmarkForm: View {
                     .autocorrectionDisabled(false)
                     .onSubmit {
                         Task {
-                            await viewModel.searchByText(using: addressLookupService)
+                            await viewModel.searchByText(
+                                using: addressLookupService,
+                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
+                            )
                         }
                     }
                     Button {
                         Task {
-                            await viewModel.searchByText(using: addressLookupService)
+                            await viewModel.searchByText(
+                                using: addressLookupService,
+                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
+                            )
                         }
                     } label: {
                         Image(systemName: "magnifyingglass")
