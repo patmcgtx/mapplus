@@ -140,4 +140,4 @@ Tests live under `MapPlusTests/` and use the **Swift Testing** framework (`@Test
 - ViewModels are tested by injecting mock services and asserting state transitions
 - SwiftData operations use in-memory containers from `ModelContainers.inMemorySampleContainer()`
 - Parameterized tests (`@Test(arguments:)`) cover multi-case scenarios
-- Mock service implementations (`MockLocationService`, `MockAddressLookupService`, `MockLookAroundService`) mirror the protocols exactly and are used solely for tests
+- Mock service implementations (`MockLocationService`, `MockAddressLookupService`, `MockLookAroundService`) mirror the protocols exactly and are used for tests and DEBUG previews.
