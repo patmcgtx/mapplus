@@ -98,7 +98,7 @@ final class LandmarkFormViewModel {
     
     /// All available categories (loaded from persistence)
     var allCategories: [LandmarkCategory] = []
-
+    
     init(mode: Mode, suggestionsService: MapItemSuggestionService) {
         self .suggestionsService = suggestionsService
         self.mode = mode
@@ -198,7 +198,7 @@ final class LandmarkFormViewModel {
                 applyLocationResult(resolvedAddress, updateSearchInput: false)
             } catch {
                 // Not a reportable error if this fails; just let them proceed as normal
-                addressSearchState = .searchFailed(MapPlusError.noAddressFound)
+                // TODO patmcg revisit error handling
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -216,11 +216,11 @@ final class LandmarkFormViewModel {
         addressSearchState = .searching
         do {
             let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
-            var itemsExplorer = MapItemsIterator(
+            var itemsExplorer = MapItemsExplorer(
                 suggestionService: suggestionsService,
                 mapItems: mapItems
             )
-            if let locationInfo = try await itemsExplorer.nextLocationInfo() {
+            if let locationInfo = try await itemsExplorer.nextMapItem() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
                 // TODO patmcg no (more) locations found - not an error state per se
@@ -236,11 +236,11 @@ final class LandmarkFormViewModel {
         addressSearchState = .searching
         do {
             let mapItems = try await locationService.nearbyMapItems()
-            var itemsExplorer = MapItemsIterator(
+            var itemsExplorer = MapItemsExplorer(
                 suggestionService: suggestionsService,
                 mapItems: mapItems
             )
-            if let locationInfo = try await itemsExplorer.nextLocationInfo() {
+            if let locationInfo = try await itemsExplorer.nextMapItem() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
                 // TODO patmcg no (more) locations found - not an error state per se

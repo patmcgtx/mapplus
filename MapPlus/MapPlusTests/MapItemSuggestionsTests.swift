@@ -32,11 +32,10 @@ struct MapItemsIteratorTests {
     @Test("Iterator returns nil for empty array")
     func testEmptyArray() async throws {
         let service = BasicMapItemSuggestionService()
-        var iterator = MapItemsIterator(suggestionService: service, mapItems: [])
+        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [])
         
-        await #expect(throws: MapPlusError.noAddressFound) {
-            try await iterator.nextLocationInfo()
-        }
+        let locationInfo = await iterator.nextMapItem()
+        #expect(locationInfo == nil)
     }
     
     @Test("Iterator returns LocationInfo for single map item")
@@ -47,9 +46,9 @@ struct MapItemsIteratorTests {
             latitude: 37.8199,
             longitude: -122.4783
         )
-        var iterator = MapItemsIterator(suggestionService: service, mapItems: [mapItem])
+        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
         
-        let locationInfo = try await iterator.nextLocationInfo()
+        let locationInfo = await iterator.nextMapItem()
         
         #expect(locationInfo != nil)
         #expect(locationInfo?.briefDescription == "Golden Gate Bridge")
@@ -78,33 +77,32 @@ struct MapItemsIteratorTests {
             longitude: -73.9654
         )
         
-        var iterator = MapItemsIterator(
+        var iterator = MapItemsExplorer(
             suggestionService: service,
             mapItems: [mapItem1, mapItem2, mapItem3]
         )
         
         // First item
-        let location1 = try await iterator.nextLocationInfo()
+        let location1 = await iterator.nextMapItem()
         #expect(location1?.briefDescription == "Statue of Liberty")
         #expect(location1?.coordinates.latitude == 40.6892)
         #expect(location1?.coordinates.longitude == -74.0445)
         
         // Second item
-        let location2 = try await iterator.nextLocationInfo()
+        let location2 = await iterator.nextMapItem()
         #expect(location2?.briefDescription == "Empire State Building")
         #expect(location2?.coordinates.latitude == 40.7484)
         #expect(location2?.coordinates.longitude == -73.9857)
         
         // Third item
-        let location3 = try await iterator.nextLocationInfo()
+        let location3 = await iterator.nextMapItem()
         #expect(location3?.briefDescription == "Central Park")
         #expect(location3?.coordinates.latitude == 40.7829)
         #expect(location3?.coordinates.longitude == -73.9654)
         
-        // No more items - should throw
-        await #expect(throws: MapPlusError.noAddressFound) {
-            try await iterator.nextLocationInfo()
-        }
+        // No more items
+        let location4 = await iterator.nextMapItem()
+        #expect(location4 == nil)
     }
     
     @Test("Iterator uses default suggestions from BasicMapItemSuggestionService")
@@ -115,9 +113,9 @@ struct MapItemsIteratorTests {
             latitude: 0.0,
             longitude: 0.0
         )
-        var iterator = MapItemsIterator(suggestionService: service, mapItems: [mapItem])
+        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
         
-        let locationInfo = try await iterator.nextLocationInfo()
+        let locationInfo = await iterator.nextMapItem()
         
         // BasicMapItemSuggestionService should provide default values
         #expect(locationInfo?.suggestedSymbol == "📍")
@@ -133,9 +131,9 @@ struct MapItemsIteratorTests {
         let mapItem = MKMapItem(placemark: placemark)
         // Note: not setting mapItem.name
         
-        var iterator = MapItemsIterator(suggestionService: service, mapItems: [mapItem])
+        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
         
-        let locationInfo = try await iterator.nextLocationInfo()
+        let locationInfo = await iterator.nextMapItem()
         
         #expect(locationInfo != nil)
         // When name is nil, BasicMapItemSuggestionService returns empty string for name
@@ -152,14 +150,14 @@ struct MapItemsIteratorTests {
             makeSampleMapItem(name: "Location B", latitude: 30.0, longitude: 40.0),
         ]
         
-        var iterator = MapItemsIterator(suggestionService: service, mapItems: mapItems)
+        var iterator = MapItemsExplorer(suggestionService: service, mapItems: mapItems)
         
         // First call should return first item
-        let first = try await iterator.nextLocationInfo()
+        let first = await iterator.nextMapItem()
         #expect(first?.briefDescription == "Location A")
         
         // Second call should return second item (not first again)
-        let second = try await iterator.nextLocationInfo()
+        let second = await iterator.nextMapItem()
         #expect(second?.briefDescription == "Location B")
     }
     
@@ -178,9 +176,9 @@ struct MapItemsIteratorTests {
         
         for (name, lat, lon) in testCases {
             let mapItem = makeSampleMapItem(name: name, latitude: lat, longitude: lon)
-            var iterator = MapItemsIterator(suggestionService: service, mapItems: [mapItem])
+            var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
             
-            let locationInfo = try await iterator.nextLocationInfo()
+            let locationInfo = await iterator.nextMapItem()
             
             #expect(locationInfo?.briefDescription == name)
             #expect(locationInfo?.coordinates.latitude == lat)

@@ -36,7 +36,6 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         
         // First, get the current coordinates
         let location = try await requestCurrentLocation()
-        let request = MKReverseGeocodingRequest(location: location)
         
         // Then, reverse geocode to get a formatted address
         // TODO patmcg CLGeocoder deprecated, use MapKit?

@@ -1,5 +1,5 @@
 //
-//  MapItemsIterator.swift
+//  MapItemsExplorer.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 6/6/26.
@@ -7,7 +7,7 @@
 import MapKit
 
 ///A stateful service to iterate through an array of map items with suggestions embedded.
-struct MapItemsIterator {
+struct MapItemsExplorer {
 
     private var mapItems: [MKMapItem]
     private var iterator: IndexingIterator<[MKMapItem]>
@@ -26,10 +26,10 @@ struct MapItemsIterator {
     /// This method must be called to get the first map item.
     /// 
     /// - Returns:The next LocationInfo object or `nil` if no more are available
-    mutating func nextLocationInfo() async throws -> LocationInfo? {
+    mutating func nextMapItem() async -> LocationInfo? {
         guard let mapItem = iterator.next(),
               let suggestions = try? await suggestionService.suggestions(for: mapItem)
-        else { throw MapPlusError.noAddressFound }
+        else { return nil }
         return LocationInfo(
             briefDescription: mapItem.name ?? suggestions.name,
             fullDescription: mapItem.fullDescription,
