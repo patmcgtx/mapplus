@@ -12,6 +12,10 @@ Please reference ARCHITECTURE.md for architectural patterns in this project.
 - Prefer Swift over other languages for new code
 - Use Apple frameworks and APIs (MapKit, Foundation, etc.)
 
+## Localization
+
+Reference LOCALIZATION.md for localization rules.
+
 ### Test Files
 
 All test files belong under the `MapPlus/MapPlusTests` directory.
