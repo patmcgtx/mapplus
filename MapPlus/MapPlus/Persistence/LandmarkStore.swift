@@ -8,10 +8,12 @@
 import SwiftData
 import CoreLocation
 
-/// A type that can commit a landmark to persistent storage.
+/// A type that can commit and delete landmarks in persistent storage.
 protocol LandmarkStoring {
     /// Updates or inserts the given landmark and commits the change.
     func commit(landmark: Landmark) throws
+    /// Deletes the given landmark and commits the change.
+    func delete(landmark: Landmark) throws
 }
 
 /// A persistent store for a specific managed landmark.
