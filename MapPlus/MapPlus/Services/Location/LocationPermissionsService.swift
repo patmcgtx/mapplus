@@ -7,6 +7,11 @@ import MapKit
 
 // TODO patmcg cleanup docs
 
+/// A protocol for requesting and observing location authorization status.
+protocol LocationPermissionsServicing {
+    func requestPermissions(callback: @escaping (_ status: CLAuthorizationStatus) -> Void)
+}
+
 /// Service that wraps CLLocationManager to request and report location authorization status.
 ///
 /// Use this class to request "When In Use" location permissions and receive the resulting
@@ -21,7 +26,7 @@ import MapKit
 ///   status changes (the delegate method `locationManager(_:didChangeAuthorization:)`).
 /// - Depending on iOS version and the current authorization state, the delegate method may
 ///   be called immediately or after the system prompt is presented to the user.
-class LocationPermissionsService: NSObject, CLLocationManagerDelegate {
+class LocationPermissionsService: NSObject, CLLocationManagerDelegate, LocationPermissionsServicing {
     
     // TODO patmcg can this be folded into LocationService?
     

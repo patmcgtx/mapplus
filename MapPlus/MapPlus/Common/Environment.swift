@@ -21,6 +21,7 @@ extension EnvironmentValues {
     // "Sorry, this app can't operate because a service is missing." 🤦🏻‍♂️
     
     @Entry var locationService: LocationService!
+    @Entry var locationPermissionsService: LocationPermissionsServicing!
     @Entry var addressLookupService: AddressLookupService!
     @Entry var lookAroundService: LookAroundService!
     @Entry var categorySelectionService: CategorySelectionService!

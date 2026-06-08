@@ -30,6 +30,7 @@ private struct InjectServicesModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.locationService, MapKitLocationService())
+            .environment(\.locationPermissionsService, LocationPermissionsService())
             .environment(\.addressLookupService, MapKitAddressLookupService())
             .environment(\.lookAroundService, MapKitLookAroundService())
             .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))

@@ -14,28 +14,20 @@ struct MainMapView: View {
     
     // View model manages all state and business logic
     @State private var viewModel = MainMapViewModel()
-    
-    // Category filtering service
-    @State private var categoriesService: DefaultCategorySelectionService?
-    
-    // Location service
-    private var locationPermissionsService = LocationPermissionsService()
 
     // App storage
     @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
     @AppStorage(AppStorageKeys.poiLevel.rawValue) private var poiLevel: PointsOfInterestLevel = .none
 
-    // Persistence
-    @Environment(\.modelContext) private var modelContext
+    // Services
+    @Environment(\.categorySelectionService) private var categorySelectionService
+    @Environment(\.locationPermissionsService) private var locationPermissionsService
 
     // Landmarks
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
     private var visibleLandmarks: [Landmark] {
-        guard let service = categoriesService else {
-            return allLandmarks
-        }
-        return service.filterLandmarks(allLandmarks)
+        categorySelectionService.filterLandmarks(allLandmarks)
     }
     
     // MARK: - Animation State
@@ -151,9 +143,6 @@ struct MainMapView: View {
                 }
             }
             .onAppear(){
-                if categoriesService == nil {
-                    categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
-                }
                 viewModel.requestLocationPermissions(using: locationPermissionsService)
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
@@ -296,7 +285,7 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map.fill" : "map"
+        let iconName = categorySelectionService.hasSelectedCategories ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }
@@ -393,6 +382,8 @@ struct MainMapView: View {
 #Preview {
     MainMapView()
         .modelContainer(try! ModelContainer.inMemorySampleContainer())
+        .environment(\.categorySelectionService, MockCategorySelectionService())
+        .environment(\.locationPermissionsService, LocationPermissionsService())
 }
 
 #endif // DEBUG
