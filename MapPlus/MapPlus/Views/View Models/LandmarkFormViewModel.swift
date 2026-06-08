@@ -5,6 +5,7 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 import SwiftData
+import Foundation
 
 /// View model that provides state and logic for `LandmarkForm`.
 @Observable @MainActor
