@@ -71,7 +71,6 @@ struct LandmarkForm: View {
             await viewModel.initializeLocation(using: locationService ?? MapKitLocationService())
             viewModel.loadCategories(from: modelContext)
         }
-        }
         .onChange(of: viewModel.saveState) { _, newState in
             if case .saved = newState {
                 didSaveLandmark.toggle()
