@@ -13,22 +13,18 @@ struct LandmarkForm: View {
     
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
-
-        // TODO patmcg check capabilities and use non-AI if needed
-        self.suggestionsService = AIMapItemSuggestionService()
-        
-        self.viewModel = LandmarkFormViewModel(
-            mode: mode,
-            suggestionsService: self.suggestionsService
+        self._viewModel = State(
+            initialValue: LandmarkFormViewModel(
+                mode: mode,
+                suggestionsService: BasicMapItemSuggestionService()
+            )
         )
     }
 
     // Environment
     @Environment(\.locationService) private var locationService: LocationService!
     @Environment(\.addressLookupService) private var addressLookupService: AddressLookupService!
-
-    // TODO patmcg check capabilities and use non-AI if needed
-    private var suggestionsService: MapItemSuggestionService
+    @Environment(\.mapItemSuggestionService) private var suggestionsService: MapItemSuggestionService!
     
     // The view model owns the form mode, configuration, and location state
     @State private var viewModel: LandmarkFormViewModel
@@ -71,6 +67,7 @@ struct LandmarkForm: View {
         .navigationTitle(viewModel.formTitle)
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
+            viewModel.suggestionsService = suggestionsService
             await viewModel.initializeLocation(using: locationService)
             viewModel.loadCategories(from: modelContext)
         }

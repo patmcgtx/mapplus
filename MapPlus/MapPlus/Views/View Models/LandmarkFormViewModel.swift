@@ -11,7 +11,9 @@ import CoreData
 @Observable @MainActor
 final class LandmarkFormViewModel {
 
-    let suggestionsService: MapItemSuggestionService
+    /// Inject another service such as AI as needed
+    /// TODO patmcg find a better way? It gets complicated with the Environment.
+    var suggestionsService: MapItemSuggestionService = BasicMapItemSuggestionService()
     
     /// Indicates how the form is being used.
     /// - Note: In `create` mode, there is no backing landmark yet; in `edit` mode,
@@ -22,7 +24,7 @@ final class LandmarkFormViewModel {
         /// Edit an existing landmark.
         case edit(Landmark)
     }
-
+    
     /// Represents the current state of the location/address search.
     enum AddressSearchState: Equatable {
         case searchInitial

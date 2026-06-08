@@ -16,7 +16,7 @@ struct LandmarkDetailsView: View {
     
     // Environment
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.lookAroundService) var lookAroundService
+    @Environment(\.lookAroundService) var lookAroundService: LookAroundService!
     
     // UI state
     @State private var isEditorShowing: Bool = false
@@ -96,7 +96,7 @@ struct LandmarkDetailsView: View {
             do {
                 // Fetch the look-around scene when the view loads
                 lookAroundState = .loading
-                if let lookAroundScene = try await lookAroundService?.lookAroundScene(
+                if let lookAroundScene = try await lookAroundService.lookAroundScene(
                     for: landmark.location) {
                     lookAroundState = .resolved(lookAroundScene)
                 } else {

@@ -7,9 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		693A3FA22FD6FE690079F58B /* ARCHITECTURE.md in Resources */ = {isa = PBXBuildFile; fileRef = 693A3F9F2FD6FE690079F58B /* ARCHITECTURE.md */; };
-		693A3FA32FD6FE690079F58B /* LOCALIZATION.md in Resources */ = {isa = PBXBuildFile; fileRef = 693A3FA12FD6FE690079F58B /* LOCALIZATION.md */; };
-		693A3FA42FD6FE690079F58B /* CLAUDE.md in Resources */ = {isa = PBXBuildFile; fileRef = 693A3FA02FD6FE690079F58B /* CLAUDE.md */; };
 		695028B62F4A605300D6C55F /* Flow in Frameworks */ = {isa = PBXBuildFile; productRef = 695028B52F4A605300D6C55F /* Flow */; };
 /* End PBXBuildFile section */
 
@@ -244,9 +241,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				693A3FA22FD6FE690079F58B /* ARCHITECTURE.md in Resources */,
-				693A3FA32FD6FE690079F58B /* LOCALIZATION.md in Resources */,
-				693A3FA42FD6FE690079F58B /* CLAUDE.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
