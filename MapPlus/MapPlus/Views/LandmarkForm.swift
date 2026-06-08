@@ -24,8 +24,8 @@ struct LandmarkForm: View {
     }
 
     // Environment
-    @Environment(\.locationService) private var locationService
-    @Environment(\.addressLookupService) private var addressLookupService
+    @Environment(\.locationService) private var locationService: LocationService!
+    @Environment(\.addressLookupService) private var addressLookupService: AddressLookupService!
 
     // TODO patmcg check capabilities and use non-AI if needed
     private var suggestionsService: MapItemSuggestionService

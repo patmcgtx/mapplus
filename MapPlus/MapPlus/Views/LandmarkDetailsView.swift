@@ -96,7 +96,7 @@ struct LandmarkDetailsView: View {
             do {
                 // Fetch the look-around scene when the view loads
                 lookAroundState = .loading
-                if let lookAroundScene = try await lookAroundService.lookAroundScene(
+                if let lookAroundScene = try await lookAroundService?.lookAroundScene(
                     for: landmark.location) {
                     lookAroundState = .resolved(lookAroundScene)
                 } else {
