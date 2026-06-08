@@ -9,7 +9,7 @@ import SwiftData
 
 /// Manages the state and business logic for category selection
 /// This is now a lightweight wrapper around CategorySelectionService
-@Observable
+@Observable @MainActor
 class CategoriesSelectFlowViewModel {
     
     // MARK: - Dependencies

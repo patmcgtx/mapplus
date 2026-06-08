@@ -16,7 +16,7 @@ struct LandmarkDetailsView: View {
     
     // Environment
     @Environment(\.dismiss) private var dismiss
-    @Environment(\.lookAroundService) var lookAroundService
+    @Environment(\.lookAroundService) var lookAroundService: LookAroundService!
     
     // UI state
     @State private var isEditorShowing: Bool = false

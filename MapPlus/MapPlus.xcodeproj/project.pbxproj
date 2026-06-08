@@ -28,6 +28,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		693A3F9F2FD6FE690079F58B /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
+		693A3FA02FD6FE690079F58B /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
+		693A3FA12FD6FE690079F58B /* LOCALIZATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LOCALIZATION.md; sourceTree = "<group>"; };
 		69A020452E6CE46700871D38 /* MapPlus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MapPlus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A0205C2E6CE46800871D38 /* MapPlusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MapPlusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		69A020662E6CE46800871D38 /* MapPlusUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MapPlusUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +100,9 @@
 				69A0205F2E6CE46800871D38 /* MapPlusTests */,
 				69A020692E6CE46800871D38 /* MapPlusUITests */,
 				69A020462E6CE46700871D38 /* Products */,
+				693A3F9F2FD6FE690079F58B /* ARCHITECTURE.md */,
+				693A3FA02FD6FE690079F58B /* CLAUDE.md */,
+				693A3FA12FD6FE690079F58B /* LOCALIZATION.md */,
 			);
 			sourceTree = "<group>";
 		};
