@@ -13,12 +13,22 @@ struct LandmarkForm: View {
     
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
-        self.viewModel = LandmarkFormViewModel(mode: mode)
+
+        // TODO patmcg check capabilities and use non-AI if needed
+        self.suggestionsService = AIMapItemSuggestionService()
+        
+        self.viewModel = LandmarkFormViewModel(
+            mode: mode,
+            suggestionsService: self.suggestionsService
+        )
     }
 
     // Environment
     @Environment(\.locationService) private var locationService
     @Environment(\.addressLookupService) private var addressLookupService
+
+    // TODO patmcg check capabilities and use non-AI if needed
+    private var suggestionsService: MapItemSuggestionService
     
     // The view model owns the form mode, configuration, and location state
     @State private var viewModel: LandmarkFormViewModel

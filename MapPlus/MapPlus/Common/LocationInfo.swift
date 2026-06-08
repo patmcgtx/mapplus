@@ -19,6 +19,12 @@ struct LocationInfo {
     
     /// The coordinates of the location
     let coordinates: CLLocationCoordinate2D
+    
+    /// Generated notes for this location
+    let suggestedNotes: String
+    
+    /// Generated symbol for this location
+    let suggestedSymbol: String
 
     /// Creates a `LocationInfo` instance with the specified description and coordinates.
     /// - Parameters:
@@ -31,11 +37,15 @@ struct LocationInfo {
         coordinates: CLLocationCoordinate2D = CLLocationCoordinate2D(
             latitude: 0.0,
             longitude: 0.0
-        )
+        ),
+        suggestedNotes: String = "",
+        suggestedSymbol: String = "📍"
     ) {
         self.briefDescription = briefDescription
         self.fullDescription = fullDescription
         self.coordinates = coordinates
+        self.suggestedNotes = suggestedNotes
+        self.suggestedSymbol = suggestedSymbol
     }
 
     /// Creates a `LocationInfo` instance with the specified description and lat/lon.
@@ -48,7 +58,9 @@ struct LocationInfo {
         briefDescription: String,
         fullDescription: String = "",
         latitude: CLLocationDegrees,
-        longitude: CLLocationDegrees
+        longitude: CLLocationDegrees,
+        suggestedNotes: String = "",
+        suggestedSymbol: String = "📍"
     ) {
         self.briefDescription = briefDescription
         self.fullDescription = fullDescription
@@ -56,6 +68,8 @@ struct LocationInfo {
             latitude: latitude,
             longitude: longitude
         )
+        self.suggestedNotes = suggestedNotes
+        self.suggestedSymbol = suggestedSymbol
     }
 }
 

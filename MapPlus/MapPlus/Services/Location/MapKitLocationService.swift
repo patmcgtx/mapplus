@@ -21,7 +21,14 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
-    
+
+    // TODO patmcg doc
+    func nearbyMapItems() async throws -> [MKMapItem] {
+        let location = try await requestCurrentLocation()
+        let request = MKReverseGeocodingRequest(location: location)
+        return (try? await request?.mapItems) ?? []
+    }
+
     /// Gets the user's current location and converts it to an AddressInfo object.
     /// - Returns: An AddressInfo object containing the formatted address and coordinates.
     /// - Throws: MapPlusError.noAddressFound if location cannot be determined or reverse geocoding fails.

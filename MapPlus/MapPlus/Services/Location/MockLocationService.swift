@@ -5,6 +5,7 @@
 //  Created by Patrick McGonigle on 2/12/26.
 //
 import CoreLocation
+import MapKit
 
 #if DEBUG
 
@@ -14,6 +15,12 @@ import CoreLocation
 /// Returns a predefined location or throws errors based on configuration.
 /// (Thanks, Claude Sonnet.)
 class MockLocationService: LocationService {
+    
+    // TODO patmcg implement
+    func nearbyMapItems() async throws -> [MKMapItem] {
+        return []
+    }
+    
     
     // TODO patmcg simplify like MockLookAroundService
 

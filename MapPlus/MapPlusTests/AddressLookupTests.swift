@@ -10,8 +10,7 @@ struct AddressLookupTests {
     // Test data for parameterized address lookup tests
     struct AddressLookupTestCase {
         let query: String
-        let expectedBriefDescription: String
-        let expectedDescription: String
+        let expectedName: String
         let expectedLatitude: Double
         let expectedLongitude: Double
         let description: String
@@ -20,56 +19,49 @@ struct AddressLookupTests {
     @Test("Mock address lookup success cases", arguments: [
         AddressLookupTestCase(
             query: "San Francisco",
-            expectedBriefDescription: "San Francisco",
-            expectedDescription: "San Francisco, CA, United States",
+            expectedName: "San Francisco",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
             description: "Exact match"
         ),
         AddressLookupTestCase(
             query: "san francisco",
-            expectedBriefDescription: "San Francisco",
-            expectedDescription: "San Francisco, CA, United States",
+            expectedName: "San Francisco",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
             description: "Case insensitive match"
         ),
         AddressLookupTestCase(
             query: "Francisco",
-            expectedBriefDescription: "San Francisco",
-            expectedDescription: "San Francisco, CA, United States",
+            expectedName: "San Francisco",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
             description: "Partial match"
         ),
         AddressLookupTestCase(
             query: "New York",
-            expectedBriefDescription: "NYC",
-            expectedDescription: "New York, NY, United States",
+            expectedName: "NYC",
             expectedLatitude: 40.7128,
             expectedLongitude: -74.0060,
             description: "New York exact match"
         ),
         AddressLookupTestCase(
             query: "London",
-            expectedBriefDescription: "London",
-            expectedDescription: "London, United Kingdom",
+            expectedName: "London",
             expectedLatitude: 51.5074,
             expectedLongitude: -0.1278,
             description: "London exact match"
         ),
         AddressLookupTestCase(
             query: "Tokyo",
-            expectedBriefDescription: "Tokyo",
-            expectedDescription: "Tokyo, Japan",
+            expectedName: "Tokyo",
             expectedLatitude: 35.6762,
             expectedLongitude: 139.6503,
             description: "Tokyo exact match"
         ),
         AddressLookupTestCase(
             query: "1 Infinite Loop",
-            expectedBriefDescription: "Apple HQ",
-            expectedDescription: "1 Infinite Loop, Cupertino, CA 95014, United States",
+            expectedName: "Apple HQ",
             expectedLatitude: 37.3349,
             expectedLongitude: -122.0090,
             description: "Apple headquarters exact match"
@@ -78,15 +70,16 @@ struct AddressLookupTests {
     func testMockAddressLookupSuccess(testCase: AddressLookupTestCase) async throws {
         let service = MockAddressLookupService()
         
-        let result = try await service.lookup(address: testCase.query)
+        let mapItems = try await service.mapItemsFor(searchString: testCase.query)
         
-        #expect(result.briefDescription == testCase.expectedBriefDescription,
-                "Expected '\(testCase.expectedBriefDescription)' for \(testCase.description)")
-        #expect(result.fullDescription == testCase.expectedDescription,
-                "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
-        #expect(result.coordinates.latitude == testCase.expectedLatitude,
+        #expect(!mapItems.isEmpty, "Expected at least one map item for \(testCase.description)")
+        
+        let firstItem = mapItems[0]
+        #expect(firstItem.name == testCase.expectedName,
+                "Expected name '\(testCase.expectedName)' for \(testCase.description)")
+        #expect(firstItem.placemark.coordinate.latitude == testCase.expectedLatitude,
                 "Expected latitude \(testCase.expectedLatitude) for \(testCase.description)")
-        #expect(result.coordinates.longitude == testCase.expectedLongitude,
+        #expect(firstItem.placemark.coordinate.longitude == testCase.expectedLongitude,
                 "Expected longitude \(testCase.expectedLongitude) for \(testCase.description)")
     }
     
@@ -132,64 +125,61 @@ struct AddressLookupTests {
     func testMockAddressLookupSuccessWithCustomAddress(testCase: CustomAddressTestCase) async throws {
         let service = MockAddressLookupService(customAddress: testCase.customAddress)
         
-        let result = try await service.lookup(address: testCase.queryAddress)
+        let mapItems = try await service.mapItemsFor(searchString: testCase.queryAddress)
         
-        #expect(result.briefDescription == testCase.customAddress.briefDescription,
-                "Expected '\(testCase.customAddress.briefDescription)' for \(testCase.description)")
-        #expect(result.fullDescription == testCase.customAddress.fullDescription,
-                "Expected '\(testCase.customAddress.fullDescription)' for \(testCase.description)")
-        #expect(result.coordinates.latitude == testCase.customAddress.coordinates.latitude,
+        #expect(!mapItems.isEmpty, "Expected at least one map item for \(testCase.description)")
+        
+        let firstItem = mapItems[0]
+        #expect(firstItem.name == testCase.customAddress.briefDescription,
+                "Expected name '\(testCase.customAddress.briefDescription)' for \(testCase.description)")
+        #expect(firstItem.placemark.coordinate.latitude == testCase.customAddress.coordinates.latitude,
                 "Expected latitude \(testCase.customAddress.coordinates.latitude) for \(testCase.description)")
-        #expect(result.coordinates.longitude == testCase.customAddress.coordinates.longitude,
+        #expect(firstItem.placemark.coordinate.longitude == testCase.customAddress.coordinates.longitude,
                 "Expected longitude \(testCase.customAddress.coordinates.longitude) for \(testCase.description)")
     }
     
     // Test data for generic result tests (unknown addresses)
     struct GenericResultTestCase {
         let query: String
-        let expectedBriefDescription: String
-        let expectedDescription: String
+        let expectedName: String
         let description: String
     }
     
     @Test("Mock address lookup with generic results", arguments: [
         GenericResultTestCase(
             query: "Unknown Place",
-            expectedBriefDescription: "Mock address",
-            expectedDescription: "Unknown Place (Mock Result)",
+            expectedName: "Mock address",
             description: "Unknown place returns mock result"
         ),
         GenericResultTestCase(
             query: "Atlantis",
-            expectedBriefDescription: "Mock address",
-            expectedDescription: "Atlantis (Mock Result)",
+            expectedName: "Mock address",
             description: "Fictional location returns mock result"
         ),
         GenericResultTestCase(
             query: "Nowhere City",
-            expectedBriefDescription: "Mock address",
-            expectedDescription: "Nowhere City (Mock Result)",
+            expectedName: "Mock address",
             description: "Non-existent city returns mock result"
         ),
         GenericResultTestCase(
             query: "Random Address 123",
-            expectedBriefDescription: "Mock address",
-            expectedDescription: "Random Address 123 (Mock Result)",
+            expectedName: "Mock address",
             description: "Random address returns mock result"
         )
     ])
     func testMockAddressLookupSuccessWithGenericResult(testCase: GenericResultTestCase) async throws {
         let service = MockAddressLookupService()
         
-        let result = try await service.lookup(address: testCase.query)
+        let mapItems = try await service.mapItemsFor(searchString: testCase.query)
         
-        #expect(result.briefDescription == testCase.expectedBriefDescription,
-                "Expected '\(testCase.expectedBriefDescription)' for \(testCase.description)")
-        #expect(result.fullDescription == testCase.expectedDescription,
-                "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
-        #expect(result.coordinates.latitude == 37.7749,
+        #expect(!mapItems.isEmpty, "Expected at least one map item for \(testCase.description)")
+        
+        let firstItem = mapItems[0]
+        #expect(firstItem.name == testCase.expectedName,
+                "Expected name '\(testCase.expectedName)' for \(testCase.description)")
+        #expect(firstItem.placemark.coordinate.latitude == 37.7749,
                 "Expected default latitude for \(testCase.description)")
-        #expect(result.coordinates.longitude == -122.4194,
+        #expect(firstItem.placemark.coordinate.longitude == -122.4194,
                 "Expected default longitude for \(testCase.description)")
     }
     
@@ -221,8 +211,8 @@ struct AddressLookupTests {
         let service = MockAddressLookupService(shouldSucceed: false)
         
         do {
-            _ = try await service.lookup(address: testCase.queryAddress)
-            Issue.record("Expected lookup to throw for \(testCase.description), but it did not")
+            _ = try await service.mapItemsFor(searchString: testCase.queryAddress)
+            Issue.record("Expected mapItemsFor to throw for \(testCase.description), but it did not")
         } catch let error as MapPlusError {
             #expect(error == .noAddressFound, "Expected .noAddressFound for \(testCase.description)")
         } catch {
@@ -235,8 +225,7 @@ struct AddressLookupTests {
     // Test data for protocol interface with mock service
     struct ProtocolInterfaceTestCase {
         let queryAddress: String
-        let expectedBriefDescription: String
-        let expectedDescription: String
+        let expectedName: String
         let expectedLatitude: Double
         let expectedLongitude: Double
         let description: String
@@ -249,7 +238,7 @@ struct AddressLookupTests {
         // This test verifies we can use MapKitAddressLookupService through the protocol interface
         // We expect it to fail in a sandboxed test environment without MapKit access
         do {
-            _ = try await service.lookup(address: "Test Address")
+            _ = try await service.mapItemsFor(searchString: "Test Address")
         } catch {
             // Expected to fail in test environment
         }
@@ -258,24 +247,21 @@ struct AddressLookupTests {
     @Test("Protocol interface with MockService", arguments: [
         ProtocolInterfaceTestCase(
             queryAddress: "San Francisco",
-            expectedBriefDescription: "San Francisco",
-            expectedDescription: "San Francisco, CA, United States",
+            expectedName: "San Francisco",
             expectedLatitude: 37.7749,
             expectedLongitude: -122.4194,
             description: "San Francisco through protocol"
         ),
         ProtocolInterfaceTestCase(
             queryAddress: "New York",
-            expectedBriefDescription: "NYC",
-            expectedDescription: "New York, NY, United States",
+            expectedName: "NYC",
             expectedLatitude: 40.7128,
             expectedLongitude: -74.0060,
             description: "New York through protocol"
         ),
         ProtocolInterfaceTestCase(
             queryAddress: "Tokyo",
-            expectedBriefDescription: "Tokyo",
-            expectedDescription: "Tokyo, Japan",
+            expectedName: "Tokyo",
             expectedLatitude: 35.6762,
             expectedLongitude: 139.6503,
             description: "Tokyo through protocol"
@@ -285,15 +271,16 @@ struct AddressLookupTests {
         let service: AddressLookupService = MockAddressLookupService()
         
         // This test verifies we can use MockAddressLookupService through the protocol interface
-        let result = try await service.lookup(address: testCase.queryAddress)
+        let mapItems = try await service.mapItemsFor(searchString: testCase.queryAddress)
         
-        #expect(result.briefDescription == testCase.expectedBriefDescription,
-                "Expected '\(testCase.expectedBriefDescription)' for \(testCase.description)")
-        #expect(result.fullDescription == testCase.expectedDescription,
-                "Expected '\(testCase.expectedDescription)' for \(testCase.description)")
-        #expect(result.coordinates.latitude == testCase.expectedLatitude,
+        #expect(!mapItems.isEmpty, "Expected at least one map item for \(testCase.description)")
+        
+        let firstItem = mapItems[0]
+        #expect(firstItem.name == testCase.expectedName,
+                "Expected name '\(testCase.expectedName)' for \(testCase.description)")
+        #expect(firstItem.placemark.coordinate.latitude == testCase.expectedLatitude,
                 "Expected latitude \(testCase.expectedLatitude) for \(testCase.description)")
-        #expect(result.coordinates.longitude == testCase.expectedLongitude,
+        #expect(firstItem.placemark.coordinate.longitude == testCase.expectedLongitude,
                 "Expected longitude \(testCase.expectedLongitude) for \(testCase.description)")
     }
 }
