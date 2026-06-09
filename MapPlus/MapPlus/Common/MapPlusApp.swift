@@ -12,39 +12,12 @@ import FoundationModels
 @main
 struct MapPlusApp: App {
 
+    /// The main app starting point
     var body: some Scene {
         WindowGroup {
             MainMapView()
                 .modifier(InjectLiveServicesModifier())
         }
         .modelContainer(try! ModelContainer.persistentContainer())
-    }
-}
-
-/// View modifier that injects all live services into the environment.
-/// This must be applied after modelContainer is set up so that services
-/// requiring modelContext can access it.
-private struct InjectLiveServicesModifier: ViewModifier {
-    
-    @Environment(\.modelContext) private var modelContext
-    
-    func body(content: Content) -> some View {
-        content
-            .environment(\.locationService, MapKitLocationService())
-            .environment(\.locationPermissionService, MapKitLocationPermissionsService())
-            .environment(\.addressLookupService, MapKitAddressLookupService())
-            .environment(\.lookAroundService, MapKitLookAroundService())
-            .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))
-            .environment(\.mapItemSuggestionService, mapItemSuggestionService)
-    }
-    
-    /// Returns the appropriate MapItemSuggestionService based on device capabilities
-    private var mapItemSuggestionService: MapItemSuggestionService {
-        // Check if Apple Intelligence / Foundation Models are available
-        if SystemLanguageModel.default.availability == .available {
-            return AIMapItemSuggestionService()
-        } else {
-            return BasicMapItemSuggestionService()
-        }
     }
 }

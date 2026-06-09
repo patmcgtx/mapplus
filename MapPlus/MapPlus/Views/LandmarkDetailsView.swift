@@ -174,11 +174,12 @@ struct LandmarkDetailsView: View {
 
 #Preview("Real look-around") {
     LandmarkDetailsView(landmark: SampleLandmarks().brooklynBridge)
-        .environment(\.lookAroundService, MapKitLookAroundService())
+        .injectLiveServices()
 }
 
 #Preview("Mock - no look-around") {
     LandmarkDetailsView(landmark: SampleLandmarks().capital)
+        .injectMockServices()
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: nil,
             sceneToReturn: nil,

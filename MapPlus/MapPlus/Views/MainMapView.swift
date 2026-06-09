@@ -30,9 +30,6 @@ struct MainMapView: View {
 
     // MARK: Persistence
     
-    @Environment(\.modelContext)
-    private var modelContext
-    
     @Query(sort: \Landmark.name, order: .reverse)
     var allLandmarks: [Landmark]
     
@@ -402,9 +399,9 @@ struct MainMapView: View {
 
 #if DEBUG
 
-#Preview {
+#Preview("Real") {
     MainMapView()
-        .modelContainer(try! ModelContainer.inMemorySampleContainer())
+        .injectLiveServices()
 }
 
 #endif // DEBUG

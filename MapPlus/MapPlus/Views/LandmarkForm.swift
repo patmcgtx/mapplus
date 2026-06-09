@@ -298,7 +298,7 @@ struct LandmarkForm: View {
                 }
             }
         }
-    }    
+    }
 }
 
 
@@ -308,18 +308,19 @@ struct LandmarkForm: View {
 
 #Preview("Create - mock services") {
     LandmarkForm(mode: .create)
-        .environment(\.locationService, MockLocationService())
-        .environment(\.addressLookupService, MockAddressLookupService())
+        .injectMockServices()
 }
 
 #Preview("Create - real services") {
     LandmarkForm(mode: .create)
+        .injectLiveServices()
 }
 
 #Preview("Edit - real") {
     LandmarkForm(mode: .edit(
         SampleLandmarks().capital)
     )
+    .injectLiveServices()
 }
 
 #endif // DEBUG

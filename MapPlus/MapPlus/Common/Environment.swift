@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FoundationModels
 
 extension EnvironmentValues {
     
@@ -30,4 +31,59 @@ extension EnvironmentValues {
     // MARK: Default settings
     
     @Entry var theme: MapPlusTheme = .cupertino
+}
+
+/// View modifier that injects all live services into the environment.
+struct InjectLiveServicesModifier: ViewModifier {
+    
+    @Environment(\.modelContext) private var modelContext
+    
+    func body(content: Content) -> some View {
+        content
+            .environment(\.locationService, MapKitLocationService())
+            .environment(\.locationPermissionService, MapKitLocationPermissionsService())
+            .environment(\.addressLookupService, MapKitAddressLookupService())
+            .environment(\.lookAroundService, MapKitLookAroundService())
+            .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))
+            .environment(\.mapItemSuggestionService, mapItemSuggestionService)
+    }
+    
+    /// Returns the appropriate MapItemSuggestionService based on device capabilities
+    private var mapItemSuggestionService: MapItemSuggestionService {
+        // Check if Apple Intelligence / Foundation Models are available
+        if SystemLanguageModel.default.availability == .available {
+            return AIMapItemSuggestionService()
+        } else {
+            return BasicMapItemSuggestionService()
+        }
+    }
+}
+
+/// View modifier that injects mock services into the environment.
+struct InjectMockServicesModifier: ViewModifier {
+    
+    func body(content: Content) -> some View {
+        content
+            .environment(\.locationService, MockLocationService())
+            .environment(\.locationPermissionService, MapKitLocationPermissionsService())
+            .environment(\.addressLookupService, MockAddressLookupService())
+            .environment(\.lookAroundService, MockLookAroundService())
+            .environment(\.categorySelectionService, MockCategorySelectionService())
+            .environment(\.mapItemSuggestionService, BasicMapItemSuggestionService())
+    }
+    
+}
+
+extension View {
+
+    /// Injects live services into the environment.
+    func injectLiveServices() -> some View {
+        self.modifier(InjectLiveServicesModifier())
+    }
+
+    /// Injects mock services into the environment.
+    func injectMockServices() -> some View {
+        self.modifier(InjectMockServicesModifier())
+    }
+    
 }

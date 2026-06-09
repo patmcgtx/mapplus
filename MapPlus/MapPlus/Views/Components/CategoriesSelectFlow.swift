@@ -160,6 +160,7 @@ private struct SelectedCategoriesView: View {
     .modelContainer(
         try! ModelContainer.inMemorySampleContainer()
     )
+    .injectMockServices()
 }
 
 #Preview("Many") {
@@ -172,6 +173,7 @@ private struct SelectedCategoriesView: View {
             numExtraCategories: 50
         )
     )
+    .injectMockServices()
 }
 
 #endif // DEBUG
