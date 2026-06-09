@@ -8,8 +8,6 @@
 import SwiftData
 
 /// A service protocol that manages selected categories and provides filtering capabilities.
-/// This encapsulates all logic related to category selection and landmark filtering,
-/// making it reusable across different views.
 protocol CategorySelectionService {
     
     /// The currently selected categories

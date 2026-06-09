@@ -8,7 +8,7 @@ import MapKit
 
 #if DEBUG
 
-/// A mock implementation of `AddressLookupService` for testing and previews.
+/// A mock implementation for testing and previews.
 struct MockAddressLookupService: AddressLookupService {
         
     /// Controls whether the mock should simulate a successful lookup or throw an error.
@@ -58,56 +58,71 @@ struct MockAddressLookupService: AddressLookupService {
         
         // If a custom address is provided, convert it to a MKMapItem
         if let customAddress = customAddress {
-            let placemark = MKPlacemark(
-                coordinate: customAddress.coordinates
+            return try await createMapItem(
+                from: customAddress.coordinates,
+                name: customAddress.briefDescription
             )
-            let mapItem = MKMapItem(placemark: placemark)
-            mapItem.name = customAddress.briefDescription
-            return [mapItem]
         }
         
         // Try to find a matching mock address
         // Check for exact match first
         if let matchedAddress = Self.mockAddresses[searchString] {
-            let placemark = MKPlacemark(
-                coordinate: matchedAddress.coordinates
+            return try await createMapItem(
+                from: matchedAddress.coordinates,
+                name: matchedAddress.briefDescription
             )
-            let mapItem = MKMapItem(placemark: placemark)
-            mapItem.name = matchedAddress.briefDescription
-            return [mapItem]
         }
         
         // Try case-insensitive match
         let lowercaseQuery = searchString.lowercased()
         for (key, address) in Self.mockAddresses {
             if key.lowercased() == lowercaseQuery {
-                let placemark = MKPlacemark(
-                    coordinate: address.coordinates
+                return try await createMapItem(
+                    from: address.coordinates,
+                    name: address.briefDescription
                 )
-                let mapItem = MKMapItem(placemark: placemark)
-                mapItem.name = address.briefDescription
-                return [mapItem]
             }
         }
         
         // Try partial match
         for (key, address) in Self.mockAddresses {
             if key.lowercased().contains(lowercaseQuery) || lowercaseQuery.contains(key.lowercased()) {
-                let placemark = MKPlacemark(
-                    coordinate: address.coordinates
+                return try await createMapItem(
+                    from: address.coordinates,
+                    name: address.briefDescription
                 )
-                let mapItem = MKMapItem(placemark: placemark)
-                mapItem.name = address.briefDescription
-                return [mapItem]
             }
         }
         
         // Return a generic mock result for unknown addresses
         let defaultCoordinate = CLLocationCoordinate2D(latitude: 37.7749, longitude: -122.4194)
-        let placemark = MKPlacemark(coordinate: defaultCoordinate)
-        let mapItem = MKMapItem(placemark: placemark)
-        mapItem.name = "Mock address"
-        return [mapItem]
+        return try await createMapItem(
+            from: defaultCoordinate,
+            name: "Mock address"
+        )
+    }
+    
+    /// Helper method to create a MKMapItem from coordinates using reverse geocoding
+    private func createMapItem(from coordinate: CLLocationCoordinate2D, name: String) async throws -> [MKMapItem] {
+        let location = CLLocation(
+            latitude: coordinate.latitude,
+            longitude: coordinate.longitude
+        )
+        
+        // Use reverse geocoding to get a proper MKMapItem
+        guard let request = MKReverseGeocodingRequest(location: location) else {
+            throw MapPlusError.noAddressFound
+        }
+        
+        let mapItems = try await request.mapItems
+        
+        // If we got results, update the name and return
+        if let firstItem = mapItems.first {
+            firstItem.name = name
+            return [firstItem]
+        }
+        
+        throw MapPlusError.noAddressFound
     }
 }
 

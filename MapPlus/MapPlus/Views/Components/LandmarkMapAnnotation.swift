@@ -11,15 +11,20 @@ import MapKit
 /// The map itself will display the landmark name; this is just the visual to go with it.
 struct LandmarkMapAnnotation: View {
     
+    // MARK: Properties
+    
     /// The landmark's symbol to display
     let symbol: String
-        
-    // Constants
+            
+    // MARK: Constants
+    
     private let annotationPadding: CGFloat = 10
     private let minBackgroundOpacity = 0.33
     private let maxBackgroundOpacity: CGFloat = 0.67
     private let startGradientRadius = 2.0
     private let endGradientRadius: CGFloat = 8.0
+    
+    // MARK: Views
     
     var body: some View {
         Text(symbol)
@@ -28,9 +33,7 @@ struct LandmarkMapAnnotation: View {
             .padding(annotationPadding)
             .background(fillBackground)
     }
-    
-    // View helpers
-    
+        
     @ViewBuilder
     private var fillBackground: some View {
         Capsule()

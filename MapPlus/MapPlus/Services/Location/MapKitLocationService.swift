@@ -7,10 +7,7 @@
 import CoreLocation
 import MapKit
 
-// TODO patmcg cleanup / docs
-
-/// A service for obtaining the user's current location and converting it to an AddressInfo.
-/// This is basically an async wrapper for CLLocationManager (thanks, Claude Sonnet!).
+/// A service for obtaining the user's current location and converting it to an `AddressInfo`.
 class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegate {
     
     private let locationManager = CLLocationManager()

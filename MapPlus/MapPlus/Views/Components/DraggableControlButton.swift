@@ -8,7 +8,9 @@ import SwiftUI
 
 /// A movable/draggable button that performs the provided action when tapped.
 struct DraggableControlButton: View {
-        
+    
+    // MARK: Properties
+    
     /// The SF Symbols name for the buttons' icon
     let systemImageName: String
     
@@ -21,32 +23,36 @@ struct DraggableControlButton: View {
     
     // MARK: Environment
     
-    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
+    @Environment(\.colorScheme)
+    private var colorScheme: ColorScheme
 
-    // MARK: Private state
+    // MARK: App storage
+    
+    @AppStorage(AppStorageKeys.theme.rawValue)
+    private var theme: MapPlusTheme = .cupertino
 
-    @State private var draggedOffset: CGSize = .zero
-    @State private var isDragging: Bool = false
-    @State private var dragOrigin: CGSize = .zero
-    @State private var originalCenter: CGPoint? = nil
+    // MARK: View state
+
+    @State
+    private var draggedOffset: CGSize = .zero
+    
+    @State
+    private var isDragging: Bool = false
+    
+    @State
+    private var dragOrigin: CGSize = .zero
+    
+    @State
+    private var originalCenter: CGPoint? = nil
+    
+    // MARK: Constants
     
     private let buttonSize: CGFloat = 24
     private let buttonPadding: CGFloat = 16
     private let snapInterval: CGFloat = 22
-    
-    /// Snaps a coordinate value to the nearest grid point on a global grid
-    private func snapToGlobalGrid(_ value: CGFloat, original: CGFloat) -> CGFloat {
-        // Calculate the absolute position
-        let absolutePosition = original + value
-        
-        // Snap to the nearest grid
-        let snappedAbsolute = round(absolutePosition / snapInterval) * snapInterval
-        
-        // Convert back to offset from original
-        return snappedAbsolute - original
-    }
 
+    // MARK: Views
+    
     var body: some View {
         GeometryReader { geometry in
             Button(action: {
@@ -117,6 +123,21 @@ struct DraggableControlButton: View {
         }
         .frame(width: buttonSize + buttonPadding * 2, height: buttonSize + buttonPadding * 2)
     }
+    
+    // MARK: Private helpers
+    
+    /// Snaps a coordinate value to the nearest grid point on a global grid
+    private func snapToGlobalGrid(_ value: CGFloat, original: CGFloat) -> CGFloat {
+        // Calculate the absolute position
+        let absolutePosition = original + value
+        
+        // Snap to the nearest grid
+        let snappedAbsolute = round(absolutePosition / snapInterval) * snapInterval
+        
+        // Convert back to offset from original
+        return snappedAbsolute - original
+    }
+
 }
 
 #if DEBUG

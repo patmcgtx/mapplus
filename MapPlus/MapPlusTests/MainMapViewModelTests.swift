@@ -140,32 +140,6 @@ struct MainMapViewModelTests {
         // Toggle again
         viewModel.centerOnUserLocation()
         #expect(!viewModel.didTapLocate)
-    }        
+    }    
     
-    // MARK: - Location Permissions Tests
-    
-    @Test("Request location permissions calls service")
-    func testRequestLocationPermissions() {
-        let viewModel = MainMapViewModel()
-        let mockService = MockLocationPermissionsService()
-        
-        #expect(!mockService.didRequestPermissions)
-        
-        viewModel.requestLocationPermissions(using: mockService)
-        
-        #expect(mockService.didRequestPermissions)
-    }
-    
-}
-
-// MARK: - Mock Location Permissions Service
-
-/// Mock location permissions service for testing
-final class MockLocationPermissionsService: LocationPermissionsService {
-    var didRequestPermissions = false
-    
-    override func requestPermissions(callback: @escaping (CLAuthorizationStatus) -> Void) {
-        didRequestPermissions = true
-        callback(.authorizedWhenInUse)
-    }
 }

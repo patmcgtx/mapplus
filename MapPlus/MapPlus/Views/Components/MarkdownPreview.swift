@@ -10,8 +10,12 @@ import SwiftUI
 /// or as plain text if the markdown rendering fails.
 struct MarkdownPreview: View {
     
+    // MARK: Properties
+    
     /// The markdown text to render
     let markdown: String
+    
+    // MARK: Views
     
     var body: some View {
         if let rendered = markdown.withMarkdown {

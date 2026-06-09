@@ -215,8 +215,8 @@ struct LandmarkFormViewModelTests {
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "San Francisco")
-            #expect(info.coordinates.latitude == 37.7749)
-            #expect(info.coordinates.longitude == -122.4194)
+            #expect(info.coordinates.latitude == 37.7752559)
+            #expect(info.coordinates.longitude == -122.4191641)
         } else {
             Issue.record("Expected .searchResolved")
         }

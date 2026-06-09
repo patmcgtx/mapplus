@@ -9,21 +9,9 @@ import SwiftData
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
-
-    /// Describes an optional action for the category
-    struct Action {
-        
-        /// System image for an action on the category buttons
-        let systemImage: String
-        
-        /// An action to take when the category button is tapped
-        let onTap: (LandmarkCategory) -> Void
-    }
     
-    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
-    @Environment(\.colorScheme) private var colorScheme: ColorScheme
-    @Environment(\.modelContext) private var modelContext
-
+    // MARK: Properties
+    
     /// Which category to display
     let category: LandmarkCategory
 
@@ -33,18 +21,37 @@ struct CategoryCapsule: View {
     /// An optional action to add to the category
     let action: Action?
     
+    // MARK: Environment
+    
+    @Environment(\.colorScheme)
+    private var colorScheme: ColorScheme
+    
+    @Environment(\.modelContext)
+    private var modelContext
+
+    // MARK: Persistence
+    
     // Category selection state
     @Query private var selectedCategories: [SelectedCategories]
+
+    // MARK: App storage
     
-    private var selectedCategoriesModel: SelectedCategories? {
-        selectedCategories.first
-    }
+    @AppStorage(AppStorageKeys.theme.rawValue)
+    private var theme: MapPlusTheme = .cupertino
     
-    private var isSelected: Bool {
-        selectedCategoriesModel?.contains(category) ?? false
-    }
+    // MARK: Data types
+    
+    /// Describes an optional action for the category
+    struct Action {
         
-    // MARK: View
+        /// System image for an action on the category buttons
+        let systemImage: String
+        
+        /// An action to take when the category button is tapped
+        let onTap: (LandmarkCategory) -> Void
+    }
+            
+    // MARK: Views
 
     var body: some View {
         capsuleContent
@@ -131,8 +138,17 @@ struct CategoryCapsule: View {
             }
         }
     }
+
+    // MARK: Private helpers
     
-    /// Whether or not to show the selection state of the category
+    private var selectedCategoriesModel: SelectedCategories? {
+        selectedCategories.first
+    }
+    
+    private var isSelected: Bool {
+        selectedCategoriesModel?.contains(category) ?? false
+    }
+
     private var shouldShowSelectionState: Bool {
         isSelectable && isSelected
     }

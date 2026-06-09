@@ -13,10 +13,7 @@ import SwiftData
 @Observable
 final class CategoriesEditViewModel {
     
-    // MARK: - Properties
-    
-    /// The model context for SwiftData operations
-    private let modelContext: ModelContext
+    // MARK: Properties
     
     /// The name for a new category being added
     var newCategoryName: String = ""
@@ -29,14 +26,18 @@ final class CategoriesEditViewModel {
     
     /// The category for which a delete alert should be shown, if any
     var showingDeleteAlert: LandmarkCategory?
+
+    /// The model context for SwiftData operations
+    private let modelContext: ModelContext
+
     
-    // MARK: - Initialization
+    // MARK: Initialization
     
     init(modelContext: ModelContext) {
         self.modelContext = modelContext
     }
     
-    // MARK: - Actions
+    // MARK: Actions
     
     /// Adds a new category with the current name
     /// - Parameter allCategories: All existing categories to check for duplicates

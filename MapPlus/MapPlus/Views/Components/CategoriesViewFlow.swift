@@ -10,8 +10,12 @@ import Flow
 /// Displays a read-only collection of landmark categories in a flow layout.
 struct CategoriesViewFlow: View {
     
+    // MARK: Properties
+    
     /// The categories to display in the given order.
     let categories: [LandmarkCategory]
+    
+    // MARK: Views
     
     var body: some View {
         if categories.isEmpty {

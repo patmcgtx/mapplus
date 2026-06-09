@@ -11,50 +11,57 @@ import MapKit
 
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
+        
+    // MARK: Environment
     
-    // View model manages all state and business logic
-    @State private var viewModel = MainMapViewModel()
-    
-    // Category filtering service
-    @State private var categoriesService: DefaultCategorySelectionService?
-    
-    // Location service
-    private var locationPermissionsService = LocationPermissionsService()
+    @Environment(\.locationPermissionService)
+    private var locationPermissionsService: LocationPermissionsService
 
-    // App storage
-    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
-    @AppStorage(AppStorageKeys.poiLevel.rawValue) private var poiLevel: PointsOfInterestLevel = .none
+    @Environment(\.categorySelectionService)
+    private var categoriesService: CategorySelectionService
 
-    // Persistence
-    @Environment(\.modelContext) private var modelContext
+    // MARK: App storage
+    
+    @AppStorage(AppStorageKeys.theme.rawValue)
+    private var theme: MapPlusTheme = .cupertino
+    
+    @AppStorage(AppStorageKeys.poiLevel.rawValue)
+    private var poiLevel: PointsOfInterestLevel = .none
 
-    // Landmarks
-    @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
+    // MARK: Persistence
     
-    private var visibleLandmarks: [Landmark] {
-        guard let service = categoriesService else {
-            return allLandmarks
-        }
-        return service.filterLandmarks(allLandmarks)
-    }
+    @Query(sort: \Landmark.name, order: .reverse)
+    var allLandmarks: [Landmark]
     
-    // MARK: - Animation State
+    // MARK: View state
+    
+    @State
+    private var viewModel = MainMapViewModel()
+
+    // MARK: Animation State
     
     /// Landmarks that should show a glow effect
-    @State private var glowingLandmarks: Set<Landmark> = []
+    @State
+    private var glowingLandmarks: Set<Landmark> = []
     
     /// Fading glow animations for removed landmarks
-    @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
+    @State
+    private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
     
     /// Scale values for fading glow animations
-    @State private var glowScales: [UUID: CGFloat] = [:]
+    @State
+    private var glowScales: [UUID: CGFloat] = [:]
     
     /// Opacity values for fading glow animations
-    @State private var glowOpacities: [UUID: Double] = [:]
+    @State
+    private var glowOpacities: [UUID: Double] = [:]
     
     /// Active animation task (for cancellation)
-    @State private var animationTask: Task<Void, Never>?
+    @State
+    private var animationTask: Task<Void, Never>?
         
+    // MARK: - Views
+    
     var body: some View {
         
         NavigationStack {
@@ -151,9 +158,6 @@ struct MainMapView: View {
                 }
             }
             .onAppear(){
-                if categoriesService == nil {
-                    categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
-                }
                 viewModel.requestLocationPermissions(using: locationPermissionsService)
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
@@ -176,8 +180,6 @@ struct MainMapView: View {
             .apply(theme: theme)
         }
     }
-    
-    // MARK: - Subviews
     
     var addButton: some View {
         DraggableControlButton(
@@ -296,14 +298,21 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map.fill" : "map"
+        let iconName = categoriesService.hasSelectedCategories ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }
     }
     
-    // MARK: - Helper Methods
+    // MARK: Private helpers
     
+    // TODO patmcg move this to the view model?!?
+    private var visibleLandmarks: [Landmark] {
+        categoriesService.filterLandmarks(allLandmarks)
+    }
+
+    // MARK: Animation
+
     /// Animate the selected landmarks changing
     private func animateLandmarkChange(
         from previousLandmarks: [Landmark],
@@ -390,9 +399,9 @@ struct MainMapView: View {
 
 #if DEBUG
 
-#Preview {
+#Preview("Real") {
     MainMapView()
-        .modelContainer(try! ModelContainer.inMemorySampleContainer())
+        .injectLiveServices()
 }
 
 #endif // DEBUG

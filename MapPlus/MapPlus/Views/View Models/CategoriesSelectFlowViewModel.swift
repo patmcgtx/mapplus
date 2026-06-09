@@ -12,11 +12,11 @@ import SwiftData
 @Observable @MainActor
 class CategoriesSelectFlowViewModel {
     
-    // MARK: - Dependencies
+    // MARK: Dependencies
     
     private let service: any CategorySelectionService
     
-    // MARK: - State
+    // MARK: State
     
     /// Whether there are any selected categories
     var hasSelectedCategories: Bool {
@@ -33,13 +33,13 @@ class CategoriesSelectFlowViewModel {
         service.shouldShowFilterModePicker
     }
     
-    // MARK: - Initialization
+    // MARK: Initialization
     
     init(service: any CategorySelectionService) {
         self.service = service
     }
     
-    // MARK: - Public Methods
+    // MARK: Public Methods
     
     /// Clears all category selections
     func clearAllSelections() {

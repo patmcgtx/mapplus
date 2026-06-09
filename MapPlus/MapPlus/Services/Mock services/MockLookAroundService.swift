@@ -8,7 +8,7 @@ import MapKit
 
 #if DEBUG
 
-/// A mock implementation of LookAroundService for testing and previews.
+/// A mock implementation for testing and previews.
 struct MockLookAroundService: LookAroundService {
     
     /// Optional error to throw
@@ -31,9 +31,6 @@ struct MockLookAroundService: LookAroundService {
     }
         
     /// Mocks a look-around scene result with the configured network delay and resulting in the given return value and/or error.
-    /// - Parameter location: Which coordinate to get the look-around for (doesn't matter for this mock)
-    /// - Returns: The provided `sceneToReturn`, which may be `nil`
-    /// - Throws: The provided `errorToThrow` if non-nil
     func lookAroundScene(for location: CLLocationCoordinate2D) async throws -> MKLookAroundScene? {
         
         if let networkDelaySeconds = networkDelaySeconds {

@@ -7,16 +7,18 @@
 
 import SwiftData
 
-/// Mock implementation of CategorySelectionService for testing
+#if DEBUG
+
+/// A mock implementation for testing and previews.
 @Observable
 class MockCategorySelectionService: CategorySelectionService {
     
-    // MARK: - Mock State
+    // Mock State
     
     var selectedCategories: [LandmarkCategory] = []
     var filterMode: CategoryFilterMode = .matchAny
     
-    // MARK: - Computed Properties
+    // Computed Properties
     
     var hasSelectedCategories: Bool {
         !selectedCategories.isEmpty
@@ -26,14 +28,14 @@ class MockCategorySelectionService: CategorySelectionService {
         selectedCategories.count >= 2
     }
     
-    // MARK: - Tracking for Tests
+    // Tracking for Tests
     
     var toggleCalls: [LandmarkCategory] = []
     var clearAllSelectionsCalls: Int = 0
     var setFilterModeCalls: [CategoryFilterMode] = []
     var filterLandmarksCalls: Int = 0
     
-    // MARK: - Methods
+    // Methods
     
     func filterLandmarks(_ landmarks: [Landmark]) -> [Landmark] {
         filterLandmarksCalls += 1
@@ -91,3 +93,5 @@ class MockCategorySelectionService: CategorySelectionService {
         filterLandmarksCalls = 0
     }
 }
+
+#endif // DEBUG

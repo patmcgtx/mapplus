@@ -10,15 +10,36 @@ import SwiftData
 
 /// A view for managing landmark categories - adding, renaming, and deleting them.
 struct CategoriesEditView: View {
-    
-    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
 
-    @Query(sort: \LandmarkCategory.name) private var allCategories: [LandmarkCategory]
+    // MARK: Environment
     
-    @State private var viewModel: CategoriesEditViewModel?
-    @FocusState private var isAddFieldFocused: Bool
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    @Environment(\.modelContext)
+    private var modelContext
+
+    // MARK: App storage
+    
+    @AppStorage(AppStorageKeys.theme.rawValue)
+    private var theme: MapPlusTheme = .cupertino
+
+    // MARK: Persistence
+    
+    @Query(sort: \LandmarkCategory.name)
+    private var allCategories: [LandmarkCategory]
+    
+    // MARK: View state
+    
+    @State
+    private var viewModel: CategoriesEditViewModel?
+    
+    // MARK: Focus
+    
+    @FocusState
+    private var isAddFieldFocused: Bool
+    
+    // MARK: Views
     
     var body: some View {
         NavigationStack {
