@@ -11,34 +11,34 @@ import MapKit
 
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
+        
+    // MARK: Services
     
-    // View model manages all state and business logic
-    @State private var viewModel = MainMapViewModel()
-    
-    // Category filtering service
-    @State private var categoriesService: DefaultCategorySelectionService?
-    
-    // Location service
-    private var locationPermissionsService = LocationPermissionsService()
+    @Environment(\.locationPermissionService)
+    private var locationPermissionsService: LocationPermissionsService
 
-    // App storage
-    @AppStorage(AppStorageKeys.theme.rawValue) private var theme: MapPlusTheme = .cupertino
-    @AppStorage(AppStorageKeys.poiLevel.rawValue) private var poiLevel: PointsOfInterestLevel = .none
+    @Environment(\.categorySelectionService)
+    private var categoriesService: CategorySelectionService
 
-    // Persistence
+    // MARK: App storage
+    
+    @AppStorage(AppStorageKeys.theme.rawValue)
+    private var theme: MapPlusTheme = .cupertino
+    
+    @AppStorage(AppStorageKeys.poiLevel.rawValue)
+    private var poiLevel: PointsOfInterestLevel = .none
+
+    // MARK: Persistence
+    
     @Environment(\.modelContext) private var modelContext
-
-    // Landmarks
+    
     @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
     
-    private var visibleLandmarks: [Landmark] {
-        guard let service = categoriesService else {
-            return allLandmarks
-        }
-        return service.filterLandmarks(allLandmarks)
-    }
+    // MARK: View state
     
-    // MARK: - Animation State
+    @State private var viewModel = MainMapViewModel()
+
+    // MARK: Animation State
     
     /// Landmarks that should show a glow effect
     @State private var glowingLandmarks: Set<Landmark> = []
@@ -55,6 +55,8 @@ struct MainMapView: View {
     /// Active animation task (for cancellation)
     @State private var animationTask: Task<Void, Never>?
         
+    // MARK: - Views
+    
     var body: some View {
         
         NavigationStack {
@@ -151,9 +153,6 @@ struct MainMapView: View {
                 }
             }
             .onAppear(){
-                if categoriesService == nil {
-                    categoriesService = DefaultCategorySelectionService(modelContext: modelContext)
-                }
                 viewModel.requestLocationPermissions(using: locationPermissionsService)
             }
             .onChange(of: visibleLandmarks) { oldVisibleLandmarks, newVisibleLandmarks in
@@ -176,8 +175,6 @@ struct MainMapView: View {
             .apply(theme: theme)
         }
     }
-    
-    // MARK: - Subviews
     
     var addButton: some View {
         DraggableControlButton(
@@ -296,7 +293,7 @@ struct MainMapView: View {
     @ViewBuilder
     var categoriesButton: some View {
         // TODO patmcg move view logic ^ in here if you can
-        let iconName = categoriesService?.hasSelectedCategories ?? false ? "map.fill" : "map"
+        let iconName = categoriesService.hasSelectedCategories ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
         }
@@ -304,6 +301,13 @@ struct MainMapView: View {
     
     // MARK: - Helper Methods
     
+    // TODO patmcg move this to the view model?!?
+    private var visibleLandmarks: [Landmark] {
+        categoriesService.filterLandmarks(allLandmarks)
+    }
+
+    // MARK: - Animation
+
     /// Animate the selected landmarks changing
     private func animateLandmarkChange(
         from previousLandmarks: [Landmark],

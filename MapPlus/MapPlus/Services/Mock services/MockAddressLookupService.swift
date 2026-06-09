@@ -8,7 +8,7 @@ import MapKit
 
 #if DEBUG
 
-/// A mock implementation of `AddressLookupService` for testing and previews.
+/// A mock implementation for testing and previews.
 struct MockAddressLookupService: AddressLookupService {
         
     /// Controls whether the mock should simulate a successful lookup or throw an error.

@@ -20,7 +20,7 @@ protocol MapItemSuggestionService {
 
 /// A basic map items suggestion service that returns simple, predictable results.
 ///
-/// Intended for devices that need consistent results or don't support local AI.
+/// Intended for devices that don't support local AI or that need consistent results, such as tests.
 struct BasicMapItemSuggestionService: MapItemSuggestionService {
     
     func suggestions(for mapItem: MKMapItem) async throws -> MapItemSuggestions {

@@ -15,21 +15,23 @@ struct MapPlusApp: App {
     var body: some Scene {
         WindowGroup {
             MainMapView()
-                .modifier(InjectServicesModifier())
+                .modifier(InjectLiveServicesModifier())
         }
         .modelContainer(try! ModelContainer.persistentContainer())
     }
 }
 
-/// View modifier that injects all services into the environment.
+/// View modifier that injects all live services into the environment.
 /// This must be applied after modelContainer is set up so that services
 /// requiring modelContext can access it.
-private struct InjectServicesModifier: ViewModifier {
+private struct InjectLiveServicesModifier: ViewModifier {
+    
     @Environment(\.modelContext) private var modelContext
     
     func body(content: Content) -> some View {
         content
             .environment(\.locationService, MapKitLocationService())
+            .environment(\.locationPermissionService, MapKitLocationPermissionsService())
             .environment(\.addressLookupService, MapKitAddressLookupService())
             .environment(\.lookAroundService, MapKitLookAroundService())
             .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))
