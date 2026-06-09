@@ -22,8 +22,7 @@ class MapKitLocationPermissionsService: NSObject, CLLocationManagerDelegate, Loc
     // MARK: - CLLocationManagerDelegate
 
     /// Forward authorization changes from the CLLocationManager to the stored callback.
-    func locationManager(_ manager: CLLocationManager,
-                         didChangeAuthorization status: CLAuthorizationStatus) {
-        callback(status)
+    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        callback(manager.authorizationStatus)
     }
 }
