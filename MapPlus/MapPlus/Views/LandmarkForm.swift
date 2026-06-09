@@ -10,6 +10,49 @@ import SwiftData
 
 /// A  view for creating or editing landmarks.
 struct LandmarkForm: View {
+
+    // MARK: Environment
+
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    @Environment(\.modelContext)
+    private var modelContext
+
+    @Environment(\.locationService)
+    private var locationService: LocationService!
+    
+    @Environment(\.addressLookupService)
+    private var addressLookupService: AddressLookupService!
+    
+    @Environment(\.mapItemSuggestionService)
+    private var suggestionsService: MapItemSuggestionService!
+
+    // MARK: View state
+
+    @State
+    private var viewModel: LandmarkFormViewModel
+    
+    @State
+    private var isNotesPreviewEnabled: Bool = false
+    
+    @State
+    private var isNameEdited: Bool = false
+    
+    @State
+    private var didSaveLandmark: Bool = false
+
+    // MARK: Focus
+
+    private enum FocusField: Hashable {
+        case landmarkName
+        case address
+        case symbol
+    }
+    
+    @FocusState private var focusField: FocusField?
+    
+    // MARK: Initializatoin
     
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {
@@ -18,30 +61,7 @@ struct LandmarkForm: View {
         )
     }
 
-    // Environment
-    @Environment(\.locationService) private var locationService: LocationService!
-    @Environment(\.addressLookupService) private var addressLookupService: AddressLookupService!
-    @Environment(\.mapItemSuggestionService) private var suggestionsService: MapItemSuggestionService!
-    
-    // The view model owns the form mode, configuration, and location state
-    @State private var viewModel: LandmarkFormViewModel
-        
-    // Environment
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.modelContext) private var modelContext
-
-    // UI state
-    @State private var isNotesPreviewEnabled: Bool = false
-    @State private var isNameEdited: Bool = false
-    @State private var didSaveLandmark: Bool = false
-
-    // Field focus
-    private enum FocusField: Hashable {
-        case landmarkName
-        case address
-        case symbol
-    }
-    @FocusState private var focusField: FocusField?
+    // MARK: Views
     
     var body: some View {
         Form {
@@ -80,8 +100,6 @@ struct LandmarkForm: View {
             }
         }
     }
-    
-    // MARK: - Subviews
     
     @ViewBuilder
     private var categoriesSection: some View {
@@ -280,9 +298,7 @@ struct LandmarkForm: View {
                 }
             }
         }
-    }
-
-    
+    }    
 }
 
 

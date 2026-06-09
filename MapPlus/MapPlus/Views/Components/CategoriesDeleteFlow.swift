@@ -10,11 +10,15 @@ import Flow
 /// Displays landmark categories, allowing individual categories to be deleted.
 struct CategoriesDeleteFlow: View {
     
+    // MARK: Bindings
+    
     /// The categories list to edit.
     ///
     /// In this case we use a binding (not a @Query) because we want this editing to be in-memory only.
     /// Only once the user saves the changes, do we commit them.
     @Binding var categories: [LandmarkCategory]
+    
+    // MARK: Views
     
     var body: some View {
         if categories.isEmpty {

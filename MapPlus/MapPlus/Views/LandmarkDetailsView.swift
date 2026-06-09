@@ -11,15 +11,23 @@ import MapKit
 /// Displays the details of the given landmark, including notes, address, and a lookaround preview.
 struct LandmarkDetailsView: View {
     
+    // MARK: Properties
+    
     /// The landmark to display
     let landmark: Landmark
     
-    // Environment
-    @Environment(\.dismiss) private var dismiss
-    @Environment(\.lookAroundService) var lookAroundService: LookAroundService!
+    // MARK: Environment
     
-    // UI state
-    @State private var isEditorShowing: Bool = false
+    @Environment(\.dismiss)
+    private var dismiss
+    
+    @Environment(\.lookAroundService)
+    var lookAroundService: LookAroundService!
+    
+    // MARK: View state
+    
+    @State
+    private var isEditorShowing: Bool = false
 
     // Segmented picker
     private enum Section: String, CaseIterable, Identifiable {

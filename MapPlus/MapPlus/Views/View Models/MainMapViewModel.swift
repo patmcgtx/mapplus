@@ -13,7 +13,7 @@ import MapKit
 @Observable @MainActor
 final class MainMapViewModel {
     
-    // MARK: - UI State
+    // MARK: UI State
     
     /// Whether the landmarks list sheet is showing
     var showingLandmarkList: Bool = false
@@ -27,7 +27,7 @@ final class MainMapViewModel {
     /// Used to trigger sensory feedback when locate button is tapped
     var didTapLocate: Bool = false
     
-    // MARK: - Map State
+    // MARK: Map State
     
     /// The current camera position of the map
     var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
@@ -35,7 +35,7 @@ final class MainMapViewModel {
     /// The currently selected landmark (shows detail sheet)
     var selectedLandmark: Landmark?
             
-    // MARK: - Initialization
+    // MARK: Initialization
     
     init() {}
     

@@ -8,20 +8,33 @@
 import SwiftUI
 import SwiftData
 
-// TODO patmcg doc
+/// Displays an editable list of landmarks
 struct LandmarksView : View {
 
-    // Environment
-    @Environment(\.dismiss) var dismiss
+    // MARK: Environment
+    
+    @Environment(\.dismiss)
+    var dismiss
+    
+    // MARK: Persistence
+    @Environment(\.modelContext)
+    private var modelContext
+    
+    @Query(sort: \Landmark.name, order: .forward)
+    var landmarks: [Landmark]
+    
+    // MARK: View state
 
-    // UI state
-    @State private var showLandmarkForm: Bool = false
-    @State private var landmarkToEdit: Landmark? = nil
-    @State private var didDeleteLandmark: Bool = false
-
-    // Persistence
-    @Environment(\.modelContext) private var modelContext
-    @Query(sort: \Landmark.name, order: .forward) var landmarks: [Landmark]
+    @State
+    private var showLandmarkForm: Bool = false
+    
+    @State
+    private var landmarkToEdit: Landmark? = nil
+    
+    @State
+    private var didDeleteLandmark: Bool = false
+    
+    // MARK: Views
     
     var body: some View {
         NavigationStack {
@@ -65,12 +78,15 @@ struct LandmarksView : View {
         }
     }
     
-    // MARK: - Helper Methods
+    // MARK: Private helpers
     
     /// Deletes landmarks at the specified index set from the SwiftData model context.
     ///
     /// - Parameter offsets: The index set indicating which landmarks to delete from the list.
     private func deleteLandmarks(at offsets: IndexSet) {
+        
+        // TODO patmcg can we call LandmarkStorage instead if this method?
+        
         for index in offsets {
             let landmarkToDelete = landmarks[index]
             let store = LandmarkStore(modelContext: self.modelContext)

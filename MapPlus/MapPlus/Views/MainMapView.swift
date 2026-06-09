@@ -12,7 +12,7 @@ import MapKit
 /// The main map view, aka the "home" view.
 struct MainMapView: View {
         
-    // MARK: Services
+    // MARK: Environment
     
     @Environment(\.locationPermissionService)
     private var locationPermissionsService: LocationPermissionsService
@@ -30,30 +30,38 @@ struct MainMapView: View {
 
     // MARK: Persistence
     
-    @Environment(\.modelContext) private var modelContext
+    @Environment(\.modelContext)
+    private var modelContext
     
-    @Query(sort: \Landmark.name, order: .reverse) var allLandmarks: [Landmark]
+    @Query(sort: \Landmark.name, order: .reverse)
+    var allLandmarks: [Landmark]
     
     // MARK: View state
     
-    @State private var viewModel = MainMapViewModel()
+    @State
+    private var viewModel = MainMapViewModel()
 
     // MARK: Animation State
     
     /// Landmarks that should show a glow effect
-    @State private var glowingLandmarks: Set<Landmark> = []
+    @State
+    private var glowingLandmarks: Set<Landmark> = []
     
     /// Fading glow animations for removed landmarks
-    @State private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
+    @State
+    private var fadingGlows: [UUID: CLLocationCoordinate2D] = [:]
     
     /// Scale values for fading glow animations
-    @State private var glowScales: [UUID: CGFloat] = [:]
+    @State
+    private var glowScales: [UUID: CGFloat] = [:]
     
     /// Opacity values for fading glow animations
-    @State private var glowOpacities: [UUID: Double] = [:]
+    @State
+    private var glowOpacities: [UUID: Double] = [:]
     
     /// Active animation task (for cancellation)
-    @State private var animationTask: Task<Void, Never>?
+    @State
+    private var animationTask: Task<Void, Never>?
         
     // MARK: - Views
     
@@ -299,14 +307,14 @@ struct MainMapView: View {
         }
     }
     
-    // MARK: - Helper Methods
+    // MARK: Private helpers
     
     // TODO patmcg move this to the view model?!?
     private var visibleLandmarks: [Landmark] {
         categoriesService.filterLandmarks(allLandmarks)
     }
 
-    // MARK: - Animation
+    // MARK: Animation
 
     /// Animate the selected landmarks changing
     private func animateLandmarkChange(
