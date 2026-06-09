@@ -52,7 +52,7 @@ struct LandmarkForm: View {
     
     @FocusState private var focusField: FocusField?
     
-    // MARK: Initializatoin
+    // MARK: Initialization
     
     /// Creates a form to create or edit a landmark
     init(mode: LandmarkFormViewModel.Mode) {

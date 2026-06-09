@@ -25,9 +25,6 @@ struct CategoriesSelectFlow: View {
 
     // MARK: Persistence
     
-    @Environment(\.modelContext)
-    private var modelContext
-    
     @Query(sort: \LandmarkCategory.name)
     private var allCategories: [LandmarkCategory]
     
@@ -50,7 +47,7 @@ struct CategoriesSelectFlow: View {
                         categoriesService.clearAllSelections()
                     }
                     .buttonStyle(.bordered)
-                    .disabled(categoriesService.hasSelectedCategories != true)
+                    .disabled(!categoriesService.hasSelectedCategories)
                     
                     Divider()
                         .frame(height: 20)
