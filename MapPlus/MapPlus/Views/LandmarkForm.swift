@@ -187,15 +187,15 @@ struct LandmarkForm: View {
                     TextEditor(text: $viewModel.notes)
                         .textInputAutocapitalization(.sentences)
                         .autocorrectionDisabled(false)
-                    Button(
-                        action: {
-                            withAnimation(.spring) {
-                                viewModel.applySuggestedNotes()
-                            }
-                        },
-                        label: {
-                            Image(systemName: "apple.intelligence")
-                        })
+                    Button {
+                        withAnimation(.spring) {
+                            viewModel.applySuggestedNotes()
+                        }
+                    } label: {
+                        Label("apply-suggested-notes".localized, systemImage: "apple.intelligence")
+                            .labelStyle(.iconOnly)
+                    }
+                    .disabled(viewModel.suggestedNotes.isEmpty)
                 }
             }
         }
