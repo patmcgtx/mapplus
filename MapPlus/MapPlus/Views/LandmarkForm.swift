@@ -189,8 +189,8 @@ struct LandmarkForm: View {
                         .autocorrectionDisabled(false)
                     Button(
                         action: {
-                            withAnimation(.easeOut) {
-                                viewModel.notes = viewModel.suggestedNotes
+                            withAnimation(.spring) {
+                                viewModel.applySuggestedNotes()
                             }
                         },
                         label: {

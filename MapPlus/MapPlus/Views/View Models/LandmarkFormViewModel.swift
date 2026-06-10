@@ -212,7 +212,9 @@ final class LandmarkFormViewModel {
         }
     }
 
-    // TODO patmcg doc
+    /// Searches for locations based on the text in `locationSearchInput`. Updates this view model's state once completed.
+    /// - Parameter addressLookupService: The service implementation to use for the location search
+    /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func searchByText(
         using addressLookupService: any AddressLookupService,
         suggestionsService: any MapItemSuggestionService
@@ -231,6 +233,15 @@ final class LandmarkFormViewModel {
             }
         } catch {
             addressSearchState = .searchFailed(error)
+        }
+    }
+    
+    /// Appends pre-generated suggested notes to to the current notes field
+    func applySuggestedNotes() {
+        if self.notes.isEmpty {
+            self.notes = suggestedNotes
+        } else {
+            self.notes += "\n\n" + suggestedNotes
         }
     }
 
