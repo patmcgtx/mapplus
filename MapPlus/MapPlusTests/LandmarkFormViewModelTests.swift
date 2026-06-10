@@ -452,6 +452,13 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
+        mockLocationService.customAddress = LocationInfo(
+            briefDescription: "Mock SF",
+            fullDescription: "(Mock) San Francisco, CA, United States",
+            latitude: 37.7749,
+            longitude: -122.4194,
+            suggestedNotes: "Suggested notes"
+        )
         
         // Initialize location to populate suggestedNotes
         await viewModel.initializeLocation(using: mockLocationService)
@@ -469,6 +476,13 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesNotEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
+        mockLocationService.customAddress = LocationInfo(
+            briefDescription: "Mock SF",
+            fullDescription: "(Mock) San Francisco, CA, United States",
+            latitude: 37.7749,
+            longitude: -122.4194,
+            suggestedNotes: "Suggested notes"
+        )
         
         // Initialize location to populate suggestedNotes
         await viewModel.initializeLocation(using: mockLocationService)
@@ -488,6 +502,13 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesMultipleTimes() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
+        mockLocationService.customAddress = LocationInfo(
+            briefDescription: "Mock SF",
+            fullDescription: "(Mock) San Francisco, CA, United States",
+            latitude: 37.7749,
+            longitude: -122.4194,
+            suggestedNotes: "Suggested notes"
+        )
         
         // Initialize location to populate suggestedNotes
         await viewModel.initializeLocation(using: mockLocationService)
@@ -536,4 +557,3 @@ private struct FailingLandmarkStore: LandmarkStoring {
         throw SaveError()
     }
 }
-
