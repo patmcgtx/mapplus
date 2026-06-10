@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 import MapKit
 
-
+// TODO patmcg move this to a "Sample data" folder
 
 /// Some sample landmarks for development and testing.
 struct SampleLandmarks {

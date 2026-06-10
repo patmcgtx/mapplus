@@ -6,6 +6,7 @@
 import MapKit
 
 // TODO patmcg convert this to async/await?
+// TODO patmcg add a mock LocationPermissionsService and use in InjectMockServicesModifier
 
 /// A protocol to request CoreLocation permissions
 protocol LocationPermissionsService {
