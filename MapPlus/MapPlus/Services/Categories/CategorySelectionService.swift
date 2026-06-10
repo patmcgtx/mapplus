@@ -47,7 +47,9 @@ protocol CategorySelectionService {
 /// Default implementation of CategorySelectionService using SwiftData for persistence
 @Observable
 class DefaultCategorySelectionService: CategorySelectionService {
-    
+
+    // TODO patmcg rename to SwiftDataCategorySelectionService and move to its own file
+
     // MARK: - Dependencies
     
     private let modelContext: ModelContext
