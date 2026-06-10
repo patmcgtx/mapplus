@@ -6,7 +6,6 @@
 //
 
 import CoreLocation
-import MapKit
 
 /// A model representing a geographic location, including a display description and coordinates.
 /// Used across layers of the app as a common in-memory representation of a location.
