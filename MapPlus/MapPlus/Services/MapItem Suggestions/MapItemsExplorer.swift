@@ -35,7 +35,8 @@ struct MapItemsExplorer {
             fullDescription: mapItem.fullDescription,
             coordinates: mapItem.location.coordinate,
             suggestedNotes: suggestions.notes,
-            suggestedSymbol: suggestions.symbol
+            suggestedSymbol: suggestions.symbol,
+            backingMapItem: mapItem
         )
     }
 }

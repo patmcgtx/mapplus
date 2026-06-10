@@ -183,9 +183,18 @@ struct LandmarkForm: View {
             if isNotesPreviewEnabled {
                 MarkdownPreview(markdown: viewModel.notes)
             } else {
-                TextEditor(text: $viewModel.notes)
-                    .textInputAutocapitalization(.sentences)
-                    .autocorrectionDisabled(false)
+                HStack {
+                    TextEditor(text: $viewModel.notes)
+                        .textInputAutocapitalization(.sentences)
+                        .autocorrectionDisabled(false)
+                    Button(
+                        action: {
+                            viewModel.notes = viewModel.suggestedNotes
+                        },
+                        label: {
+                            Image(systemName: "apple.intelligence")
+                        })
+                }
             }
         }
     }    

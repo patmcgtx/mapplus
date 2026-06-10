@@ -26,7 +26,7 @@ struct BasicMapItemSuggestionService: MapItemSuggestionService {
     func suggestions(for mapItem: MKMapItem) async throws -> MapItemSuggestions {
         return MapItemSuggestions(
             name: mapItem.name ?? "",
-            notes: "",
+            notes: "Notes for \(mapItem.name ?? "")",
             symbol: "📍"
         )
     }

@@ -44,7 +44,8 @@ class MockLocationService: LocationService {
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
-            longitude: -122.4194
+            longitude: -122.4194,
+            backingMapItem: nil
         )
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import CoreLocation
+import MapKit
 
 /// A model representing a geographic location, including a display description and coordinates.
 /// Used across layers of the app as a common in-memory representation of a location.
@@ -25,6 +26,9 @@ struct LocationInfo {
     
     /// Generated symbol for this location
     let suggestedSymbol: String
+    
+    /// The associated raw map item
+    let backingMapItem: MKMapItem?
 
     /// Creates a `LocationInfo` instance with the specified description and coordinates.
     /// - Parameters:
@@ -39,13 +43,15 @@ struct LocationInfo {
             longitude: 0.0
         ),
         suggestedNotes: String = "",
-        suggestedSymbol: String = "📍"
+        suggestedSymbol: String = "📍",
+        backingMapItem: MKMapItem?
     ) {
         self.briefDescription = briefDescription
         self.fullDescription = fullDescription
         self.coordinates = coordinates
         self.suggestedNotes = suggestedNotes
         self.suggestedSymbol = suggestedSymbol
+        self.backingMapItem = backingMapItem
     }
 
     /// Creates a `LocationInfo` instance with the specified description and lat/lon.
@@ -60,7 +66,8 @@ struct LocationInfo {
         latitude: CLLocationDegrees,
         longitude: CLLocationDegrees,
         suggestedNotes: String = "",
-        suggestedSymbol: String = "📍"
+        suggestedSymbol: String = "📍",
+        backingMapItem: MKMapItem?
     ) {
         self.briefDescription = briefDescription
         self.fullDescription = fullDescription
@@ -70,6 +77,7 @@ struct LocationInfo {
         )
         self.suggestedNotes = suggestedNotes
         self.suggestedSymbol = suggestedSymbol
+        self.backingMapItem = backingMapItem
     }
 }
 
