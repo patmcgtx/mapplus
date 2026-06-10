@@ -79,6 +79,9 @@ final class LandmarkFormViewModel {
 
     /// The text entered in the location search field
     var locationSearchInput: String = ""
+    
+    /// Generated suggested notes for the landmark in edit
+    private(set) var suggestedNotes = ""
 
     // MARK: - Form Fields (exposed to view via bindings)
     
@@ -202,12 +205,15 @@ final class LandmarkFormViewModel {
                     briefDescription: landmarkInEdit.name,
                     fullDescription: landmarkInEdit.formattedAddress,
                     latitude: landmarkInEdit.location.latitude,
-                    longitude: landmarkInEdit.location.longitude,
+                    longitude: landmarkInEdit.location.longitude
                 )
             )
         }
     }
 
+    /// Searches for locations based on the text in `locationSearchInput`. Updates this view model's state once completed.
+    /// - Parameter addressLookupService: The service implementation to use for the location search
+    /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func searchByText(
         using addressLookupService: any AddressLookupService,
         suggestionsService: any MapItemSuggestionService
@@ -228,6 +234,15 @@ final class LandmarkFormViewModel {
             addressSearchState = .searchFailed(error)
         }
     }
+    
+    /// Appends pre-generated suggested notes to the current notes field
+    func applySuggestedNotes() {
+        if self.notes.isEmpty {
+            self.notes = suggestedNotes
+        } else {
+            self.notes += "\n\n" + suggestedNotes
+        }
+    }
 
     // MARK: - Private helpers
 
@@ -241,6 +256,7 @@ final class LandmarkFormViewModel {
         landmarkInEdit.latitude = address.coordinates.latitude
         landmarkInEdit.longitude = address.coordinates.longitude
         symbol = address.suggestedSymbol
+        suggestedNotes = address.suggestedNotes
     }
 
 }
