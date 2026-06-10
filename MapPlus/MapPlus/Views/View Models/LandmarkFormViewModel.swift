@@ -6,7 +6,6 @@
 //
 import SwiftData
 import Foundation
-import MapKit
 
 /// View model that provides state and logic for `LandmarkForm`.
 @Observable @MainActor
@@ -236,7 +235,7 @@ final class LandmarkFormViewModel {
         }
     }
     
-    /// Appends pre-generated suggested notes to to the current notes field
+    /// Appends pre-generated suggested notes to the current notes field
     func applySuggestedNotes() {
         if self.notes.isEmpty {
             self.notes = suggestedNotes
