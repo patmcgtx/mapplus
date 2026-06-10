@@ -446,6 +446,82 @@ struct LandmarkFormViewModelTests {
         
         #expect(viewModel.unassignedCategories.count == 2)
     }
+    
+    // MARK: - applySuggestedNotes
+    
+    @Test func testApplySuggestedNotesWhenNotesEmpty() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockLocationService = MockLocationService()
+        
+        // Initialize location to populate suggestedNotes
+        await viewModel.initializeLocation(using: mockLocationService)
+        
+        // Verify notes is empty initially
+        #expect(viewModel.notes == "")
+        
+        // Apply suggested notes
+        viewModel.applySuggestedNotes()
+        
+        // Notes should now contain the suggested notes
+        #expect(viewModel.notes == viewModel.suggestedNotes)
+    }
+    
+    @Test func testApplySuggestedNotesWhenNotesNotEmpty() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockLocationService = MockLocationService()
+        
+        // Initialize location to populate suggestedNotes
+        await viewModel.initializeLocation(using: mockLocationService)
+        
+        // Set existing notes
+        viewModel.notes = "My existing notes"
+        
+        let expectedSuggestedNotes = viewModel.suggestedNotes
+        
+        // Apply suggested notes
+        viewModel.applySuggestedNotes()
+        
+        // Notes should have suggested notes appended with two newlines
+        #expect(viewModel.notes == "My existing notes\n\n\(expectedSuggestedNotes)")
+    }
+    
+    @Test func testApplySuggestedNotesMultipleTimes() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockLocationService = MockLocationService()
+        
+        // Initialize location to populate suggestedNotes
+        await viewModel.initializeLocation(using: mockLocationService)
+        
+        // Set existing notes
+        viewModel.notes = "My existing notes"
+        
+        let expectedSuggestedNotes = viewModel.suggestedNotes
+        
+        // Apply suggested notes
+        viewModel.applySuggestedNotes()
+        
+        // Notes should have suggested notes appended with two newlines
+        #expect(viewModel.notes == "My existing notes\n\n\(expectedSuggestedNotes)")
+
+        // Apply suggested notes again
+        viewModel.applySuggestedNotes()
+        
+        // Notes should have suggested notes appended with two newlines
+        #expect(viewModel.notes == "My existing notes\n\n\(expectedSuggestedNotes)\n\n\(expectedSuggestedNotes)")
+    }
+    
+    @Test func testApplySuggestedNotesWhenSuggestedNotesEmpty() {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        
+        // suggestedNotes is empty by default (no location initialized)
+        #expect(viewModel.suggestedNotes == "")
+        
+        viewModel.notes = "My notes"
+        viewModel.applySuggestedNotes()
+        
+        // Should append empty string with separator
+        #expect(viewModel.notes == "My notes\n\n")
+    }
 
 }
 
