@@ -81,9 +81,7 @@ final class LandmarkFormViewModel {
     /// The text entered in the location search field
     var locationSearchInput: String = ""
     
-    /// The map item associated with the landmark in edit
-    private(set) var backingMapItem: MKMapItem?
-    
+    /// Generated suggested notes for the landmark in edit
     private(set) var suggestedNotes = ""
 
     // MARK: - Form Fields (exposed to view via bindings)
@@ -198,7 +196,6 @@ final class LandmarkFormViewModel {
         case .create:
             do {
                 let resolvedAddress = try await locationService.getCurrentLocation()
-                // TODO patmcg set backingMapItem once we have an MKMapItem here
                 applyLocationResult(resolvedAddress, updateSearchInput: false)
             } catch {
                 // TODO patmcg revisit error handling - not a user-impactting error?
@@ -209,8 +206,7 @@ final class LandmarkFormViewModel {
                     briefDescription: landmarkInEdit.name,
                     fullDescription: landmarkInEdit.formattedAddress,
                     latitude: landmarkInEdit.location.latitude,
-                    longitude: landmarkInEdit.location.longitude,
-                    backingMapItem: nil // TODO patmcg add map item once I have one here
+                    longitude: landmarkInEdit.location.longitude
                 )
             )
         }
@@ -251,7 +247,6 @@ final class LandmarkFormViewModel {
         landmarkInEdit.longitude = address.coordinates.longitude
         symbol = address.suggestedSymbol
         suggestedNotes = address.suggestedNotes
-        self.backingMapItem = address.backingMapItem
     }
 
 }

@@ -189,7 +189,9 @@ struct LandmarkForm: View {
                         .autocorrectionDisabled(false)
                     Button(
                         action: {
-                            viewModel.notes = viewModel.suggestedNotes
+                            withAnimation(.easeOut) {
+                                viewModel.notes = viewModel.suggestedNotes
+                            }
                         },
                         label: {
                             Image(systemName: "apple.intelligence")

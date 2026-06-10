@@ -51,8 +51,7 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
             briefDescription: placemark.name ?? "",
             fullDescription: formattedAddress,
             latitude: location.coordinate.latitude,
-            longitude: location.coordinate.longitude,
-            backingMapItem: nil // TODO patmcg add map item once I have one here
+            longitude: location.coordinate.longitude
         )
     }
     
