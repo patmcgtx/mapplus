@@ -10,13 +10,18 @@ import MapKit
 #if DEBUG
 
 /// A mock implementation for testing and previews.
-class MockLocationService: LocationService {
+class MockLocationService: LocationService {    
+    
+    // TODO add an initializer and use in InjectMockServicesModifier or for previews 
     
     // TODO patmcg implement
     func nearbyMapItems() async throws -> [MKMapItem] {
         return []
     }
-    
+
+    /// Controls how long to delay before return mock results
+    var delaySeconds: Double = 0.0
+
     /// Controls whether the mock should simulate a successful location fetch or throw an error.
     var shouldSucceed: Bool = true
     
@@ -29,7 +34,7 @@ class MockLocationService: LocationService {
     func getCurrentLocation() async throws -> LocationInfo {
         
         // Simulate network/location delay
-        try await Task.sleep(for: .seconds(5))
+        try await Task.sleep(for: .seconds(delaySeconds))
         
         if !shouldSucceed {
             throw MapPlusError.noAddressFound
