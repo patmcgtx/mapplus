@@ -20,3 +20,34 @@ struct MapItemSuggestions {
     @Guide(description: "A single emoji to represent the location")
     let symbol: String
 }
+
+@Generable
+struct MapItemCategorySuggestions {
+    
+    @Guide(description: "Potential categories for the location")
+    
+    @Guide(
+        description: "Most important business types in the input text, for example categories like 'Restaurant', 'Café', 'Hotel', 'Gym', etc.",
+        .maximumCount(5)
+    )
+    let businessType: [String]
+
+    @Guide(
+        description: "Most important moods in the input text, for example categories like 'Fun', 'Retro', 'Comforting', 'Classy', 'Romantic', etc.",
+        .maximumCount(5)
+    )
+    let moods: [String]
+
+    @Guide(
+        description: "Most important activities in the input text, for example categories like 'Date', 'Studying', 'Yoga', etc.",
+        .maximumCount(5)
+    )
+    let activities: [String]
+
+    @Guide(
+        description: "Most important settings in the input text, for example categories like 'Outdoors', 'Nature', 'Sunny', 'Beach', etc.",
+        .maximumCount(5)
+    )
+    let settings: [String]
+
+}

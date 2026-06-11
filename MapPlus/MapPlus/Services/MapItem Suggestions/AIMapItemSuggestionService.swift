@@ -33,14 +33,20 @@ final class AIMapItemSuggestionService: MapItemSuggestionService {
     }
 
     func categories(for mapItem: MKMapItem) async throws -> [String] {
+        
         let prompt = """
-                \(mapItem.name ?? "unknown location") 
-                in \(mapItem.addressRepresentations?.cityWithContext(.full) ?? "unknown city")
+                Categories for map item \(mapItem.name ?? "unknown location") 
+                in \(mapItem.addressRepresentations?.cityWithContext(.full) ?? "unknown city").
+                Suggested categories: '1990s', 'bars', 'breakfast', 'cafes', 'family', 'fun',
+                'history', 'lunch', 'music', 'nature', 'open early', 'open late', 'work'
                 """
+        
         let response = try await taggingSession.respond(
             to: prompt,
-            generating: [String].self
+            generating: MapItemCategorySuggestions.self
         )
-        return response.content
+        
+        let result: MapItemCategorySuggestions = response.content        
+        return result.businessType + result.moods + result.activities + result.settings
     }
 }
