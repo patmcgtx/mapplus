@@ -16,6 +16,12 @@ protocol MapItemSuggestionService {
     /// - Parameter mapItem: The map item to process
     /// - Returns: Suggestions for the given map item, i.e. name, icon, etc
     func suggestions(for mapItem: MKMapItem) async throws -> MapItemSuggestions
+    
+    /// Generates suggested categories  for a map item
+    /// - Parameter mapItem: The map item to process
+    /// - Returns: Suggestions for the given map item, i.e. name, icon, etc
+    func categories(for mapItem: MKMapItem) async throws -> [String]
+
 }
 
 /// A basic map items suggestion service that returns simple, predictable results.
@@ -29,5 +35,9 @@ struct BasicMapItemSuggestionService: MapItemSuggestionService {
             notes: "",
             symbol: "📍"
         )
+    }
+    
+    func categories(for mapItem: MKMapItem) async throws -> [String] {
+        return [] // No categories by default
     }
 }

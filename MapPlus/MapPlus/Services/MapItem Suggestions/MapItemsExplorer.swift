@@ -30,12 +30,16 @@ struct MapItemsExplorer {
         guard let mapItem = iterator.next(),
               let suggestions = try? await suggestionService.suggestions(for: mapItem)
         else { return nil }
+        
+        let suggestedCategoryNames = try? await suggestionService.categories(for: mapItem)
+        
         return LocationInfo(
             briefDescription: mapItem.name ?? suggestions.name,
             fullDescription: mapItem.fullDescription,
             coordinates: mapItem.location.coordinate,
             suggestedNotes: suggestions.notes,
-            suggestedSymbol: suggestions.symbol
+            suggestedSymbol: suggestions.symbol,
+            suggestedCategoryNames: suggestedCategoryNames ?? []
         )
     }
 }

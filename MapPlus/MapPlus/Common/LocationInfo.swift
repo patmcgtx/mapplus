@@ -25,6 +25,9 @@ struct LocationInfo {
     
     /// Generated symbol for this location
     let suggestedSymbol: String
+    
+    /// Suggested category names
+    let suggestedCategoryNames: [String]
 
     /// Creates a `LocationInfo` instance with the specified description and coordinates.
     /// - Parameters:
@@ -39,13 +42,15 @@ struct LocationInfo {
             longitude: 0.0
         ),
         suggestedNotes: String = "",
-        suggestedSymbol: String = "📍"
+        suggestedSymbol: String = "📍",
+        suggestedCategoryNames: [String] = []
     ) {
         self.briefDescription = briefDescription
         self.fullDescription = fullDescription
         self.coordinates = coordinates
         self.suggestedNotes = suggestedNotes
         self.suggestedSymbol = suggestedSymbol
+        self.suggestedCategoryNames = suggestedCategoryNames
     }
 
     /// Creates a `LocationInfo` instance with the specified description and lat/lon.
@@ -60,7 +65,8 @@ struct LocationInfo {
         latitude: CLLocationDegrees,
         longitude: CLLocationDegrees,
         suggestedNotes: String = "",
-        suggestedSymbol: String = "📍"
+        suggestedSymbol: String = "📍",
+        suggestedCategoryNames: [String] = []
     ) {
         self.briefDescription = briefDescription
         self.fullDescription = fullDescription
@@ -70,6 +76,7 @@ struct LocationInfo {
         )
         self.suggestedNotes = suggestedNotes
         self.suggestedSymbol = suggestedSymbol
+        self.suggestedCategoryNames = suggestedCategoryNames
     }
 }
 

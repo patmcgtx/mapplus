@@ -20,7 +20,3 @@ struct MapItemSuggestions {
     @Guide(description: "A single emoji to represent the location")
     let symbol: String
 }
-
-
-
-
