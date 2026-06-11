@@ -19,8 +19,8 @@ protocol MapItemSuggestionService {
     
     /// Generates suggested categories  for a map item
     /// - Parameter mapItem: The map item to process
-    /// - Returns: Suggestions for the given map item, i.e. name, icon, etc
-    func categories(for mapItem: MKMapItem) async throws -> [String]
+    /// - Returns: Single-word, lowercase category name suggestions for the given map item, e.g. "cafe", "nature", etc.
+    func categoryNames(for mapItem: MKMapItem) async throws -> Set<String>
 
 }
 
@@ -37,7 +37,7 @@ struct BasicMapItemSuggestionService: MapItemSuggestionService {
         )
     }
     
-    func categories(for mapItem: MKMapItem) async throws -> [String] {
+    func categoryNames(for mapItem: MKMapItem) async throws -> Set<String> {
         return [] // No categories by default
     }
 }

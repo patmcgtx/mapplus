@@ -32,7 +32,7 @@ final class AIMapItemSuggestionService: MapItemSuggestionService {
         return response.content
     }
 
-    func categories(for mapItem: MKMapItem) async throws -> [String] {
+    func categoryNames(for mapItem: MKMapItem) async throws -> Set<String> {
         
         let prompt = """
                 Categories for map item \(mapItem.name ?? "unknown location") 
@@ -47,6 +47,8 @@ final class AIMapItemSuggestionService: MapItemSuggestionService {
         )
         
         let result: MapItemCategorySuggestions = response.content        
-        return result.businessType + result.moods + result.activities + result.settings
+        let combined = result.businessType + result.moods + result.activities + result.settings
+        let uniqueWords = Set(combined.flatMap { $0.split(separator: " ").map(String.init) })
+        return uniqueWords
     }
 }

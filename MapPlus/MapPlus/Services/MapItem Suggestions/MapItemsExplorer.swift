@@ -31,7 +31,8 @@ struct MapItemsExplorer {
               let suggestions = try? await suggestionService.suggestions(for: mapItem)
         else { return nil }
         
-        let suggestedCategoryNames = try? await suggestionService.categories(for: mapItem)
+        // TODO patmcg find a way to map suggestedCategoryNames to actual categories
+        let suggestedCategoryNames = try? await Array(suggestionService.categoryNames(for: mapItem))
         
         return LocationInfo(
             briefDescription: mapItem.name ?? suggestions.name,
