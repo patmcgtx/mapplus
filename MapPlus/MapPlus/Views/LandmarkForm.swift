@@ -228,7 +228,7 @@ struct LandmarkForm: View {
                     .autocorrectionDisabled(false)
                     .onSubmit {
                         Task {
-                            await viewModel.searchByText(
+                            await viewModel.locationTextSearch(
                                 using: addressLookupService,
                                 suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
                             )
@@ -236,7 +236,7 @@ struct LandmarkForm: View {
                     }
                     Button {
                         Task {
-                            await viewModel.searchByText(
+                            await viewModel.locationTextSearch(
                                 using: addressLookupService,
                                 suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
                             )

@@ -155,7 +155,7 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "San Francisco")
@@ -172,7 +172,7 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.briefDescription == "San Francisco")
@@ -188,7 +188,7 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "Nowhere"
         let mockService = MockAddressLookupService(shouldSucceed: false)
 
-        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchFailed = viewModel.addressSearchState {
             // Expected
