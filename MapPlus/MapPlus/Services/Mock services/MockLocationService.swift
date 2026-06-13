@@ -6,17 +6,37 @@
 //
 import CoreLocation
 import MapKit
+import Contacts
 
 #if DEBUG
 
 /// A mock implementation for testing and previews.
 class MockLocationService: LocationService {    
     
-    // TODO add an initializer and use in InjectMockServicesModifier or for previews 
-    
-    // TODO patmcg implement
     func nearbyMapItems() async throws -> [MKMapItem] {
-        return []
+        
+        // Apply delay if configured
+        if delaySeconds > 0 {
+            try await Task.sleep(for: .seconds(delaySeconds))
+        }
+        
+        // Simulate error if configured
+        guard shouldSucceed else {
+            throw MapPlusError.noLocationInfo
+        }
+        
+        // Convert LocationInfo items to MKMapItem
+        return customAddresses.map { locationInfo in
+            let placemark = MKPlacemark(
+                coordinate: locationInfo.coordinates,
+                addressDictionary: [
+                    CNPostalAddressStreetKey: locationInfo.fullDescription
+                ]
+            )
+            let mapItem = MKMapItem(placemark: placemark)
+            mapItem.name = locationInfo.briefDescription
+            return mapItem
+        }
     }
 
     /// Controls how long to delay before return mock results
@@ -26,7 +46,7 @@ class MockLocationService: LocationService {
     var shouldSucceed: Bool = true
     
     /// Optional custom address to return instead of using the default mock data.
-    var customAddress: LocationInfo?
+    var customAddresses: [LocationInfo] = []
 }
 
 #endif // DEBUG
