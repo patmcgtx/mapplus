@@ -216,11 +216,12 @@ final class LandmarkFormViewModel {
                 )
                 if let locationInfo = await itemsExplorer.nextMapItem() {
                     applyLocationResult(locationInfo, updateSearchInput: true)
-                } else {
-                    addressSearchState = .searchFailed(MapPlusError.noLocationInfo)
                 }
+                // Note: If location initialization fails in create mode, we silently
+                // stay at .searchInitial to allow the user to manually enter a location
             } catch {
-                addressSearchState = .searchFailed(error)
+                // Location failure on create is silent; state stays at searchInitial
+                // This allows the user to manually search for a location
             }
         case .edit:
             addressSearchState = .searchResolved(

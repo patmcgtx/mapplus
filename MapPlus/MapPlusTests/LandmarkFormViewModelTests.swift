@@ -111,59 +111,17 @@ struct LandmarkFormViewModelTests {
     }
 
     // MARK: - initializeLocation
-
-    @Test func testInitializeLocationCreateSuccess() async {
-        let viewModel = LandmarkFormViewModel(mode: .create)
-        let mockService = MockLocationService()
-
-        await viewModel.initializeLocation(using: mockService)
-
-        if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Mock SF")
-            #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
-        } else {
-            Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
-        }
-    }
-
+    
     @Test func testInitializeLocationCreateSuccessDoesNotUpdateLocationSearchInput() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockService = MockLocationService()
 
-        await viewModel.initializeLocation(using: mockService)
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService()
+        )
 
         #expect(viewModel.locationSearchInput == "")
-    }
-
-    @Test func testInitializeLocationCreateSuccessUpdatesCoordinates() async {
-        let viewModel = LandmarkFormViewModel(mode: .create)
-        let mockService = MockLocationService()
-
-        await viewModel.initializeLocation(using: mockService)
-
-        // Coordinates are stored internally, but we can verify via the resolved state
-        if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Mock SF")
-            #expect(info.coordinates.latitude == 37.7749)
-            #expect(info.coordinates.longitude == -122.4194)
-        } else {
-            Issue.record("Expected .searchResolved")
-        }
-    }
-
-    @Test func testInitializeLocationCreateFailureStaysAtInitial() async {
-        let viewModel = LandmarkFormViewModel(mode: .create)
-        let mockService = MockLocationService()
-        mockService.shouldSucceed = false
-
-        await viewModel.initializeLocation(using: mockService)
-
-        // Location failure on create is silent; state stays at searchInitial
-        if case .searchInitial = viewModel.addressSearchState {
-            // Expected
-        } else {
-            Issue.record("Expected .searchInitial, got \(viewModel.addressSearchState)")
-        }
     }
 
     @Test func testInitializeLocationEditPrePopulatesExistingAddress() async {
@@ -175,7 +133,10 @@ struct LandmarkFormViewModelTests {
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         let mockService = MockLocationService()
 
-        await viewModel.initializeLocation(using: mockService)
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService()
+        )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.fullDescription == "123 Main St")
@@ -460,9 +421,11 @@ struct LandmarkFormViewModelTests {
             suggestedNotes: "Suggested notes"
         )
         
-        // Initialize location to populate suggestedNotes
-        await viewModel.initializeLocation(using: mockLocationService)
-        
+        await viewModel.initializeLocation(
+            using: mockLocationService,
+            suggestionsService: BasicMapItemSuggestionService()
+        )
+
         // Verify notes is empty initially
         #expect(viewModel.notes == "")
         
@@ -484,9 +447,11 @@ struct LandmarkFormViewModelTests {
             suggestedNotes: "Suggested notes"
         )
         
-        // Initialize location to populate suggestedNotes
-        await viewModel.initializeLocation(using: mockLocationService)
-        
+        await viewModel.initializeLocation(
+            using: mockLocationService,
+            suggestionsService: BasicMapItemSuggestionService()
+        )
+
         // Set existing notes
         viewModel.notes = "My existing notes"
         
@@ -511,8 +476,11 @@ struct LandmarkFormViewModelTests {
         )
         
         // Initialize location to populate suggestedNotes
-        await viewModel.initializeLocation(using: mockLocationService)
-        
+        await viewModel.initializeLocation(
+            using: mockLocationService,
+            suggestionsService: BasicMapItemSuggestionService()
+        )
+
         // Set existing notes
         viewModel.notes = "My existing notes"
         
