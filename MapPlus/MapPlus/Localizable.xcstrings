@@ -699,6 +699,12 @@
             "state" : "translated",
             "value" : "No location information found."
           }
+        },
+        "es" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No se encontró información de ubicación."
+          }
         }
       }
     },
