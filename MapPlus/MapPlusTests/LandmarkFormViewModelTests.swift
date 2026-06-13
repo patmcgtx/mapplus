@@ -146,6 +146,151 @@ struct LandmarkFormViewModelTests {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
     }
+    
+    @Test func testInitializeLocationWithMultipleNearbyLocations() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+        
+        // Configure multiple nearby locations
+        mockService.customAddresses = [
+            LocationInfo(
+                briefDescription: "Coffee Shop",
+                fullDescription: "123 Main St, San Francisco, CA",
+                latitude: 37.7749,
+                longitude: -122.4194,
+                suggestedNotes: "Great coffee!",
+                suggestedSymbol: "☕️"
+            ),
+            LocationInfo(
+                briefDescription: "Library",
+                fullDescription: "456 Oak Ave, San Francisco, CA",
+                latitude: 37.7750,
+                longitude: -122.4195,
+                suggestedNotes: "Quiet reading space",
+                suggestedSymbol: "📚"
+            ),
+            LocationInfo(
+                briefDescription: "Park",
+                fullDescription: "789 Park Blvd, San Francisco, CA",
+                latitude: 37.7751,
+                longitude: -122.4196,
+                suggestedNotes: "Nice walking trails",
+                suggestedSymbol: "🌳"
+            )
+        ]
+        
+        // Use a mock suggestion service that returns our custom data
+        let mockSuggestionService = MockMapItemSuggestionService(
+            notes: "Great coffee!",
+            symbol: "☕️"
+        )
+
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: mockSuggestionService
+        )
+
+        // The first location should be selected
+        if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.briefDescription == "Coffee Shop")
+            #expect(info.coordinates.latitude == 37.7749)
+            #expect(info.coordinates.longitude == -122.4194)
+            #expect(viewModel.symbol == "☕️")
+            #expect(viewModel.suggestedNotes == "Great coffee!")
+            // Note: fullDescription comes from MapKit's processing of the MKMapItem placemark,
+            // not from our original LocationInfo, so we don't assert on it here
+        } else {
+            Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
+        }
+    }
+    
+    @Test func testInitializeLocationWithEmptyCustomAddresses() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+        
+        // Empty array - no nearby locations
+        mockService.customAddresses = []
+
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService()
+        )
+
+        // Should remain in initial state when no locations found
+        if case .searchInitial = viewModel.addressSearchState {
+            // Expected
+        } else {
+            Issue.record("Expected .searchInitial, got \(viewModel.addressSearchState)")
+        }
+    }
+    
+    @Test func testMockLocationServiceReturnsMultipleMapItems() async throws {
+        let mockService = MockLocationService()
+        mockService.customAddresses = [
+            LocationInfo(
+                briefDescription: "Location 1",
+                fullDescription: "Address 1",
+                latitude: 10.0,
+                longitude: 20.0
+            ),
+            LocationInfo(
+                briefDescription: "Location 2",
+                fullDescription: "Address 2",
+                latitude: 30.0,
+                longitude: 40.0
+            )
+        ]
+        
+        let mapItems = try await mockService.nearbyMapItems()
+        
+        #expect(mapItems.count == 2)
+        #expect(mapItems[0].name == "Location 1")
+        #expect(mapItems[0].placemark.coordinate.latitude == 10.0)
+        #expect(mapItems[0].placemark.coordinate.longitude == 20.0)
+        #expect(mapItems[1].name == "Location 2")
+        #expect(mapItems[1].placemark.coordinate.latitude == 30.0)
+        #expect(mapItems[1].placemark.coordinate.longitude == 40.0)
+    }
+    
+    @Test func testMockLocationServiceWithDelay() async throws {
+        let mockService = MockLocationService()
+        mockService.delaySeconds = 0.1
+        mockService.customAddresses = [
+            LocationInfo(
+                briefDescription: "Test Location",
+                fullDescription: "Test Address",
+                latitude: 10.0,
+                longitude: 20.0
+            )
+        ]
+        
+        let startTime = Date()
+        let mapItems = try await mockService.nearbyMapItems()
+        let elapsedTime = Date().timeIntervalSince(startTime)
+        
+        #expect(mapItems.count == 1)
+        #expect(elapsedTime >= 0.1)
+    }
+    
+    @Test func testMockLocationServiceThrowsErrorWhenConfigured() async {
+        let mockService = MockLocationService()
+        mockService.shouldSucceed = false
+        mockService.customAddresses = [
+            LocationInfo(
+                briefDescription: "Test Location",
+                fullDescription: "Test Address",
+                latitude: 10.0,
+                longitude: 20.0
+            )
+        ]
+        
+        do {
+            _ = try await mockService.nearbyMapItems()
+            Issue.record("Expected error to be thrown")
+        } catch {
+            // Expected
+        }
+    }
 
     // MARK: - searchByText
 
