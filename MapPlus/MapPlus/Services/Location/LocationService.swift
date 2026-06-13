@@ -9,7 +9,8 @@ import MapKit
 /// A protocol for obtaining the user's current location.
 protocol LocationService {
 
-    // TODO patmcg doc
+    /// Finds map items near the user's current location
+    /// - Returns: Zero or more MapKit map items nearby
     func nearbyMapItems() async throws -> [MKMapItem]
 
     /// Gets the user's current location and converts it to a common `LocationInfo` value.

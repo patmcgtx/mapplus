@@ -33,6 +33,13 @@ extension EnvironmentValues {
     @Entry var theme: MapPlusTheme = .cupertino
 }
 
+extension View {
+    /// Injects live services into the environment.
+    func injectLiveServices() -> some View {
+        self.modifier(InjectLiveServicesModifier())
+    }
+}
+    
 /// View modifier that injects all live services into the environment.
 struct InjectLiveServicesModifier: ViewModifier {
     
@@ -59,13 +66,15 @@ struct InjectLiveServicesModifier: ViewModifier {
     }
 }
 
+#if DEBUG
+
 /// View modifier that injects mock services into the environment.
 struct InjectMockServicesModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
             .environment(\.locationService, MockLocationService())
-            .environment(\.locationPermissionService, MapKitLocationPermissionsService())
+            .environment(\.locationPermissionService, AlwaysSucceedsLocationPermissionsService())
             .environment(\.addressLookupService, MockAddressLookupService())
             .environment(\.lookAroundService, MockLookAroundService())
             .environment(\.categorySelectionService, MockCategorySelectionService())
@@ -75,15 +84,10 @@ struct InjectMockServicesModifier: ViewModifier {
 }
 
 extension View {
-
-    /// Injects live services into the environment.
-    func injectLiveServices() -> some View {
-        self.modifier(InjectLiveServicesModifier())
-    }
-
     /// Injects mock services into the environment.
     func injectMockServices() -> some View {
         self.modifier(InjectMockServicesModifier())
     }
-    
 }
+
+#endif // DEBUG

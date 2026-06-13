@@ -16,8 +16,8 @@ class CategoriesSelectFlowViewModel {
     
     private let service: any CategorySelectionService
     
-    // MARK: State
-    
+    // MARK: UI State for observable / binding
+
     /// Whether there are any selected categories
     var hasSelectedCategories: Bool {
         service.hasSelectedCategories
@@ -39,8 +39,8 @@ class CategoriesSelectFlowViewModel {
         self.service = service
     }
     
-    // MARK: Public Methods
-    
+    // MARK: Actions
+
     /// Clears all category selections
     func clearAllSelections() {
         service.clearAllSelections()
