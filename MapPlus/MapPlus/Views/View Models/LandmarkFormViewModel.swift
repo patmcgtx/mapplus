@@ -201,14 +201,25 @@ final class LandmarkFormViewModel {
     /// In edit mode, resolves the landmark's existing address.
     ///
     /// - Parameter locationService: The service used to fetch the current device location.
-    func initializeLocation(using locationService: any LocationService) async {
-        switch mode {
-        case .create:
+    func initializeLocation(
+        using locationService: any LocationService,
+        suggestionsService: any MapItemSuggestionService)
+    async {
+            switch mode {
+            case .create:
             do {
-                let resolvedAddress = try await locationService.getCurrentLocation()
-                applyLocationResult(resolvedAddress, updateSearchInput: false)
+                let mapItems = try await locationService.nearbyMapItems()
+                var itemsExplorer = MapItemsExplorer(
+                    suggestionService: suggestionsService,
+                    mapItems: mapItems
+                )
+                if let locationInfo = await itemsExplorer.nextMapItem() {
+                    applyLocationResult(locationInfo, updateSearchInput: true)
+                } else {
+                    // TODO patmcg add error handling
+                }
             } catch {
-                // TODO patmcg revisit error handling - not a user-impactting error?
+                // TODO patmcg add error handling
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -239,7 +250,7 @@ final class LandmarkFormViewModel {
             if let locationInfo = await itemsExplorer.nextMapItem() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
-                // TODO patmcg revisit error handling - not a user-impactting error?
+                // TODO patmcg add error handling
             }
         } catch {
             addressSearchState = .searchFailed(error)
