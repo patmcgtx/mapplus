@@ -10,8 +10,12 @@ import MapKit
 /// A service for obtaining the user's current location and converting it to an `AddressInfo`.
 class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegate {
     
+    // MARK: Private properties
+    
     private let locationManager = CLLocationManager()
     private var continuation: CheckedContinuation<CLLocation, Error>?
+    
+    // MARK: Init
     
     override init() {
         super.init()
@@ -19,7 +23,10 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
 
-    // TODO patmcg doc
+    //MARK: protocol LocationService
+    
+    /// Finds map items nears the user's current location
+    /// - Returns: Zero or more MapKit map items nearby
     func nearbyMapItems() async throws -> [MKMapItem] {
         let location = try await requestCurrentLocation()
         let request = MKReverseGeocodingRequest(location: location)

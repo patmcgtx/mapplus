@@ -8,9 +8,10 @@ import SwiftData
 
 extension ModelContainer {
         
+    /// Creates a real persistent container for the app that saves to disk.
     @MainActor
-    // TODO patmcg doc
     static func persistentContainer() throws -> ModelContainer {
+        
         let config = ModelConfiguration()
         let container = try! ModelContainer(
             for: Landmark.self, SelectedCategories.self,
@@ -32,8 +33,8 @@ extension ModelContainer {
     }
 
     /// Create an in-memory persistent container for testing.
+    ///
     /// All changes are loaded fresh on each app launch and lost on each app exit.
-    /// - Parameter category: The category to add
     /// - Parameter numExtraCategories: How many extra categories, beyond the basics, to add to the in-memory database.  This is useful for edge and stress testing.
     @MainActor
     static func inMemorySampleContainer(numExtraCategories: Int = 0) throws -> ModelContainer {
