@@ -208,6 +208,7 @@ final class LandmarkFormViewModel {
             switch mode {
             case .create:
             do {
+                // TODO patmcg Once we have mapItems, share this logic with `searchByText`
                 let mapItems = try await locationService.nearbyMapItems()
                 var itemsExplorer = MapItemsExplorer(
                     suggestionService: suggestionsService,
@@ -216,10 +217,10 @@ final class LandmarkFormViewModel {
                 if let locationInfo = await itemsExplorer.nextMapItem() {
                     applyLocationResult(locationInfo, updateSearchInput: true)
                 } else {
-                    // TODO patmcg add error handling
+                    addressSearchState = .searchFailed(MapPlusError.noLocationInfo)
                 }
             } catch {
-                // TODO patmcg add error handling
+                addressSearchState = .searchFailed(error)
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -250,7 +251,7 @@ final class LandmarkFormViewModel {
             if let locationInfo = await itemsExplorer.nextMapItem() {
                 applyLocationResult(locationInfo, updateSearchInput: true)
             } else {
-                // TODO patmcg add error handling
+                addressSearchState = .searchFailed(MapPlusError.noLocationInfo)
             }
         } catch {
             addressSearchState = .searchFailed(error)
