@@ -65,7 +65,7 @@ struct InjectMockServicesModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.locationService, MockLocationService())
-            .environment(\.locationPermissionService, MapKitLocationPermissionsService())
+            .environment(\.locationPermissionService, AlwaysSucceedsLocationPermissionsService())
             .environment(\.addressLookupService, MockAddressLookupService())
             .environment(\.lookAroundService, MockLookAroundService())
             .environment(\.categorySelectionService, MockCategorySelectionService())
