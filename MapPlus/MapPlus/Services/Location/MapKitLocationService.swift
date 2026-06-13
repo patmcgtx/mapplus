@@ -23,9 +23,9 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
     }
 
-    //MARK: protocol LocationService
+    // MARK: LocationService
     
-    /// Finds map items nears the user's current location
+    /// Finds map items near the user's current location
     /// - Returns: Zero or more MapKit map items nearby
     func nearbyMapItems() async throws -> [MKMapItem] {
         let location = try await requestCurrentLocation()

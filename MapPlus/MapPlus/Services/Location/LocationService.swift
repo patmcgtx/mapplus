@@ -9,7 +9,7 @@ import MapKit
 /// A protocol for obtaining the user's current location.
 protocol LocationService {
 
-    /// Finds map items nears the user's current location
+    /// Finds map items near the user's current location
     /// - Returns: Zero or more MapKit map items nearby
     func nearbyMapItems() async throws -> [MKMapItem]
 
