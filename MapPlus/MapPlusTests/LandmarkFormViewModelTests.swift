@@ -152,7 +152,7 @@ struct LandmarkFormViewModelTests {
         let mockService = MockLocationService()
         
         // Configure multiple nearby locations
-        mockService.customAddresses = [
+        mockService.locationsToReturn = [
             LocationInfo(
                 briefDescription: "Coffee Shop",
                 fullDescription: "123 Main St, San Francisco, CA",
@@ -209,7 +209,7 @@ struct LandmarkFormViewModelTests {
         let mockService = MockLocationService()
         
         // Empty array - no nearby locations
-        mockService.customAddresses = []
+        mockService.locationsToReturn = []
 
         await viewModel.initializeLocation(
             using: mockService,
@@ -226,7 +226,7 @@ struct LandmarkFormViewModelTests {
     
     @Test func testMockLocationServiceReturnsMultipleMapItems() async throws {
         let mockService = MockLocationService()
-        mockService.customAddresses = [
+        mockService.locationsToReturn = [
             LocationInfo(
                 briefDescription: "Location 1",
                 fullDescription: "Address 1",
@@ -255,7 +255,7 @@ struct LandmarkFormViewModelTests {
     @Test func testMockLocationServiceWithDelay() async throws {
         let mockService = MockLocationService()
         mockService.delaySeconds = 0.1
-        mockService.customAddresses = [
+        mockService.locationsToReturn = [
             LocationInfo(
                 briefDescription: "Test Location",
                 fullDescription: "Test Address",
@@ -275,7 +275,7 @@ struct LandmarkFormViewModelTests {
     @Test func testMockLocationServiceThrowsErrorWhenConfigured() async {
         let mockService = MockLocationService()
         mockService.shouldSucceed = false
-        mockService.customAddresses = [
+        mockService.locationsToReturn = [
             LocationInfo(
                 briefDescription: "Test Location",
                 fullDescription: "Test Address",
@@ -558,7 +558,7 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
-        mockLocationService.customAddresses = [LocationInfo(
+        mockLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
@@ -584,7 +584,7 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesNotEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
-        mockLocationService.customAddresses = [LocationInfo(
+        mockLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
@@ -612,7 +612,7 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesMultipleTimes() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
-        mockLocationService.customAddresses = [LocationInfo(
+        mockLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,

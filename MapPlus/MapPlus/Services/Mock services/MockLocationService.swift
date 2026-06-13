@@ -26,7 +26,7 @@ class MockLocationService: LocationService {
         }
         
         // Convert LocationInfo items to MKMapItem
-        return customAddresses.map { locationInfo in
+        return locationsToReturn.map { locationInfo in
             let placemark = MKPlacemark(
                 coordinate: locationInfo.coordinates,
                 addressDictionary: [
@@ -45,8 +45,8 @@ class MockLocationService: LocationService {
     /// Controls whether the mock should simulate a successful location fetch or throw an error.
     var shouldSucceed: Bool = true
     
-    /// Optional custom address to return instead of using the default mock data.
-    var customAddresses: [LocationInfo] = []
+    /// Locations to return on the mock response
+    var locationsToReturn: [LocationInfo] = []
 }
 
 #endif // DEBUG
