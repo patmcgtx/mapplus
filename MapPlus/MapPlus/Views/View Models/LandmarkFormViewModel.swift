@@ -202,6 +202,7 @@ final class LandmarkFormViewModel {
     /// In edit mode, resolves the landmark's existing address.
     ///
     /// - Parameter locationService: The service used to fetch the current device location.
+    /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func initializeLocation(
         using locationService: any LocationService,
         suggestionsService: any MapItemSuggestionService)
@@ -284,9 +285,9 @@ final class LandmarkFormViewModel {
             landmarkInEdit.longitude = locationInfo.coordinates.longitude
             symbol = locationInfo.suggestedSymbol
             suggestedNotes = locationInfo.suggestedNotes
+        } else {
+            addressSearchState = .searchInitial
         }
-        // Note: If location initialization fails in create mode, we silently
-        // stay at .searchInitial to allow the user to manually enter a location
     }
 
 }

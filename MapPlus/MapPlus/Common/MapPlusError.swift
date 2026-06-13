@@ -15,7 +15,7 @@ enum MapPlusError: Error {
     /// Indicates that a map look-around scene is not available for the location specified.
     case noLookAround
     
-    /// Indicates that a location has no associate map item information
+    /// Indicates that a location has no associated map item information
     case noLocationInfo
     
     /// A human-readable description of the error.
