@@ -13,7 +13,7 @@ import MapKit
 @Observable @MainActor
 final class MainMapViewModel {
     
-    // MARK: UI State
+    // MARK: UI State for observable / binding
     
     /// Whether the landmarks list sheet is showing
     var showingLandmarkList: Bool = false
@@ -27,20 +27,14 @@ final class MainMapViewModel {
     /// Used to trigger sensory feedback when locate button is tapped
     var didTapLocate: Bool = false
     
-    // MARK: Map State
-    
     /// The current camera position of the map
     var mapPosition: MapCameraPosition = .userLocation(fallback: .automatic)
     
     /// The currently selected landmark (shows detail sheet)
     var selectedLandmark: Landmark?
-            
-    // MARK: Initialization
     
-    init() {}
-    
-    // MARK: - Public Methods
-    
+    // MARK: Actions
+
     /// Request location permissions from the user
     /// - Parameter locationPermissionsService: The service used to request permissions
     func requestLocationPermissions(using locationPermissionsService: LocationPermissionsService) {
@@ -65,7 +59,5 @@ final class MainMapViewModel {
         mapPosition = .userLocation(fallback: .automatic)
         didTapLocate.toggle()
     }
-    
-    // MARK: - Private Methods
     
 }

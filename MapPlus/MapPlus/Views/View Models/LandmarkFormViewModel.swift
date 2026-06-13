@@ -11,6 +11,8 @@ import Foundation
 @Observable @MainActor
 final class LandmarkFormViewModel {
 
+    // MARK: Data types
+    
     /// Indicates how the form is being used.
     /// - Note: In `create` mode, there is no backing landmark yet; in `edit` mode,
     ///         the provided `Landmark` supplies initial values.
@@ -65,11 +67,12 @@ final class LandmarkFormViewModel {
         }
     }
 
+    // MARK: View config properties
+    
     /// The current mode for the form
     let mode: Mode
-
-    /// The landmark being edited (private - not exposed to view)
-    private var landmarkInEdit: Landmark
+    
+    // MARK: UI State for observable / binding
 
     /// The current state of the address/location search
     var addressSearchState: AddressSearchState = .searchInitial
@@ -79,11 +82,6 @@ final class LandmarkFormViewModel {
 
     /// The text entered in the location search field
     var locationSearchInput: String = ""
-    
-    /// Generated suggested notes for the landmark in edit
-    private(set) var suggestedNotes = ""
-
-    // MARK: - Form Fields (exposed to view via bindings)
     
     /// The landmark's name
     var name: String = ""
@@ -100,6 +98,17 @@ final class LandmarkFormViewModel {
     /// All available categories (loaded from persistence)
     var allCategories: [LandmarkCategory] = []
     
+    
+    // MARK: Private properties
+    
+    /// The landmark being edited (private - not exposed to view)
+    private var landmarkInEdit: Landmark
+    
+    /// Generated suggested notes for the landmark in edit
+    private(set) var suggestedNotes = ""
+
+    // MARK: Init
+    
     init(mode: Mode) {
         self.mode = mode
         switch mode {
@@ -114,6 +123,8 @@ final class LandmarkFormViewModel {
             categories = landmark.categories
         }
     }
+
+    // MARK: Actions
 
     /// Loads available categories from persistence
     /// - Parameter context: The context to fetch categories from

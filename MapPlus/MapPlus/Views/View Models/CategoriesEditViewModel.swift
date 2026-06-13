@@ -13,8 +13,8 @@ import SwiftData
 @Observable
 final class CategoriesEditViewModel {
     
-    // MARK: Properties
-    
+    // MARK: UI State for observable / binding
+
     /// The name for a new category being added
     var newCategoryName: String = ""
     
@@ -29,7 +29,6 @@ final class CategoriesEditViewModel {
 
     /// The model context for SwiftData operations
     private let modelContext: ModelContext
-
     
     // MARK: Initialization
     
