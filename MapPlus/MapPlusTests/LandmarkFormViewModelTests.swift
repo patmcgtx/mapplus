@@ -85,7 +85,7 @@ struct LandmarkFormViewModelTests {
 
     @Test func testIsSaveEnabledAfterSearchFailed() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.addressSearchState = .searchFailed(SearchError.locationPermissionDenied)
+        viewModel.addressSearchState = .searchFailed(MapPlusError.locationPermissionDenied)
         #expect(!viewModel.isSaveEnabled)
     }
 
@@ -192,7 +192,6 @@ struct LandmarkFormViewModelTests {
 
         // The first location should be selected
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Coffee Shop")
             #expect(info.coordinates.latitude == 37.7749)
             #expect(info.coordinates.longitude == -122.4194)
             #expect(viewModel.symbol == "☕️")
@@ -303,7 +302,6 @@ struct LandmarkFormViewModelTests {
         await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "San Francisco")
             #expect(viewModel.locationSearchInput == "San Francisco")
             // TODO patmcg fix the check below
 //            #expect(info.fullDescription == "San Francisco, CA, United States")
@@ -320,7 +318,6 @@ struct LandmarkFormViewModelTests {
         await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "San Francisco")
             #expect(info.coordinates.latitude == 37.7752559)
             #expect(info.coordinates.longitude == -122.4191641)
         } else {

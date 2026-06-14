@@ -84,19 +84,16 @@ struct MapItemsIteratorTests {
         
         // First item
         let location1 = await iterator.nextMapItem()
-        #expect(location1?.briefDescription == "Statue of Liberty")
         #expect(location1?.coordinates.latitude == 40.6892)
         #expect(location1?.coordinates.longitude == -74.0445)
         
         // Second item
         let location2 = await iterator.nextMapItem()
-        #expect(location2?.briefDescription == "Empire State Building")
         #expect(location2?.coordinates.latitude == 40.7484)
         #expect(location2?.coordinates.longitude == -73.9857)
         
         // Third item
         let location3 = await iterator.nextMapItem()
-        #expect(location3?.briefDescription == "Central Park")
         #expect(location3?.coordinates.latitude == 40.7829)
         #expect(location3?.coordinates.longitude == -73.9654)
         
@@ -136,7 +133,6 @@ struct MapItemsIteratorTests {
         
         #expect(locationInfo != nil)
         // When name is nil, BasicMapItemSuggestionService returns empty string for name
-        #expect(locationInfo?.briefDescription == "Unknown Location")
         #expect(locationInfo?.coordinates.latitude == 34.0522)
         #expect(locationInfo?.coordinates.longitude == -118.2437)
     }

@@ -29,7 +29,7 @@ final class LandmarkFormViewModel {
         case searchInitial
         case searching
         case searchResolved(LocationInfo)
-        case searchFailed(SearchError)
+        case searchFailed(MapPlusError)
 
         static func == (lhs: AddressSearchState, rhs: AddressSearchState) -> Bool {
             switch (lhs, rhs) {
@@ -261,7 +261,7 @@ final class LandmarkFormViewModel {
     }
     
     /// Classifies raw errors into specific SearchError cases
-    private func classifySearchError(_ error: Error) -> SearchError {
+    private func classifySearchError(_ error: Error) -> MapPlusError {
         let nsError = error as NSError
         
         // Check for network errors
