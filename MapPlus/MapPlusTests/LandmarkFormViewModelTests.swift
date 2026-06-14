@@ -85,7 +85,7 @@ struct LandmarkFormViewModelTests {
 
     @Test func testIsSaveEnabledAfterSearchFailed() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.addressSearchState = .searchFailed(MapPlusError.noAddressFound)
+        viewModel.addressSearchState = .searchFailed(SearchError.locationPermissionDenied)
         #expect(!viewModel.isSaveEnabled)
     }
 

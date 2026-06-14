@@ -33,6 +33,35 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         return (try? await request?.mapItems) ?? []
     }
 
+    // TODO patmcg To extract actual business names or points of interest from coordinates, you must use MKLocalPointsOfInterestRequest or MKLocalSearch
+
+    /*
+    func fetchBusinessName(from coordinate: CLLocationCoordinate2D) async -> String? {
+        // 1. Create a circular region around your coordinate (e.g., 20 meters radius)
+        let request = MKLocalPointsOfInterestRequest(center: coordinate, radius: 20)
+        
+        // Optional: Filter for specific types of businesses if needed
+        // request.pointOfInterestFilter = MKPointOfInterestFilter(including: [.restaurant, .cafe, .store])
+        
+        let search = MKLocalPointsOfInterestSearch(request: request)
+        
+        do {
+            // 2. Fetch the points of interest from Apple Maps
+            let response = try await search.start()
+            
+            // 3. The response contains an array of MKMapItems
+            // Grab the closest map item that represents an actual point of interest
+            if let nearestBusiness = response.mapItems.first {
+                return nearestBusiness.name // This will return "Starbucks", "Target", etc.
+            }
+        } catch {
+            print("Failed to fetch points of interest: \(error.localizedDescription)")
+        }
+        
+        return nil
+    }
+     */
+
     // MARK: - Private Helpers
     
     private func requestCurrentLocation() async throws -> CLLocation {
@@ -58,27 +87,6 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
                 self.continuation = nil
             }
         }
-    }
-    
-    // TODO patmcg refactor this into an extension - if needed any more
-    private func formatPlacemark(_ placemark: CLPlacemark) -> String {
-        var components: [String] = []
-        
-        if let name = placemark.name {
-            components.append(name)
-        }
-        if let locality = placemark.locality {
-            components.append(locality)
-        }
-        if let administrativeArea = placemark.administrativeArea {
-            components.append(administrativeArea)
-        }
-        if let country = placemark.country {
-            components.append(country)
-        }
-        
-        // TODO patmcg user ListFormatter!
-        return components.isEmpty ? "current-location".localized : components.joined(separator: ", ")
     }
     
     // MARK: - CLLocationManagerDelegate

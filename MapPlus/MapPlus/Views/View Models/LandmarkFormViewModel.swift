@@ -29,7 +29,7 @@ final class LandmarkFormViewModel {
         case searchInitial
         case searching
         case searchResolved(LocationInfo)
-        case searchFailed(Error)
+        case searchFailed(SearchError)
 
         static func == (lhs: AddressSearchState, rhs: AddressSearchState) -> Bool {
             switch (lhs, rhs) {
@@ -43,7 +43,7 @@ final class LandmarkFormViewModel {
                 a.coordinates.latitude == b.coordinates.latitude &&
                 a.coordinates.longitude == b.coordinates.longitude
             case (.searchFailed(let e1), .searchFailed(let e2)):
-                return type(of: e1) == type(of: e2)
+                return e1 == e2
             default:
                 return false
             }
@@ -216,9 +216,9 @@ final class LandmarkFormViewModel {
                     suggestionsService: suggestionsService
                 )
             } catch {
-                // TODO patmcg error handling?
-                // Location failure on create is silent; state stays at searchInitial
-                // This allows the user to manually search for a location
+                // In create mode, location failures are silent - the user can manually search
+                // We stay at .searchInitial to allow manual input without showing an error
+                addressSearchState = .searchInitial
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -244,14 +244,52 @@ final class LandmarkFormViewModel {
             let mapItems = try await addressLookupService.mapItemsFor(
                 searchString: locationSearchInput
             )
+            
+            guard !mapItems.isEmpty else {
+                addressSearchState = .searchFailed(.noResults)
+                return
+            }
+            
             await applyFirstLocationResult(
                 from: mapItems,
                 suggestionsService: suggestionsService
             )
         } catch {
-            // TODO patmcg error handling? See ^ initializeLocation.
-            addressSearchState = .searchFailed(error)
+            // Map known error types to user-friendly messages
+            addressSearchState = .searchFailed(classifySearchError(error))
         }
+    }
+    
+    /// Classifies raw errors into specific SearchError cases
+    private func classifySearchError(_ error: Error) -> SearchError {
+        let nsError = error as NSError
+        
+        // Check for network errors
+        if nsError.domain == NSURLErrorDomain {
+            switch nsError.code {
+            case NSURLErrorNotConnectedToInternet,
+                 NSURLErrorNetworkConnectionLost,
+                 NSURLErrorTimedOut:
+                return .networkUnavailable
+            default:
+                break
+            }
+        }
+        
+        // Check for Core Location errors
+        if nsError.domain == "kCLErrorDomain" {
+            switch nsError.code {
+            case 0: // kCLErrorLocationUnknown
+                return .locationServicesDisabled
+            case 1: // kCLErrorDenied
+                return .locationPermissionDenied
+            default:
+                break
+            }
+        }
+        
+        // Default to unknown with the localized description
+        return .unknown(error.localizedDescription)
     }
     
     /// Appends pre-generated suggested notes to the current notes field
@@ -277,14 +315,14 @@ final class LandmarkFormViewModel {
             suggestionService: suggestionsService,
             mapItems: mapItems
         )
-        if let locationInfo = await itemsExplorer.nextMapItem() {
+        if let mapItem = await itemsExplorer.nextMapItem() {
             // Apply the changes
-            addressSearchState = .searchResolved(locationInfo)
-            landmarkInEdit.formattedAddress = locationInfo.fullDescription
-            landmarkInEdit.latitude = locationInfo.coordinates.latitude
-            landmarkInEdit.longitude = locationInfo.coordinates.longitude
-            symbol = locationInfo.suggestedSymbol
-            suggestedNotes = locationInfo.suggestedNotes
+            addressSearchState = .searchResolved(mapItem)
+            landmarkInEdit.formattedAddress = mapItem.fullDescription
+            landmarkInEdit.latitude = mapItem.coordinates.latitude
+            landmarkInEdit.longitude = mapItem.coordinates.longitude
+            symbol = mapItem.suggestedSymbol
+            suggestedNotes = mapItem.suggestedNotes
         } else {
             addressSearchState = .searchInitial
         }

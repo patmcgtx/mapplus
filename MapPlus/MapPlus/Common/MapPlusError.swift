@@ -4,6 +4,7 @@
 //
 //  Created by Patrick McGonigle on 1/31/26.
 //
+import Foundation
 
 /// Errors used throughout the app.
 enum MapPlusError: Error {
@@ -27,6 +28,49 @@ enum MapPlusError: Error {
             return "no-look-around".localized
         case .noLocationInfo:
             return "no-location-info".localized
+        }
+    }
+}
+
+/// Specific error types for location search operations
+enum SearchError: Error, Equatable, LocalizedError {
+
+    // TODO patmcg doc
+    case noResults
+    case networkUnavailable
+    case locationServicesDisabled
+    case locationPermissionDenied
+    case unknown(String)
+    
+    // TODO patmcg add localized versions of all these strings
+    var errorDescription: String? {
+        switch self {
+        case .noResults:
+            return "search-error-no-results".localized
+        case .networkUnavailable:
+            return "search-error-network".localized
+        case .locationServicesDisabled:
+            return "search-error-location-disabled".localized
+        case .locationPermissionDenied:
+            return "search-error-location-permission".localized
+        case .unknown(let message):
+            return message
+        }
+    }
+    
+    // TODO patmcg add localized versions of all these strings
+    var recoverySuggestion: String? {
+        switch self {
+        case .noResults:
+            return "search-error-no-results-suggestion".localized
+        case .networkUnavailable:
+            return "search-error-network-suggestion".localized
+        case .locationServicesDisabled:
+            return "search-error-location-disabled-suggestion".localized
+        case .locationPermissionDenied:
+            return "search-error-location-permission-suggestion".localized
+        case .unknown:
+            return nil
         }
     }
 }
