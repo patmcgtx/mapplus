@@ -11,8 +11,8 @@ import MapKit
 protocol PointOfInterestService {
 
     /// Finds points of interest near the given location and radius
-    /// - Parameter coordinate: The center point of a circular region to search
-    /// - Parameter radius: The radius of the region to search in meters
+    /// - Parameter coordinate: The center of the search location
+    /// - Parameter radiusMeters: How wide of a radius to search, in meters
     /// - Returns: Zero or more map items near the given parameters
     func pointsOfInterest(
         near coordinate: CLLocationCoordinate2D,
@@ -20,3 +20,5 @@ protocol PointOfInterestService {
     ) async -> [MKMapItem]
 
 }
+
+

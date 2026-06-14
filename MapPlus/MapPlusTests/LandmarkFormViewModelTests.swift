@@ -189,7 +189,7 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.initializeLocation(
             using: mockService,
-            suggestionsService: BasicMapItemSuggestionService(),
+            suggestionsService: mockSuggestionService,
             pointOfInterestService: MockPointOfInterestService()
         )
 
