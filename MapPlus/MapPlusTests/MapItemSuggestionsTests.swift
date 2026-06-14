@@ -32,7 +32,11 @@ struct MapItemsIteratorTests {
     @Test("Iterator returns nil for empty array")
     func testEmptyArray() async throws {
         let service = BasicMapItemSuggestionService()
-        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [])
+        var iterator = MapItemsExplorer(
+            suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
+            mapItems: []
+        )
         
         let locationInfo = await iterator.nextMapItem()
         #expect(locationInfo == nil)
@@ -46,7 +50,11 @@ struct MapItemsIteratorTests {
             latitude: 37.8199,
             longitude: -122.4783
         )
-        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
+        var iterator = MapItemsExplorer(
+            suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
+            mapItems: [mapItem]
+        )
         
         let locationInfo = await iterator.nextMapItem()
         
@@ -79,6 +87,7 @@ struct MapItemsIteratorTests {
         
         var iterator = MapItemsExplorer(
             suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
             mapItems: [mapItem1, mapItem2, mapItem3]
         )
         
@@ -110,7 +119,11 @@ struct MapItemsIteratorTests {
             latitude: 0.0,
             longitude: 0.0
         )
-        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
+        var iterator = MapItemsExplorer(
+            suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
+            mapItems: [mapItem]
+        )
         
         let locationInfo = await iterator.nextMapItem()
         
@@ -127,7 +140,11 @@ struct MapItemsIteratorTests {
         let mapItem = MKMapItem(placemark: placemark)
         // Note: not setting mapItem.name
         
-        var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
+        var iterator = MapItemsExplorer(
+            suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
+            mapItems: [mapItem]
+        )
         
         let locationInfo = await iterator.nextMapItem()
         
@@ -145,7 +162,11 @@ struct MapItemsIteratorTests {
             makeSampleMapItem(name: "Location B", latitude: 30.0, longitude: 40.0),
         ]
         
-        var iterator = MapItemsExplorer(suggestionService: service, mapItems: mapItems)
+        var iterator = MapItemsExplorer(
+            suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
+            mapItems: mapItems
+        )
         
         // First call should return first item
         let first = await iterator.nextMapItem()
@@ -171,7 +192,11 @@ struct MapItemsIteratorTests {
         
         for (name, lat, lon) in testCases {
             let mapItem = makeSampleMapItem(name: name, latitude: lat, longitude: lon)
-            var iterator = MapItemsExplorer(suggestionService: service, mapItems: [mapItem])
+            var iterator = MapItemsExplorer(
+                suggestionService: service,
+                pointOfInterestService: MockPointOfInterestService(),
+                mapItems: [mapItem]
+            )
             
             let locationInfo = await iterator.nextMapItem()
             

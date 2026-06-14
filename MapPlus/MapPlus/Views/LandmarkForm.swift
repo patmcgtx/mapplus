@@ -27,6 +27,9 @@ struct LandmarkForm: View {
     
     @Environment(\.mapItemSuggestionService)
     private var suggestionsService: MapItemSuggestionService!
+    
+    @Environment(\.pointOfInterestService)
+    private var pointOfInterestService: PointOfInterestService!
 
     // MARK: View state
 
@@ -86,7 +89,8 @@ struct LandmarkForm: View {
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(
                 using: locationService ?? MapKitLocationService(),
-                suggestionsService: suggestionsService
+                suggestionsService: suggestionsService,
+                pointOfInterestService: pointOfInterestService
             )
             viewModel.loadCategories(from: modelContext)
         }
@@ -230,7 +234,8 @@ struct LandmarkForm: View {
                         Task {
                             await viewModel.locationTextSearch(
                                 using: addressLookupService,
-                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
+                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService(),
+                                pointOfInterestService: pointOfInterestService
                             )
                         }
                     }
@@ -238,7 +243,8 @@ struct LandmarkForm: View {
                         Task {
                             await viewModel.locationTextSearch(
                                 using: addressLookupService,
-                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
+                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService(),
+                                pointOfInterestService: pointOfInterestService
                             )
                         }
                     } label: {

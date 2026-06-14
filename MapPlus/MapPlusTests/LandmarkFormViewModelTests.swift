@@ -118,7 +118,8 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.initializeLocation(
             using: mockService,
-            suggestionsService: BasicMapItemSuggestionService()
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         #expect(viewModel.locationSearchInput == "")
@@ -135,7 +136,8 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.initializeLocation(
             using: mockService,
-            suggestionsService: BasicMapItemSuggestionService()
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
@@ -187,7 +189,8 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.initializeLocation(
             using: mockService,
-            suggestionsService: mockSuggestionService
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         // The first location should be selected
@@ -212,7 +215,8 @@ struct LandmarkFormViewModelTests {
 
         await viewModel.initializeLocation(
             using: mockService,
-            suggestionsService: BasicMapItemSuggestionService()
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         // Should remain in initial state when no locations found
@@ -299,7 +303,11 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(viewModel.locationSearchInput == "San Francisco")
@@ -315,7 +323,11 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.coordinates.latitude == 37.7752559)
@@ -330,7 +342,11 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "Nowhere"
         let mockService = MockAddressLookupService(shouldSucceed: false)
 
-        await viewModel.locationTextSearch(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchFailed = viewModel.addressSearchState {
             // Expected
@@ -565,7 +581,8 @@ struct LandmarkFormViewModelTests {
         
         await viewModel.initializeLocation(
             using: mockLocationService,
-            suggestionsService: BasicMapItemSuggestionService()
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         // Verify notes is empty initially
@@ -591,7 +608,8 @@ struct LandmarkFormViewModelTests {
         
         await viewModel.initializeLocation(
             using: mockLocationService,
-            suggestionsService: BasicMapItemSuggestionService()
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         // Set existing notes
@@ -620,7 +638,8 @@ struct LandmarkFormViewModelTests {
         // Initialize location to populate suggestedNotes
         await viewModel.initializeLocation(
             using: mockLocationService,
-            suggestionsService: BasicMapItemSuggestionService()
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
 
         // Set existing notes

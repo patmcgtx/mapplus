@@ -204,8 +204,10 @@ final class LandmarkFormViewModel {
     /// - Parameter locationService: The service used to fetch the current device location.
     /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func initializeLocation(
-        using locationService: any LocationService,
-        suggestionsService: any MapItemSuggestionService)
+        using locationService: LocationService,
+        suggestionsService: MapItemSuggestionService,
+        pointOfInterestService: PointOfInterestService
+    )
     async {
             switch mode {
             case .create:
@@ -213,7 +215,8 @@ final class LandmarkFormViewModel {
                 let mapItems = try await locationService.nearbyMapItems()
                 await applyFirstLocationResult(
                     from: mapItems,
-                    suggestionsService: suggestionsService
+                    suggestionsService: suggestionsService,
+                    pointOfInterestService: pointOfInterestService
                 )
             } catch {
                 // In create mode, location failures are silent - the user can manually search
@@ -236,8 +239,9 @@ final class LandmarkFormViewModel {
     /// - Parameter addressLookupService: The service implementation to use for the location search
     /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func locationTextSearch(
-        using addressLookupService: any AddressLookupService,
-        suggestionsService: any MapItemSuggestionService
+        using addressLookupService: AddressLookupService,
+        suggestionsService: MapItemSuggestionService,
+        pointOfInterestService: PointOfInterestService
     ) async {
         addressSearchState = .searching
         do {
@@ -252,7 +256,8 @@ final class LandmarkFormViewModel {
             
             await applyFirstLocationResult(
                 from: mapItems,
-                suggestionsService: suggestionsService
+                suggestionsService: suggestionsService,
+                pointOfInterestService: pointOfInterestService
             )
         } catch {
             // Map known error types to user-friendly messages
@@ -309,10 +314,12 @@ final class LandmarkFormViewModel {
     ///   - suggestionsService: The map item suggestion service to use
     private func applyFirstLocationResult(
         from mapItems: [MKMapItem],
-        suggestionsService: any MapItemSuggestionService
+        suggestionsService: MapItemSuggestionService,
+        pointOfInterestService: PointOfInterestService
     ) async {
         var itemsExplorer = MapItemsExplorer(
             suggestionService: suggestionsService,
+            pointOfInterestService: pointOfInterestService,
             mapItems: mapItems
         )
         if let mapItem = await itemsExplorer.nextMapItem() {
