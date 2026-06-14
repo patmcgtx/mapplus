@@ -88,7 +88,7 @@ struct LandmarkForm: View {
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(
-                using: locationService ?? MapKitLocationService(),
+                using: locationService,
                 suggestionsService: suggestionsService,
                 pointOfInterestService: pointOfInterestService
             )
@@ -234,7 +234,7 @@ struct LandmarkForm: View {
                         Task {
                             await viewModel.locationTextSearch(
                                 using: addressLookupService,
-                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService(),
+                                suggestionsService: suggestionsService,
                                 pointOfInterestService: pointOfInterestService
                             )
                         }
@@ -243,7 +243,7 @@ struct LandmarkForm: View {
                         Task {
                             await viewModel.locationTextSearch(
                                 using: addressLookupService,
-                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService(),
+                                suggestionsService: suggestionsService,
                                 pointOfInterestService: pointOfInterestService
                             )
                         }
