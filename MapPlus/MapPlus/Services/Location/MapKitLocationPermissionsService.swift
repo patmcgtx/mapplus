@@ -16,7 +16,7 @@ class MapKitLocationPermissionsService: NSObject, CLLocationManagerDelegate, Loc
     func requestPermissions(callback: @escaping (_ status: CLAuthorizationStatus) -> Void) {
         self.callback = callback
         self.locationManager.delegate = self
-        self.locationManager.desiredAccuracy = kCLLocationAccuracyNearestTenMeters
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
     }
 

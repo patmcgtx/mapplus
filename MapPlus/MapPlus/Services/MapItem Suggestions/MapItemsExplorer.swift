@@ -47,7 +47,7 @@ struct MapItemsExplorer {
         
         let poiMapItem = await pointOfInterestService.pointsOfInterest(
             near: mapItem.location.coordinate,
-            radiusMeters: 25.0
+            radiusMeters: 10.0
         ).first
         
         return LocationInfo(

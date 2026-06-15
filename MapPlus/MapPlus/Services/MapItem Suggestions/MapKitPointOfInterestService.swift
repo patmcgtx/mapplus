@@ -12,7 +12,7 @@ class MapKitPointOfInterestService: PointOfInterestService {
     
     func pointsOfInterest(
         near coordinate: CLLocationCoordinate2D,
-        radiusMeters: CLLocationDistance = 50
+        radiusMeters: CLLocationDistance = 10.0
     ) async -> [MKMapItem] {
         
         let request = MKLocalPointsOfInterestRequest(center: coordinate, radius: radiusMeters)
