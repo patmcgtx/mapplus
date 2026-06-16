@@ -41,14 +41,16 @@ struct MapItemsExplorer {
     ///
     /// - Returns:The next LocationInfo object or `nil` if no more are available
     mutating func nextMapItem() async -> LocationInfo? {
-        guard let mapItem = iterator.next(),
-              let suggestions = try? await suggestionService.suggestions(for: mapItem)
+        guard let mapItem = iterator.next()
         else { return nil }
         
         let poiMapItem = await pointOfInterestService.pointsOfInterest(
             near: mapItem.location.coordinate,
             radiusMeters: 10.0
         ).first
+        
+        guard let suggestions = try? await suggestionService.suggestions(for: mapItem)
+        else { return nil }
         
         return LocationInfo(
             briefDescription: poiMapItem?.name ?? suggestions.name,
