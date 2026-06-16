@@ -63,6 +63,12 @@ Services are injected into views via SwiftUI `@Environment` values (defined in `
 
 `MapItemsExplorer` wraps a stream of `MKMapItem` results and fetches AI suggestions for each, providing the lazy-loading sequence consumed by `LandmarkFormViewModel`.
 
+#### Mock service
+
+All mock services belong under `MapPlus/Services/Mock services`.
+
+Mock services should be surrounded by `#if DEBUG` and `#endif // DEBUG` so they only build for development.
+
 ### 3. ViewModel Layer
 
 ViewModels use the `@Observable` macro and are bound to `@MainActor`. They orchestrate service calls, manage multi-step interaction states via enums, and expose reactive properties to views.
@@ -136,6 +142,12 @@ User taps "+" on MainMapView
 **On-device AI** — `AIMapItemSuggestionService` uses `FoundationModels.LanguageModelSession` to suggest landmark names and emoji symbols; `BasicMapItemSuggestionService` is the fallback when AI is unavailable.
 
 ---
+
+## Localization
+
+See LOCALIZATION.md for localization instructions.
+
+--- 
 
 ## Testing
 

@@ -11,11 +11,12 @@ class MapKitLocationPermissionsService: NSObject, CLLocationManagerDelegate, Loc
     
     private var locationManager = CLLocationManager()
     private var callback: (_ status: CLAuthorizationStatus) -> Void = { _ in }
-
+ 
     /// Requests "when in use" location permissions as needed.
     func requestPermissions(callback: @escaping (_ status: CLAuthorizationStatus) -> Void) {
         self.callback = callback
         self.locationManager.delegate = self
+        self.locationManager.desiredAccuracy = kCLLocationAccuracyBest
         self.locationManager.requestWhenInUseAuthorization()
     }
 

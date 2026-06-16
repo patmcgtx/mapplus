@@ -33,35 +33,6 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
         return (try? await request?.mapItems) ?? []
     }
 
-    /// Gets the user's current location and converts it to an AddressInfo object.
-    /// - Returns: An AddressInfo object containing the formatted address and coordinates.
-    /// - Throws: MapPlusError.noAddressFound if location cannot be determined or reverse geocoding fails.
-    func getCurrentLocation() async throws -> LocationInfo {
-        
-        // First, get the current coordinates
-        let location = try await requestCurrentLocation()
-        
-        // Then, reverse geocode to get a formatted address
-        // TODO patmcg CLGeocoder deprecated, use MapKit?
-        //      Hmm that fails, so just send the lat/lon string to AddressLookupService?
-        let geocoder = CLGeocoder()
-        let placemarks = try await geocoder.reverseGeocodeLocation(location)
-        
-        guard let placemark = placemarks.first else {
-            throw MapPlusError.noAddressFound
-        }
-        
-        // Build a formatted address string
-        let formattedAddress = formatPlacemark(placemark)
-        
-        return LocationInfo(
-            briefDescription: placemark.name ?? "",
-            fullDescription: formattedAddress,
-            latitude: location.coordinate.latitude,
-            longitude: location.coordinate.longitude
-        )
-    }
-    
     // MARK: - Private Helpers
     
     private func requestCurrentLocation() async throws -> CLLocation {
@@ -87,27 +58,6 @@ class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegat
                 self.continuation = nil
             }
         }
-    }
-    
-    // TODO patmcg refactor this into an extension - if needed any more
-    private func formatPlacemark(_ placemark: CLPlacemark) -> String {
-        var components: [String] = []
-        
-        if let name = placemark.name {
-            components.append(name)
-        }
-        if let locality = placemark.locality {
-            components.append(locality)
-        }
-        if let administrativeArea = placemark.administrativeArea {
-            components.append(administrativeArea)
-        }
-        if let country = placemark.country {
-            components.append(country)
-        }
-        
-        // TODO patmcg user ListFormatter!
-        return components.isEmpty ? "current-location".localized : components.joined(separator: ", ")
     }
     
     // MARK: - CLLocationManagerDelegate

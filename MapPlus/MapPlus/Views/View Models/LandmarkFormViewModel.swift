@@ -5,6 +5,7 @@
 //  Created by Patrick McGonigle on 1/31/26.
 //
 import SwiftData
+import MapKit
 import Foundation
 
 /// View model that provides state and logic for `LandmarkForm`.
@@ -28,7 +29,7 @@ final class LandmarkFormViewModel {
         case searchInitial
         case searching
         case searchResolved(LocationInfo)
-        case searchFailed(Error)
+        case searchFailed(MapPlusError)
 
         static func == (lhs: AddressSearchState, rhs: AddressSearchState) -> Bool {
             switch (lhs, rhs) {
@@ -42,7 +43,7 @@ final class LandmarkFormViewModel {
                 a.coordinates.latitude == b.coordinates.latitude &&
                 a.coordinates.longitude == b.coordinates.longitude
             case (.searchFailed(let e1), .searchFailed(let e2)):
-                return type(of: e1) == type(of: e2)
+                return e1 == e2
             default:
                 return false
             }
@@ -201,14 +202,26 @@ final class LandmarkFormViewModel {
     /// In edit mode, resolves the landmark's existing address.
     ///
     /// - Parameter locationService: The service used to fetch the current device location.
-    func initializeLocation(using locationService: any LocationService) async {
-        switch mode {
-        case .create:
+    /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
+    func initializeLocation(
+        using locationService: LocationService,
+        suggestionsService: MapItemSuggestionService,
+        pointOfInterestService: PointOfInterestService
+    )
+    async {
+            switch mode {
+            case .create:
             do {
-                let resolvedAddress = try await locationService.getCurrentLocation()
-                applyLocationResult(resolvedAddress, updateSearchInput: false)
+                let mapItems = try await locationService.nearbyMapItems()
+                await applyFirstLocationResult(
+                    from: mapItems,
+                    suggestionsService: suggestionsService,
+                    pointOfInterestService: pointOfInterestService
+                )
             } catch {
-                // TODO patmcg revisit error handling - not a user-impactting error?
+                // In create mode, location failures are silent - the user can manually search
+                // We stay at .searchInitial to allow manual input without showing an error
+                addressSearchState = .searchInitial
             }
         case .edit:
             addressSearchState = .searchResolved(
@@ -225,25 +238,63 @@ final class LandmarkFormViewModel {
     /// Searches for locations based on the text in `locationSearchInput`. Updates this view model's state once completed.
     /// - Parameter addressLookupService: The service implementation to use for the location search
     /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
-    func searchByText(
-        using addressLookupService: any AddressLookupService,
-        suggestionsService: any MapItemSuggestionService
+    func locationTextSearch(
+        using addressLookupService: AddressLookupService,
+        suggestionsService: MapItemSuggestionService,
+        pointOfInterestService: PointOfInterestService
     ) async {
         addressSearchState = .searching
         do {
-            let mapItems = try await addressLookupService.mapItemsFor(searchString: locationSearchInput)
-            var itemsExplorer = MapItemsExplorer(
-                suggestionService: suggestionsService,
-                mapItems: mapItems
+            let mapItems = try await addressLookupService.mapItemsFor(
+                searchString: locationSearchInput
             )
-            if let locationInfo = await itemsExplorer.nextMapItem() {
-                applyLocationResult(locationInfo, updateSearchInput: true)
-            } else {
-                // TODO patmcg revisit error handling - not a user-impactting error?
+            
+            guard !mapItems.isEmpty else {
+                addressSearchState = .searchFailed(.noResults)
+                return
             }
+            
+            await applyFirstLocationResult(
+                from: mapItems,
+                suggestionsService: suggestionsService,
+                pointOfInterestService: pointOfInterestService
+            )
         } catch {
-            addressSearchState = .searchFailed(error)
+            // Map known error types to user-friendly messages
+            addressSearchState = .searchFailed(classifySearchError(error))
         }
+    }
+    
+    /// Classifies raw errors into specific SearchError cases
+    private func classifySearchError(_ error: Error) -> MapPlusError {
+        let nsError = error as NSError
+        
+        // Check for network errors
+        if nsError.domain == NSURLErrorDomain {
+            switch nsError.code {
+            case NSURLErrorNotConnectedToInternet,
+                 NSURLErrorNetworkConnectionLost,
+                 NSURLErrorTimedOut:
+                return .networkUnavailable
+            default:
+                break
+            }
+        }
+        
+        // Check for Core Location errors
+        if nsError.domain == "kCLErrorDomain" {
+            switch nsError.code {
+            case 0: // kCLErrorLocationUnknown
+                return .locationServicesDisabled
+            case 1: // kCLErrorDenied
+                return .locationPermissionDenied
+            default:
+                break
+            }
+        }
+        
+        // Default to unknown with the localized description
+        return .unknown(error.localizedDescription)
     }
     
     /// Appends pre-generated suggested notes to the current notes field
@@ -256,18 +307,32 @@ final class LandmarkFormViewModel {
     }
 
     // MARK: - Private helpers
-
+    
     /// Applies a resolved address to the landmark and updates the search state.
     /// - Parameters:
-    ///   - address: The resolved location to apply.
-    ///   - updateSearchInput: When `true`, also updates `locationSearchInput` to the resolved description.
-    private func applyLocationResult(_ address: LocationInfo, updateSearchInput: Bool) {
-        addressSearchState = .searchResolved(address)
-        landmarkInEdit.formattedAddress = address.fullDescription
-        landmarkInEdit.latitude = address.coordinates.latitude
-        landmarkInEdit.longitude = address.coordinates.longitude
-        symbol = address.suggestedSymbol
-        suggestedNotes = address.suggestedNotes
+    ///   - mapItems: The maps items to potentially display
+    ///   - suggestionsService: The map item suggestion service to use
+    private func applyFirstLocationResult(
+        from mapItems: [MKMapItem],
+        suggestionsService: MapItemSuggestionService,
+        pointOfInterestService: PointOfInterestService
+    ) async {
+        var itemsExplorer = MapItemsExplorer(
+            suggestionService: suggestionsService,
+            pointOfInterestService: pointOfInterestService,
+            mapItems: mapItems
+        )
+        if let mapItem = await itemsExplorer.nextMapItem() {
+            // Apply the changes
+            addressSearchState = .searchResolved(mapItem)
+            landmarkInEdit.formattedAddress = mapItem.fullDescription
+            landmarkInEdit.latitude = mapItem.coordinates.latitude
+            landmarkInEdit.longitude = mapItem.coordinates.longitude
+            symbol = mapItem.suggestedSymbol
+            suggestedNotes = mapItem.suggestedNotes
+        } else {
+            addressSearchState = .searchInitial
+        }
     }
 
 }

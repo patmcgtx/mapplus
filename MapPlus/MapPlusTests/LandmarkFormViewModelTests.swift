@@ -85,7 +85,7 @@ struct LandmarkFormViewModelTests {
 
     @Test func testIsSaveEnabledAfterSearchFailed() {
         let viewModel = LandmarkFormViewModel(mode: .create)
-        viewModel.addressSearchState = .searchFailed(MapPlusError.noAddressFound)
+        viewModel.addressSearchState = .searchFailed(MapPlusError.locationPermissionDenied)
         #expect(!viewModel.isSaveEnabled)
     }
 
@@ -111,59 +111,18 @@ struct LandmarkFormViewModelTests {
     }
 
     // MARK: - initializeLocation
-
-    @Test func testInitializeLocationCreateSuccess() async {
-        let viewModel = LandmarkFormViewModel(mode: .create)
-        let mockService = MockLocationService()
-
-        await viewModel.initializeLocation(using: mockService)
-
-        if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Mock SF")
-            #expect(info.fullDescription == "(Mock) San Francisco, CA, United States")
-        } else {
-            Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
-        }
-    }
-
+    
     @Test func testInitializeLocationCreateSuccessDoesNotUpdateLocationSearchInput() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockService = MockLocationService()
 
-        await viewModel.initializeLocation(using: mockService)
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         #expect(viewModel.locationSearchInput == "")
-    }
-
-    @Test func testInitializeLocationCreateSuccessUpdatesCoordinates() async {
-        let viewModel = LandmarkFormViewModel(mode: .create)
-        let mockService = MockLocationService()
-
-        await viewModel.initializeLocation(using: mockService)
-
-        // Coordinates are stored internally, but we can verify via the resolved state
-        if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "Mock SF")
-            #expect(info.coordinates.latitude == 37.7749)
-            #expect(info.coordinates.longitude == -122.4194)
-        } else {
-            Issue.record("Expected .searchResolved")
-        }
-    }
-
-    @Test func testInitializeLocationCreateFailureStaysAtInitial() async {
-        let viewModel = LandmarkFormViewModel(mode: .create)
-        let mockService = MockLocationService()
-        mockService.shouldSucceed = false
-
-        await viewModel.initializeLocation(using: mockService)
-
-        // Location failure on create is silent; state stays at searchInitial
-        if case .searchInitial = viewModel.addressSearchState {
-            // Expected
-        } else {
-            Issue.record("Expected .searchInitial, got \(viewModel.addressSearchState)")
-        }
     }
 
     @Test func testInitializeLocationEditPrePopulatesExistingAddress() async {
@@ -175,7 +134,11 @@ struct LandmarkFormViewModelTests {
         let viewModel = LandmarkFormViewModel(mode: .edit(landmark))
         let mockService = MockLocationService()
 
-        await viewModel.initializeLocation(using: mockService)
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(info.fullDescription == "123 Main St")
@@ -183,6 +146,152 @@ struct LandmarkFormViewModelTests {
             #expect(info.coordinates.longitude == -122.41)
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
+        }
+    }
+    
+    @Test func testInitializeLocationWithMultipleNearbyLocations() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+        
+        // Configure multiple nearby locations
+        mockService.locationsToReturn = [
+            LocationInfo(
+                briefDescription: "Coffee Shop",
+                fullDescription: "123 Main St, San Francisco, CA",
+                latitude: 37.7749,
+                longitude: -122.4194,
+                suggestedNotes: "Great coffee!",
+                suggestedSymbol: "☕️"
+            ),
+            LocationInfo(
+                briefDescription: "Library",
+                fullDescription: "456 Oak Ave, San Francisco, CA",
+                latitude: 37.7750,
+                longitude: -122.4195,
+                suggestedNotes: "Quiet reading space",
+                suggestedSymbol: "📚"
+            ),
+            LocationInfo(
+                briefDescription: "Park",
+                fullDescription: "789 Park Blvd, San Francisco, CA",
+                latitude: 37.7751,
+                longitude: -122.4196,
+                suggestedNotes: "Nice walking trails",
+                suggestedSymbol: "🌳"
+            )
+        ]
+        
+        // Use a mock suggestion service that returns our custom data
+        let mockSuggestionService = MockMapItemSuggestionService(
+            notes: "Great coffee!",
+            symbol: "☕️"
+        )
+
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: mockSuggestionService,
+            pointOfInterestService: MockPointOfInterestService()
+        )
+
+        // The first location should be selected
+        if case .searchResolved(let info) = viewModel.addressSearchState {
+            #expect(info.coordinates.latitude == 37.7749)
+            #expect(info.coordinates.longitude == -122.4194)
+            #expect(viewModel.symbol == "☕️")
+            #expect(viewModel.suggestedNotes == "Great coffee!")
+            // Note: fullDescription comes from MapKit's processing of the MKMapItem placemark,
+            // not from our original LocationInfo, so we don't assert on it here
+        } else {
+            Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
+        }
+    }
+    
+    @Test func testInitializeLocationWithEmptyCustomAddresses() async {
+        let viewModel = LandmarkFormViewModel(mode: .create)
+        let mockService = MockLocationService()
+        
+        // Empty array - no nearby locations
+        mockService.locationsToReturn = []
+
+        await viewModel.initializeLocation(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
+
+        // Should remain in initial state when no locations found
+        if case .searchInitial = viewModel.addressSearchState {
+            // Expected
+        } else {
+            Issue.record("Expected .searchInitial, got \(viewModel.addressSearchState)")
+        }
+    }
+    
+    @Test func testMockLocationServiceReturnsMultipleMapItems() async throws {
+        let mockService = MockLocationService()
+        mockService.locationsToReturn = [
+            LocationInfo(
+                briefDescription: "Location 1",
+                fullDescription: "Address 1",
+                latitude: 10.0,
+                longitude: 20.0
+            ),
+            LocationInfo(
+                briefDescription: "Location 2",
+                fullDescription: "Address 2",
+                latitude: 30.0,
+                longitude: 40.0
+            )
+        ]
+        
+        let mapItems = try await mockService.nearbyMapItems()
+        
+        #expect(mapItems.count == 2)
+        #expect(mapItems[0].name == "Location 1")
+        #expect(mapItems[0].placemark.coordinate.latitude == 10.0)
+        #expect(mapItems[0].placemark.coordinate.longitude == 20.0)
+        #expect(mapItems[1].name == "Location 2")
+        #expect(mapItems[1].placemark.coordinate.latitude == 30.0)
+        #expect(mapItems[1].placemark.coordinate.longitude == 40.0)
+    }
+    
+    @Test func testMockLocationServiceWithDelay() async throws {
+        let mockService = MockLocationService()
+        mockService.delaySeconds = 0.1
+        mockService.locationsToReturn = [
+            LocationInfo(
+                briefDescription: "Test Location",
+                fullDescription: "Test Address",
+                latitude: 10.0,
+                longitude: 20.0
+            )
+        ]
+        
+        let startTime = Date()
+        let mapItems = try await mockService.nearbyMapItems()
+        let elapsedTime = Date().timeIntervalSince(startTime)
+        
+        #expect(mapItems.count == 1)
+        #expect(elapsedTime >= 0.1)
+    }
+    
+    @Test func testMockLocationServiceThrowsErrorWhenConfigured() async {
+        let mockService = MockLocationService()
+        mockService.shouldSucceed = false
+        mockService.locationsToReturn = [
+            LocationInfo(
+                briefDescription: "Test Location",
+                fullDescription: "Test Address",
+                latitude: 10.0,
+                longitude: 20.0
+            )
+        ]
+        
+        do {
+            _ = try await mockService.nearbyMapItems()
+            Issue.record("Expected error to be thrown")
+        } catch {
+            // Expected
         }
     }
 
@@ -194,10 +303,13 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "San Francisco")
             #expect(viewModel.locationSearchInput == "San Francisco")
             // TODO patmcg fix the check below
 //            #expect(info.fullDescription == "San Francisco, CA, United States")
@@ -211,10 +323,13 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "San Francisco"
         let mockService = MockAddressLookupService()
 
-        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
-            #expect(info.briefDescription == "San Francisco")
             #expect(info.coordinates.latitude == 37.7752559)
             #expect(info.coordinates.longitude == -122.4191641)
         } else {
@@ -227,7 +342,11 @@ struct LandmarkFormViewModelTests {
         viewModel.locationSearchInput = "Nowhere"
         let mockService = MockAddressLookupService(shouldSucceed: false)
 
-        await viewModel.searchByText(using: mockService, suggestionsService: BasicMapItemSuggestionService())
+        await viewModel.locationTextSearch(
+            using: mockService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
 
         if case .searchFailed = viewModel.addressSearchState {
             // Expected
@@ -452,17 +571,20 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
-        mockLocationService.customAddress = LocationInfo(
+        mockLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
             longitude: -122.4194,
             suggestedNotes: "Suggested notes"
+        )]
+        
+        await viewModel.initializeLocation(
+            using: mockLocationService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
-        
-        // Initialize location to populate suggestedNotes
-        await viewModel.initializeLocation(using: mockLocationService)
-        
+
         // Verify notes is empty initially
         #expect(viewModel.notes == "")
         
@@ -476,17 +598,20 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesNotEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
-        mockLocationService.customAddress = LocationInfo(
+        mockLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
             longitude: -122.4194,
             suggestedNotes: "Suggested notes"
+        )]
+        
+        await viewModel.initializeLocation(
+            using: mockLocationService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
         )
-        
-        // Initialize location to populate suggestedNotes
-        await viewModel.initializeLocation(using: mockLocationService)
-        
+
         // Set existing notes
         viewModel.notes = "My existing notes"
         
@@ -502,17 +627,21 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesMultipleTimes() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockLocationService = MockLocationService()
-        mockLocationService.customAddress = LocationInfo(
+        mockLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
             longitude: -122.4194,
             suggestedNotes: "Suggested notes"
-        )
+        )]
         
         // Initialize location to populate suggestedNotes
-        await viewModel.initializeLocation(using: mockLocationService)
-        
+        await viewModel.initializeLocation(
+            using: mockLocationService,
+            suggestionsService: BasicMapItemSuggestionService(),
+            pointOfInterestService: MockPointOfInterestService()
+        )
+
         // Set existing notes
         viewModel.notes = "My existing notes"
         

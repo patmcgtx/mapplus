@@ -7,6 +7,8 @@
 
 import SwiftData
 
+// TODO patmcg do we even need a protocol for CategorySelectionService?
+
 /// A service protocol that manages selected categories and provides filtering capabilities.
 protocol CategorySelectionService {
     

@@ -27,6 +27,9 @@ struct LandmarkForm: View {
     
     @Environment(\.mapItemSuggestionService)
     private var suggestionsService: MapItemSuggestionService!
+    
+    @Environment(\.pointOfInterestService)
+    private var pointOfInterestService: PointOfInterestService!
 
     // MARK: View state
 
@@ -84,7 +87,11 @@ struct LandmarkForm: View {
         .navigationTitle(viewModel.formTitle)
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
-            await viewModel.initializeLocation(using: locationService ?? MapKitLocationService())
+            await viewModel.initializeLocation(
+                using: locationService,
+                suggestionsService: suggestionsService,
+                pointOfInterestService: pointOfInterestService
+            )
             viewModel.loadCategories(from: modelContext)
         }
         .onChange(of: viewModel.saveState) { _, newState in
@@ -225,17 +232,19 @@ struct LandmarkForm: View {
                     .autocorrectionDisabled(false)
                     .onSubmit {
                         Task {
-                            await viewModel.searchByText(
+                            await viewModel.locationTextSearch(
                                 using: addressLookupService,
-                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
+                                suggestionsService: suggestionsService,
+                                pointOfInterestService: pointOfInterestService
                             )
                         }
                     }
                     Button {
                         Task {
-                            await viewModel.searchByText(
+                            await viewModel.locationTextSearch(
                                 using: addressLookupService,
-                                suggestionsService: suggestionsService ?? BasicMapItemSuggestionService()
+                                suggestionsService: suggestionsService,
+                                pointOfInterestService: pointOfInterestService
                             )
                         }
                     } label: {

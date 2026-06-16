@@ -7,6 +7,8 @@
 
 import MapKit
 
+// TODO patmcg rename to LocationSearchService
+
 /// An address search service
 protocol AddressLookupService {
     

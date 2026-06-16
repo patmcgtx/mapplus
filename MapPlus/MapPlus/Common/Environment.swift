@@ -27,6 +27,7 @@ extension EnvironmentValues {
     @Entry var lookAroundService: LookAroundService!
     @Entry var categorySelectionService: CategorySelectionService!
     @Entry var mapItemSuggestionService: MapItemSuggestionService!
+    @Entry var pointOfInterestService: PointOfInterestService!
 
     // MARK: Default settings
     
@@ -53,6 +54,7 @@ struct InjectLiveServicesModifier: ViewModifier {
             .environment(\.lookAroundService, MapKitLookAroundService())
             .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, mapItemSuggestionService)
+            .environment(\.pointOfInterestService, MapKitPointOfInterestService())
     }
     
     /// Returns the appropriate MapItemSuggestionService based on device capabilities
@@ -79,6 +81,7 @@ struct InjectMockServicesModifier: ViewModifier {
             .environment(\.lookAroundService, MockLookAroundService())
             .environment(\.categorySelectionService, MockCategorySelectionService())
             .environment(\.mapItemSuggestionService, BasicMapItemSuggestionService())
+            .environment(\.pointOfInterestService, MockPointOfInterestService())
     }
     
 }
