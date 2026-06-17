@@ -2,7 +2,7 @@
 
 [Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful.  But it's doing a lot.
 
-Built on Apple's maps stack, Map Plus does less to make things easier for you. 
+Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
 ## Map Plus allows you to basically do two things:
 
