@@ -1,6 +1,6 @@
 # Map Plus: iOS Maps With Less Noise
 
-[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful.  But it's doing a lot.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. But it's doing a lot.
 
 Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
@@ -41,8 +41,6 @@ Prefer the button on the bottom or left-hand side of the screen?  Just drag and 
 This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
 
 AI tools helped accelerate spikes, refactors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
-
-AI assistants (Copilot and Claude) were used occasionally for documentation, code reviews, to write tests, to iterate quickly on experimental ideas, to refactor, to fix some bugs, and for help when I get stuck.
 
 ### Architecture
 
