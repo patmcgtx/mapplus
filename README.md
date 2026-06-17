@@ -36,16 +36,19 @@ Are you left-handed?  Prefer the button on the bottom of the screen?  Just move 
 
 ## Tech notes
 
-This app was coded in Swift and SwiftUI _mostly_ by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
+This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
 
-AI (Copilot and Claude) were used _occasionally_ as an assistant, mostly to run some spikes, iterate on experimental ideas, fix some bugs, and review PRs.
-
-I wanted this app to be a hands-on experience where I got to experiment with ideas personally, so I left _most_ of the coding to myself.
+AI assistants (Copilot and Claude) were used occasionally for documentation, code reviews, to write tests, to iterate quickly on experimental ideas, to refactor, to fix some bugs, and for help when I get stuck.
 
 ### Architecture
 
 In the experimental spirit, I'm playing with a few architectural ideas in this app.
 
-I've tried some views in classic MVVM with SwiftUI.
-
-In places where it makes more sense, I'm fully embracing SwiftData as an app-wide, reactive, persistent state to keep things super simple and responsive. While this approach breaks with traditional MVVM, I am trying to answer the question: is there any downside for an app like this?
+* Fully embracing SwiftData and @AppStorage as an app-wide, reactive, persistent state to keep things super simple and responsive.
+* Maintaining protocol-based, mockable services to support unit testing and SwiftU previews.
+* Injecting live vs. mock services as needed Using @Environment.
+* Using traditional MVVM when the complexity justifies it.
+* Leveraging Apple's location and mapping services, CoreLocation and MapKit.
+* Employing on-device Apple Foundation Models AI when it makes sense for the user experience.
+  
+See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCHITECTURE.md) for details.
