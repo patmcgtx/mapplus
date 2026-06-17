@@ -40,7 +40,7 @@ Prefer the button on the bottom or left-hand side of the screen?  Just drag and 
 
 This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
 
-AI tools helped accelerate spikes, refctors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
+AI tools helped accelerate spikes, refactors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
 
 AI assistants (Copilot and Claude) were used occasionally for documentation, code reviews, to write tests, to iterate quickly on experimental ideas, to refactor, to fix some bugs, and for help when I get stuck.
 
@@ -54,5 +54,5 @@ In the experimental spirit, I'm playing with a few architectural ideas in this a
 * Using traditional MVVM when the complexity justifies it.
 * Leveraging Apple's location and mapping services, CoreLocation and MapKit.
 * Employing on-device Apple Foundation Models AI when it makes sense for the user experience.
-  
+
 See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCHITECTURE.md) for details.
