@@ -1,8 +1,8 @@
 # Map Plus: iOS Maps With Less Noise
 
-[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful.  But it's doing a **lot**.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful.  But it's doing a lot.
 
-Built on Apple's maps stack, Map Plus does _less_ to make things _easier_ for you. 
+Built on Apple's maps stack, Map Plus does less to make things easier for you. 
 
 ## Map Plus allows you to basically do two things:
 
@@ -16,7 +16,9 @@ Each place has a name, notes, and an icon that you pick.
 
 Narrow your map's focus to your favorite coffee shops, restaurants to try, dream vacation destinations, late night haunts, whatever you want.
 
-## Everything else is just frosting on the cake
+## Polish & Personalization
+
+Frosting on the cake.
 
 ### Themes for the visual pop you want
 
@@ -32,11 +34,13 @@ Match the map to your vibe.
 
 Many of the buttons appear on the lower-right part of the screen by default.  
 
-Are you left-handed?  Prefer the button on the bottom of the screen?  Just move the buttons wherever you want them.
+Prefer the button on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
 
 ## Tech notes
 
 This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
+
+AI tools helped accelerate spikes, refctors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
 
 AI assistants (Copilot and Claude) were used occasionally for documentation, code reviews, to write tests, to iterate quickly on experimental ideas, to refactor, to fix some bugs, and for help when I get stuck.
 
@@ -45,8 +49,8 @@ AI assistants (Copilot and Claude) were used occasionally for documentation, cod
 In the experimental spirit, I'm playing with a few architectural ideas in this app.
 
 * Fully embracing SwiftData and @AppStorage as an app-wide, reactive, persistent state to keep things super simple and responsive.
-* Maintaining protocol-based, mockable services to support unit testing and SwiftU previews.
-* Injecting live vs. mock services as needed Using @Environment.
+* Maintaining protocol-based, mockable services to support unit testing and SwiftUI previews.
+* Injecting live vs. mock services using @Environment.
 * Using traditional MVVM when the complexity justifies it.
 * Leveraging Apple's location and mapping services, CoreLocation and MapKit.
 * Employing on-device Apple Foundation Models AI when it makes sense for the user experience.
