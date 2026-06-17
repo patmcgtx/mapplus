@@ -34,7 +34,7 @@ Match the map to your vibe.
 
 Many of the buttons appear on the lower-right part of the screen by default.  
 
-Prefer the button on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
+Prefer the buttons on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
 
 ## Tech notes
 
