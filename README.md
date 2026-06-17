@@ -1,8 +1,8 @@
 # Map Plus: iOS Maps With Less Noise
 
-[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful.  But it's doing a **lot**.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. But it's doing a lot.
 
-Built on Apple's maps stack, Map Plus does _less_ to make things _easier_ for you. 
+Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
 ## Map Plus allows you to basically do two things:
 
@@ -16,7 +16,9 @@ Each place has a name, notes, and an icon that you pick.
 
 Narrow your map's focus to your favorite coffee shops, restaurants to try, dream vacation destinations, late night haunts, whatever you want.
 
-## Everything else is just frosting on the cake
+## Polish & Personalization
+
+Frosting on the cake.
 
 ### Themes for the visual pop you want
 
@@ -32,20 +34,23 @@ Match the map to your vibe.
 
 Many of the buttons appear on the lower-right part of the screen by default.  
 
-Are you left-handed?  Prefer the button on the bottom of the screen?  Just move the buttons wherever you want them.
+Prefer the buttons on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
 
 ## Tech notes
 
-This app was coded in Swift and SwiftUI _mostly_ by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
+This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
 
-AI (Copilot and Claude) were used _occasionally_ as an assistant, mostly to run some spikes, iterate on experimental ideas, fix some bugs, and review PRs.
-
-I wanted this app to be a hands-on experience where I got to experiment with ideas personally, so I left _most_ of the coding to myself.
+AI tools helped accelerate spikes, refactors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
 
 ### Architecture
 
 In the experimental spirit, I'm playing with a few architectural ideas in this app.
 
-I've tried some views in classic MVVM with SwiftUI.
+* Fully embracing SwiftData and @AppStorage as an app-wide, reactive, persistent state to keep things super simple and responsive.
+* Maintaining protocol-based, mockable services to support unit testing and SwiftUI previews.
+* Injecting live vs. mock services using @Environment.
+* Using traditional MVVM when the complexity justifies it.
+* Leveraging Apple's location and mapping services, CoreLocation and MapKit.
+* Employing on-device Apple Foundation Models AI when it makes sense for the user experience.
 
-In places where it makes more sense, I'm fully embracing SwiftData as an app-wide, reactive, persistent state to keep things super simple and responsive. While this approach breaks with traditional MVVM, I am trying to answer the question: is there any downside for an app like this?
+See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCHITECTURE.md) for details.
