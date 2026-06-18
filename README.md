@@ -54,3 +54,15 @@ In the experimental spirit, I'm playing with a few architectural ideas in this a
 * Employing on-device Apple Foundation Models AI when it makes sense for the user experience.
 
 See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCHITECTURE.md) for details.
+
+## Screenshots
+
+This app is no shipped yet, but here's a preview.
+
+<img width="148" height="320" alt="IMG_7113" src="https://github.com/user-attachments/assets/206b0d1c-930d-467b-879a-6d2b0344eda3" />
+<img width="148" height="320" alt="IMG_7110" src="https://github.com/user-attachments/assets/26e7ae98-f7d7-4d21-8938-6fb004475c73" />
+<img width="148" height="320" alt="IMG_7108" src="https://github.com/user-attachments/assets/6801964a-b889-4d05-9a9d-92ec8c1c323b" />
+<img width="148" height="320" alt="IMG_7106" src="https://github.com/user-attachments/assets/4a53ad19-c46d-4739-a0f8-1c1185dfea9a" />
+<img width="148" height="320" alt="IMG_7100" src="https://github.com/user-attachments/assets/ef709562-7f76-4105-ba13-cd0208a837f8" />
+<img width="148" height="320" alt="IMG_7099" src="https://github.com/user-attachments/assets/0dea62f7-5a06-4189-8446-7740c428b413" />
+
