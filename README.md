@@ -65,4 +65,6 @@ This app is no shipped yet, but here's a preview.
 <img width="148" height="320" alt="IMG_7106" src="https://github.com/user-attachments/assets/4a53ad19-c46d-4739-a0f8-1c1185dfea9a" />
 <img width="148" height="320" alt="IMG_7100" src="https://github.com/user-attachments/assets/ef709562-7f76-4105-ba13-cd0208a837f8" />
 <img width="148" height="320" alt="IMG_7099" src="https://github.com/user-attachments/assets/0dea62f7-5a06-4189-8446-7740c428b413" />
+<img width="320" height="148" alt="IMG_7122" src="https://github.com/user-attachments/assets/6abfa62a-269c-4173-b4c4-89829f3e39fe" />
+<img width="320" height="148" alt="IMG_7120" src="https://github.com/user-attachments/assets/1facc5ee-87ed-47f0-a513-03dfc5576ad4" />
 
