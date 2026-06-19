@@ -36,6 +36,9 @@ Many of the buttons appear on the lower-right part of the screen by default.
 
 Prefer the buttons on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
 
+### Animations
+
+When you change your category seleciton, newly visible landmarks magically blink into place, and removed landmarks disappear with a poof.
 
 ## Tech notes
 
@@ -58,9 +61,11 @@ See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCH
 
 ## Status
 
-Here's a preview showing the 8-bit and Flamingo themes in light mode vs. dark mode and landscape vs. portrait.
+The app is in development and not on the App Store yet.
 
 ### Screenshots
+
+Here's a preview showing the 8-bit and Flamingo themes in light mode vs. dark mode and landscape vs. portrait.
 
 <img width="148" height="320" alt="IMG_7113" src="https://github.com/user-attachments/assets/206b0d1c-930d-467b-879a-6d2b0344eda3" />
 <img width="148" height="320" alt="IMG_7110" src="https://github.com/user-attachments/assets/26e7ae98-f7d7-4d21-8938-6fb004475c73" />
