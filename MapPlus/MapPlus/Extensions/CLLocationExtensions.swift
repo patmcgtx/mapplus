@@ -6,8 +6,6 @@
 //
 import CoreLocation
 
-// TODO patmcg is this still needed?
-
 extension CLLocation {
 
     /// Creates a user-facing string with this location's latitude & longitude,
