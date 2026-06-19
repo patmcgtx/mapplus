@@ -37,7 +37,7 @@ struct CategoriesSelectFlowViewModelTests {
         let container = try makeTestContainer()
         let context = container.mainContext
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         let viewModel = CategoriesSelectFlowViewModel(service: service)
         
         #expect(viewModel.hasSelectedCategories == false)
@@ -67,7 +67,7 @@ struct CategoriesSelectFlowViewModelTests {
         try context.save()
         
         // Create service and view model
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         let viewModel = CategoriesSelectFlowViewModel(service: service)
         
         // Initially should have selections

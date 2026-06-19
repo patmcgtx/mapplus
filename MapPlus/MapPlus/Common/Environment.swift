@@ -52,7 +52,7 @@ struct InjectLiveServicesModifier: ViewModifier {
             .environment(\.locationSearchService, MapKitLocationSearchService())
             .environment(\.locationPermissionService, MapKitLocationPermissionsService())
             .environment(\.lookAroundService, MapKitLookAroundService())
-            .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))
+            .environment(\.categorySelectionService, CategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, mapItemSuggestionService)
             .environment(\.pointOfInterestService, MapKitPointOfInterestService())
     }
@@ -72,14 +72,16 @@ struct InjectLiveServicesModifier: ViewModifier {
 
 /// View modifier that injects mock services into the environment.
 struct InjectMockServicesModifier: ViewModifier {
-    
+
+    @Environment(\.modelContext) private var modelContext
+
     func body(content: Content) -> some View {
         content
             .environment(\.currentLocationService, MockCurrentLocationService())
             .environment(\.locationSearchService, MockLocationSearchService())
             .environment(\.locationPermissionService, AlwaysSucceedsLocationPermissionsService())
             .environment(\.lookAroundService, MockLookAroundService())
-            .environment(\.categorySelectionService, MockCategorySelectionService())
+            .environment(\.categorySelectionService, CategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, BasicMapItemSuggestionService())
             .environment(\.pointOfInterestService, MockPointOfInterestService())
     }
