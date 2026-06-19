@@ -36,6 +36,7 @@ Many of the buttons appear on the lower-right part of the screen by default.
 
 Prefer the buttons on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
 
+
 ## Tech notes
 
 This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
@@ -55,9 +56,11 @@ In the experimental spirit, I'm playing with a few architectural ideas in this a
 
 See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCHITECTURE.md) for details.
 
-## Screenshots
+## Status
 
-This app is no shipped yet, but here's a preview.
+Here's a preview showing the 8-bit and Flamingo themes in light mode vs. dark mode and landscape vs. portrait.
+
+### Screenshots
 
 <img width="148" height="320" alt="IMG_7113" src="https://github.com/user-attachments/assets/206b0d1c-930d-467b-879a-6d2b0344eda3" />
 <img width="148" height="320" alt="IMG_7110" src="https://github.com/user-attachments/assets/26e7ae98-f7d7-4d21-8938-6fb004475c73" />
