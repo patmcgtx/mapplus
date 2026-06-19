@@ -21,9 +21,9 @@ extension EnvironmentValues {
     // of ?'s all over the code with unreasonable error cases like basically,
     // "Sorry, this app can't operate because a service is missing." 🤦🏻‍♂️
     
-    @Entry var locationService: LocationService!
+    @Entry var currentLocationService: CurrentLocationService!
+    @Entry var locationSearchService: LocationSearchService!
     @Entry var locationPermissionService: LocationPermissionsService!
-    @Entry var addressLookupService: AddressLookupService!
     @Entry var lookAroundService: LookAroundService!
     @Entry var categorySelectionService: CategorySelectionService!
     @Entry var mapItemSuggestionService: MapItemSuggestionService!
@@ -48,9 +48,9 @@ struct InjectLiveServicesModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .environment(\.locationService, MapKitLocationService())
+            .environment(\.currentLocationService, MapKitCurrentLocationService())
+            .environment(\.locationSearchService, MapKitLocationSearchService())
             .environment(\.locationPermissionService, MapKitLocationPermissionsService())
-            .environment(\.addressLookupService, MapKitAddressLookupService())
             .environment(\.lookAroundService, MapKitLookAroundService())
             .environment(\.categorySelectionService, DefaultCategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, mapItemSuggestionService)
@@ -75,9 +75,9 @@ struct InjectMockServicesModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .environment(\.locationService, MockLocationService())
+            .environment(\.currentLocationService, MockCurrentLocationService())
+            .environment(\.locationSearchService, MockLocationSearchService())
             .environment(\.locationPermissionService, AlwaysSucceedsLocationPermissionsService())
-            .environment(\.addressLookupService, MockAddressLookupService())
             .environment(\.lookAroundService, MockLookAroundService())
             .environment(\.categorySelectionService, MockCategorySelectionService())
             .environment(\.mapItemSuggestionService, BasicMapItemSuggestionService())

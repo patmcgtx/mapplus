@@ -1,5 +1,5 @@
 //
-//  MapKitAddressLookupService.swift
+//  MapKitLocationSearchService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 2/6/26.
@@ -7,7 +7,7 @@
 import MapKit
 
 /// A live MapKit implementation of `AddressLookupService`
-struct MapKitAddressLookupService: AddressLookupService {
+struct MapKitLocationSearchService: LocationSearchService {
 
     func mapItemsFor(searchString: String) async throws -> [MKMapItem] {
         

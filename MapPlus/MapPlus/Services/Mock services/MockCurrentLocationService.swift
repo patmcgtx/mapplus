@@ -11,7 +11,7 @@ import Contacts
 #if DEBUG
 
 /// A mock implementation for testing and previews.
-class MockLocationService: LocationService {    
+class MockCurrentLocationService: CurrentLocationService {    
     
     func nearbyMapItems() async throws -> [MKMapItem] {
         

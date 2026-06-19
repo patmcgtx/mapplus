@@ -1,5 +1,5 @@
 //
-//  AddressLookupProtocol.swift
+//  LocationSearchService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 2/6/26.
@@ -7,10 +7,8 @@
 
 import MapKit
 
-// TODO patmcg rename to LocationSearchService
-
 /// An address search service
-protocol AddressLookupService {
+protocol LocationSearchService {
     
     /// A text-based location search
     /// - Parameter searchString: A user-provided search string for locations

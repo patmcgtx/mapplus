@@ -19,11 +19,11 @@ struct LandmarkForm: View {
     @Environment(\.modelContext)
     private var modelContext
 
-    @Environment(\.locationService)
-    private var locationService: LocationService!
+    @Environment(\.currentLocationService)
+    private var currentLocationService: CurrentLocationService!
     
-    @Environment(\.addressLookupService)
-    private var addressLookupService: AddressLookupService!
+    @Environment(\.locationSearchService)
+    private var addressLookupService: LocationSearchService!
     
     @Environment(\.mapItemSuggestionService)
     private var suggestionsService: MapItemSuggestionService!
@@ -88,7 +88,7 @@ struct LandmarkForm: View {
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(
-                using: locationService,
+                using: currentLocationService,
                 suggestionsService: suggestionsService,
                 pointOfInterestService: pointOfInterestService
             )
