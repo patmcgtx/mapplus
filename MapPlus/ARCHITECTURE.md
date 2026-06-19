@@ -13,8 +13,7 @@ MapPlus is an iOS app for saving and organizing personal points of interest on a
 ```
 MapPlus/
 ├── MapPlus/                 # App source code
-│   ├── MapPlusApp.swift      # Entry point
-│   ├── Common/               # Shared helpers (e.g., Environment)
+│   ├── Common/               # App entry point (MapPlusApp.swift), Environment, shared types
 │   ├── Extensions/           # Swift extensions
 │   ├── Persistence/          # SwiftData models + containers/stores
 │   ├── Preferences/          # App settings / AppStorage keys
@@ -57,6 +56,7 @@ Services encapsulate external API calls and business logic behind protocols. Eac
 | `AddressLookupService` | `MapKitAddressLookupService` | Text-based location search via `MKLocalSearch` |
 | `LookAroundService` | `MapKitLookAroundService` | Fetch `MKLookAroundScene` for street-level previews |
 | `MapItemSuggestionService` | `AIMapItemSuggestionService` | On-device AI for landmark name/symbol suggestions |
+| `PointOfInterestService` | `MapKitPointOfInterestService` | Find points of interest (businesses, etc.) near a coordinate |
 | `CategorySelectionService` | `DefaultCategorySelectionService` | Filter landmark list by category; persists via SwiftData |
 
 Services are injected into views via SwiftUI `@Environment` values (defined in `Environment.swift`), allowing easy swapping of mocks in tests without constructor changes.
@@ -87,7 +87,7 @@ enum AddressSearchState {
     case searchInitial
     case searching
     case searchResolved(LocationInfo)
-    case searchFailed(Error)
+    case searchFailed(MapPlusError)
 }
 ```
 
