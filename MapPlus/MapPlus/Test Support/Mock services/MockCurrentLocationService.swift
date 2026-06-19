@@ -4,11 +4,11 @@
 //
 //  Created by Patrick McGonigle on 2/12/26.
 //
+#if DEBUG
+
 import CoreLocation
 import MapKit
 import Contacts
-
-#if DEBUG
 
 /// A mock implementation for testing and previews.
 class MockCurrentLocationService: CurrentLocationService {    

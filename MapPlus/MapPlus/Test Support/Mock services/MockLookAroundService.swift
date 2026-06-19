@@ -4,9 +4,9 @@
 //  Created by Patrick McGonigle on 2/15/26.
 //  Thanks, Claude Sonnet 4.5
 //
-import MapKit
-
 #if DEBUG
+
+import MapKit
 
 /// A mock implementation for testing and previews.
 struct MockLookAroundService: LookAroundService {

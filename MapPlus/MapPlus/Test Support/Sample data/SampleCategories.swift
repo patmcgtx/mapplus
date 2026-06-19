@@ -4,8 +4,7 @@
 //
 //  Created by Patrick McGonigle on 2/21/26.
 //
-
-// TODO patmcg move this to a "Sample data" folder
+#if DEBUG
 
 /// Some sample categories for development and testing.
 struct SampleCategories {
@@ -52,3 +51,5 @@ struct SampleCategories {
         return retval
     }
 }
+
+#endif // DEBUG
