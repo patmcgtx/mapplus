@@ -63,6 +63,10 @@ See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCH
 
 The app is in development and not on the App Store yet.
 
+### Demo
+
+Here's [a walkthrough of this app](https://youtu.be/AARBKyTHfYg) in development showing basic functionality, themes, and dark mode vs. light mode.
+
 ### Screenshots
 
 Here's a preview showing the 8-bit and Flamingo themes in light mode vs. dark mode and landscape vs. portrait.
