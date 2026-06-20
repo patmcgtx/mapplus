@@ -297,7 +297,6 @@ struct LandmarkFormViewModelTests {
 
     // MARK: - searchByText
 
-    // TODO patmcg re-enable and fix this test
     @Test func testSearchByTextSuccess() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "San Francisco"
@@ -311,8 +310,7 @@ struct LandmarkFormViewModelTests {
 
         if case .searchResolved(let info) = viewModel.addressSearchState {
             #expect(viewModel.locationSearchInput == "San Francisco")
-            // TODO patmcg fix the check below
-//            #expect(info.fullDescription == "San Francisco, CA, United States")
+            #expect(info.fullDescription == "Van Ness\nSan Francisco, CA  94103")
         } else {
             Issue.record("Expected .searchResolved, got \(viewModel.addressSearchState)")
         }
