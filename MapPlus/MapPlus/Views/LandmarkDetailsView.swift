@@ -172,6 +172,8 @@ struct LandmarkDetailsView: View {
 
 // MARK: - Previews
 
+import SwiftData
+
 #Preview("Real look-around") {
     LandmarkDetailsView(landmark: SampleLandmarks().brooklynBridge)
         .injectLiveServices()
