@@ -569,7 +569,7 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockCurrentLocationService = MockCurrentLocationService()
-        MockCurrentLocationService.locationsToReturn = [LocationInfo(
+        mockCurrentLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
@@ -578,7 +578,7 @@ struct LandmarkFormViewModelTests {
         )]
         
         await viewModel.initializeLocation(
-            using: MockCurrentLocationService,
+            using: mockCurrentLocationService,
             suggestionsService: BasicMapItemSuggestionService(),
             pointOfInterestService: MockPointOfInterestService()
         )
@@ -596,7 +596,7 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesWhenNotesNotEmpty() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockCurrentLocationService = MockCurrentLocationService()
-        MockCurrentLocationService.locationsToReturn = [LocationInfo(
+        mockCurrentLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
@@ -605,7 +605,7 @@ struct LandmarkFormViewModelTests {
         )]
         
         await viewModel.initializeLocation(
-            using: MockCurrentLocationService,
+            using: mockCurrentLocationService,
             suggestionsService: BasicMapItemSuggestionService(),
             pointOfInterestService: MockPointOfInterestService()
         )
@@ -625,7 +625,7 @@ struct LandmarkFormViewModelTests {
     @Test func testApplySuggestedNotesMultipleTimes() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         let mockCurrentLocationService = MockCurrentLocationService()
-        MockCurrentLocationService.locationsToReturn = [LocationInfo(
+        mockCurrentLocationService.locationsToReturn = [LocationInfo(
             briefDescription: "Mock SF",
             fullDescription: "(Mock) San Francisco, CA, United States",
             latitude: 37.7749,
@@ -635,7 +635,7 @@ struct LandmarkFormViewModelTests {
         
         // Initialize location to populate suggestedNotes
         await viewModel.initializeLocation(
-            using: MockCurrentLocationService,
+            using: mockCurrentLocationService,
             suggestionsService: BasicMapItemSuggestionService(),
             pointOfInterestService: MockPointOfInterestService()
         )
