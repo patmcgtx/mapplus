@@ -23,7 +23,7 @@ struct LandmarkForm: View {
     private var currentLocationService: CurrentLocationService!
     
     @Environment(\.locationSearchService)
-    private var addressLookupService: LocationSearchService!
+    private var locationSearchService: LocationSearchService!
     
     @Environment(\.mapItemSuggestionService)
     private var suggestionsService: MapItemSuggestionService!
@@ -233,7 +233,7 @@ struct LandmarkForm: View {
                     .onSubmit {
                         Task {
                             await viewModel.locationTextSearch(
-                                using: addressLookupService,
+                                using: locationSearchService,
                                 suggestionsService: suggestionsService,
                                 pointOfInterestService: pointOfInterestService
                             )
@@ -242,7 +242,7 @@ struct LandmarkForm: View {
                     Button {
                         Task {
                             await viewModel.locationTextSearch(
-                                using: addressLookupService,
+                                using: locationSearchService,
                                 suggestionsService: suggestionsService,
                                 pointOfInterestService: pointOfInterestService
                             )
