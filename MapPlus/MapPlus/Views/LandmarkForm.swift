@@ -328,6 +328,7 @@ struct LandmarkForm: View {
 
 #Preview("Create - mock services") {
     LandmarkForm(mode: .create)
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
         .injectMockServices()
 }
 
@@ -344,4 +345,3 @@ struct LandmarkForm: View {
 }
 
 #endif // DEBUG
-
