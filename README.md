@@ -65,7 +65,7 @@ The app is in development and not on the App Store yet.
 
 ### Demo
 
-Here's [a walkthrough of this app](https://youtu.be/AARBKyTHfYg) in development showing basic functionality, themes, and dark mode vs. light mode.
+Here's [a video walkthrough of this app](https://youtu.be/AARBKyTHfYg) in development showing basic functionality, themes, and dark mode vs. light mode.
 
 ### Screenshots
 
