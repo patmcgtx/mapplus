@@ -1,5 +1,5 @@
 //
-//  CurrentLocationService.swift
+//  MapKitCurrentLocationService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 2/12/26.
@@ -8,7 +8,7 @@ import CoreLocation
 import MapKit
 
 /// A service for obtaining the user's current location and converting it to an `AddressInfo`.
-class MapKitLocationService: NSObject, LocationService, CLLocationManagerDelegate {
+class MapKitCurrentLocationService: NSObject, CurrentLocationService, CLLocationManagerDelegate {
     
     // MARK: Private properties
     

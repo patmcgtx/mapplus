@@ -4,12 +4,11 @@
 //
 //  Created by Patrick McGonigle on 10/15/25.
 //
+#if DEBUG
 
 import SwiftData
 import SwiftUI
 import MapKit
-
-// TODO patmcg move this to a "Sample data" folder
 
 /// Some sample landmarks for development and testing.
 struct SampleLandmarks {
@@ -123,3 +122,5 @@ struct SampleLandmarks {
     }
 
 }
+
+#endif // DEBUG

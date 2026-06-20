@@ -85,8 +85,6 @@ struct LandmarksView : View {
     /// - Parameter offsets: The index set indicating which landmarks to delete from the list.
     private func deleteLandmarks(at offsets: IndexSet) {
         
-        // TODO patmcg can we call LandmarkStorage instead if this method?
-        
         for index in offsets {
             let landmarkToDelete = landmarks[index]
             let store = LandmarkStore(modelContext: self.modelContext)

@@ -4,53 +4,11 @@
 //
 //  Created by Patrick McGonigle on 5/31/26.
 //
-
 import SwiftData
 
-// TODO patmcg do we even need a protocol for CategorySelectionService?
-
-/// A service protocol that manages selected categories and provides filtering capabilities.
-protocol CategorySelectionService {
-    
-    /// The currently selected categories
-    var selectedCategories: [LandmarkCategory] { get }
-    
-    /// Whether there are any selected categories
-    var hasSelectedCategories: Bool { get }
-    
-    /// The current filter mode
-    var filterMode: CategoryFilterMode { get set }
-    
-    /// Whether the filter mode picker should be shown (only relevant when 2+ categories selected)
-    var shouldShowFilterModePicker: Bool { get }
-    
-    /// Filters landmarks based on the current category selection and filter mode
-    /// - Parameter landmarks: The landmarks to filter
-    /// - Returns: Filtered landmarks matching the selection criteria
-    func filterLandmarks(_ landmarks: [Landmark]) -> [Landmark]
-    
-    /// Checks if a category is currently selected
-    /// - Parameter category: The category to check
-    /// - Returns: True if the category is selected
-    func isSelected(_ category: LandmarkCategory) -> Bool
-    
-    /// Toggles the selection state of a category
-    /// - Parameter category: The category to toggle
-    func toggle(_ category: LandmarkCategory)
-    
-    /// Clears all category selections
-    func clearAllSelections()
-    
-    /// Sets the filter mode for combining multiple categories
-    /// - Parameter mode: The filter mode to use
-    func setFilterMode(_ mode: CategoryFilterMode)
-}
-
-/// Default implementation of CategorySelectionService using SwiftData for persistence
+/// A service that selects and filters landmarks by category
 @Observable
-class DefaultCategorySelectionService: CategorySelectionService {
-
-    // TODO patmcg rename to SwiftDataCategorySelectionService and move to its own file
+class CategorySelectionService {
 
     // MARK: - Dependencies
     

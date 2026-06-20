@@ -14,7 +14,7 @@ class CategoriesSelectFlowViewModel {
     
     // MARK: Dependencies
     
-    private let service: any CategorySelectionService
+    private let service: CategorySelectionService
     
     // MARK: UI State for observable / binding
 
@@ -35,7 +35,7 @@ class CategoriesSelectFlowViewModel {
     
     // MARK: Initialization
     
-    init(service: any CategorySelectionService) {
+    init(service: CategorySelectionService) {
         self.service = service
     }
     

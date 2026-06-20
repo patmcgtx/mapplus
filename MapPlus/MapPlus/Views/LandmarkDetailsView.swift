@@ -172,6 +172,8 @@ struct LandmarkDetailsView: View {
 
 // MARK: - Previews
 
+import SwiftData
+
 #Preview("Real look-around") {
     LandmarkDetailsView(landmark: SampleLandmarks().brooklynBridge)
         .injectLiveServices()
@@ -179,6 +181,7 @@ struct LandmarkDetailsView: View {
 
 #Preview("Mock - no look-around") {
     LandmarkDetailsView(landmark: SampleLandmarks().capital)
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
         .injectMockServices()
         .environment(\.lookAroundService, MockLookAroundService(
             errorToThrow: nil,
