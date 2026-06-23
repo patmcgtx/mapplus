@@ -4,7 +4,7 @@
 
 Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
-## Map Plus allows you to basically do two things:
+## Map Plus allows you to do two things:
 
 ### Add your own places to the map
 
@@ -30,19 +30,23 @@ Match the map to your vibe.
 * Kerby for an Austin flair
 * Or add your own (with an upgrade)
 
+### On-device AI assistance
+
+On-device AI (Apple Foundation Models) helps provide meaningful defaults for a new location, namely its emoji and (if requested) its descriptive notes.
+
 ### Movable buttons
 
 Many of the buttons appear on the lower-right part of the screen by default.  
 
-Prefer the buttons on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
+Prefer the buttons on the bottom or left-hand side of the screen? Just drag and drop the buttons wherever you want them.
 
-### Animations
+### Fun animations
 
-When you change your category seleciton, newly visible landmarks magically blink into place, and removed landmarks disappear with a poof.
+When you change your category selection, newly visible landmarks magically blink into place, and removed landmarks disappear with a poof.
 
 ## Tech notes
 
-This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
+This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on making modern iOS apps with SwiftUI and SwiftData.
 
 AI tools helped accelerate spikes, refactors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
 
@@ -61,11 +65,11 @@ See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCH
 
 ## Status
 
-The app is in development and not on the App Store yet.
+The app is in development and not yet on the App Store.
 
 ### Demo
 
-Here's [a video walkthrough of this app](https://youtu.be/AARBKyTHfYg) in development showing basic functionality, themes, and dark mode vs. light mode.
+Here's [a video walkthrough of this app](https://youtu.be/AARBKyTHfYg) in development showing basic functionality, themes, dark mode vs. light mode, and on-device AI.
 
 ### Screenshots
 
