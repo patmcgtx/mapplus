@@ -4,8 +4,6 @@
 //
 //  Created by Patrick McGonigle on 10/15/25.
 //
-#if DEBUG
-
 import SwiftData
 import SwiftUI
 import MapKit
@@ -122,5 +120,3 @@ struct SampleLandmarks {
     }
 
 }
-
-#endif // DEBUG
