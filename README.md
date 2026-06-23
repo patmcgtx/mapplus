@@ -16,7 +16,7 @@ Each place has a name, notes, and an icon that you pick.
 
 Narrow your map's focus to your favorite coffee shops, restaurants to try, dream vacation destinations, late night haunts, whatever you want.
 
-## Polish & Personalization
+## Polish & personalization
 
 Frosting on the cake.
 
@@ -32,7 +32,7 @@ Match the map to your vibe.
 
 ### On-device AI assistance
 
-On-device AI (Apple Foundation Models) helps provide meaningful defaults for a new location, namely its emoji and (if requested) its descriptive notes.
+On-device AI (Apple Foundation Models) helps provide meaningful defaults for a new location, namely its emoji and (if requested) its descriptive notes. Your favorite coffee shop will likelt get a "☕️" for its emoji.
 
 ### Movable buttons
 
