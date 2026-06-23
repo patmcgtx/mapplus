@@ -32,7 +32,7 @@ Match the map to your vibe.
 
 ### On-device AI assistance
 
-On-device AI (Apple Foundation Models) helps provide meaningful defaults for a new location, namely its emoji and (if requested) its descriptive notes. Your favorite coffee shop will likelt get a "☕️" for its emoji.
+On-device AI (Apple Foundation Models) helps provide meaningful defaults for a new location, namely its emoji and (if requested) its descriptive notes. Your favorite coffee shop will likely get a "☕️" for its emoji.
 
 ### Movable buttons
 
