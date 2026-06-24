@@ -1,6 +1,6 @@
 # Map Plus: iOS Maps With Less Noise
 
-[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. But it's doing a lot.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. And it's doing a lot.
 
 Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
