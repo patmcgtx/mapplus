@@ -5,8 +5,6 @@
 //
 import MapKit
 
-// TODO patmcg convert this to async/await?
-
 /// A protocol to request CoreLocation permissions
 protocol LocationPermissionsService {
         
