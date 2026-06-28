@@ -5,8 +5,6 @@
 //  Created by Patrick McGonigle on 2/21/26.
 //
 
-// TODO patmcg move this to a "Sample data" folder
-
 /// Some sample categories for development and testing.
 struct SampleCategories {
 
