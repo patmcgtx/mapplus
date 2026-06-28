@@ -128,6 +128,7 @@ struct CategoryCapsule: View {
         isSelectable: false,
         action: nil
     )
+    .injectMockServices()
 }
 
 #Preview("View-only, selected") {
@@ -137,6 +138,7 @@ struct CategoryCapsule: View {
         isSelectable: false,
         action: nil
     )
+    .injectMockServices()
 }
 
 #Preview("Delete") {
@@ -153,7 +155,8 @@ struct CategoryCapsule: View {
             }
         )
     )
-    
+    .injectMockServices()
+
     Text("Is deleted?")
     Text(isDeleted ? "Yes" : "No")
 }

@@ -29,7 +29,7 @@ class LandmarksViewModel {
     // MARK: Actions
 
     /// Deletes the landmarks at the given indices.
-    /// Sets `deleteError` if there is an error commiting the deletion.
+    /// Sets `deleteError` if there is an error committing the deletion.
     /// - Parameter offsets: The indices of the landmarks to delete.
     /// - Parameter landmarks: The array of landmarks to delete from
     /// - Parameter modelContext: The persistent context to delete from
@@ -39,6 +39,7 @@ class LandmarksViewModel {
         modelContext: ModelContext
     ) {
         let store = LandmarkStore(modelContext: modelContext)
+        deleteError = nil
         do {
             for index in offsets {
                 try store.delete(landmark: landmarks[index])

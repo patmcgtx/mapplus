@@ -25,8 +25,10 @@ extension MKMapItem {
             fullAddress
         } else if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             fullAddress
+        } else if let name = self.name {
+            self.name
         } else {
-            self.name ?? self.location.description
+            [String(self.location.coordinate.latitude), String(self.location.coordinate.longitude)].joined(separator: ",")
         }
     }
     

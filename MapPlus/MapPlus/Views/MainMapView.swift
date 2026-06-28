@@ -223,7 +223,7 @@ struct MainMapView: View {
             }
         )
         .accessibilityLabel("my-places-menu".localized)
-        .sensoryFeedback(.impact(weight: .light), trigger: viewModel.didTapLocate)
+        .sensoryFeedback(.impact(weight: .light), trigger: viewModel.showingLandmarkList)
     }
 
     // Will switch this view to `landmarksMenuDraggable` in issue #158
