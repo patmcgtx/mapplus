@@ -26,8 +26,8 @@ extension MKMapItem {
         } else if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             fullAddress
         } else {
-            // Fall back to coordinates if no address is available
-            location.coordinateString
+            // TODO patmcg handle this case
+            ""
         }
     }
     
