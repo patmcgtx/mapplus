@@ -26,8 +26,7 @@ extension MKMapItem {
         } else if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             fullAddress
         } else {
-            // TODO patmcg handle this case
-            ""
+            self.name
         }
     }
     

@@ -152,16 +152,15 @@ struct LandmarkDetailsView: View {
         case .initial:
             EmptyView()
         case .loading:
-            // TODO patmcg improve this view
             ProgressView()
         case .resolved(let scene):
             LookAroundPreview(initialScene: scene)
                 .padding()
         case .notAvailable:
-            // TODO patmcg improve this view
+            // Error states will be improved in #96
             Text("nothing-to-see".localized)
         case .failure(let error):
-            // TODO patmcg improve this view
+            // Error states will be improved in #96
             ErrorView(shortMessage: "look-around-issues".localized, error: error)
         }
     }
