@@ -90,7 +90,7 @@ struct CategorySelectionServiceTests {
         let container = try makeTestContainer()
         let context = container.mainContext
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         #expect(service.hasSelectedCategories == false)
         #expect(service.selectedCategories.isEmpty)
@@ -111,7 +111,7 @@ struct CategorySelectionServiceTests {
         try context.save()
         
         // Create service - should load existing selection
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         #expect(service.hasSelectedCategories == true)
         #expect(service.selectedCategories.count == 2)
@@ -127,7 +127,7 @@ struct CategorySelectionServiceTests {
         let context = container.mainContext
         
         let (parks, _, _) = createTestCategories(in: context)
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         #expect(service.isSelected(parks) == false)
         
@@ -144,7 +144,7 @@ struct CategorySelectionServiceTests {
         let context = container.mainContext
         
         let (parks, _, _) = createTestCategories(in: context)
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         // Add category
         service.toggle(parks)
@@ -162,7 +162,7 @@ struct CategorySelectionServiceTests {
         let context = container.mainContext
         
         let (parks, museums, cafes) = createTestCategories(in: context)
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         // Add multiple categories
         service.toggle(parks)
@@ -185,7 +185,7 @@ struct CategorySelectionServiceTests {
         let container = try makeTestContainer()
         let context = container.mainContext
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         #expect(service.filterMode == .matchAny)
         
@@ -200,11 +200,11 @@ struct CategorySelectionServiceTests {
         let context = container.mainContext
         
         // Create first service and set filter mode
-        let service1 = DefaultCategorySelectionService(modelContext: context)
+        let service1 = CategorySelectionService(modelContext: context)
         service1.setFilterMode(.matchAll)
         
         // Create second service - should load persisted mode
-        let service2 = DefaultCategorySelectionService(modelContext: context)
+        let service2 = CategorySelectionService(modelContext: context)
         
         #expect(service2.filterMode == .matchAll)
     }
@@ -215,7 +215,7 @@ struct CategorySelectionServiceTests {
         let context = container.mainContext
         
         let (parks, museums, _) = createTestCategories(in: context)
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         // 0 categories - don't show
         #expect(service.shouldShowFilterModePicker == false)
@@ -244,7 +244,7 @@ struct CategorySelectionServiceTests {
             cafes: cafes
         )
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         service.setFilterMode(.matchAny)
         
         // Select parks and museums
@@ -279,7 +279,7 @@ struct CategorySelectionServiceTests {
             cafes: cafes
         )
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         service.setFilterMode(.matchAny)
         
         // Select only cafes
@@ -313,7 +313,7 @@ struct CategorySelectionServiceTests {
             cafes: cafes
         )
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         service.setFilterMode(.matchAll)
         
         // Select cafes and museums
@@ -346,7 +346,7 @@ struct CategorySelectionServiceTests {
             cafes: cafes
         )
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         service.setFilterMode(.matchAll)
         
         // Select all three categories
@@ -379,7 +379,7 @@ struct CategorySelectionServiceTests {
             cafes: cafes
         )
         
-        let service = DefaultCategorySelectionService(modelContext: context)
+        let service = CategorySelectionService(modelContext: context)
         
         let allLandmarks = [landmark1, landmark2, landmark3, landmark4]
         let filtered = service.filterLandmarks(allLandmarks)
@@ -387,56 +387,4 @@ struct CategorySelectionServiceTests {
         #expect(filtered.count == 4)
     }
     
-    // MARK: - Mock Service Tests
-    
-    @Test("Mock service tracks toggle calls")
-    func mockServiceTracksToggleCalls() {
-        let mockService = MockCategorySelectionService()
-        let category = LandmarkCategory(name: "Test")
-        
-        mockService.toggle(category)
-        
-        #expect(mockService.toggleCalls.count == 1)
-        #expect(mockService.toggleCalls.first?.name == "Test")
-    }
-    
-    @Test("Mock service tracks clear all calls")
-    func mockServiceTracksClearAllCalls() {
-        let mockService = MockCategorySelectionService()
-        
-        mockService.clearAllSelections()
-        mockService.clearAllSelections()
-        
-        #expect(mockService.clearAllSelectionsCalls == 2)
-    }
-    
-    @Test("Mock service tracks filter mode calls")
-    func mockServiceTracksFilterModeCalls() {
-        let mockService = MockCategorySelectionService()
-        
-        mockService.setFilterMode(.matchAll)
-        mockService.setFilterMode(.matchAny)
-        
-        #expect(mockService.setFilterModeCalls.count == 2)
-        #expect(mockService.setFilterModeCalls[0] == .matchAll)
-        #expect(mockService.setFilterModeCalls[1] == .matchAny)
-    }
-    
-    @Test("Mock service can be reset")
-    func mockServiceCanBeReset() {
-        let mockService = MockCategorySelectionService()
-        let category = LandmarkCategory(name: "Test")
-        
-        mockService.toggle(category)
-        mockService.setFilterMode(.matchAll)
-        mockService.clearAllSelections()
-        
-        mockService.reset()
-        
-        #expect(mockService.selectedCategories.isEmpty)
-        #expect(mockService.filterMode == .matchAny)
-        #expect(mockService.toggleCalls.isEmpty)
-        #expect(mockService.clearAllSelectionsCalls == 0)
-        #expect(mockService.setFilterModeCalls.isEmpty)
-    }
 }
