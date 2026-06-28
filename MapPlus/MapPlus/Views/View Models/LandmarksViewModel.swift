@@ -43,9 +43,9 @@ class LandmarksViewModel {
             for index in offsets {
                 try store.delete(landmark: landmarks[index])
             }
+            didDeleteLandmark.toggle()
         } catch {
             deleteError = error
         }
-        didDeleteLandmark.toggle()
     }
 }

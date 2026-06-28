@@ -8,7 +8,7 @@ import SwiftData
 
 /// A service for keeping track of category selections.
 /// This service uses SwiftData for persistence. Since SwiftData can be wired with any kind of
-/// `ModelContext`, it can be used for previews and tests, and a protocol and mocks are not necessary.
+/// `ModelContext`, it can be used for previews and tests, so a protocol and mocks are not necessary.
 @Observable
 class CategorySelectionService {
 
