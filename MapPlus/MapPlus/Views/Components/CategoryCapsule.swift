@@ -26,7 +26,7 @@ struct CategoryCapsule: View {
     private var colorScheme: ColorScheme
 
     @Environment(\.categorySelectionService)
-    private var categorySelectionService: CategorySelectionService!
+    private var categorySelectionService: CategorySelectionService
 
     // MARK: App storage
     
@@ -112,7 +112,7 @@ struct CategoryCapsule: View {
     // MARK: Private helpers
 
     private var isSelected: Bool {
-        categorySelectionService?.isSelected(category) ?? false
+        categorySelectionService.isSelected(category)
     }
 
     private var shouldShowSelectionState: Bool {

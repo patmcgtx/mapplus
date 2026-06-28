@@ -33,6 +33,12 @@ struct LandmarksView : View {
     
     var body: some View {
         NavigationStack {
+            if let deleteError = viewModel.deleteError {
+                ErrorView(
+                    shortMessage: deleteError.localizedDescription,
+                    error: deleteError
+                )
+            }
             List {
                 ForEach(landmarks) { landmark in
                     Button {
@@ -45,7 +51,11 @@ struct LandmarksView : View {
                     }
                 }
                 .onDelete { offsets in
-                    viewModel.deleteLandmarks(at: offsets, in: landmarks, modelContext: modelContext)
+                    viewModel.deleteLandmarks(
+                        at: offsets,
+                        in: landmarks,
+                        modelContext: modelContext
+                    )
                 }
             }
             .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.didDeleteLandmark)

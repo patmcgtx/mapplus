@@ -9,7 +9,7 @@ import MapKit
 extension MKMapItem {
 
     /// Generates a user-facing description of this map item, such as full address and/or place name.
-    /// The result is typically a multi-line address but could be coordinates if no address is available.
+    /// The result is typically a multi-line address but could be a basicname if no address is available.
     var fullDescription: String {
         buildFullDescription()
     }
@@ -26,7 +26,7 @@ extension MKMapItem {
         } else if let fullAddress = self.addressRepresentations?.fullAddress(includingRegion: false, singleLine: false) {
             fullAddress
         } else {
-            self.name
+            self.name ?? self.location.description
         }
     }
     

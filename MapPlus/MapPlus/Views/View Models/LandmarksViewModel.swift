@@ -14,16 +14,37 @@ class LandmarksViewModel {
 
     // MARK: UI State
 
+    /// Triggers showing the new-landmark flow
     var showLandmarkForm: Bool = false
+    
+    /// The landmark we're editing, if any.
     var landmarkToEdit: Landmark? = nil
+    
+    /// Set when a landmark is deleted.
     var didDeleteLandmark: Bool = false
+    
+    /// Any deletion errors encountered.
+    var deleteError: Error?
 
     // MARK: Actions
 
-    func deleteLandmarks(at offsets: IndexSet, in landmarks: [Landmark], modelContext: ModelContext) {
+    /// Deletes the landmarks at the given indices.
+    /// Sets `deleteError` if there is an error commiting the deletion.
+    /// - Parameter offsets: The indices of the landmarks to delete.
+    /// - Parameter landmarks: The array of landmarks to delete from
+    /// - Parameter modelContext: The persistent context to delete from
+    func deleteLandmarks(
+        at offsets: IndexSet,
+        in landmarks: [Landmark],
+        modelContext: ModelContext
+    ) {
         let store = LandmarkStore(modelContext: modelContext)
-        for index in offsets {
-            try? store.delete(landmark: landmarks[index])
+        do {
+            for index in offsets {
+                try store.delete(landmark: landmarks[index])
+            }
+        } catch {
+            deleteError = error
         }
         didDeleteLandmark.toggle()
     }
