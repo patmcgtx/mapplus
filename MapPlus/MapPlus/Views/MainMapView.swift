@@ -104,8 +104,8 @@ struct MainMapView: View {
                 }
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
+                        // Will implement this button for #178, #179, #299
                         Button("settings".localized, systemImage: "gearshape") {}
-                        // TODO patmcg add settings form
                     }
                     ToolbarItem() {
                         themeMenu
@@ -215,7 +215,7 @@ struct MainMapView: View {
         DraggableControlButton(
             systemImageName: "list.bullet",
             onTap: {
-                // TODO patmcg have to convert this to a "show menu" action and then use this instead of the old landmarksMenu
+                // Will use this view in issue #158
                 viewModel.showingLandmarkList = true
             },
             onMoved: { offset in
@@ -223,9 +223,10 @@ struct MainMapView: View {
             }
         )
         .accessibilityLabel("my-places-menu".localized)
+        .sensoryFeedback(.impact(weight: .light), trigger: viewModel.showingLandmarkList)
     }
 
-    // TODO patmcg this is an odd case - see landmarksMenuDraggable
+    // Will switch this view to `landmarksMenuDraggable` in issue #158
     var landmarksMenu : some View {
         Menu {
             Button("my-places-menu".localized, systemImage: "list.bullet") {
@@ -297,7 +298,6 @@ struct MainMapView: View {
     
     @ViewBuilder
     var categoriesButton: some View {
-        // TODO patmcg move view logic ^ in here if you can
         let iconName = categoriesService.hasSelectedCategories ? "map.fill" : "map"
         Button("categories".localized, systemImage: iconName) {
             viewModel.isShowingCategoryFilter = true
@@ -306,7 +306,6 @@ struct MainMapView: View {
     
     // MARK: Private helpers
     
-    // TODO patmcg move this to the view model?!?
     private var visibleLandmarks: [Landmark] {
         categoriesService.filterLandmarks(allLandmarks)
     }

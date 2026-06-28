@@ -236,16 +236,17 @@ final class LandmarkFormViewModel {
     }
 
     /// Searches for locations based on the text in `locationSearchInput`. Updates this view model's state once completed.
-    /// - Parameter addressLookupService: The service implementation to use for the location search
+    /// - Parameter locationSearchService: The service implementation to use for the location search
     /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
+    /// - Parameter pointOfInterestService: The service implementation to use for finding points of interest
     func locationTextSearch(
-        using addressLookupService: LocationSearchService,
+        using locationSearchService: LocationSearchService,
         suggestionsService: MapItemSuggestionService,
         pointOfInterestService: PointOfInterestService
     ) async {
         addressSearchState = .searching
         do {
-            let mapItems = try await addressLookupService.mapItemsFor(
+            let mapItems = try await locationSearchService.mapItemsFor(
                 searchString: locationSearchInput
             )
             

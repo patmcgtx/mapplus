@@ -10,38 +10,39 @@ import SwiftData
 
 /// Displays an editable list of landmarks
 struct LandmarksView : View {
-
+    
     // MARK: Environment
     
     @Environment(\.dismiss)
     var dismiss
     
-    // MARK: Persistence
     @Environment(\.modelContext)
     private var modelContext
+    
+    // MARK: Persistence
     
     @Query(sort: \Landmark.name, order: .forward)
     var landmarks: [Landmark]
     
     // MARK: View state
-
-    @State
-    private var showLandmarkForm: Bool = false
     
     @State
-    private var landmarkToEdit: Landmark? = nil
-    
-    @State
-    private var didDeleteLandmark: Bool = false
+    private var viewModel = LandmarksViewModel()
     
     // MARK: Views
     
     var body: some View {
         NavigationStack {
+            if let deleteError = viewModel.deleteError {
+                ErrorView(
+                    shortMessage: deleteError.localizedDescription,
+                    error: deleteError
+                )
+            }
             List {
                 ForEach(landmarks) { landmark in
                     Button {
-                        self.landmarkToEdit = landmark
+                        viewModel.landmarkToEdit = landmark
                     } label: {
                         HStack {
                             Text(landmark.symbol)
@@ -49,9 +50,15 @@ struct LandmarksView : View {
                         }
                     }
                 }
-                .onDelete(perform: deleteLandmarks)
+                .onDelete { offsets in
+                    viewModel.deleteLandmarks(
+                        at: offsets,
+                        in: landmarks,
+                        modelContext: modelContext
+                    )
+                }
             }
-            .sensoryFeedback(.impact(weight: .medium), trigger: didDeleteLandmark)
+            .sensoryFeedback(.impact(weight: .medium), trigger: viewModel.didDeleteLandmark)
             .navigationTitle("my-places".localized)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
@@ -61,36 +68,21 @@ struct LandmarksView : View {
                 }
                 ToolbarItem(placement: .primaryAction) {
                     Button("add-place".localized, systemImage: "plus") {
-                        self.showLandmarkForm = true
+                        viewModel.showLandmarkForm = true
                     }
                 }
             }
         }
-        .sheet(isPresented: $showLandmarkForm) {
+        .sheet(isPresented: $viewModel.showLandmarkForm) {
             NavigationStack {
                 LandmarkForm(mode: .create)
             }
         }
-        .sheet(item: $landmarkToEdit) { landmark in
+        .sheet(item: $viewModel.landmarkToEdit) { landmark in
             NavigationStack {
                 LandmarkForm(mode: .edit(landmark))
             }
         }
-    }
-    
-    // MARK: Private helpers
-    
-    /// Deletes landmarks at the specified index set from the SwiftData model context.
-    ///
-    /// - Parameter offsets: The index set indicating which landmarks to delete from the list.
-    private func deleteLandmarks(at offsets: IndexSet) {
-        
-        for index in offsets {
-            let landmarkToDelete = landmarks[index]
-            let store = LandmarkStore(modelContext: self.modelContext)
-            try? store.delete(landmark: landmarkToDelete)
-        }
-        didDeleteLandmark.toggle()
     }
 }
 

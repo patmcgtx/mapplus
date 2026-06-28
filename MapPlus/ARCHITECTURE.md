@@ -53,7 +53,7 @@ Services encapsulate external API calls and business logic behind protocols. Eac
 | Protocol | Real Implementation | Purpose |
 |---|---|---|
 | `LocationService` | `MapKitLocationService` | Get current user location, reverse geocoding |
-| `AddressLookupService` | `MapKitAddressLookupService` | Text-based location search via `MKLocalSearch` |
+| `LocationSearchService` | `MapKitLocationSearchService` | Text-based location search via `MKLocalSearch` |
 | `LookAroundService` | `MapKitLookAroundService` | Fetch `MKLookAroundScene` for street-level previews |
 | `MapItemSuggestionService` | `AIMapItemSuggestionService` | On-device AI for landmark name/symbol suggestions |
 | `PointOfInterestService` | `MapKitPointOfInterestService` | Find points of interest (businesses, etc.) near a coordinate |
@@ -117,7 +117,7 @@ User taps "+" on MainMapView
   → LandmarkForm presented (create mode)
   → User types an address
   → LandmarkFormViewModel.searchByText()
-  → AddressLookupService → [MKMapItem]
+  → LocationSearchService → [MKMapItem]
   → MapItemsExplorer fetches AI suggestions per item
   → AddressSearchState becomes .searchResolved(LocationInfo)
   → User selects a result and taps Save
@@ -156,4 +156,4 @@ Tests live under `MapPlusTests/` and use the **Swift Testing** framework (`@Test
 - ViewModels are tested by injecting mock services and asserting state transitions
 - SwiftData operations use in-memory containers from `ModelContainers.inMemorySampleContainer()`
 - Parameterized tests (`@Test(arguments:)`) cover multi-case scenarios
-- Mock service implementations (`MockLocationService`, `MockAddressLookupService`, `MockLookAroundService`) mirror the protocols exactly and are used for tests and DEBUG previews.
+- Mock service implementations (`MockLocationService`, `MockLocationSearchService`, `MockLookAroundService`) mirror the protocols exactly and are used for tests and DEBUG previews.

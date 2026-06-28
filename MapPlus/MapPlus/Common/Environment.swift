@@ -72,7 +72,7 @@ struct InjectLiveServicesModifier: ViewModifier {
 
 /// View modifier that injects mock services into the environment.
 struct InjectMockServicesModifier: ViewModifier {
-
+    
     @Environment(\.modelContext) private var modelContext
 
     func body(content: Content) -> some View {

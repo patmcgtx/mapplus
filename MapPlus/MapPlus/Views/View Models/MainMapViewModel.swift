@@ -39,7 +39,7 @@ final class MainMapViewModel {
     /// - Parameter locationPermissionsService: The service used to request permissions
     func requestLocationPermissions(using locationPermissionsService: LocationPermissionsService) {
         locationPermissionsService.requestPermissions { _ in
-            // TODO patmcg handle issues on the location permissions request
+            // Implement this in #53
         }
     }
     

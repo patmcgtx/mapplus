@@ -27,7 +27,6 @@ struct ErrorView: View {
                 Text(shortMessage)
             }
             Text("")
-            // TODO patmcg move the details into a "wut?" button with a sheet that says, "This may make zero sense, but your device is telling me..."
             Text(error.localizedDescription)
                 .font(.footnote)
         }

@@ -24,7 +24,7 @@ class MapKitPointOfInterestService: PointOfInterestService {
             let response = try await search.start()
             return response.mapItems
         } catch {
-            // TODO patmcg error handling
+            // Implement this in #53
             return []
         }
     }
