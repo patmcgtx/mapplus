@@ -301,7 +301,7 @@ struct LandmarkFormViewModelTests {
     @Test func testSearchByTextSuccess() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "San Francisco"
-        let mockService = MockAddressLookupService()
+        let mockService = MockLocationSearchService()
 
         await viewModel.locationTextSearch(
             using: mockService,
@@ -321,7 +321,7 @@ struct LandmarkFormViewModelTests {
     @Test func testSearchByTextSuccessUpdatesCoordinates() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "San Francisco"
-        let mockService = MockAddressLookupService()
+        let mockService = MockLocationSearchService()
 
         await viewModel.locationTextSearch(
             using: mockService,
@@ -340,7 +340,7 @@ struct LandmarkFormViewModelTests {
     @Test func testSearchByTextFailure() async {
         let viewModel = LandmarkFormViewModel(mode: .create)
         viewModel.locationSearchInput = "Nowhere"
-        let mockService = MockAddressLookupService(shouldSucceed: false)
+        let mockService = MockLocationSearchService(shouldSucceed: false)
 
         await viewModel.locationTextSearch(
             using: mockService,

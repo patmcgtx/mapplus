@@ -239,7 +239,7 @@ final class LandmarkFormViewModel {
     /// - Parameter addressLookupService: The service implementation to use for the location search
     /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func locationTextSearch(
-        using addressLookupService: AddressLookupService,
+        using addressLookupService: LocationSearchService,
         suggestionsService: MapItemSuggestionService,
         pointOfInterestService: PointOfInterestService
     ) async {

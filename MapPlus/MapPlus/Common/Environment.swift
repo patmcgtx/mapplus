@@ -23,7 +23,7 @@ extension EnvironmentValues {
     
     @Entry var locationService: LocationService!
     @Entry var locationPermissionService: LocationPermissionsService!
-    @Entry var addressLookupService: AddressLookupService!
+    @Entry var addressLookupService: LocationSearchService!
     @Entry var lookAroundService: LookAroundService!
     @Entry var categorySelectionService: CategorySelectionService!
     @Entry var mapItemSuggestionService: MapItemSuggestionService!
@@ -50,7 +50,7 @@ struct InjectLiveServicesModifier: ViewModifier {
         content
             .environment(\.locationService, MapKitLocationService())
             .environment(\.locationPermissionService, MapKitLocationPermissionsService())
-            .environment(\.addressLookupService, MapKitAddressLookupService())
+            .environment(\.addressLookupService, MapKitLocationSearchService())
             .environment(\.lookAroundService, MapKitLookAroundService())
             .environment(\.categorySelectionService, CategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, mapItemSuggestionService)
@@ -79,7 +79,7 @@ struct InjectMockServicesModifier: ViewModifier {
         content
             .environment(\.locationService, MockLocationService())
             .environment(\.locationPermissionService, AlwaysSucceedsLocationPermissionsService())
-            .environment(\.addressLookupService, MockAddressLookupService())
+            .environment(\.addressLookupService, MockLocationSearchService())
             .environment(\.lookAroundService, MockLookAroundService())
             .environment(\.categorySelectionService, CategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, BasicMapItemSuggestionService())

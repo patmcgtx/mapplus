@@ -1,5 +1,5 @@
 //
-//  MockAddressLookupService.swift
+//  MockLocationSearchService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 2/6/26.
@@ -9,7 +9,7 @@ import MapKit
 #if DEBUG
 
 /// A mock implementation for testing and previews.
-struct MockAddressLookupService: AddressLookupService {
+struct MockLocationSearchService: LocationSearchService {
         
     /// Controls whether the mock should simulate a successful lookup or throw an error.
     var shouldSucceed: Bool = true

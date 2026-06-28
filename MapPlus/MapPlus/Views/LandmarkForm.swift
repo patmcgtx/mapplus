@@ -23,7 +23,7 @@ struct LandmarkForm: View {
     private var locationService: LocationService!
     
     @Environment(\.addressLookupService)
-    private var addressLookupService: AddressLookupService!
+    private var addressLookupService: LocationSearchService!
     
     @Environment(\.mapItemSuggestionService)
     private var suggestionsService: MapItemSuggestionService!
