@@ -5,7 +5,6 @@
 //  Created by Patrick McGonigle on 4/16/26.
 //
 import SwiftUI
-import SwiftData
 
 /// A "capsule" view of a category, such as to be shown in a flow layout of categories.
 struct CategoryCapsule: View {
@@ -22,17 +21,12 @@ struct CategoryCapsule: View {
     let action: Action?
     
     // MARK: Environment
-    
+
     @Environment(\.colorScheme)
     private var colorScheme: ColorScheme
-    
-    @Environment(\.modelContext)
-    private var modelContext
 
-    // MARK: Persistence
-    
-    // Category selection state
-    @Query private var selectedCategories: [SelectedCategories]
+    @Environment(\.categorySelectionService)
+    private var categorySelectionService: CategorySelectionService!
 
     // MARK: App storage
     
@@ -109,44 +103,16 @@ struct CategoryCapsule: View {
         .onTapGesture {
             if isSelectable {
                 withAnimation {
-                    do {
-                        try withAnimation {
-                            // Get or create the selection model
-                            let selectionModel: SelectedCategories
-                            if let existing = selectedCategories.first {
-                                selectionModel = existing
-                            } else {
-                                selectionModel = SelectedCategories()
-                                modelContext.insert(selectionModel)
-                            }
-                            
-                            // Toggle the category selection
-                            selectionModel.toggle(category)
-                            
-                            // Update and commit the selected state to immediately reflect across
-                            // the app. This is part of an opinionated approach that leverages
-                            // SwiftData for simple app-wide, reactive persistent state, breaking
-                            // somewhat with traditional MVVM for simplicity and responsiveness.
-                            // Basically, it works really well. 🤷🏻‍♂️
-                            try modelContext.save()
-                        }
-                    } catch {
-                        // TODO patmcg what to do if the persist fails? Show an error alert? 🤔
-                        print("Failed to save category selection: \(error)")
-                    }
+                    categorySelectionService.toggle(category)
                 }
             }
         }
     }
 
     // MARK: Private helpers
-    
-    private var selectedCategoriesModel: SelectedCategories? {
-        selectedCategories.first
-    }
-    
+
     private var isSelected: Bool {
-        selectedCategoriesModel?.contains(category) ?? false
+        categorySelectionService?.isSelected(category) ?? false
     }
 
     private var shouldShowSelectionState: Bool {
@@ -193,34 +159,8 @@ struct CategoryCapsule: View {
 }
 
 #Preview("Toggle") {
-    
-    let category = LandmarkCategory(name: "Groceries")
-    
-    CategoryCapsule(
-        category: category,
-        isSelectable: true,
-        action: nil
-    )
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
-    
-    // TODO patmcg this is not reflecting the state change on category; fix
-    Text("Check selection in UI")
-    
-}
-
-#Preview("Toggle, selected") {
-    
-    let category = LandmarkCategory(name: "Groceries")
-    
-    CategoryCapsule(
-        category: category,
-        isSelectable: true,
-        action: nil
-    )
-    .modelContainer(try! ModelContainer.inMemorySampleContainer())
-    
-    // TODO patmcg this is not reflecting the state change on category; fix
-    Text("Check selection in UI")
+    CategoryCapsule(category: SampleCategories().cafes, isSelectable: true, action: nil)
+        .injectMockServices()
 }
 
 #endif // DEBUG
