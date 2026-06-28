@@ -1,10 +1,10 @@
 # Map Plus: iOS Maps With Less Noise
 
-[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. But it's doing a lot.
+[Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. And it's doing a lot.
 
 Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
-## Map Plus allows you to basically do two things:
+## Map Plus allows you to do two things:
 
 ### Add your own places to the map
 
@@ -16,7 +16,7 @@ Each place has a name, notes, and an icon that you pick.
 
 Narrow your map's focus to your favorite coffee shops, restaurants to try, dream vacation destinations, late night haunts, whatever you want.
 
-## Polish & Personalization
+## Polish & personalization
 
 Frosting on the cake.
 
@@ -30,19 +30,23 @@ Match the map to your vibe.
 * Kerby for an Austin flair
 * Or add your own (with an upgrade)
 
+### On-device AI assistance
+
+On-device AI (Apple Foundation Models) helps provide meaningful defaults for a new location, namely its emoji and (if requested) its descriptive notes. Your favorite coffee shop will likely get a "☕️" for its emoji.
+
 ### Movable buttons
 
 Many of the buttons appear on the lower-right part of the screen by default.  
 
-Prefer the buttons on the bottom or left-hand side of the screen?  Just drag and drop the buttons wherever you want them.
+Prefer the buttons on the bottom or left-hand side of the screen? Just drag and drop the buttons wherever you want them.
 
-### Animations
+### Fun animations
 
-When you change your category seleciton, newly visible landmarks magically blink into place, and removed landmarks disappear with a poof.
+When you change your category selection, newly visible landmarks magically blink into place, and removed landmarks disappear with a poof.
 
 ## Tech notes
 
-This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on the latest and greatest way to make apps with SwiftUI and SwiftData.
+This app was coded in Swift and SwiftUI primarily by hand as a learning exercise on making modern iOS apps with SwiftUI and SwiftData.
 
 AI tools helped accelerate spikes, refactors, code reviews, documentation, and test creation, all while letting me focus on hands-on learning.
 
@@ -61,7 +65,11 @@ See [ARCHITECTURE.md](https://github.com/patmcgtx/mapplus/blob/main/MapPlus/ARCH
 
 ## Status
 
-The app is in development and not on the App Store yet.
+The app is in development and not yet on the App Store.
+
+### Demo
+
+Here's [a video walkthrough of this app](https://youtu.be/AARBKyTHfYg) in development showing basic functionality, themes, dark mode vs. light mode, and on-device AI.
 
 ### Screenshots
 

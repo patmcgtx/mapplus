@@ -10,22 +10,22 @@ import SwiftData
 
 /// Displays an editable list of landmarks
 struct LandmarksView : View {
-
+    
     // MARK: Environment
-
+    
     @Environment(\.dismiss)
     var dismiss
-
+    
     @Environment(\.modelContext)
     private var modelContext
-
+    
     // MARK: Persistence
-
+    
     @Query(sort: \Landmark.name, order: .forward)
     var landmarks: [Landmark]
-
+    
     // MARK: View state
-
+    
     @State
     private var viewModel = LandmarksViewModel()
     

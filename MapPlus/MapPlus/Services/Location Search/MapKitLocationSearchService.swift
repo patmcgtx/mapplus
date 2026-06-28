@@ -6,7 +6,7 @@
 //
 import MapKit
 
-/// A live MapKit implementation of `AddressLookupService`
+/// A live MapKit implementation of `LocationSearchService`
 struct MapKitLocationSearchService: LocationSearchService {
 
     func mapItemsFor(searchString: String) async throws -> [MKMapItem] {

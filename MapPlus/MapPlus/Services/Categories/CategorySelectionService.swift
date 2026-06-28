@@ -4,7 +4,6 @@
 //
 //  Created by Patrick McGonigle on 5/31/26.
 //
-
 import SwiftData
 
 /// A service for keeping track of category selections.

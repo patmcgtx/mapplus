@@ -4,9 +4,9 @@
 //
 //  Created by Patrick McGonigle on 2/6/26.
 //
-import MapKit
-
 #if DEBUG
+
+import MapKit
 
 /// A mock implementation for testing and previews.
 struct MockLocationSearchService: LocationSearchService {

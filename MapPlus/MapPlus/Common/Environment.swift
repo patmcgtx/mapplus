@@ -21,9 +21,9 @@ extension EnvironmentValues {
     // of ?'s all over the code with unreasonable error cases like basically,
     // "Sorry, this app can't operate because a service is missing." 🤦🏻‍♂️
     
-    @Entry var locationService: LocationService!
+    @Entry var currentLocationService: CurrentLocationService!
+    @Entry var locationSearchService: LocationSearchService!
     @Entry var locationPermissionService: LocationPermissionsService!
-    @Entry var addressLookupService: LocationSearchService!
     @Entry var lookAroundService: LookAroundService!
     @Entry var categorySelectionService: CategorySelectionService!
     @Entry var mapItemSuggestionService: MapItemSuggestionService!
@@ -48,9 +48,9 @@ struct InjectLiveServicesModifier: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .environment(\.locationService, MapKitLocationService())
+            .environment(\.currentLocationService, MapKitCurrentLocationService())
+            .environment(\.locationSearchService, MapKitLocationSearchService())
             .environment(\.locationPermissionService, MapKitLocationPermissionsService())
-            .environment(\.addressLookupService, MapKitLocationSearchService())
             .environment(\.lookAroundService, MapKitLookAroundService())
             .environment(\.categorySelectionService, CategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, mapItemSuggestionService)
@@ -77,9 +77,9 @@ struct InjectMockServicesModifier: ViewModifier {
 
     func body(content: Content) -> some View {
         content
-            .environment(\.locationService, MockLocationService())
+            .environment(\.currentLocationService, MockCurrentLocationService())
+            .environment(\.locationSearchService, MockLocationSearchService())
             .environment(\.locationPermissionService, AlwaysSucceedsLocationPermissionsService())
-            .environment(\.addressLookupService, MockLocationSearchService())
             .environment(\.lookAroundService, MockLookAroundService())
             .environment(\.categorySelectionService, CategorySelectionService(modelContext: modelContext))
             .environment(\.mapItemSuggestionService, BasicMapItemSuggestionService())

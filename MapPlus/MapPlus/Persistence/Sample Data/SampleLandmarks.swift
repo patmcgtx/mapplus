@@ -4,7 +4,6 @@
 //
 //  Created by Patrick McGonigle on 10/15/25.
 //
-
 import SwiftData
 import SwiftUI
 import MapKit

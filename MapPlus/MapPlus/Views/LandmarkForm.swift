@@ -19,11 +19,11 @@ struct LandmarkForm: View {
     @Environment(\.modelContext)
     private var modelContext
 
-    @Environment(\.locationService)
-    private var locationService: LocationService!
+    @Environment(\.currentLocationService)
+    private var currentLocationService: CurrentLocationService!
     
-    @Environment(\.addressLookupService)
-    private var addressLookupService: LocationSearchService!
+    @Environment(\.locationSearchService)
+    private var locationSearchService: LocationSearchService!
     
     @Environment(\.mapItemSuggestionService)
     private var suggestionsService: MapItemSuggestionService!
@@ -88,7 +88,7 @@ struct LandmarkForm: View {
         .scrollDismissesKeyboard(.immediately)
         .task(priority: .userInitiated) {
             await viewModel.initializeLocation(
-                using: locationService,
+                using: currentLocationService,
                 suggestionsService: suggestionsService,
                 pointOfInterestService: pointOfInterestService
             )
@@ -233,7 +233,7 @@ struct LandmarkForm: View {
                     .onSubmit {
                         Task {
                             await viewModel.locationTextSearch(
-                                using: addressLookupService,
+                                using: locationSearchService,
                                 suggestionsService: suggestionsService,
                                 pointOfInterestService: pointOfInterestService
                             )
@@ -242,7 +242,7 @@ struct LandmarkForm: View {
                     Button {
                         Task {
                             await viewModel.locationTextSearch(
-                                using: addressLookupService,
+                                using: locationSearchService,
                                 suggestionsService: suggestionsService,
                                 pointOfInterestService: pointOfInterestService
                             )
@@ -328,6 +328,7 @@ struct LandmarkForm: View {
 
 #Preview("Create - mock services") {
     LandmarkForm(mode: .create)
+        .modelContainer(try! ModelContainer.inMemorySampleContainer())
         .injectMockServices()
 }
 
@@ -344,4 +345,3 @@ struct LandmarkForm: View {
 }
 
 #endif // DEBUG
-

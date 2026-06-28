@@ -1,4 +1,4 @@
-//  LocationPermissonsService.swift
+//  LocationPermissionsService.swift
 //  MapPlus
 //
 //  Created by Patrick McGonigle on 11/13/25.

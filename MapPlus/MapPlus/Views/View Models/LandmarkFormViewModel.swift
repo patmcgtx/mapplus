@@ -201,10 +201,10 @@ final class LandmarkFormViewModel {
     /// In create mode, attempts to pre-populate the current device location.
     /// In edit mode, resolves the landmark's existing address.
     ///
-    /// - Parameter locationService: The service used to fetch the current device location.
+    /// - Parameter currentLocationService: The service used to fetch the current device location.
     /// - Parameter suggestionsService: The service implementation to use for suggestions about found locations
     func initializeLocation(
-        using locationService: LocationService,
+        using currentLocationService: CurrentLocationService,
         suggestionsService: MapItemSuggestionService,
         pointOfInterestService: PointOfInterestService
     )
@@ -212,7 +212,7 @@ final class LandmarkFormViewModel {
             switch mode {
             case .create:
             do {
-                let mapItems = try await locationService.nearbyMapItems()
+                let mapItems = try await currentLocationService.nearbyMapItems()
                 await applyFirstLocationResult(
                     from: mapItems,
                     suggestionsService: suggestionsService,
