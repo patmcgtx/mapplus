@@ -79,5 +79,31 @@ struct CategoriesSelectFlowViewModelTests {
         // Should be empty now
         #expect(viewModel.hasSelectedCategories == false)
     }
+
+    @MainActor @Test("Filter mode state comes from the service")
+    func filterModeState() throws {
+        let container = try makeTestContainer()
+        let context = container.mainContext
+
+        let category1 = LandmarkCategory(name: "Cafes")
+        let category2 = LandmarkCategory(name: "Museums")
+        let selection = SelectedCategories(categories: [category1, category2], filterMode: .matchAny)
+        context.insert(category1)
+        context.insert(category2)
+        context.insert(selection)
+        try context.save()
+
+        let service = CategorySelectionService(modelContext: context)
+        let viewModel = CategoriesSelectFlowViewModel(service: service)
+
+        #expect(viewModel.shouldShowFilterModePicker)
+        #expect(viewModel.filterMode == .matchAny)
+        #expect(viewModel.filterModeExplanationKey == "match-any-explanation")
+
+        viewModel.setFilterMode(.matchAll)
+
+        #expect(viewModel.filterMode == .matchAll)
+        #expect(viewModel.filterModeExplanationKey == "match-all-explanation")
+    }
     
 }

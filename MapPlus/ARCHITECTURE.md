@@ -77,6 +77,7 @@ ViewModels use the `@Observable` macro and are bound to `@MainActor`. They orche
 |---|---|---|
 | `MainMapViewModel` | `MainMapView` | Map region, selected annotation, sheet visibility, location permission |
 | `LandmarkFormViewModel` | `LandmarkForm` | Create/edit mode, address search lifecycle, AI suggestions, save state |
+| `LandmarkDetailsViewModel` | `LandmarkDetailsView` | Look Around loading, service orchestration, preview state |
 | `CategoriesEditViewModel` | Category edit UI | Category CRUD |
 | `CategoriesSelectFlowViewModel` | `CategoriesSelectFlow` | Delegates filter logic to `CategorySelectionService` |
 
@@ -94,6 +95,8 @@ enum AddressSearchState {
 ### 4. View Layer
 
 Views are SwiftUI and generally own no business logic — they bind to a ViewModel or SwiftData `@Query`, and forward user actions to the ViewModel.
+
+Use a dedicated ViewModel when a view needs async work, service orchestration, explicit error handling, or a multi-step state machine. Keep a view view-only when it is purely presentational or limited to lightweight local UI state such as disclosure, sheet, or picker selection.
 
 | View | Role |
 |---|---|
@@ -136,6 +139,8 @@ User taps "+" on MainMapView
 **@Observable ViewModels** — uses Swift 5.9+ `@Observable` macro rather than `ObservableObject`/Combine.
 
 **State machine enums** — multi-step flows (search, save) are modeled as enums with associated values rather than multiple boolean flags.
+
+**View-model boundary** — async loading, service-backed interaction flows, and recoverable error states belong in a ViewModel; simple rendering and lightweight local presentation state can stay in the view.
 
 **SwiftData reactivity** — `@Query` replaces explicit fetch/refresh cycles; the view layer reacts automatically to model changes.
 
