@@ -11,11 +11,6 @@ import MapKit
 /// Displays the details of the given landmark, including notes, address, and a lookaround preview.
 struct LandmarkDetailsView: View {
     
-    // MARK: Properties
-    
-    /// The landmark to display
-    let landmark: Landmark
-    
     // MARK: Environment
     
     @Environment(\.dismiss)
@@ -29,7 +24,9 @@ struct LandmarkDetailsView: View {
     @State
     private var isEditorShowing: Bool = false
 
-    // Segmented picker
+    @State
+    private var viewModel: LandmarkDetailsViewModel
+
     private enum Section: String, CaseIterable, Identifiable {
         case details = "details"
         case preview = "preview"
@@ -40,29 +37,23 @@ struct LandmarkDetailsView: View {
         }
     }
     @State private var selectedSection: Section = .details
-    
-    // Look-around location preview
-    private enum LookAroundState {
-        case initial
-        case loading
-        case resolved(MKLookAroundScene)
-        case notAvailable
-        case failure(Error)
+
+    init(landmark: Landmark) {
+        _viewModel = State(initialValue: LandmarkDetailsViewModel(landmark: landmark))
     }
-    @State private var lookAroundState: LookAroundState = .initial
     
     var body: some View {
         NavigationStack {
             HStack {
                 VStack(alignment: .leading) {
                     HStack {
-                        Text(landmark.symbol)
-                        Text(landmark.name)
+                        Text(viewModel.landmark.symbol)
+                        Text(viewModel.landmark.name)
                     }
                     .font(.title)
                     .padding()
                     
-                    CategoriesViewFlow(categories: landmark.categoriesSorted)
+                    CategoriesViewFlow(categories: viewModel.landmark.categoriesSorted)
                     
                     Picker("section".localized, selection:$selectedSection) {
                         ForEach(Section.allCases) { section in
@@ -97,22 +88,11 @@ struct LandmarkDetailsView: View {
         }
         .sheet(isPresented: $isEditorShowing) {
             NavigationStack {
-                LandmarkForm(mode: .edit(landmark))
+                LandmarkForm(mode: .edit(viewModel.landmark))
             }
         }
         .task {
-            do {
-                // Fetch the look-around scene when the view loads
-                lookAroundState = .loading
-                if let lookAroundScene = try await lookAroundService.lookAroundScene(
-                    for: landmark.location) {
-                    lookAroundState = .resolved(lookAroundScene)
-                } else {
-                    lookAroundState = .notAvailable
-                }
-            } catch {
-                lookAroundState = .failure(error)
-            }
+            await viewModel.loadLookAround(using: lookAroundService)
         }
     }
     
@@ -120,26 +100,26 @@ struct LandmarkDetailsView: View {
     
     @ViewBuilder
     private var detailsView: some View {
-        if let markdown = landmark.notes.withMarkdown {
+        if let markdown = viewModel.landmark.notes.withMarkdown {
             Text(markdown)
                 .padding()
         } else {
-            Text(landmark.notes)
+            Text(viewModel.landmark.notes)
                 .padding()
         }
         HStack(alignment: .top) {
-            Text(landmark.formattedAddress)
+            Text(viewModel.landmark.formattedAddress)
                 .font(.footnote)
                 .padding(.leading)
             Spacer()
             VStack(alignment: .leading) {
                 Button("get-directions", systemImage: "arrow.trianglehead.turn.up.right.circle") {
-                    landmark.openInMaps(
+                    viewModel.landmark.openInMaps(
                         mapsOptions: [MKLaunchOptionsDirectionsModeKey: MKLaunchOptionsDirectionsModeDefault]
                     )
                 }
                 Button("show-in-maps", systemImage: "map") {
-                    landmark.openInMaps()
+                    viewModel.landmark.openInMaps()
                 }
             }
             Spacer()
@@ -148,7 +128,7 @@ struct LandmarkDetailsView: View {
     
     @ViewBuilder
     private var lookAroundView: some View {
-        switch lookAroundState {
+        switch viewModel.lookAroundState {
         case .initial:
             EmptyView()
         case .loading:

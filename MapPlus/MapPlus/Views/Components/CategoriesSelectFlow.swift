@@ -33,6 +33,9 @@ struct CategoriesSelectFlow: View {
     @State
     private var isShowingEditView = false
 
+    @State
+    private var viewModel: CategoriesSelectFlowViewModel?
+
     // MARK: Views
     
     var body: some View {
@@ -44,10 +47,10 @@ struct CategoriesSelectFlow: View {
                 
                 HStack(spacing: 8) {
                     Button("clear".localized) {
-                        categoriesService.clearAllSelections()
+                        viewModel?.clearAllSelections()
                     }
                     .buttonStyle(.bordered)
-                    .disabled(!categoriesService.hasSelectedCategories)
+                    .disabled(!(viewModel?.hasSelectedCategories ?? false))
                     
                     Divider()
                         .frame(height: 20)
@@ -60,7 +63,7 @@ struct CategoriesSelectFlow: View {
             }
             
             // Filter mode picker - only shown when 2+ categories are selected
-            if categoriesService.shouldShowFilterModePicker == true {
+            if viewModel?.shouldShowFilterModePicker == true {
                 VStack(alignment: .leading, spacing: 8) {
                     HStack {
                         Text("filter-mode".localized)
@@ -70,8 +73,8 @@ struct CategoriesSelectFlow: View {
                         Spacer()
                         
                         Picker("filter-mode".localized, selection: Binding(
-                            get: { categoriesService.filterMode },
-                            set: { categoriesService.setFilterMode($0) }
+                            get: { viewModel?.filterMode ?? .matchAny },
+                            set: { viewModel?.setFilterMode($0) }
                         )) {
                             Text("match-any".localized).tag(CategoryFilterMode.matchAny)
                             Text("match-all".localized).tag(CategoryFilterMode.matchAll)
@@ -83,9 +86,7 @@ struct CategoriesSelectFlow: View {
                     // Helpful explanation text
                     if showCategorySelectorExplanation {
                         HStack {
-                            Text(categoriesService.filterMode == .matchAny
-                                 ? "match-any-explanation".localized
-                                 : "match-all-explanation".localized)
+                            Text((viewModel?.filterModeExplanationKey ?? "match-any-explanation").localized)
                             .font(.caption)
                             .foregroundStyle(.primary)
                             
@@ -125,9 +126,14 @@ struct CategoriesSelectFlow: View {
                 }
             }
         }
-        .animation(.default, value: categoriesService.shouldShowFilterModePicker)
+        .animation(.default, value: viewModel?.shouldShowFilterModePicker ?? false)
         .sheet(isPresented: $isShowingEditView) {
             CategoriesEditView()
+        }
+        .onAppear {
+            if viewModel == nil {
+                viewModel = CategoriesSelectFlowViewModel(service: categoriesService)
+            }
         }
     }
 }

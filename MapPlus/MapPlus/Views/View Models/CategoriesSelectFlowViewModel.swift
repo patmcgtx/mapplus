@@ -10,7 +10,7 @@ import SwiftData
 /// Manages the state and business logic for category selection
 /// This is now a lightweight wrapper around CategorySelectionService
 @Observable @MainActor
-class CategoriesSelectFlowViewModel {
+final class CategoriesSelectFlowViewModel {
     
     // MARK: Dependencies
     
@@ -31,6 +31,13 @@ class CategoriesSelectFlowViewModel {
     /// Whether the filter mode picker should be shown (only relevant when 2+ categories selected)
     var shouldShowFilterModePicker: Bool {
         service.shouldShowFilterModePicker
+    }
+
+    /// The localized explanation key for the current filter mode
+    var filterModeExplanationKey: String {
+        filterMode == .matchAny
+            ? "match-any-explanation"
+            : "match-all-explanation"
     }
     
     // MARK: Initialization
