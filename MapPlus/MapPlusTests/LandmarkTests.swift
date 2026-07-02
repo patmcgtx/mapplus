@@ -5,6 +5,7 @@ import MapKit
 import SwiftData
 @testable import MapPlus
 
+@MainActor
 struct LandmarkTests {
     
     // Test data for parameterized landmark initialization tests
@@ -144,7 +145,7 @@ struct LandmarkTests {
                 "Expected longitude \(testCase.longitude) for \(testCase.description)")
     }
     
-    @Test func testUniqueness() {
+    @Test("Two landmarks at the same coordinates share a location") func testUniqueness() {
         
         let coordinate = CLLocationCoordinate2D(
             latitude: 30.00458,
@@ -176,7 +177,7 @@ struct LandmarkTests {
     
     // MARK: - init(from:) Tests
     
-    @Test func testInitFromCopiesAllProperties() {
+    @Test("init(from:) copies all properties") func testInitFromCopiesAllProperties() {
         let source = Landmark(
             name: "Golden Gate Bridge",
             notes: "Iconic suspension bridge",
@@ -195,7 +196,7 @@ struct LandmarkTests {
         #expect(copy.location.longitude == source.location.longitude)
     }
     
-    @Test func testInitFromProducesSeparateInstance() {
+    @Test("init(from:) produces a separate instance") func testInitFromProducesSeparateInstance() {
         let source = Landmark(name: "Eiffel Tower", notes: "Paris landmark", symbol: "🗼",
                               location: .init(latitude: 48.8584, longitude: 2.2945))
         let copy = Landmark(from: source)
@@ -204,7 +205,7 @@ struct LandmarkTests {
         #expect(copy !== source)
     }
     
-    @Test func testInitFromMutationsDoNotAffectSource() {
+    @Test("init(from:) mutations do not affect the source") func testInitFromMutationsDoNotAffectSource() {
         let source = Landmark(name: "Original Name", notes: "Original notes", symbol: "📍",
                               location: .init(latitude: 10.0, longitude: 20.0))
         let copy = Landmark(from: source)
@@ -216,7 +217,7 @@ struct LandmarkTests {
         #expect(source.notes == "Original notes", "Mutating copy should not affect source notes")
     }
     
-    @Test func testInitFromWithEmptyFields() {
+    @Test("init(from:) handles empty fields") func testInitFromWithEmptyFields() {
         let source = Landmark(name: "", notes: "", formattedAddress: "", symbol: "",
                               location: .init(latitude: 0.0, longitude: 0.0))
         let copy = Landmark(from: source)
@@ -229,7 +230,7 @@ struct LandmarkTests {
         #expect(copy.location.longitude == 0.0)
     }
     
-    @MainActor @Test func testUniqueUpsert() throws {
+    @Test("Inserting the same landmark twice results in one entry") func testUniqueUpsert() throws {
         
         // Set up in-memory persistence container
         let configInMemory = ModelConfiguration(

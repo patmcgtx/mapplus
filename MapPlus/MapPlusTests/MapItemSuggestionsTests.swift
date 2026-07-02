@@ -11,9 +11,17 @@ import MapKit
 
 @Suite("MapItemsIterator Tests")
 struct MapItemsIteratorTests {
-    
+
+    // MARK: - Helper Types
+
+    struct CoordinateTestCase {
+        let name: String
+        let latitude: Double
+        let longitude: Double
+    }
+
     // MARK: - Helper Methods
-    
+
     /// Creates a sample MKMapItem for testing
     private func makeSampleMapItem(
         name: String,
@@ -177,33 +185,27 @@ struct MapItemsIteratorTests {
         #expect(second?.briefDescription == "Location B")
     }
     
-    @Test("Iterator with different coordinates")
-    func testDifferentCoordinates() async throws {
+    @Test("Iterator with different coordinates", arguments: [
+        CoordinateTestCase(name: "Equator", latitude: 0.0, longitude: 0.0),
+        CoordinateTestCase(name: "North Pole", latitude: 90.0, longitude: 0.0),
+        CoordinateTestCase(name: "South Pole", latitude: -90.0, longitude: 0.0),
+        CoordinateTestCase(name: "International Date Line", latitude: 0.0, longitude: 180.0),
+        CoordinateTestCase(name: "Prime Meridian", latitude: 51.4778, longitude: 0.0)
+    ])
+    func testDifferentCoordinates(testCase: CoordinateTestCase) async throws {
         let service = BasicMapItemSuggestionService()
-        
-        // Test with various coordinate values
-        let testCases: [(String, Double, Double)] = [
-            ("Equator", 0.0, 0.0),
-            ("North Pole", 90.0, 0.0),
-            ("South Pole", -90.0, 0.0),
-            ("International Date Line", 0.0, 180.0),
-            ("Prime Meridian", 51.4778, 0.0)
-        ]
-        
-        for (name, lat, lon) in testCases {
-            let mapItem = makeSampleMapItem(name: name, latitude: lat, longitude: lon)
-            var iterator = MapItemsExplorer(
-                suggestionService: service,
-                pointOfInterestService: MockPointOfInterestService(),
-                mapItems: [mapItem]
-            )
-            
-            let locationInfo = await iterator.nextMapItem()
-            
-            #expect(locationInfo?.briefDescription == name)
-            #expect(locationInfo?.coordinates.latitude == lat)
-            #expect(locationInfo?.coordinates.longitude == lon)
-        }
+        let mapItem = makeSampleMapItem(name: testCase.name, latitude: testCase.latitude, longitude: testCase.longitude)
+        var iterator = MapItemsExplorer(
+            suggestionService: service,
+            pointOfInterestService: MockPointOfInterestService(),
+            mapItems: [mapItem]
+        )
+
+        let locationInfo = await iterator.nextMapItem()
+
+        #expect(locationInfo?.briefDescription == testCase.name)
+        #expect(locationInfo?.coordinates.latitude == testCase.latitude)
+        #expect(locationInfo?.coordinates.longitude == testCase.longitude)
     }
-    
+
 }

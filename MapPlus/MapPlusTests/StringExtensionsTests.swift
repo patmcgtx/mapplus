@@ -141,28 +141,14 @@ struct StringExtensionsTests {
     
     // MARK: - withMarkdown Tests
     
-    @Test("withMarkdown returns non-nil for plain text")
-    func testWithMarkdownPlainText() {
-        let result = "Hello, World!".withMarkdown
-        #expect(result != nil, "withMarkdown should return non-nil for plain text")
-    }
-    
-    @Test("withMarkdown returns non-nil for bold markdown")
-    func testWithMarkdownBold() {
-        let result = "**bold text**".withMarkdown
-        #expect(result != nil, "withMarkdown should return non-nil for bold markdown")
-    }
-    
-    @Test("withMarkdown returns non-nil for italic markdown")
-    func testWithMarkdownItalic() {
-        let result = "_italic text_".withMarkdown
-        #expect(result != nil, "withMarkdown should return non-nil for italic markdown")
-    }
-    
-    @Test("withMarkdown returns non-nil for markdown link")
-    func testWithMarkdownLink() {
-        let result = "[Apple](https://www.apple.com)".withMarkdown
-        #expect(result != nil, "withMarkdown should return non-nil for markdown link")
+    @Test("withMarkdown returns non-nil", arguments: [
+        "Hello, World!",
+        "**bold text**",
+        "_italic text_",
+        "[Apple](https://www.apple.com)"
+    ])
+    func testWithMarkdownReturnsNonNil(input: String) {
+        #expect(input.withMarkdown != nil)
     }
     
     @Test("withMarkdown preserves text content")

@@ -83,28 +83,15 @@ struct CategoriesEditViewModelTests {
         #expect(categories.first?.name == "Cafes") // Trimmed
     }
     
-    @Test("Add category fails with empty name")
-    func testAddCategoryFailsWithEmptyName() throws {
+    @Test("Add category fails with empty or whitespace-only name", arguments: ["", " ", "   "])
+    func testAddCategoryFailsWithInvalidName(invalidName: String) throws {
         let (viewModel, context) = try makeViewModel()
-        
-        viewModel.newCategoryName = ""
+
+        viewModel.newCategoryName = invalidName
         let result = viewModel.addCategory(allCategories: [])
-        
+
         #expect(result == false)
-        
-        let categories = try fetchAllCategories(from: context)
-        #expect(categories.isEmpty)
-    }
-    
-    @Test("Add category fails with whitespace-only name")
-    func testAddCategoryFailsWithWhitespaceOnly() throws {
-        let (viewModel, context) = try makeViewModel()
-        
-        viewModel.newCategoryName = "   "
-        let result = viewModel.addCategory(allCategories: [])
-        
-        #expect(result == false)
-        
+
         let categories = try fetchAllCategories(from: context)
         #expect(categories.isEmpty)
     }
@@ -359,7 +346,7 @@ struct CategoriesEditViewModelTests {
         var categories = try fetchAllCategories(from: context)
         #expect(categories.count == 1)
         
-        let category = categories.first!
+        let category = try #require(categories.first)
         
         // Edit the category
         viewModel.startEditing(category)
