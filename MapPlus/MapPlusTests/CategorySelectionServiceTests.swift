@@ -10,6 +10,7 @@ import SwiftData
 import CoreLocation
 @testable import MapPlus
 
+@MainActor
 @Suite("Category Selection Service Tests")
 struct CategorySelectionServiceTests {
     
@@ -85,7 +86,7 @@ struct CategorySelectionServiceTests {
     
     // MARK: - Initialization Tests
     
-    @MainActor @Test("Service initializes with no selections")
+    @Test("Service initializes with no selections")
     func initializesEmpty() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -98,7 +99,7 @@ struct CategorySelectionServiceTests {
         #expect(service.shouldShowFilterModePicker == false)
     }
     
-    @MainActor @Test("Service loads existing selections")
+    @Test("Service loads existing selections")
     func loadsExistingSelections() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -121,7 +122,7 @@ struct CategorySelectionServiceTests {
     
     // MARK: - Selection Tests
     
-    @MainActor @Test("Toggle adds category when not selected")
+    @Test("Toggle adds category when not selected")
     func toggleAddsCategory() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -138,7 +139,7 @@ struct CategorySelectionServiceTests {
         #expect(service.selectedCategories.contains(parks))
     }
     
-    @MainActor @Test("Toggle removes category when selected")
+    @Test("Toggle removes category when selected")
     func toggleRemovesCategory() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -156,7 +157,7 @@ struct CategorySelectionServiceTests {
         #expect(service.hasSelectedCategories == false)
     }
     
-    @MainActor @Test("Clear all selections removes all categories")
+    @Test("Clear all selections removes all categories")
     func clearAllSelections() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -180,7 +181,7 @@ struct CategorySelectionServiceTests {
     
     // MARK: - Filter Mode Tests
     
-    @MainActor @Test("Setting filter mode updates state")
+    @Test("Setting filter mode updates state")
     func setFilterMode() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -194,7 +195,7 @@ struct CategorySelectionServiceTests {
         #expect(service.filterMode == .matchAll)
     }
     
-    @MainActor @Test("Filter mode persists across service instances")
+    @Test("Filter mode persists across service instances")
     func filterModePersists() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -209,7 +210,7 @@ struct CategorySelectionServiceTests {
         #expect(service2.filterMode == .matchAll)
     }
     
-    @MainActor @Test("Should show filter mode picker with 2+ categories")
+    @Test("Should show filter mode picker with 2+ categories")
     func shouldShowFilterModePicker() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -231,7 +232,7 @@ struct CategorySelectionServiceTests {
     
     // MARK: - Filtering Tests - Match Any
     
-    @MainActor @Test("Filter landmarks with match any mode")
+    @Test("Filter landmarks with match any mode")
     func filterLandmarksMatchAny() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -266,7 +267,7 @@ struct CategorySelectionServiceTests {
         #expect(filtered.contains(landmark4))
     }
     
-    @MainActor @Test("Filter landmarks with match any excludes non-matching")
+    @Test("Filter landmarks with match any excludes non-matching")
     func filterLandmarksMatchAnyExcludesNonMatching() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -300,7 +301,7 @@ struct CategorySelectionServiceTests {
     
     // MARK: - Filtering Tests - Match All
     
-    @MainActor @Test("Filter landmarks with match all mode")
+    @Test("Filter landmarks with match all mode")
     func filterLandmarksMatchAll() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -333,7 +334,7 @@ struct CategorySelectionServiceTests {
         #expect(filtered.contains(landmark4))
     }
     
-    @MainActor @Test("Filter landmarks with match all requires all categories")
+    @Test("Filter landmarks with match all requires all categories")
     func filterLandmarksMatchAllRequiresAll() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -366,7 +367,7 @@ struct CategorySelectionServiceTests {
         #expect(filtered.contains(landmark4))
     }
     
-    @MainActor @Test("Filter with no selections returns all landmarks")
+    @Test("Filter with no selections returns all landmarks")
     func filterWithNoSelectionsReturnsAll() throws {
         let container = try makeTestContainer()
         let context = container.mainContext

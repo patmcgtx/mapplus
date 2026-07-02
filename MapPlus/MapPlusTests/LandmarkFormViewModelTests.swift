@@ -287,11 +287,8 @@ struct LandmarkFormViewModelTests {
             )
         ]
         
-        do {
+        await #expect(throws: (any Error).self) {
             _ = try await mockService.nearbyMapItems()
-            Issue.record("Expected error to be thrown")
-        } catch {
-            // Expected
         }
     }
 

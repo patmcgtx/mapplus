@@ -23,7 +23,7 @@ struct LandmarkStoreTests {
     
     // MARK: - delete(landmark:) Tests
     
-    @Test func testDeleteRemovesLandmark() throws {
+    @Test("Delete removes the landmark from the store") func testDeleteRemovesLandmark() throws {
         let container = try makeContainer()
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
@@ -41,7 +41,7 @@ struct LandmarkStoreTests {
         #expect(all.isEmpty, "Store should be empty after deleting the only landmark")
     }
     
-    @Test func testDeleteRemovesOnlyTargetLandmark() throws {
+    @Test("Delete removes only the target landmark") func testDeleteRemovesOnlyTargetLandmark() throws {
         let container = try makeContainer()
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
@@ -64,7 +64,7 @@ struct LandmarkStoreTests {
                 "The remaining landmark should be the one that was not deleted")
     }
     
-    @Test func testDeletePersistsAfterFetch() throws {
+    @Test("Delete persists after re-fetch") func testDeletePersistsAfterFetch() throws {
         let container = try makeContainer()
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)
@@ -81,7 +81,7 @@ struct LandmarkStoreTests {
     
     // MARK: - commit(landmark:) Tests
     
-    @Test func testCommitInsertsLandmark() throws {
+    @Test("Commit inserts a landmark into the context") func testCommitInsertsLandmark() throws {
         let container = try makeContainer()
         let context = container.mainContext
         let store = LandmarkStore(modelContext: context)

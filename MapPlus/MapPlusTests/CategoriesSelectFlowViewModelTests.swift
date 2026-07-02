@@ -9,6 +9,7 @@ import Testing
 import SwiftData
 @testable import MapPlus
 
+@MainActor
 @Suite("Categories Selection ViewModel Tests")
 struct CategoriesSelectFlowViewModelTests {
     
@@ -32,7 +33,7 @@ struct CategoriesSelectFlowViewModelTests {
     
     // MARK: - Tests
         
-    @MainActor @Test("Initially has no selected categories")
+    @Test("Initially has no selected categories")
     func initiallyNoSelections() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
@@ -50,7 +51,7 @@ struct CategoriesSelectFlowViewModelTests {
         #expect(!selections.isEmpty)
     }
     
-    @MainActor @Test("Clear all selections removes all categories")
+    @Test("Clear all selections removes all categories")
     func clearAllSelections() throws {
         let container = try makeTestContainer()
         let context = container.mainContext
