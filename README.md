@@ -4,6 +4,8 @@
 
 Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
+⚠️ This app is a work in progress.
+
 ## Map Plus allows you to do two things:
 
 ### Add your own places to the map
