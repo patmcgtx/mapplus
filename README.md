@@ -4,7 +4,9 @@
 
 Built on Apple's native MapKit, Map Plus is a lighter, more personalized map companion with some fun twists.
 
-⚠️ This app is a work in progress.
+This is a work in progress. 
+
+It is also serving as a reference implementation for other apps such as my [daily flight planner](https://github.com/patmcgtx/daily-flight-plan).
 
 ## Map Plus allows you to do two things:
 
