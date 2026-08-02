@@ -1,4 +1,4 @@
-# Map Plus: iOS Maps With Less Noise
+# Map Plus: Mapping Your Own World
 
 [Apple Maps](https://maps.apple.com) is a pretty great map app. It's beautiful, and it's useful. And it's doing a lot.
 
