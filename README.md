@@ -8,10 +8,7 @@ A lighter, more personal map companion built on Apple's native MapKit, hand-code
   <img src="docs/images/mapplus-new-landmark.png" width="220" alt="Adding a place in Map Plus, with on-device AI drafting the notes">
 </p>
 
-<p align="center">
-  <a href="https://youtu.be/AARBKyTHfYg"><img src="https://img.youtube.com/vi/AARBKyTHfYg/hqdefault.jpg" width="400" alt="Map Plus demo video"></a><br>
-  <sub><a href="https://youtu.be/AARBKyTHfYg">Watch the walkthrough</a>: basic functionality, themes, dark vs. light mode, and on-device AI.</sub>
-</p>
+**[Watch the walkthrough](https://youtu.be/AARBKyTHfYg)**: basic functionality, themes, dark vs. light mode, and on-device AI.
 
 **Status:** a work in progress, not yet on the App Store. It also serves as the reference implementation for my [daily flight planner](https://github.com/patmcgtx/daily-flight-plan).
 
