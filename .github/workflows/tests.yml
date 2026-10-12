@@ -56,10 +56,38 @@ jobs:
             CODE_SIGNING_REQUIRED=NO \
             CODE_SIGN_IDENTITY=""
 
+      - name: Report code coverage
+        if: always()
+        working-directory: MapPlus
+        run: |
+          if [ ! -d TestResults.xcresult ]; then
+            echo "No result bundle, skipping coverage."
+            exit 0
+          fi
+          xcrun xccov view --report --json TestResults.xcresult > coverage.json
+          jq -r '
+            def pct: (. * 1000 | round / 10 | tostring) + "%";
+            .targets[] | select(.name == "MapPlus.app") |
+            "## Code coverage: \(.lineCoverage | pct)",
+            "",
+            "\(.coveredLines) of \(.executableLines) lines covered in MapPlus.app.",
+            "",
+            "<details><summary>Coverage by file</summary>",
+            "",
+            "| File | Coverage | Lines |",
+            "| --- | ---: | ---: |",
+            (.files | sort_by(.lineCoverage)[] |
+              "| \(.name) | \(.lineCoverage | pct) | \(.coveredLines)/\(.executableLines) |"),
+            "",
+            "</details>"
+          ' coverage.json | tee -a "$GITHUB_STEP_SUMMARY"
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: TestResults
-          path: MapPlus/TestResults.xcresult
+          path: |
+            MapPlus/TestResults.xcresult
+            MapPlus/coverage.json
           if-no-files-found: ignore
