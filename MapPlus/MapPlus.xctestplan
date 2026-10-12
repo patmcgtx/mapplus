@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "5C3F2B9A-7E41-4D8B-9A6F-1B2C3D4E5F60",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:MapPlus.xcodeproj",
+        "identifier" : "69A0205B2E6CE46800871D38",
+        "name" : "MapPlusTests"
+      }
+    }
+  ],
+  "version" : 1
+}
