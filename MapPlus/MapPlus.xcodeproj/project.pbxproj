@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		695028B62F4A605300D6C55F /* Flow in Frameworks */ = {isa = PBXBuildFile; productRef = 695028B52F4A605300D6C55F /* Flow */; };
+		69EE6AC9307D9AE000FB4E72 /* ViewInspector in Frameworks */ = {isa = PBXBuildFile; productRef = 69EE6AC8307D9AE000FB4E72 /* ViewInspector */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -80,6 +81,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				69EE6AC9307D9AE000FB4E72 /* ViewInspector in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -160,6 +162,7 @@
 			);
 			name = MapPlusTests;
 			packageProductDependencies = (
+				69EE6AC8307D9AE000FB4E72 /* ViewInspector */,
 			);
 			productName = MapPlusTests;
 			productReference = 69A0205C2E6CE46800871D38 /* MapPlusTests.xctest */;
@@ -223,6 +226,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				695028B42F4A605300D6C55F /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */,
+				69EE6AC7307D9AE000FB4E72 /* XCRemoteSwiftPackageReference "ViewInspector" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 69A020462E6CE46700871D38 /* Products */;
@@ -660,6 +664,14 @@
 				minimumVersion = 3.4.0;
 			};
 		};
+		69EE6AC7307D9AE000FB4E72 /* XCRemoteSwiftPackageReference "ViewInspector" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/nalexn/ViewInspector.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.10.5;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -667,6 +679,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 695028B42F4A605300D6C55F /* XCRemoteSwiftPackageReference "SwiftUI-Flow" */;
 			productName = Flow;
+		};
+		69EE6AC8307D9AE000FB4E72 /* ViewInspector */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 69EE6AC7307D9AE000FB4E72 /* XCRemoteSwiftPackageReference "ViewInspector" */;
+			productName = ViewInspector;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
