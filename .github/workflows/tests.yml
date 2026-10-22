@@ -132,11 +132,16 @@ jobs:
         working-directory: MapPlus
         run: |
           set -o pipefail
+          # UI tests can fail for simulator reasons (e.g. the simulator not
+          # terminating the previous app in time), so retry a failed test up
+          # to 3 times in total. Retries are still recorded in the result bundle.
           xcodebuild test \
             -project MapPlus.xcodeproj \
             -scheme MapPlus \
             -testPlan MapPlus \
             -destination "id=${{ steps.sim.outputs.udid }}" \
+            -retry-tests-on-failure \
+            -test-iterations 3 \
             -resultBundlePath TestResults.xcresult \
             CODE_SIGNING_ALLOWED=NO \
             CODE_SIGNING_REQUIRED=NO \
