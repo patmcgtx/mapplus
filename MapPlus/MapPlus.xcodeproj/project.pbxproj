@@ -29,6 +29,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		69362C32308D754200D39F97 /* tests.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = tests.yml; sourceTree = "<group>"; };
+		69362C34308D755400D39F97 /* mapplus-categories.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapplus-categories.png"; sourceTree = "<group>"; };
+		69362C35308D755400D39F97 /* mapplus-map-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapplus-map-dark.png"; sourceTree = "<group>"; };
+		69362C36308D755400D39F97 /* mapplus-new-landmark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapplus-new-landmark.png"; sourceTree = "<group>"; };
+		69362C37308D755400D39F97 /* mapplus-theme-cupertino.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapplus-theme-cupertino.png"; sourceTree = "<group>"; };
+		69362C38308D755400D39F97 /* mapplus-theme-flamingo-dark.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "mapplus-theme-flamingo-dark.png"; sourceTree = "<group>"; };
 		693A3F9F2FD6FE690079F58B /* ARCHITECTURE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = ARCHITECTURE.md; sourceTree = "<group>"; };
 		693A3FA02FD6FE690079F58B /* CLAUDE.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = CLAUDE.md; sourceTree = "<group>"; };
 		693A3FA12FD6FE690079F58B /* LOCALIZATION.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = LOCALIZATION.md; sourceTree = "<group>"; };
@@ -95,12 +101,44 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		69362C33308D754200D39F97 /* workflows */ = {
+			isa = PBXGroup;
+			children = (
+				69362C32308D754200D39F97 /* tests.yml */,
+			);
+			name = workflows;
+			path = ../.github/workflows;
+			sourceTree = SOURCE_ROOT;
+		};
+		69362C39308D755400D39F97 /* images */ = {
+			isa = PBXGroup;
+			children = (
+				69362C34308D755400D39F97 /* mapplus-categories.png */,
+				69362C35308D755400D39F97 /* mapplus-map-dark.png */,
+				69362C36308D755400D39F97 /* mapplus-new-landmark.png */,
+				69362C37308D755400D39F97 /* mapplus-theme-cupertino.png */,
+				69362C38308D755400D39F97 /* mapplus-theme-flamingo-dark.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
+		69362C3A308D755400D39F97 /* docs */ = {
+			isa = PBXGroup;
+			children = (
+				69362C39308D755400D39F97 /* images */,
+			);
+			name = docs;
+			path = ../docs;
+			sourceTree = SOURCE_ROOT;
+		};
 		69A0203C2E6CE46700871D38 = {
 			isa = PBXGroup;
 			children = (
 				69A020472E6CE46700871D38 /* MapPlus */,
 				69A0205F2E6CE46800871D38 /* MapPlusTests */,
 				69A020692E6CE46800871D38 /* MapPlusUITests */,
+				69362C3A308D755400D39F97 /* docs */,
+				69362C33308D754200D39F97 /* workflows */,
 				69A020462E6CE46700871D38 /* Products */,
 				693A3F9F2FD6FE690079F58B /* ARCHITECTURE.md */,
 				693A3FA02FD6FE690079F58B /* CLAUDE.md */,
@@ -329,6 +367,7 @@
 				INFOPLIST_FILE = MapPlus/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Minimap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To see yourself on the map.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -339,10 +378,10 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.patmcg.MapPlus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -352,7 +391,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.0;
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Debug;
 		};
@@ -383,6 +422,7 @@
 				INFOPLIST_FILE = MapPlus/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = Minimap;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.navigation";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "To see yourself on the map.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -393,10 +433,10 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.patmcg.MapPlus;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -406,7 +446,7 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
-				XROS_DEPLOYMENT_TARGET = 26.0;
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Release;
 		};
@@ -532,8 +572,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 597RXYKB68;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.patmcg.MapPlusTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -543,7 +583,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MapPlus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MapPlus";
-				XROS_DEPLOYMENT_TARGET = 26.0;
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Debug;
 		};
@@ -555,8 +595,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 597RXYKB68;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 26.0;
-				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.patmcg.MapPlusTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -566,7 +606,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/MapPlus.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MapPlus";
-				XROS_DEPLOYMENT_TARGET = 26.0;
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Release;
 		};
@@ -577,8 +617,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 597RXYKB68;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.patmcg.MapPlusUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -588,7 +628,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_TARGET_NAME = MapPlus;
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Debug;
 		};
@@ -599,8 +639,8 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 597RXYKB68;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 18.2;
-				MACOSX_DEPLOYMENT_TARGET = 15.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 27.0;
+				MACOSX_DEPLOYMENT_TARGET = 27.0;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.patmcg.MapPlusUITests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -610,7 +650,7 @@
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
 				TEST_TARGET_NAME = MapPlus;
-				XROS_DEPLOYMENT_TARGET = 2.2;
+				XROS_DEPLOYMENT_TARGET = 27.0;
 			};
 			name = Release;
 		};
