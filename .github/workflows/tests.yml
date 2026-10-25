@@ -17,14 +17,14 @@ jobs:
   unit-tests:
     name: Unit tests (iOS 27 simulator)
     if: github.event_name == 'push' || github.event_name == 'pull_request'
-    runs-on: macos-27
+    runs-on: xcode-27
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v5
 
       - name: Select Xcode 27
         run: |
-          XCODE=$(ls -d /Applications/Xcode_27*.app | sort -V | tail -n 1)
+          XCODE=/Applications/Xcode_27.0.app
           echo "Using $XCODE"
           sudo xcode-select -s "$XCODE/Contents/Developer"
           xcodebuild -version
@@ -99,14 +99,14 @@ jobs:
   nightly-full-tests:
     name: Unit + UI tests (iOS 27 simulator)
     if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
-    runs-on: macos-27
+    runs-on: xcode-27
     timeout-minutes: 60
     steps:
       - uses: actions/checkout@v5
 
       - name: Select Xcode 27
         run: |
-          XCODE=$(ls -d /Applications/Xcode_27*.app | sort -V | tail -n 1)
+          XCODE=/Applications/Xcode_27.0.app
           echo "Using $XCODE"
           sudo xcode-select -s "$XCODE/Contents/Developer"
           xcodebuild -version
